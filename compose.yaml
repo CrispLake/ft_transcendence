@@ -28,7 +28,7 @@ services:
     # depends_on:
     #   - mysql
     volumes:
-      - django:/data
+      - django:/usr/src/app
     restart: unless-stopped
     ports:
       - "8000:8000"

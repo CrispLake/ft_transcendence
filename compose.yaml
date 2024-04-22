@@ -1,0 +1,48 @@
+volumes:
+  django:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './django/src'
+  # mysql:
+  #   driver: local
+  #   driver_opts:
+  #     type: 'none'
+  #     o: 'bind'
+  #     device: './mysql/db'
+
+networks:
+  transcendence:
+    driver: bridge
+
+services:
+  django:
+    container_name: django
+    networks:
+      - transcendence
+    build:
+      context: django
+      dockerfile: Dockerfile
+    # env_file: .env
+    # depends_on:
+    #   - mysql
+    volumes:
+      - django:/data
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+
+  # mysql:
+  #   container_name: mysql
+  #   networks:
+  #     - inception
+  #   build:
+  #     context: mysql
+  #     dockerfile: Dockerfile
+  #   # env_file: .env
+  #   volumes:
+  #     - mysql:/var/www/mysql
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3306:3306"

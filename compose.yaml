@@ -1,48 +1,51 @@
 volumes:
-  django:
+  transcendence_volume:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: './django/src'
-  # mysql:
-  #   driver: local
-  #   driver_opts:
-  #     type: 'none'
-  #     o: 'bind'
-  #     device: './mysql/db'
+      device: './transcendence_src/src'
+  postgresql:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './postgresql/db'
 
 networks:
-  transcendence:
+  transcendence_network:
     driver: bridge
 
 services:
-  django:
-    container_name: django
+  transcendence:
+    container_name: transcendence
     networks:
-      - transcendence
+      - transcendence_network
     build:
-      context: django
+      context: transcendence_src
       dockerfile: Dockerfile
-    # env_file: .env
-    # depends_on:
-    #   - mysql
+    env_file: .env
+    depends_on:
+      postgresql:
+        condition: service_healthy
     volumes:
-      - django:/usr/src/app
+      - transcendence_volume:/usr/src/app
     restart: unless-stopped
     ports:
       - "8000:8000"
 
-  # mysql:
-  #   container_name: mysql
-  #   networks:
-  #     - inception
-  #   build:
-  #     context: mysql
-  #     dockerfile: Dockerfile
-  #   # env_file: .env
-  #   volumes:
-  #     - mysql:/var/www/mysql
-  #   restart: unless-stopped
-  #   ports:
-  #     - "3306:3306"
+  postgresql:
+    image: postgres
+    container_name: postgresql
+    networks:
+      - transcendence_network
+    env_file: .env
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -d ${POSTGRES_DB}'"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - postgresql:/var/lib/postgresql/data
+    restart: unless-stopped

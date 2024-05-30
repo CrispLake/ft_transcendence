@@ -7,7 +7,7 @@
             //  This function communicates with django (backend)
             
             function showSection(section) {   
-                fetch(`/sections/${section}`)
+                fetch(`/${section}`)
                 .then(response => response.text())
                 .then(text => {
                     console.log(text);
@@ -30,8 +30,8 @@
     </head>
     <body>
         <h1>Hello</h1>
-        <button data-section="1">Section 1</button>
-        <button data-section="2">Section 2</button>
+        <button data-section="add">add</button>
+        <button data-section="display">display</button>
         <button data-section="3">Section 3</button>
 
         <!-- Contents loaded from server is inserted here by javascript -->

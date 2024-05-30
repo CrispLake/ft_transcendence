@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, Http404
-
+from singlepage.models import Test
 
 # Create your views here.
 def index(request):
@@ -16,3 +16,21 @@ def section(request, num):
         return HttpResponse(texts[num-1])
     else:
         raise Http404("No such section")
+
+def test_add(request):
+    text = request.GET.get('text', 'hello')  # Default to 'hello' if no text provided
+    Test.objects.create(text=text)
+    return HttpResponse(status=201)
+
+
+def test_display(request):
+    tests = Test.objects.all().values('text')
+    tests_list = list(tests)
+
+    html_content = "<ul>"
+    for test in tests_list:
+        html_content += f"<li>{test['text']}</li>"
+    html_content += "</ul>"
+
+    return HttpResponse(html_content)
+

@@ -2,9 +2,14 @@ NAME = transcendence
 
 COMPOSE = ./compose.yaml
 
+DATA_DIR = ./postgresql/db
+
 all: $(NAME)
 
-$(NAME):
+$(DATA_DIR):
+	mkdir -p $@
+
+$(NAME): $(DATA_DIR)
 	docker compose -f $(COMPOSE) up -d
 
 clean:

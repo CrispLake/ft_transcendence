@@ -5,12 +5,8 @@ volumes:
       type: 'none'
       o: 'bind'
       device: './transcendence_src/src'
-  postgresql:
+  postgresql_data:
     driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: './postgresql/db'
 
 networks:
   transcendence_network:
@@ -47,5 +43,5 @@ services:
       retries: 5
       start_period: 10s
     volumes:
-      - postgresql:/var/lib/postgresql/data
+      - postgresql_data:/var/lib/postgresql/data
     restart: unless-stopped

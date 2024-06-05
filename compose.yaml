@@ -7,10 +7,6 @@ volumes:
       device: './transcendence_src/src'
   postgresql:
     driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: './postgresql/db'
 
 networks:
   transcendence_network:

@@ -7,45 +7,57 @@ volumes:
       device: './transcendence_src/src'
   postgresql:
     driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: './postgresql/db'
 
 networks:
   transcendence_network:
     driver: bridge
 
 services:
-  transcendence:
-    container_name: transcendence
+  # transcendence:
+  #   container_name: transcendence
+  #   networks:
+  #     - transcendence_network
+  #   build:
+  #     context: transcendence_src
+  #     dockerfile: Dockerfile
+  #   env_file: .env
+  #   # depends_on:
+  #     # postgresql:
+  #       # condition: service_healthy
+  #   volumes:
+  #     - transcendence_volume:/usr/src/app
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8000:8000"
+
+  # postgresql:
+  #   image: postgres
+  #   container_name: postgresql
+  #   networks:
+  #     - transcendence_network
+  #   env_file: .env
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "sh -c 'pg_isready -d ${POSTGRES_DB}'"]
+  #     interval: 20s
+  #     timeout: 10s
+  #     retries: 5
+  #     start_period: 10s
+  #   volumes:
+  #     - postgresql:/var/lib/postgresql/data
+  #   restart: unless-stopped
+
+  frontend:
+    image: frontend
+    container_name: frontend
+    build: 
+      context: frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend/app/:/app
     networks:
       - transcendence_network
-    build:
-      context: transcendence_src
-      dockerfile: Dockerfile
-    env_file: .env
-    depends_on:
-      postgresql:
-        condition: service_healthy
-    volumes:
-      - transcendence_volume:/usr/src/app
+    env_file:
+      - .env
     restart: unless-stopped
     ports:
-      - "8000:8000"
-
-  postgresql:
-    image: postgres
-    container_name: postgresql
-    networks:
-      - transcendence_network
-    env_file: .env
-    healthcheck:
-      test: ["CMD-SHELL", "sh -c 'pg_isready -d ${POSTGRES_DB}'"]
-      interval: 20s
-      timeout: 10s
-      retries: 5
-      start_period: 10s
-    volumes:
-      - postgresql:/var/lib/postgresql/data
-    restart: unless-stopped
+      - "3000:3000"

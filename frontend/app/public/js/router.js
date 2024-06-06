@@ -41,6 +41,10 @@ const urlRoutes = {
 		template: '/html/contact.html',
 		title: 'Contact Us',
 	},
+	'/login': {
+		template: '/html/login.html',
+		title: 'Login',
+	},
 };
 
 // handles button clicks and other redirects

@@ -1,4 +1,3 @@
 __pycache__/
 .env
 ./postgresql/db
-./trancendence_src/**/__pycache__

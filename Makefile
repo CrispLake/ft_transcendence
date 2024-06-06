@@ -6,10 +6,7 @@ DATA_DIR = ./postgresql/db
 
 all: $(NAME)
 
-$(DATA_DIR):
-	mkdir -p $@
-
-$(NAME): $(DATA_DIR)
+$(NAME):
 	docker compose -f $(COMPOSE) up -d
 
 clean:

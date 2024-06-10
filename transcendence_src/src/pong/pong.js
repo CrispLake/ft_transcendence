@@ -14,6 +14,21 @@ const floorThickness = 0.2;
 const floorWidth = arenaWidth + floorThickness * 2;
 const wallLightIntensity = 1;
 const paddleLightIntensity = 1;
+const ballBox = new THREE.Box3();
+const paddle1Box = new THREE.Box3();
+const paddle2Box = new THREE.Box3();
+const leftWallBox = new THREE.Box3();
+const rightWallBox = new THREE.Box3();
+
+
+// ----Variables----
+let paddleSpeed = 0.2;
+let moveLeft1 = false;
+let moveRight1 = false;
+let moveLeft2 = false;
+let moveRight2 = false;
+let ballSpeedX = 0.1;
+let ballSpeedZ = 0.1;
 
 
 // ----Scene----
@@ -108,7 +123,7 @@ const ballRadius = 0.2;
 const ballGeometry = new THREE.SphereGeometry(ballRadius, 32, 16);
 const ballMaterial = new THREE.MeshBasicMaterial({color: CYAN, wireframe: false});
 const ballSphere = new THREE.Mesh(ballGeometry, ballMaterial);
-ballSphere.position.set(-2, 0, -3);
+ballSphere.position.set(0, 0, 0);
 scene.add(ballSphere);
 const ballLight = new THREE.PointLight(CYAN, 1, 10, 0.5); // (color, intensity, distance, decay)
 ballLight.position.copy(ballSphere.position);
@@ -119,16 +134,129 @@ scene.add(ballLight);
 function update()
 {
     requestAnimationFrame(update);
-    var time = Date.now() * 0.0005;
-    ballSphere.position.x = Math.sin(time) * 2;
-    ballSphere.position.z = Math.cos(time) * 2;
-    ballLight.position.copy(ballSphere.position);
+    updatePaddlePosition();
+    updateBallPosition();
     renderer.render(scene, camera);
 }
 update();
 
 
-//----Window resize----
+// ----Key Input----
+document.addEventListener('keydown', handleKeyDown);
+document.addEventListener('keyup', handleKeyUp);
+
+function handleKeyDown(event)
+{
+    switch (event.key)
+    {
+        case 'ArrowLeft':
+            moveLeft2 = true;
+            break;
+        case 'ArrowRight':
+            moveRight2 = true;
+            break;
+        case 'a':
+            moveLeft1 = true;
+            break;
+        case 'd':
+            moveRight1 = true;
+            break;
+    }
+}
+
+function handleKeyUp(event)
+{
+    switch (event.key)
+    {
+        case 'ArrowLeft':
+            moveLeft2 = false;
+            break;
+        case 'ArrowRight':
+            moveRight2 = false;
+            break;
+        case 'a':
+            moveLeft1 = false;
+            break;
+        case 'd':
+            moveRight1 = false;
+            break;
+    }
+}
+
+
+// ----Update Paddle----
+function updatePaddlePosition()
+{
+    if (moveLeft1)
+    {
+        paddle1.position.z -= paddleSpeed;
+        if (paddle1.position.z < -(arenaWidth / 2) + paddleLength / 2)
+            paddle1.position.z = -(arenaWidth / 2) + paddleLength / 2;
+    }
+    if (moveRight1)
+    {
+        paddle1.position.z += paddleSpeed;
+        if (paddle1.position.z > (arenaWidth / 2) - paddleLength / 2)
+            paddle1.position.z = (arenaWidth / 2) - paddleLength / 2;
+    }
+    paddleLight1.position.copy(paddle1.position);
+    if (moveLeft2)
+    {
+        paddle2.position.z -= paddleSpeed;
+        if (paddle2.position.z < -(arenaWidth / 2) + paddleLength / 2)
+            paddle2.position.z = -(arenaWidth / 2) + paddleLength / 2;
+    }
+    if (moveRight2)
+    {
+        paddle2.position.z += paddleSpeed;
+        if (paddle2.position.z > (arenaWidth / 2) - paddleLength / 2)
+            paddle2.position.z = (arenaWidth / 2) - paddleLength / 2;
+    }
+    paddleLight2.position.copy(paddle2.position);
+}
+
+
+// ----Update Ball----
+function updateBallPosition()
+{
+    ballBox.setFromObject(ballSphere);
+    paddle1Box.setFromObject(paddle1);
+    paddle2Box.setFromObject(paddle2);
+    leftWallBox.setFromObject(leftSideWall);
+    rightWallBox.setFromObject(rightSideWall);
+    let newPosX = ballSphere.position.x + ballSpeedX;
+    let newPosZ = ballSphere.position.z + ballSpeedZ;
+    
+    if (ballBox.intersectsBox(paddle1Box))
+    {
+        ballSpeedX = -ballSpeedX;
+        newPosX = ballSphere.position.x + ballSpeedX;
+        adjustAngle(paddle1);
+    }
+    else if (ballBox.intersectsBox(paddle2Box))
+    {
+        ballSpeedX = -ballSpeedX;
+        newPosX = ballSphere.position.x + ballSpeedX;
+    }
+
+    if (ballBox.intersectsBox(leftWallBox) || ballBox.intersectsBox(rightWallBox))
+    {
+        ballSpeedZ = -ballSpeedZ;
+        newPosZ = ballSphere.position.z + ballSpeedZ;
+    }
+
+    ballSphere.position.x = newPosX;
+    ballSphere.position.z = newPosZ;
+    ballLight.position.copy(ballSphere.position);
+}
+
+function calculateAngle()
+{
+    if ()
+}
+
+
+// ----Window resize----
 window.addEventListener( 'resize', onWindowResize, false );
 function onWindowResize( event )
 {

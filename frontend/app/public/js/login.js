@@ -1,4 +1,5 @@
-const axios = require('axios');
+import axios from "axios";
+// const axios = require('axios');
 
 function registerUser() {
     console.log('hello');
@@ -13,6 +14,3 @@ function registerUser() {
     console.log(error);
     });
 }
-
-const form = document.getElementById("loginform");
-form.addEventListener("submit", registerUser);

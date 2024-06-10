@@ -15,4 +15,4 @@ function registerUser() {
 }
 
 const form = document.getElementById("loginform");
-form.addEventListener("submit");
+form.addEventListener("submit", registerUser);

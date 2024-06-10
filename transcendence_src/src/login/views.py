@@ -21,7 +21,7 @@ def register(request):
     User.objects.create(username=username, password=password)
     return HttpResponse(status=201)
 
-def sign_in(request):
+def login(request):
     username = request.POST.get('username', '')
     if User.objects.filter(username=username).exists() == False:
         return HttpResponse(status=501) # TODO incorrect username/password

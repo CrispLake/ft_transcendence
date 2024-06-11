@@ -10,26 +10,10 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
 import { lerp, degToRad, radToDeg, calculate2DSpeed, vector2DToAngle, deriveXspeed, deriveZspeed, setMinAngle, setMaxAngle } from './math.js';
 import { speedUp } from './utilities.js';
+import * as COLOR from './colors.js'
 
 
 /*---- INITIALIZE ------------------------------------------------------------*/
-
-// ----Base Colors----
-const PURPLE = 0xff00ff;
-const CYAN = 0x11ffff;
-const YELLOW = 0xffff11;
-const ORANGE = 0xff7722;
-const WHITE = 0xffffff;
-const BLACK = 0x000000;
-const GRAY = 0x555555;
-
-// ----Object Colors----
-const FLOOR_COLOR = GRAY;
-const WALL_COLOR = PURPLE;
-const PADDLE_COLOR = CYAN;
-const BALL_COLOR = WHITE;
-const PONG_COLOR = BLACK;
-const PONG_AURA_COLOR = CYAN;
 
 // ----Arena----
 const arenaLength = 25;
@@ -89,7 +73,7 @@ fontLoader.load('./resources/font.json', function (font)
 		bevelOffset: 0,
 		bevelSegments: 3
 	});
-    const textMaterial = new THREE.MeshBasicMaterial({color: PONG_COLOR});
+    const textMaterial = new THREE.MeshBasicMaterial({color: COLOR.PONG});
     textMesh = new THREE.Mesh(textGeometry, textMaterial);
     textGeometry.computeBoundingBox();
     const boundingBox = textGeometry.boundingBox;
@@ -104,8 +88,8 @@ fontLoader.load('./resources/font.json', function (font)
     const outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera, [textMesh]);
     outlinePass.edgeStrength = 10; // Increase to make the edges glow more
     outlinePass.edgeGlow = 1; // Increase to make the glow wider
-    outlinePass.visibleEdgeColor.set(PONG_AURA_COLOR); // Neon color
-    outlinePass.hiddenEdgeColor.set(PONG_AURA_COLOR); // Neon color
+    outlinePass.visibleEdgeColor.set(COLOR.PONG_AURA); // Neon color
+    outlinePass.hiddenEdgeColor.set(COLOR.PONG_AURA); // Neon color
     composer.addPass(outlinePass);
 
     // Add FXAA for better smoothing of edges
@@ -133,7 +117,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 
 // ----Back Wall----
 const backWallGeometry = new THREE.BoxGeometry(25, 15, 2);
-const backWallMeshMaterial = new THREE.MeshStandardMaterial({color: 0xffffff, emissive: BLACK});
+const backWallMeshMaterial = new THREE.MeshStandardMaterial({color: 0xffffff, emissive: COLOR.BACKWALL});
 const backWall = new THREE.Mesh(backWallGeometry, backWallMeshMaterial);
 backWall.position.set(0, 0, -10.5);
 scene.add(backWall);
@@ -144,14 +128,14 @@ scene.add(ambientLight);
 
 // ----Floor----
 const floorGeometry = new THREE.BoxGeometry(arenaLength, floorThickness, floorWidth);
-const floorMeshMaterial = new THREE.MeshStandardMaterial({color: 0xffffff, emissive: FLOOR_COLOR, wireframe: false});
+const floorMeshMaterial = new THREE.MeshStandardMaterial({color: 0xffffff, emissive: COLOR.FLOOR, wireframe: false});
 const floor = new THREE.Mesh(floorGeometry, floorMeshMaterial);
 floor.position.set(0, -(wallHeight / 2 + floorThickness / 2), 0);
 scene.add(floor);
 
 // ----Walls----
 const sideWallGeometry = new THREE.BoxGeometry(arenaLength, wallHeight, wallThickness);
-const wallMeshMaterial = new THREE.MeshStandardMaterial({color: WALL_COLOR, emissive: WALL_COLOR, wireframe: false});
+const wallMeshMaterial = new THREE.MeshStandardMaterial({color: COLOR.WALL, emissive: COLOR.WALL, wireframe: false});
 
 const leftSideWall = new THREE.Mesh(sideWallGeometry, wallMeshMaterial);
 leftSideWall.position.set(0, 0, -(arenaWidth / 2 + wallThickness / 2))
@@ -163,19 +147,19 @@ scene.add(rightSideWall);
 
 // ----Wall Lights----
 RectAreaLightUniformsLib.init();
-const wallLightLeft = new THREE.RectAreaLight(WALL_COLOR, wallLightIntensity, arenaLength, wallHeight);
+const wallLightLeft = new THREE.RectAreaLight(COLOR.WALL, wallLightIntensity, arenaLength, wallHeight);
 wallLightLeft.position.copy(leftSideWall.position);
 wallLightLeft.lookAt(0, 0, 0);
 scene.add(wallLightLeft);
 
-const wallLightRight = new THREE.RectAreaLight(WALL_COLOR, wallLightIntensity, arenaLength, wallHeight);
+const wallLightRight = new THREE.RectAreaLight(COLOR.WALL, wallLightIntensity, arenaLength, wallHeight);
 wallLightRight.position.copy(rightSideWall.position);
 wallLightRight.lookAt(0, 0, 0);
 scene.add(wallLightRight);
 
 // ----Paddles----
 const paddleGeometry = new THREE.BoxGeometry(paddleThickness, wallHeight, paddleLength);
-const paddleMaterial = new THREE.MeshStandardMaterial({color: PADDLE_COLOR, emissive: PADDLE_COLOR, wireframe: false});
+const paddleMaterial = new THREE.MeshStandardMaterial({color: COLOR.PADDLE, emissive: COLOR.PADDLE, wireframe: false});
 const paddle1 = new THREE.Mesh(paddleGeometry, paddleMaterial);
 const paddle1Box = new THREE.Box3();
 paddle1.position.set(-(arenaLength / 2 - paddleThickness / 2), 0, 0);
@@ -188,12 +172,12 @@ scene.add(paddle2);
 
 
 // ----Paddle Light----
-const paddleLight1 = new THREE.RectAreaLight(PADDLE_COLOR, paddleLightIntensity, paddleLength, paddleHeight);
+const paddleLight1 = new THREE.RectAreaLight(COLOR.PADDLE, paddleLightIntensity, paddleLength, paddleHeight);
 paddleLight1.position.copy(paddle1.position);
 paddleLight1.lookAt(0, 0, 0);
 scene.add(paddleLight1);
 
-const paddleLight2 = new THREE.RectAreaLight(PADDLE_COLOR, paddleLightIntensity, paddleLength, paddleHeight);
+const paddleLight2 = new THREE.RectAreaLight(COLOR.PADDLE, paddleLightIntensity, paddleLength, paddleHeight);
 paddleLight2.position.copy(paddle2.position);
 paddleLight2.lookAt(0, 0, 0);
 scene.add(paddleLight2);
@@ -202,12 +186,12 @@ scene.add(paddleLight2);
 // ----Ball----
 const ballRadius = 0.2;
 const ballGeometry = new THREE.SphereGeometry(ballRadius, 32, 16);
-const ballMaterial = new THREE.MeshBasicMaterial({color: BALL_COLOR, wireframe: false});
+const ballMaterial = new THREE.MeshBasicMaterial({color: COLOR.BALL, wireframe: false});
 const ball = new THREE.Mesh(ballGeometry, ballMaterial);
 const ballBox = new THREE.Box3();
 ball.position.set(0, 0, 0);
 scene.add(ball);
-const ballLight = new THREE.PointLight(BALL_COLOR, 1, 10, 0.5); // (color, intensity, distance, decay)
+const ballLight = new THREE.PointLight(COLOR.BALL, 1, 10, 0.5); // (color, intensity, distance, decay)
 ballLight.position.copy(ball.position);
 scene.add(ballLight);
 

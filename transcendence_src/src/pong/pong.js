@@ -1,6 +1,13 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
 import { lerp, degToRad, radToDeg, calculate2DSpeed, vector2DToAngle, deriveXspeed, deriveZspeed, setMinAngle, setMaxAngle } from './math.js';
 import { speedUp } from './utilities.js';
 
@@ -8,16 +15,21 @@ import { speedUp } from './utilities.js';
 /*---- INITIALIZE ------------------------------------------------------------*/
 
 // ----Base Colors----
-const PURPLE = 0xff11ff;
+const PURPLE = 0xff00ff;
 const CYAN = 0x11ffff;
 const YELLOW = 0xffff11;
-const WHITE = 0xffffff;
 const ORANGE = 0xff7722;
+const WHITE = 0xffffff;
+const BLACK = 0x000000;
+const GRAY = 0x555555;
 
 // ----Object Colors----
+const FLOOR_COLOR = GRAY;
 const WALL_COLOR = PURPLE;
 const PADDLE_COLOR = CYAN;
 const BALL_COLOR = WHITE;
+const PONG_COLOR = BLACK;
+const PONG_AURA_COLOR = CYAN;
 
 // ----Arena----
 const arenaLength = 25;
@@ -57,6 +69,52 @@ let angle = 30;
 let ballSpeedX = deriveXspeed(speed, angle);
 let ballSpeedZ = deriveZspeed(speed, angle);
 
+
+// ----Font----
+let textMesh;
+let composer;
+const fontLoader = new FontLoader();
+fontLoader.load('./resources/font.json', function (font)
+{
+    const textGeometry = new TextGeometry( 'PONG', 
+    {
+		font: font,
+		size: 6,
+        height: 1,
+		depth: 0.1,
+		curveSegments: 12,
+		bevelEnabled: true,
+		bevelThickness: 0.5,
+		bevelSize: 0.2,
+		bevelOffset: 0,
+		bevelSegments: 3
+	});
+    const textMaterial = new THREE.MeshBasicMaterial({color: PONG_COLOR});
+    textMesh = new THREE.Mesh(textGeometry, textMaterial);
+    textGeometry.computeBoundingBox();
+    const boundingBox = textGeometry.boundingBox;
+    const textWidth = boundingBox.max.x - boundingBox.min.x;
+    textMesh.position.set(-textWidth / 2, 0, -10);
+    scene.add(textMesh);
+
+    composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+
+    // Create the OutlinePass
+    const outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera, [textMesh]);
+    outlinePass.edgeStrength = 10; // Increase to make the edges glow more
+    outlinePass.edgeGlow = 1; // Increase to make the glow wider
+    outlinePass.visibleEdgeColor.set(PONG_AURA_COLOR); // Neon color
+    outlinePass.hiddenEdgeColor.set(PONG_AURA_COLOR); // Neon color
+    composer.addPass(outlinePass);
+
+    // Add FXAA for better smoothing of edges
+    const effectFXAA = new ShaderPass(FXAAShader);
+    effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
+    composer.addPass(effectFXAA);
+});
+
+
 // ----Scene----
 const scene = new THREE.Scene();
 
@@ -64,7 +122,6 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
 camera.lookAt(0, 0, 0);
 camera.position.set(-22, 25, 23);
-// camera.position.set(0, 35, 0);
 
 // ----Renderer Setup----
 const renderer = new THREE.WebGLRenderer();
@@ -74,13 +131,20 @@ document.body.appendChild(renderer.domElement);
 // ----Orbit Control----
 const controls = new OrbitControls(camera, renderer.domElement);
 
+// ----Back Wall----
+const backWallGeometry = new THREE.BoxGeometry(25, 15, 2);
+const backWallMeshMaterial = new THREE.MeshStandardMaterial({color: 0xffffff, emissive: BLACK});
+const backWall = new THREE.Mesh(backWallGeometry, backWallMeshMaterial);
+backWall.position.set(0, 0, -10.5);
+scene.add(backWall);
+
 // ----Light----
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.05);
 scene.add(ambientLight);
 
 // ----Floor----
 const floorGeometry = new THREE.BoxGeometry(arenaLength, floorThickness, floorWidth);
-const floorMeshMaterial = new THREE.MeshStandardMaterial({color: 0xffffff, wireframe: false});
+const floorMeshMaterial = new THREE.MeshStandardMaterial({color: 0xffffff, emissive: FLOOR_COLOR, wireframe: false});
 const floor = new THREE.Mesh(floorGeometry, floorMeshMaterial);
 floor.position.set(0, -(wallHeight / 2 + floorThickness / 2), 0);
 scene.add(floor);
@@ -156,7 +220,14 @@ function update()
     requestAnimationFrame(update);
     updatePaddlePosition();
     updateBallPosition();
-    renderer.render(scene, camera);
+    if (composer)
+    {
+        composer.render();
+    }
+    else
+    {
+        renderer.render(scene, camera);
+    }
 }
 update();
 

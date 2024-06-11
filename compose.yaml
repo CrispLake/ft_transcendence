@@ -27,8 +27,8 @@ services:
     volumes:
       - transcendence_volume:/usr/src/app
     restart: unless-stopped
-    expose:
-      - "8000"
+    ports:
+      - "8000:8000"
 
   postgresql:
     image: postgres
@@ -38,10 +38,10 @@ services:
     env_file: .env
     healthcheck:
       test: ["CMD-SHELL", "sh -c 'pg_isready -d ${POSTGRES_DB}'"]
-      interval: 20s
-      timeout: 10s
+      interval: 10s
+      timeout: 5s
       retries: 5
-      start_period: 10s
+      start_period: 5s
     volumes:
       - postgresql_data:/var/lib/postgresql/data
     restart: unless-stopped

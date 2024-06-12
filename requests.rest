@@ -35,3 +35,17 @@ Sec-Fetch-Dest: document
 Accept-Encoding: gzip, deflate, br
 Accept-Language: en-GB,en-US;q=0.9,en;q=0.8
 Connection: keep-alive
+
+###
+
+GET http://localhost:8000/matches/ HTTP/1.1
+
+###
+
+POST http://localhost:8000/matches/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "winners": "1, 2",
+    "losers": "3, 4"
+}

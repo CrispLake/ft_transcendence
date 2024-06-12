@@ -9,50 +9,34 @@ import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
 import { lerp, degToRad, radToDeg, calculate2DSpeed, vector2DToAngle, deriveXspeed, deriveZspeed, setMinAngle, setMaxAngle } from './math.js';
+import * as G from './globals.js';
 import { speedUp } from './utilities.js';
-import * as COLOR from './colors.js'
-
+import * as COLOR from './colors.js';
+import { Player } from './Player.js';
+import { Ball } from './Ball.js';
 
 /*---- INITIALIZE ------------------------------------------------------------*/
 
-// ----Arena----
-const arenaLength = 25;
-const arenaWidth = 15;
-const wallHeight = 0.5;
-const wallThickness = 0.2;
-const floorThickness = 0.2;
-const floorWidth = arenaWidth + floorThickness * 2;
-const wallLightIntensity = 1;
+// ----Scene----
+const scene = new THREE.Scene();
 
-// ----Other----
-const maxAngleDegrees = 20;
-let minAngle = setMinAngle(maxAngleDegrees);
-let maxAngle = setMaxAngle(maxAngleDegrees);
+// ----Players----
+let player1 = new Player(-(G.arenaLength / 2 - G.paddleThickness / 2), 0, 0, 'Emil');
+scene.add(player1.paddle);
+scene.add(player1.light);
+let player2 = new Player((G.arenaLength / 2 - G.paddleThickness / 2), 0, 0, 'Jonathan');
+scene.add(player2.paddle);
+scene.add(player2.light);
 
-// ----Paddles----
-const paddleLightIntensity = 1;
-// const paddleLength = arenaWidth;
-const paddleLength = 4;
-const paddleHeight = wallHeight;
-const paddleThickness = 0.2;
+// ----Ball----
+let ball = new Ball(0, 0, 0);
+scene.add(ball.mesh);
+scene.add(ball.light);
+
 
 // ----Boxes----
-
 const leftWallBox = new THREE.Box3();
 const rightWallBox = new THREE.Box3();
-
-// ----Variables----
-let paddleSpeed = 0.2;
-let moveLeft1 = false;
-let moveRight1 = false;
-let moveLeft2 = false;
-let moveRight2 = false;
-let speed = 0.2;
-let speedIncrement = 0.01;
-let angle = 30;
-let ballSpeedX = deriveXspeed(speed, angle);
-let ballSpeedZ = deriveZspeed(speed, angle);
-
 
 // ----Font----
 let textMesh;
@@ -99,9 +83,6 @@ fontLoader.load('./resources/font.json', function (font)
 });
 
 
-// ----Scene----
-const scene = new THREE.Scene();
-
 // -----Camera Setup----
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
 camera.lookAt(0, 0, 0);
@@ -127,73 +108,35 @@ const ambientLight = new THREE.AmbientLight(0xffffff, 0.05);
 scene.add(ambientLight);
 
 // ----Floor----
-const floorGeometry = new THREE.BoxGeometry(arenaLength, floorThickness, floorWidth);
+const floorGeometry = new THREE.BoxGeometry(G.arenaLength, G.floorThickness, G.floorWidth);
 const floorMeshMaterial = new THREE.MeshStandardMaterial({color: 0xffffff, emissive: COLOR.FLOOR, wireframe: false});
 const floor = new THREE.Mesh(floorGeometry, floorMeshMaterial);
-floor.position.set(0, -(wallHeight / 2 + floorThickness / 2), 0);
+floor.position.set(0, -(G.wallHeight / 2 + G.floorThickness / 2), 0);
 scene.add(floor);
 
 // ----Walls----
-const sideWallGeometry = new THREE.BoxGeometry(arenaLength, wallHeight, wallThickness);
+const sideWallGeometry = new THREE.BoxGeometry(G.arenaLength, G.wallHeight, G.wallThickness);
 const wallMeshMaterial = new THREE.MeshStandardMaterial({color: COLOR.WALL, emissive: COLOR.WALL, wireframe: false});
 
 const leftSideWall = new THREE.Mesh(sideWallGeometry, wallMeshMaterial);
-leftSideWall.position.set(0, 0, -(arenaWidth / 2 + wallThickness / 2))
+leftSideWall.position.set(0, 0, -(G.arenaWidth / 2 + G.wallThickness / 2))
 scene.add(leftSideWall);
 
 const rightSideWall = new THREE.Mesh(sideWallGeometry, wallMeshMaterial);
-rightSideWall.position.set(0, 0, (arenaWidth / 2 + wallThickness / 2))
+rightSideWall.position.set(0, 0, (G.arenaWidth / 2 + G.wallThickness / 2))
 scene.add(rightSideWall);
 
 // ----Wall Lights----
 RectAreaLightUniformsLib.init();
-const wallLightLeft = new THREE.RectAreaLight(COLOR.WALL, wallLightIntensity, arenaLength, wallHeight);
+const wallLightLeft = new THREE.RectAreaLight(COLOR.WALL, G.wallLightIntensity, G.arenaLength, G.wallHeight);
 wallLightLeft.position.copy(leftSideWall.position);
 wallLightLeft.lookAt(0, 0, 0);
 scene.add(wallLightLeft);
 
-const wallLightRight = new THREE.RectAreaLight(COLOR.WALL, wallLightIntensity, arenaLength, wallHeight);
+const wallLightRight = new THREE.RectAreaLight(COLOR.WALL, G.wallLightIntensity, G.arenaLength, G.wallHeight);
 wallLightRight.position.copy(rightSideWall.position);
 wallLightRight.lookAt(0, 0, 0);
 scene.add(wallLightRight);
-
-// ----Paddles----
-const paddleGeometry = new THREE.BoxGeometry(paddleThickness, wallHeight, paddleLength);
-const paddleMaterial = new THREE.MeshStandardMaterial({color: COLOR.PADDLE, emissive: COLOR.PADDLE, wireframe: false});
-const paddle1 = new THREE.Mesh(paddleGeometry, paddleMaterial);
-const paddle1Box = new THREE.Box3();
-paddle1.position.set(-(arenaLength / 2 - paddleThickness / 2), 0, 0);
-scene.add(paddle1);
-
-const paddle2 = new THREE.Mesh(paddleGeometry, paddleMaterial);
-const paddle2Box = new THREE.Box3();
-paddle2.position.set((arenaLength / 2 - paddleThickness / 2), 0, 0);
-scene.add(paddle2);
-
-
-// ----Paddle Light----
-const paddleLight1 = new THREE.RectAreaLight(COLOR.PADDLE, paddleLightIntensity, paddleLength, paddleHeight);
-paddleLight1.position.copy(paddle1.position);
-paddleLight1.lookAt(0, 0, 0);
-scene.add(paddleLight1);
-
-const paddleLight2 = new THREE.RectAreaLight(COLOR.PADDLE, paddleLightIntensity, paddleLength, paddleHeight);
-paddleLight2.position.copy(paddle2.position);
-paddleLight2.lookAt(0, 0, 0);
-scene.add(paddleLight2);
-
-
-// ----Ball----
-const ballRadius = 0.2;
-const ballGeometry = new THREE.SphereGeometry(ballRadius, 32, 16);
-const ballMaterial = new THREE.MeshBasicMaterial({color: COLOR.BALL, wireframe: false});
-const ball = new THREE.Mesh(ballGeometry, ballMaterial);
-const ballBox = new THREE.Box3();
-ball.position.set(0, 0, 0);
-scene.add(ball);
-const ballLight = new THREE.PointLight(COLOR.BALL, 1, 10, 0.5); // (color, intensity, distance, decay)
-ballLight.position.copy(ball.position);
-scene.add(ballLight);
 
 
 /*---- LOOP ------------------------------------------------------------------*/
@@ -212,9 +155,62 @@ function update()
     {
         renderer.render(scene, camera);
     }
+    if (goal())
+    {
+        updateScore();
+        let winners = ['player1'];
+        let losers = ['player2'];
+
+        sendGameResults(winners, losers);
+    }
 }
 update();
 
+function sleepMillis(millis)
+{
+    var date = new Date();
+    var curDate = null;
+    do { curDate = new Date(); }
+    while(curDate-date < millis);
+}
+
+function resetPaddles()
+{
+    player1.setPos(-(G.arenaLength / 2 - G.paddleThickness / 2), 0, 0);
+    player2.setPos((G.arenaLength / 2 - G.paddleThickness / 2), 0, 0);
+}
+
+function resetBall()
+{
+    ball.setPos(0, 0, 0);
+    ball.angle = G.initialStartingAngle;
+    ball.setSpeed(G.initialBallSpeed);
+    sleepMillis(1000);
+}
+
+function goal()
+{
+    let goalOffSet = 1;
+    if (ball.mesh.position.x <= player1.paddle.position.x - goalOffSet)
+    {
+        console.log("player2 scored");
+        G.scores.player1++;
+        return (true);
+    }
+    else if (ball.mesh.position.x >= player2.paddle.position.x + goalOffSet)
+    {
+        console.log("player1 scored");
+        G.scores.player2++;
+        return (true);
+    }
+    return (false);
+}
+
+function updateScore()
+{
+    resetBall();
+    resetPaddles();
+}
 
 // ----Key Input----
 function handleKeyDown(event)
@@ -222,16 +218,16 @@ function handleKeyDown(event)
     switch (event.key)
     {
         case 'ArrowLeft':
-            moveLeft2 = true;
+            player2.moveLeft = true;
             break;
         case 'ArrowRight':
-            moveRight2 = true;
+            player2.moveRight = true;
             break;
         case 'a':
-            moveLeft1 = true;
+            player1.moveLeft = true;
             break;
         case 'd':
-            moveRight1 = true;
+            player1.moveRight = true;
             break;
     }
 }
@@ -241,16 +237,16 @@ function handleKeyUp(event)
     switch (event.key)
     {
         case 'ArrowLeft':
-            moveLeft2 = false;
+            player2.moveLeft = false;
             break;
         case 'ArrowRight':
-            moveRight2 = false;
+            player2.moveRight = false;
             break;
         case 'a':
-            moveLeft1 = false;
+            player1.moveLeft = false;
             break;
         case 'd':
-            moveRight1 = false;
+            player1.moveRight = false;
             break;
     }
 }
@@ -262,85 +258,110 @@ document.addEventListener('keyup', handleKeyUp);
 // ----Update Paddle----
 function updatePaddlePosition()
 {
-    if (moveLeft1)
+    if (player1.moveLeft)
     {
-        paddle1.position.z -= paddleSpeed;
-        if (paddle1.position.z < -(arenaWidth / 2) + paddleLength / 2)
-            paddle1.position.z = -(arenaWidth / 2) + paddleLength / 2;
+        player1.move(-player1.speed);
+        if (player1.paddle.position.z < -(G.arenaWidth / 2) + G.paddleLength / 2)
+            player1.paddle.position.z = -(G.arenaWidth / 2) + G.paddleLength / 2;
     }
-    if (moveRight1)
+    if (player1.moveRight)
     {
-        paddle1.position.z += paddleSpeed;
-        if (paddle1.position.z > (arenaWidth / 2) - paddleLength / 2)
-            paddle1.position.z = (arenaWidth / 2) - paddleLength / 2;
+        player1.move(player1.speed);
+        if (player1.paddle.position.z > (G.arenaWidth / 2) - G.paddleLength / 2)
+            player1.paddle.position.z = (G.arenaWidth / 2) - G.paddleLength / 2;
     }
-    paddleLight1.position.copy(paddle1.position);
-    if (moveLeft2)
+    if (player2.moveLeft)
     {
-        paddle2.position.z -= paddleSpeed;
-        if (paddle2.position.z < -(arenaWidth / 2) + paddleLength / 2)
-            paddle2.position.z = -(arenaWidth / 2) + paddleLength / 2;
+        player2.move(-player2.speed);
+        if (player2.paddle.position.z < -(G.arenaWidth / 2) + G.paddleLength / 2)
+            player2.paddle.position.z = -(G.arenaWidth / 2) + G.paddleLength / 2;
     }
-    if (moveRight2)
+    if (player2.moveRight)
     {
-        paddle2.position.z += paddleSpeed;
-        if (paddle2.position.z > (arenaWidth / 2) - paddleLength / 2)
-            paddle2.position.z = (arenaWidth / 2) - paddleLength / 2;
+        player2.move(player2.speed);
+        if (player2.paddle.position.z > (G.arenaWidth / 2) - G.paddleLength / 2)
+            player2.paddle.position.z = (G.arenaWidth / 2) - G.paddleLength / 2;
     }
-    paddleLight2.position.copy(paddle2.position);
 }
 
+
+const lastBounce = {
+	wallLeft: false,
+	wallRight: false,
+	paddle1: false,
+	paddle2: false
+}
+
+function resetBounces(bounces)
+{
+	bounces.wallLeft = false;
+	bounces.wallRight = false;
+	bounces.paddle1 = false;
+	bounces.paddle2 = false;
+}
 
 // ----Update Ball----
 function updateBallPosition()
 {
-    ballBox.setFromObject(ball);
-    paddle1Box.setFromObject(paddle1);
-    paddle2Box.setFromObject(paddle2);
+    ball.box.setFromObject(ball.mesh);
+    player1.box.setFromObject(player1.paddle);
+    player2.box.setFromObject(player2.paddle);
     leftWallBox.setFromObject(leftSideWall);
     rightWallBox.setFromObject(rightSideWall);
-    let newPosX = ball.position.x + ballSpeedX;
-    let newPosZ = ball.position.z + ballSpeedZ;
+    let newPosX = ball.mesh.position.x + ball.speedX;
+    let newPosZ = ball.mesh.position.z + ball.speedZ;
     
-    if (ballBox.intersectsBox(paddle1Box))
+    if (ball.box.intersectsBox(player1.box) && !lastBounce.paddle1)
     {
-        adjustAngle(paddle1);
-        ballSpeedZ = -ballSpeedZ;
-        ball.position.x += ballSpeedX;
-        ball.position.z += ballSpeedZ;
+        adjustAngle(player1.paddle);
+        ball.speedZ = -ball.speedZ;
+        ball.mesh.position.x += ball.speedX;
+        ball.mesh.position.z += ball.speedZ;
+		resetBounces(lastBounce);
+		lastBounce.paddle1 = true;
     }
-    else if (ballBox.intersectsBox(paddle2Box))
+    else if (ball.box.intersectsBox(player2.box) && !lastBounce.paddle2)
     {
-        adjustAngle(paddle2)
-        ballSpeedX = -ballSpeedX;
-        ballSpeedZ = -ballSpeedZ;
-        ball.position.x += ballSpeedX;
-        ball.position.z += ballSpeedZ;
+        adjustAngle(player2.paddle)
+        ball.speedX = -ball.speedX;
+        ball.speedZ = -ball.speedZ;
+        ball.mesh.position.x += ball.speedX;
+        ball.mesh.position.z += ball.speedZ;
+		resetBounces(lastBounce);
+		lastBounce.paddle2 = true;
     }
-    else if (ballBox.intersectsBox(leftWallBox) || ballBox.intersectsBox(rightWallBox))
+    else if (ball.box.intersectsBox(leftWallBox) && !lastBounce.wallLeft)
     {
-        ballSpeedZ = -ballSpeedZ;
-        ball.position.x += ballSpeedX;
-        ball.position.z += ballSpeedZ;
+        ball.speedZ = -ball.speedZ;
+        ball.mesh.position.x += ball.speedX;
+        ball.mesh.position.z += ball.speedZ;
+		resetBounces(lastBounce);
+		lastBounce.wallLeft = true;
+    }
+    else if (ball.box.intersectsBox(rightWallBox) && !lastBounce.wallRight)
+    {
+        ball.speedZ = -ball.speedZ;
+        ball.mesh.position.x += ball.speedX;
+        ball.mesh.position.z += ball.speedZ;
+		resetBounces(lastBounce);
+		lastBounce.wallRight = true;
     }
     else
     {
-        ball.position.x = newPosX;
-        ball.position.z = newPosZ;
+        ball.mesh.position.x = newPosX;
+        ball.mesh.position.z = newPosZ;
     }
-    ballLight.position.copy(ball.position);
+    ball.light.position.copy(ball.mesh.position);
 }
 
 function adjustAngle(paddle)
 {
-    const incomingAngle = vector2DToAngle(ballSpeedX, ballSpeedZ);
-    let impactPoint = ball.position.z - paddle.position.z;
-    let normalizedImpact = impactPoint / (paddleLength / 2);
-    angle = lerp(normalizedImpact, -1, 1, minAngle, maxAngle);
-    speed = calculate2DSpeed(ballSpeedX, ballSpeedZ);
-    speed = speedUp(speed, speedIncrement);
-    ballSpeedX = deriveXspeed(speed, angle);
-    ballSpeedZ = deriveZspeed(speed, angle);
+    const incomingAngle = vector2DToAngle(ball.speedX, ball.speedZ);
+    let impactPoint = ball.mesh.position.z - paddle.position.z;
+    let normalizedImpact = impactPoint / (G.paddleLength / 2);
+    ball.angle = lerp(normalizedImpact, -1, 1, G.minAngle, G.maxAngle);
+    ball.speed = calculate2DSpeed(ball.speedX, ball.speedZ);
+    ball.setSpeed(ball.speed + G.speedIncrement);
 }
 
 
@@ -353,4 +374,27 @@ function onWindowResize( event )
     renderer.setSize(width, height);
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
+}
+
+
+/*
+    TODO: Send post request when game ends. Might need to add axios path to html file.
+*/
+
+import axios from 'axios';
+
+function sendGameResults(winners, losers)
+{
+    const data = {
+        winners: winners,
+        losers: losers,
+    };
+
+    axios.post('localhost:8000/matches', data)
+        .then(response => {
+            console.log('Success:', response.data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 }

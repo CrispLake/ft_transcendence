@@ -1,7 +1,6 @@
 FROM node:22-alpine3.19
 
 RUN npm install nodemon -g
-RUN npm install axios -g
 COPY ./package.json ./
 RUN npm install
 

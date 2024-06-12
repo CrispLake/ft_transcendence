@@ -46,6 +46,6 @@ POST http://localhost:8000/matches/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "winners":"1, 2",
-    "losers":"3, 4",
+    "winners": "1, 2",
+    "losers": "3, 4"
 }

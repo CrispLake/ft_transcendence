@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, Http404
 from django.contrib.auth.models import User
+import PIL.Image
 
 # TODO create validates
 def validate_username(username):
@@ -24,7 +25,7 @@ def register(request):
         user = User.objects.create(username, "", password) # empty string to put empty email for user
         user.account.wins = 0
         user.account.losses = 0
-        # user.account.pfp = defaultpfp #TODO Add default pfp to the user on creation
+        user.account.pfp = PIL.Image.open(r'./defaultpfp.png')
         user.save()
         return HttpResponse(status=201)
 

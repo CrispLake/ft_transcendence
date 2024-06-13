@@ -20,7 +20,6 @@ class CustomAuthToken(ObtainAuthToken):
             'username': user.username
         })
 
-
 @api_view(['GET', 'POST'])
 def register(request):
     if request.method == "GET":

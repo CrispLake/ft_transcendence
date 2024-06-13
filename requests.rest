@@ -7,6 +7,76 @@
 #     "time": "Wed, 21 Oct 2015 18:27:50 GMT"
 # }
 
+# Account requests
+
+###
+
+GET http://localhost:8000/login/register HTTP/1.1
+
+###
+
+POST http://localhost:8000/login/register HTTP/1.1
+Content-Type: application/json
+
+{
+    "user": {
+        "username": "testUser1",
+        "password": "testPassword",
+        "email": ""
+    }
+}
+
+###
+
+POST http://localhost:8000/login/register HTTP/1.1
+Content-Type: application/json
+
+{
+    "user": {
+        "username": "testUser2",
+        "password": "testPassword",
+        "email": ""
+    }
+}
+
+###
+
+# Login
+
+###
+
+POST http://localhost:8000/login/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "FakeUser",
+    "password": "testPassword"
+}
+
+###
+
+POST http://localhost:8000/login/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "testUser1",
+    "password": "FakePassword"
+}
+
+###
+
+POST http://localhost:8000/login/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "testUser1",
+    "password": "testPassword"
+}
+
+###
+
+
+POST http://localhost:8000/login/login HTTP/1.1
 
 ###
 
@@ -35,3 +105,17 @@ Sec-Fetch-Dest: document
 Accept-Encoding: gzip, deflate, br
 Accept-Language: en-GB,en-US;q=0.9,en;q=0.8
 Connection: keep-alive
+
+###
+
+GET http://localhost:8000/matches/ HTTP/1.1
+
+###
+
+POST http://localhost:8000/matches/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "winners": "1, 2",
+    "losers": "3, 4"
+}

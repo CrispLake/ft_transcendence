@@ -21,8 +21,7 @@ Content-Type: application/json
 {
     "user": {
         "username": "testUser1",
-        "password": "testPassword",
-        "email": ""
+        "password": "testPassword"
     }
 }
 
@@ -34,8 +33,7 @@ Content-Type: application/json
 {
     "user": {
         "username": "testUser2",
-        "password": "testPassword",
-        "email": ""
+        "password": "testPassword"
     }
 }
 

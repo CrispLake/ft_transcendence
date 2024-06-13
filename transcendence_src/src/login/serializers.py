@@ -28,6 +28,24 @@ class AccountSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         user_data = validated_data.pop('user')
-        user = User.objects.create(**user_data)
-        account = Account.objects.create(user=user, **validated_data)
-        return account
+        # pfp_data = validated_data.pop('pfp', None)
+
+        user_serializer = UserSerializer(data=user_data)
+        
+        if user_serializer.is_valid():
+            user = user_serializer.save()
+            account = Account.objects.create(user=user, **validated_data)
+
+            # if pfp_data:
+            #     account.pfp = self.handle_base64_pfp(pfp_data, user.username)
+            #     account.save
+
+            return account
+
+        
+        else:
+            raise serializers.ValidationError(user_serializer.errors)
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(style={'input_type': 'password'})

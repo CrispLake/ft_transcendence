@@ -20,11 +20,63 @@ Content-Type: application/json
 
 {
     "user": {
-        "username": "test2User",
+        "username": "testUser1",
         "password": "testPassword",
         "email": ""
     }
 }
+
+###
+
+POST http://localhost:8000/login/register HTTP/1.1
+Content-Type: application/json
+
+{
+    "user": {
+        "username": "testUser2",
+        "password": "testPassword",
+        "email": ""
+    }
+}
+
+###
+
+# Login
+
+###
+
+POST http://localhost:8000/login/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "FakeUser",
+    "password": "testPassword"
+}
+
+###
+
+POST http://localhost:8000/login/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "testUser1",
+    "password": "FakePassword"
+}
+
+###
+
+POST http://localhost:8000/login/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "testUser1",
+    "password": "testPassword"
+}
+
+###
+
+
+POST http://localhost:8000/login/login HTTP/1.1
 
 ###
 

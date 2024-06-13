@@ -2,8 +2,6 @@ NAME = transcendence
 
 COMPOSE = ./compose.yaml
 
-DATA_DIR = ./postgresql/db
-
 all: $(NAME)
 
 $(NAME):

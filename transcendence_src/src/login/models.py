@@ -13,5 +13,9 @@ class Account(models.Model):
     pfp = models.ImageField()
     wins = models.IntegerField()
     losses = models.IntegerField()
+    friends = models.ManyToManyField("self")
+    # games = models.ManyToManyField(Match)
+    # status = models.BooleanField()
     # gamehistory?
     # friends
+    # online_status?

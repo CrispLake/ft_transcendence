@@ -45,7 +45,3 @@ class AccountSerializer(serializers.ModelSerializer):
         
         else:
             raise serializers.ValidationError(user_serializer.errors)
-
-class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    password = serializers.CharField(style={'input_type': 'password'})

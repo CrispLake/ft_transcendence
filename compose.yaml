@@ -45,19 +45,3 @@ services:
     volumes:
       - postgresql_data:/var/lib/postgresql/data
     restart: unless-stopped
-
-  frontend:
-    image: frontend
-    container_name: frontend
-    build: 
-      context: frontend
-      dockerfile: Dockerfile
-    volumes:
-      - ./frontend/app/:/app
-    networks:
-      - transcendence_network
-    env_file:
-      - .env
-    restart: unless-stopped
-    ports:
-      - "3000:3000"

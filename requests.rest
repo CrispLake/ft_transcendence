@@ -7,6 +7,14 @@
 #     "time": "Wed, 21 Oct 2015 18:27:50 GMT"
 # }
 
+# CSRF TOKEN
+
+###
+
+GET http://localhost:8000/login/csrf-token HTTP/1.1
+
+###
+
 # Account requests
 
 ###

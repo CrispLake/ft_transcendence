@@ -6,6 +6,7 @@ from login.serializers import AccountSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from django.middleware.csrf import get_token
 
 class CustomAuthToken(ObtainAuthToken):
 
@@ -36,3 +37,8 @@ def register(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def get_csrf_token(request):
+    token = get_token(request)
+    return Response({'csrfToken': token})

@@ -1,33 +1,40 @@
-from django.shortcuts import render
-from django.http import HttpResponse, Http404
-from django.contrib.auth.models import User
-import PIL.Image
+from PIL import Image
+from io import BytesIO
+import base64
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from login.models import Account
+from login.serializers import AccountSerializer
 
-# TODO create validates
-def validate_username(username):
-    return True
 
-def validate_password(password):
-    return True
-
+@api_view(['GET', 'PUT', 'POST'])
 def register(request):
     if request.method == "GET":
-        return render(request, "user/register.html") # TODO remove or make it
-    elif request.method == "POST":
-        username = request.POST.get('username', '')
-        if validate_username(username) == False:
-            return HttpResponse(status=501) # TODO return correct error
+        accounts = Account.objects.all()
+        serializer = AccountSerializer(accounts, many=True)
+        return Response(serializer.data)
 
-        password = request.POST.get('password', '')
-        if validate_password(password) == False:
-            return HttpResponse(status=501) # TODO return correct error
+    elif request.method == "POST":
+        data = request.data
+        # with open('login/static/images/pfp.png', 'rb') as img_file:
+        #     img = Image.open(img_file)
+        #     buffered = BytesIO()
+        #     img.save(buffered, format="PNG")
+        #     img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
+        #     data['pfp'] = img_str
+
+        serializer = AccountSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         
-        user = User.objects.create(username, "", password) # empty string to put empty email for user
-        user.account.wins = 0
-        user.account.losses = 0
-        user.account.pfp = PIL.Image.open(r'./defaultpfp.png')
-        user.save()
-        return HttpResponse(status=201)
+        print('Data: ', serializer.initial_data)
+        print('errors: ', serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    elif request.method == 'PUT':
+        return Response(status=status.HTTP_201_CREATED)
 
 # def login(request):
 #     username = request.POST.get('username', '')
@@ -39,8 +46,3 @@ def register(request):
 #         return HttpResponse(status=501) # TODO incorrect username/password
 
 #     return HttpResponse(status=201)
-
-def password_change(request):
-    user = User.objects.get(username=request.POST.get('username'))
-    user.set_password(request.POST.get('password'))
-    user.save()

@@ -12,6 +12,7 @@
 ###
 
 GET http://localhost:8000/pong/match HTTP/1.1
+Authorization: Token 3612928b8a8aa3833004ee40bb86d15c0922b830
 
 ###
 

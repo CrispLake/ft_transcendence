@@ -16,11 +16,28 @@ export const paddleHeight = wallHeight;
 export const paddleThickness = 0.2;
 export const initialPaddleSpeed = 0.2;
 
+// Player
+export const p1StartPos = {
+    x: -(arenaLength / 2 - paddleThickness / 2),
+    y: 0,
+    z: 0
+};
+export const p2StartPos = {
+    x: (arenaLength / 2 - paddleThickness / 2),
+    y: 0,
+    z: 0
+};
+
 // Ball
 export const initialBallRadius = 0.2;
 export const initialBallSpeed = 0.2;
 export const initialStartingAngle = 30;
 export const speedIncrement = 0.01;
+export const ballStartPos = {
+    x: 0,
+    y: 0,
+    z: 0
+};
 
 // Angles
 export const maxAngleDegrees = 20;

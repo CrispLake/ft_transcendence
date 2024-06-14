@@ -14,29 +14,32 @@ import { speedUp } from './utilities.js';
 import * as COLOR from './colors.js';
 import { Player } from './Player.js';
 import { Ball } from './Ball.js';
+import { Arena } from './Arena.js';
+
 
 /*---- INITIALIZE ------------------------------------------------------------*/
 
 // ----Scene----
 const scene = new THREE.Scene();
-
-// ----Players----
-let player1 = new Player(-(G.arenaLength / 2 - G.paddleThickness / 2), 0, 0, 'Emil');
-scene.add(player1.paddle);
-scene.add(player1.light);
-let player2 = new Player((G.arenaLength / 2 - G.paddleThickness / 2), 0, 0, 'Jonathan');
-scene.add(player2.paddle);
-scene.add(player2.light);
-
-// ----Ball----
-let ball = new Ball(0, 0, 0);
-scene.add(ball.mesh);
-scene.add(ball.light);
+const arena = new Arena(scene);
+let player1 = new Player(scene, G.p1StartPos, 'Emil');
+let player2 = new Player(scene, G.p2StartPos, 'Jonathan');
+let ball = new Ball(scene, G.ballStartPos);
 
 
 // ----Boxes----
 const leftWallBox = new THREE.Box3();
 const rightWallBox = new THREE.Box3();
+
+// -----Camera Setup----
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
+camera.lookAt(0, 0, 0);
+camera.position.set(-22, 25, 23);
+
+// ----Renderer Setup----
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
 
 // ----Font----
 let textMesh;
@@ -82,59 +85,22 @@ fontLoader.load('./resources/font.json', function (font)
     composer.addPass(effectFXAA);
 });
 
-
-// -----Camera Setup----
-const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
-camera.lookAt(0, 0, 0);
-camera.position.set(-22, 25, 23);
-
-// ----Renderer Setup----
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
-
 // ----Orbit Control----
 const controls = new OrbitControls(camera, renderer.domElement);
-
-// ----Back Wall----
-const backWallGeometry = new THREE.BoxGeometry(25, 15, 2);
-const backWallMeshMaterial = new THREE.MeshStandardMaterial({color: 0xffffff, emissive: COLOR.BACKWALL});
-const backWall = new THREE.Mesh(backWallGeometry, backWallMeshMaterial);
-backWall.position.set(0, 0, -10.5);
-scene.add(backWall);
 
 // ----Light----
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.05);
 scene.add(ambientLight);
 
-// ----Floor----
-const floorGeometry = new THREE.BoxGeometry(G.arenaLength, G.floorThickness, G.floorWidth);
-const floorMeshMaterial = new THREE.MeshStandardMaterial({color: 0xffffff, emissive: COLOR.FLOOR, wireframe: false});
-const floor = new THREE.Mesh(floorGeometry, floorMeshMaterial);
-floor.position.set(0, -(G.wallHeight / 2 + G.floorThickness / 2), 0);
-scene.add(floor);
-
-// ----Walls----
-const sideWallGeometry = new THREE.BoxGeometry(G.arenaLength, G.wallHeight, G.wallThickness);
-const wallMeshMaterial = new THREE.MeshStandardMaterial({color: COLOR.WALL, emissive: COLOR.WALL, wireframe: false});
-
-const leftSideWall = new THREE.Mesh(sideWallGeometry, wallMeshMaterial);
-leftSideWall.position.set(0, 0, -(G.arenaWidth / 2 + G.wallThickness / 2))
-scene.add(leftSideWall);
-
-const rightSideWall = new THREE.Mesh(sideWallGeometry, wallMeshMaterial);
-rightSideWall.position.set(0, 0, (G.arenaWidth / 2 + G.wallThickness / 2))
-scene.add(rightSideWall);
-
 // ----Wall Lights----
 RectAreaLightUniformsLib.init();
 const wallLightLeft = new THREE.RectAreaLight(COLOR.WALL, G.wallLightIntensity, G.arenaLength, G.wallHeight);
-wallLightLeft.position.copy(leftSideWall.position);
+wallLightLeft.position.copy(arena.leftSideWall.position);
 wallLightLeft.lookAt(0, 0, 0);
 scene.add(wallLightLeft);
 
 const wallLightRight = new THREE.RectAreaLight(COLOR.WALL, G.wallLightIntensity, G.arenaLength, G.wallHeight);
-wallLightRight.position.copy(rightSideWall.position);
+wallLightRight.position.copy(arena.rightSideWall.position);
 wallLightRight.lookAt(0, 0, 0);
 scene.add(wallLightRight);
 
@@ -158,10 +124,10 @@ function update()
     if (goal())
     {
         updateScore();
-        let winners = ['player1'];
-        let losers = ['player2'];
 
-        sendGameResults(winners, losers);
+        // let winners = ['player1'];
+        // let losers = ['player2'];
+        // sendGameResults(winners, losers);
     }
 }
 update();
@@ -306,8 +272,8 @@ function updateBallPosition()
     ball.box.setFromObject(ball.mesh);
     player1.box.setFromObject(player1.paddle);
     player2.box.setFromObject(player2.paddle);
-    leftWallBox.setFromObject(leftSideWall);
-    rightWallBox.setFromObject(rightSideWall);
+    leftWallBox.setFromObject(arena.leftSideWall);
+    rightWallBox.setFromObject(arena.rightSideWall);
     let newPosX = ball.mesh.position.x + ball.speedX;
     let newPosZ = ball.mesh.position.z + ball.speedZ;
     
@@ -381,20 +347,20 @@ function onWindowResize( event )
     TODO: Send post request when game ends. Might need to add axios path to html file.
 */
 
-import axios from 'axios';
+// import axios from 'axios';
 
-function sendGameResults(winners, losers)
-{
-    const data = {
-        winners: winners,
-        losers: losers,
-    };
+// function sendGameResults(winners, losers)
+// {
+//     const data = {
+//         winners: winners,
+//         losers: losers,
+//     };
 
-    axios.post('localhost:8000/matches', data)
-        .then(response => {
-            console.log('Success:', response.data);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-}
+//     axios.post('localhost:8000/matches', data)
+//         .then(response => {
+//             console.log('Success:', response.data);
+//         })
+//         .catch(error => {
+//             console.error('Error:', error);
+//         });
+// }

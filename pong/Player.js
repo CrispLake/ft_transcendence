@@ -4,7 +4,7 @@ import * as G from './globals.js';
 
 export class Player
 {
-    constructor(x, y, z, name)
+    constructor(scene, pos, name)
     {
         this.name = name;
         this.geometry = new THREE.BoxGeometry(G.paddleThickness, G.wallHeight, G.paddleLength);
@@ -16,8 +16,15 @@ export class Player
         this.moveLeft = false;
         this.moveRight = false;
         this.speed = G.initialPaddleSpeed;
-        this.setPos(x, y, z);
+        this.setPos(pos.x, pos.y, pos.z);
         this.light.lookAt(0, 0, 0);
+        this.addToScene(scene)
+    }
+
+    addToScene(scene)
+    {
+        scene.add(this.paddle);
+        scene.add(this.light);
     }
 
     setPos(x, y, z)

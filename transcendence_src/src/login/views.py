@@ -22,12 +22,12 @@ class CustomAuthToken(ObtainAuthToken):
 
 @api_view(['GET', 'POST'])
 def register(request):
-    if request.method == "GET":
+    if request.method == 'GET':
         accounts = Account.objects.all()
         serializer = AccountSerializer(accounts, many=True)
         return Response(serializer.data)
 
-    elif request.method == "POST":
+    elif request.method == 'POST':
         data = request.data
 
         serializer = AccountSerializer(data=data)

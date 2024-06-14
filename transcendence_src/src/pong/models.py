@@ -3,8 +3,8 @@ from login.models import Account
 
 class Match(models.Model):
     date = models.DateTimeField()
-    winners = models.ManyToManyField(Account, related_name="matches")
-    losers = models.ManyToManyField(Account, related_name="matches")
+    winners = models.ManyToManyField(Account, related_name="won_games")
+    losers = models.ManyToManyField(Account, related_name="lost_games")
 
     class Meta:
         ordering = ['date']

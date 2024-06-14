@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'login',
     'rest_framework',
     'rest_framework.authtoken',
+    'pong',
 ]
 
 MIDDLEWARE = [

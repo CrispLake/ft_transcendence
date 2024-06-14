@@ -17,10 +17,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 class AccountSerializer(serializers.ModelSerializer):
     user = UserSerializer()
+    # matches = MatchPlayerSerializer(source='matchplayer_set', many=True)
 
     class Meta:
         model = Account
-        fields = ['id', 'user', 'pfp', 'wins', 'losses', 'friends']
+        fields = ['id', 'user', 'pfp', 'wins', 'losses', 'friends', 'matches']
         extra_kwargs = {
             'friends': {'required': False},
             'pfp': {'required': False}

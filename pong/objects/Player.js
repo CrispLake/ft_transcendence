@@ -18,7 +18,7 @@ export class Player
         this.speed = G.initialPaddleSpeed;
         this.setPos(pos.x, pos.y, pos.z);
         this.light.lookAt(0, 0, 0);
-        this.addToScene(scene)
+        this.addToScene(scene);
     }
 
     addToScene(scene)

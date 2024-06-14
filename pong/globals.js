@@ -43,9 +43,3 @@ export const ballStartPos = {
 export const maxAngleDegrees = 20;
 export const minAngle = PongMath.setMinAngle(maxAngleDegrees);
 export const maxAngle = PongMath.setMaxAngle(maxAngleDegrees);
-
-// Variables
-export let scores = {
-    player1: 0,
-    player2: 0
-}

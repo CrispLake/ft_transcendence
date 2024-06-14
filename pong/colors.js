@@ -15,3 +15,5 @@ export const BALL = WHITE;
 export const PONG = BLACK;
 export const PONG_AURA = CYAN;
 export const BACKWALL = BLACK;
+export const UI_NAMES = PURPLE;
+export const UI_SCORE = WHITE;

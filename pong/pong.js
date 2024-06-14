@@ -12,24 +12,21 @@ import { lerp, degToRad, radToDeg, calculate2DSpeed, vector2DToAngle, deriveXspe
 import * as G from './globals.js';
 import { speedUp } from './utilities.js';
 import * as COLOR from './colors.js';
-import { Player } from './Player.js';
-import { Ball } from './Ball.js';
-import { Arena } from './Arena.js';
+import { Player } from './objects/Player.js';
+import { Ball } from './objects/Ball.js';
+import { Arena } from './objects/Arena.js';
+import { Text } from './objects/Text.js';
+import { UserInterface } from './objects/UserInterface.js';
 
 
 /*---- INITIALIZE ------------------------------------------------------------*/
 
-// ----Scene----
+RectAreaLightUniformsLib.init();
 const scene = new THREE.Scene();
 const arena = new Arena(scene);
-let player1 = new Player(scene, G.p1StartPos, 'Emil');
-let player2 = new Player(scene, G.p2StartPos, 'Jonathan');
+let player1 = new Player(scene, G.p1StartPos, 'Jesse');
+let player2 = new Player(scene, G.p2StartPos, 'James');
 let ball = new Ball(scene, G.ballStartPos);
-
-
-// ----Boxes----
-const leftWallBox = new THREE.Box3();
-const rightWallBox = new THREE.Box3();
 
 // -----Camera Setup----
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
@@ -40,6 +37,9 @@ camera.position.set(-22, 25, 23);
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
+
+// ----Orbit Controls----
+const controls = new OrbitControls(camera, renderer.domElement);
 
 // ----Font----
 let textMesh;
@@ -85,24 +85,30 @@ fontLoader.load('./resources/font.json', function (font)
     composer.addPass(effectFXAA);
 });
 
-// ----Orbit Control----
-const controls = new OrbitControls(camera, renderer.domElement);
 
-// ----Light----
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.05);
-scene.add(ambientLight);
+const scene2D = new THREE.Scene();
 
-// ----Wall Lights----
-RectAreaLightUniformsLib.init();
-const wallLightLeft = new THREE.RectAreaLight(COLOR.WALL, G.wallLightIntensity, G.arenaLength, G.wallHeight);
-wallLightLeft.position.copy(arena.leftSideWall.position);
-wallLightLeft.lookAt(0, 0, 0);
-scene.add(wallLightLeft);
+const camera2D = new THREE.OrthographicCamera(
+    window.innerWidth / -2, window.innerWidth / 2,
+    window.innerHeight / 2, window.innerHeight / -2,
+    0.1, 1000
+);
+camera2D.position.z = 4;
 
-const wallLightRight = new THREE.RectAreaLight(COLOR.WALL, G.wallLightIntensity, G.arenaLength, G.wallHeight);
-wallLightRight.position.copy(arena.rightSideWall.position);
-wallLightRight.lookAt(0, 0, 0);
-scene.add(wallLightRight);
+const UI = new UserInterface(scene, fontLoader);
+
+UI.addTextObject(scene2D, 'p1', player1.name, new THREE.Vector3(-800, 500, 0), 40, COLOR.UI_NAMES);
+UI.addTextObject(scene2D, 'p2', player2.name, new THREE.Vector3(600, 500, 0), 40, COLOR.UI_NAMES);
+UI.addTextObject(scene2D, 'score', '0 - 0', new THREE.Vector3(-50, 500, 0), 50, COLOR.UI_SCORE);
+
+// Function to update the score
+function updateScore(player1Score, player2Score)
+{
+    UI.updateTextObject("score", player1Score + " - " + player2Score);
+    resetBall();
+    resetPaddles();
+}
+
 
 
 /*---- LOOP ------------------------------------------------------------------*/
@@ -123,12 +129,17 @@ function update()
     }
     if (goal())
     {
-        updateScore();
+        console.log("Score = " + player1.score + " - " + player2.score);
+        updateScore(player1.score, player2.score);
 
         // let winners = ['player1'];
         // let losers = ['player2'];
         // sendGameResults(winners, losers);
     }
+    // Render the 2D scene
+    renderer.autoClear = false;
+    renderer.clearDepth();
+    renderer.render(scene2D, camera2D);
 }
 update();
 
@@ -160,22 +171,16 @@ function goal()
     if (ball.mesh.position.x <= player1.paddle.position.x - goalOffSet)
     {
         console.log("player2 scored");
-        G.scores.player1++;
+        player2.score++;
         return (true);
     }
     else if (ball.mesh.position.x >= player2.paddle.position.x + goalOffSet)
     {
         console.log("player1 scored");
-        G.scores.player2++;
+        player1.score++;
         return (true);
     }
     return (false);
-}
-
-function updateScore()
-{
-    resetBall();
-    resetPaddles();
 }
 
 // ----Key Input----
@@ -272,8 +277,8 @@ function updateBallPosition()
     ball.box.setFromObject(ball.mesh);
     player1.box.setFromObject(player1.paddle);
     player2.box.setFromObject(player2.paddle);
-    leftWallBox.setFromObject(arena.leftSideWall);
-    rightWallBox.setFromObject(arena.rightSideWall);
+    arena.leftWallBox.setFromObject(arena.leftSideWall);
+    arena.rightWallBox.setFromObject(arena.rightSideWall);
     let newPosX = ball.mesh.position.x + ball.speedX;
     let newPosZ = ball.mesh.position.z + ball.speedZ;
     
@@ -296,7 +301,7 @@ function updateBallPosition()
 		resetBounces(lastBounce);
 		lastBounce.paddle2 = true;
     }
-    else if (ball.box.intersectsBox(leftWallBox) && !lastBounce.wallLeft)
+    else if (ball.box.intersectsBox(arena.leftWallBox) && !lastBounce.wallLeft)
     {
         ball.speedZ = -ball.speedZ;
         ball.mesh.position.x += ball.speedX;
@@ -304,7 +309,7 @@ function updateBallPosition()
 		resetBounces(lastBounce);
 		lastBounce.wallLeft = true;
     }
-    else if (ball.box.intersectsBox(rightWallBox) && !lastBounce.wallRight)
+    else if (ball.box.intersectsBox(arena.rightWallBox) && !lastBounce.wallRight)
     {
         ball.speedZ = -ball.speedZ;
         ball.mesh.position.x += ball.speedX;

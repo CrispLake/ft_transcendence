@@ -31,7 +31,7 @@ export class Arena
         // ----General Light----
         this.ambientLight = new THREE.AmbientLight(COLOR.WHITE, 0.05);
 
-        // ----Wall Lights
+        // ----Wall Lights----
         this.wallLightLeft = new THREE.RectAreaLight(COLOR.WALL, G.wallLightIntensity, G.arenaLength, G.wallHeight);
         this.wallLightLeft.position.copy(this.leftSideWall.position);
         this.wallLightLeft.lookAt(0, 0, 0);

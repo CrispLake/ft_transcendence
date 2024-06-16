@@ -1,0 +1,76 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   index.css                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/16 08:00:37 by jmykkane          #+#    #+#             */
+/*   Updated: 2024/06/16 11:38:40 by jmykkane         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+body {
+  background-color: white;
+  padding-left: 0;
+  margin-left: 0;
+  margin-right: 0;
+  margin-top: 0;
+}
+
+#app {
+  padding: 1rem;
+}
+
+/* MAIN HEADINGS --> drukbold */
+@font-face {
+  font-family: 'drukbold';
+  src: url('https://github.com/benshrimpton/shulamit/raw/master/wp-content/.themes/shulamit/css/fonts/DrukText-Bold.ttf');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Coluna-CondensedBold";
+  src: url("https://db.onlinewebfonts.com/t/0e39a4b06a027c967cdf68c149ed586f.eot");
+  src: url("https://db.onlinewebfonts.com/t/0e39a4b06a027c967cdf68c149ed586f.eot?#iefix")format("embedded-opentype"),
+  url("https://db.onlinewebfonts.com/t/0e39a4b06a027c967cdf68c149ed586f.woff2")format("woff2"),
+  url("https://db.onlinewebfonts.com/t/0e39a4b06a027c967cdf68c149ed586f.woff")format("woff"),
+  url("https://db.onlinewebfonts.com/t/0e39a4b06a027c967cdf68c149ed586f.ttf")format("truetype"),
+  url("https://db.onlinewebfonts.com/t/0e39a4b06a027c967cdf68c149ed586f.svg#Coluna-CondensedBold")format("svg");
+}
+
+.font-heading {
+  font-family: 'Coluna-CondensedBold';
+  letter-spacing: 5px;
+  font-size: 128px;
+  font-weight: 400;
+}
+
+.font-sub {
+  font-family: 'Chakra Petch', sans-serif;
+  font-size: 48px;
+  font-weight: 500;
+}
+
+.font-text {
+  font-family: 'Lekton';
+  line-height: 32px;
+  font-weight: 500;
+  font-size: 24px;
+}
+
+
+/* DEFINE ALL GLOBAL COLORS */
+:root {
+  --pink: rgb(245,197,195);
+  --yellow: rgb(255,221,1);
+  --orange: rgb(238,120,1);
+  --blue: rgb(191,238,255);
+
+  --white: rgb(255,255,255);
+  --black: rgb(0,0,0);
+
+  --bg-primary: rgb(255,255,255);
+  --bg-secondary: rgb(239,237,238);
+}

@@ -4,7 +4,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-	"start": "nodemon app/server.js 3000 -e js,css,html,jpg,png"
+	"start": "nodemon --watch app --watch public app/server.js 3000 -e js,css,html,jpg,png"
   },
   "author": "",
   "license": "ISC",

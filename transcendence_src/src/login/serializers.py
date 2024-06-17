@@ -14,10 +14,8 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         return user
 
-
 class AccountSerializer(serializers.ModelSerializer):
     user = UserSerializer()
-    # matches = MatchPlayerSerializer(source='matchplayer_set', many=True)
 
     class Meta:
         model = Account
@@ -46,3 +44,10 @@ class AccountSerializer(serializers.ModelSerializer):
         
         else:
             raise serializers.ValidationError(user_serializer.errors)
+
+class SimpleAccountSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username')
+
+    class Meta:
+        model = Account
+        fields = ['id', 'username']

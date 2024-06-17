@@ -12,17 +12,27 @@
 ###
 
 GET http://localhost:8000/pong/match HTTP/1.1
-Authorization: Token 3612928b8a8aa3833004ee40bb86d15c0922b830
+Authorization: Token 8ee5c406f8cd95345d2fa7d3917ab9da52467ad1
 
 ###
 
 POST http://localhost:8000/pong/match HTTP/1.1
-Authorization: Token 3612928b8a8aa3833004ee40bb86d15c0922b830
+Authorization: Token 8ee5c406f8cd95345d2fa7d3917ab9da52467ad1
 Content-Type: application/json
 
 {
-    "players": [1]
+    "players": [
+        {
+            "username": "player1",
+            "role": "role1"
+        },
+        {
+            "username": "player2",
+            "role": "role2"
+        }
+    ]
 }
+
 
 ###
 
@@ -89,7 +99,7 @@ Content-Type: application/json
 
 {
     "username": "testUser1",
-    "password": "FakePassword"
+    "password": "testPassword"
 }
 
 ###
@@ -98,7 +108,7 @@ POST http://localhost:8000/login/login HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "testUser1",
+    "username": "testUser2",
     "password": "testPassword"
 }
 

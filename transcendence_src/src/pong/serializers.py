@@ -11,7 +11,11 @@ class MatchPlayerSerializer(serializers.ModelSerializer):
         fields = ['account', 'role']
 
 class MatchSerializer(serializers.ModelSerializer):
+    # Using this one I can retrieve well formatted data but unable to add
     players = serializers.SerializerMethodField()
+
+    # Using this I can add using {"players": [1, 2]} but cant add role
+    # players = serializers.PrimaryKeyRelatedField(queryset=Account.objects.all(), many=True)
 
     class Meta:
         model = Match

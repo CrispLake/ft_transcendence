@@ -18,6 +18,7 @@ import { Arena } from './objects/Arena.js';
 import { Text } from './objects/Text.js';
 import { UserInterface } from './objects/UserInterface.js';
 import * as KEY from './keys.js';
+import * as SETTINGS from './gameSetting.js';
 
 
 /*---- INITIALIZE ------------------------------------------------------------*/
@@ -158,7 +159,7 @@ function update()
             // sendGameResults(winner, loser);
             resetGame(player1, player2);
         }
-        console.log("Score = " + player1.score + " - " + player2.score);
+        // console.log("Score = " + player1.score + " - " + player2.score);
         updateScore(player1.score, player2.score);
     }
     // Render the 2D scene
@@ -195,13 +196,13 @@ function goal()
     let goalOffSet = 1;
     if (ball.mesh.position.x <= player1.paddle.position.x - goalOffSet)
     {
-        console.log("player2 scored");
+        // console.log("player2 scored");
         player2.score++;
         return (true);
     }
     else if (ball.mesh.position.x >= player2.paddle.position.x + goalOffSet)
     {
-        console.log("player1 scored");
+        // console.log("player1 scored");
         player1.score++;
         return (true);
     }
@@ -231,6 +232,15 @@ function handleKeyDown(event)
         case KEY.P2_BOOST:
             player2.boostPressed = true;
             break;
+        case 'p':
+            console.log("up     (1, 0) = " + vector2DToAngle(1, 0));
+            console.log("up     (1, 0) = " + radToDeg(vector2DToAngle(1, 0)));
+            console.log("left  (0, -1) = " + vector2DToAngle(0, -1));
+            console.log("left  (0, -1) = " + radToDeg(vector2DToAngle(0, -1)));
+            console.log("right  (0, 1) = " + vector2DToAngle(0, 1));
+            console.log("right  (0, 1) = " + radToDeg(vector2DToAngle(0, 1)));
+            console.log("down  (-1, 0) = " + vector2DToAngle(-1, 0));
+            console.log("down  (-1, 0) = " + radToDeg(vector2DToAngle(-1, 0)));
     }
 }
 
@@ -294,6 +304,8 @@ function updatePaddlePosition()
 
 function updateBoost()
 {
+    if (SETTINGS.spin == false)
+        return ;
     if (player1.boostPressed)
         player1.increaseBoost();
     else
@@ -329,11 +341,13 @@ function updateBallPosition()
     player2.box.setFromObject(player2.paddle);
     arena.leftWallBox.setFromObject(arena.leftSideWall);
     arena.rightWallBox.setFromObject(arena.rightSideWall);
+    ball.affectBySpin();
     let newPosX = ball.mesh.position.x + ball.speedX;
     let newPosZ = ball.mesh.position.z + ball.speedZ;
     
     if (ball.box.intersectsBox(player1.box) && !lastBounce.paddle1)
     {
+        adjustSpin(player1);
         adjustAngle(player1.paddle);
         ball.speedZ = -ball.speedZ;
         ball.mesh.position.x += ball.speedX;
@@ -343,6 +357,7 @@ function updateBallPosition()
     }
     else if (ball.box.intersectsBox(player2.box) && !lastBounce.paddle2)
     {
+        adjustSpin(player2);
         adjustAngle(player2.paddle)
         ball.speedX = -ball.speedX;
         ball.speedZ = -ball.speedZ;
@@ -378,11 +393,26 @@ function updateBallPosition()
 function adjustAngle(paddle)
 {
     const incomingAngle = vector2DToAngle(ball.speedX, ball.speedZ);
+    // console.log("Incoming angle (rad) = " + incomingAngle);
+    // console.log("Incoming angle (deg) = " + radToDeg(incomingAngle));
     let impactPoint = ball.mesh.position.z - paddle.position.z;
     let normalizedImpact = impactPoint / (G.paddleLength / 2);
     ball.angle = lerp(normalizedImpact, -1, 1, G.minAngle, G.maxAngle);
     ball.speed = calculate2DSpeed(ball.speedX, ball.speedZ);
     ball.setSpeed(ball.speed + G.speedIncrement);
+}
+
+function adjustSpin(player)
+{
+    if (SETTINGS.spin == false) return ;
+
+    if (!player.moveLeft && !player.moveRight)
+        ball.reduceSpin();
+    else
+    {
+        const spinPower = ((player.moveLeft) ? 1 : -1) * player.sign * player.boostAmount;
+        ball.addSpin(spinPower);
+    }
 }
 
 

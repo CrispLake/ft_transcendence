@@ -8,6 +8,7 @@ export class Player
     {
         this.scene = scene;
         this.name = name;
+        this.sign = (pos.x > 0) ? 1 : -1;
         this.geometry = new THREE.BoxGeometry(G.paddleThickness, G.wallHeight, G.paddleLength);
         this.material = new THREE.MeshStandardMaterial({color: COLOR.PADDLE, emissive: COLOR.PADDLE});
         this.paddle = new THREE.Mesh(this.geometry, this.material);
@@ -22,11 +23,6 @@ export class Player
         this.boostPressed = false;
         this.boostAmount = 0;
         this.speed = G.initialPaddleSpeed;
-        // if (pos.x > 0)
-        //     this.sign = 1;
-        // else
-        //     this.sign = -1;
-        (pos.x > 0) ? this.sign = 1 : this.sign = -1;
         this.boostOffset = G.boostOffset * this.sign;
         this.setPos(pos.x, pos.y, pos.z);
         this.light.lookAt(0, 0, 0);

@@ -19,6 +19,7 @@ export class Ball
         this.angle = G.initialStartingAngle;
         this.speedX = PongMath.deriveXspeed(this.speed, this.angle);
         this.speedZ = PongMath.deriveZspeed(this.speed, this.angle);
+        this.spin = 0;
         this.addToScene(scene);
     }
 
@@ -39,5 +40,24 @@ export class Ball
         this.speed = speed;
         this.speedX = PongMath.deriveXspeed(this.speed, this.angle);
         this.speedZ = PongMath.deriveZspeed(this.speed, this.angle);
+    }
+
+    addSpin(power)
+    {
+        this.spin += power;
+        if (this.spin > G.maxSpin)
+            this.spin = G.maxSpin;
+        else if (this.spin < -G.maxSpin)
+            this.spin = -G.maxSpin;
+    }
+
+    reduceSpin()
+    {
+        this.spin = (100 - G.spinReduction) / 100;
+    }
+
+    affectBySpin()
+    {
+        this.angle += this.spin;
     }
 }

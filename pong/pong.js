@@ -109,6 +109,16 @@ function updateScore(player1Score, player2Score)
     resetPaddles();
 }
 
+function gameEnded(score1, score2)
+{
+    return (score1 >= G.winningScore || score2 >= G.winningScore);
+}
+
+function resetGame(player1, player2)
+{
+    player1.score = 0;
+    player2.score = 0;
+}
 
 
 /*---- LOOP ------------------------------------------------------------------*/
@@ -129,12 +139,25 @@ function update()
     }
     if (goal())
     {
+        if (gameEnded(player1.score, player2.score))
+        {
+            let winner;
+            let loser;
+            if (player1.score >= G.winningScore)
+            {
+                winner = player1.name;
+                loser = player2.name;
+            }
+            else
+            {
+                winner = player2.name;
+                loser = player1.name;
+            }
+            // sendGameResults(winner, loser);
+            resetGame(player1, player2);
+        }
         console.log("Score = " + player1.score + " - " + player2.score);
         updateScore(player1.score, player2.score);
-
-        // let winners = ['player1'];
-        // let losers = ['player2'];
-        // sendGameResults(winners, losers);
     }
     // Render the 2D scene
     renderer.autoClear = false;

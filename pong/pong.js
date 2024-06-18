@@ -17,6 +17,7 @@ import { Ball } from './objects/Ball.js';
 import { Arena } from './objects/Arena.js';
 import { Text } from './objects/Text.js';
 import { UserInterface } from './objects/UserInterface.js';
+import * as KEY from './keys.js';
 
 
 /*---- INITIALIZE ------------------------------------------------------------*/
@@ -106,7 +107,7 @@ function updateScore(player1Score, player2Score)
 {
     UI.updateTextObject("score", player1Score + " - " + player2Score);
     resetBall();
-    resetPaddles();
+    resetPlayers();
 }
 
 function gameEnded(score1, score2)
@@ -127,6 +128,7 @@ function resetGame(player1, player2)
 function update()
 {
     requestAnimationFrame(update);
+    updateBoost();
     updatePaddlePosition();
     updateBallPosition();
     if (composer)
@@ -174,10 +176,10 @@ function sleepMillis(millis)
     while(curDate-date < millis);
 }
 
-function resetPaddles()
+function resetPlayers()
 {
-    player1.setPos(-(G.arenaLength / 2 - G.paddleThickness / 2), 0, 0);
-    player2.setPos((G.arenaLength / 2 - G.paddleThickness / 2), 0, 0);
+    player1.reset();
+    player2.reset();
 }
 
 function resetBall()
@@ -211,17 +213,23 @@ function handleKeyDown(event)
 {
     switch (event.key)
     {
-        case 'ArrowLeft':
-            player2.moveLeft = true;
-            break;
-        case 'ArrowRight':
-            player2.moveRight = true;
-            break;
-        case 'a':
+        case KEY.P1_LEFT:
             player1.moveLeft = true;
             break;
-        case 'd':
+        case KEY.P1_RIGHT:
             player1.moveRight = true;
+            break;
+        case KEY.P1_BOOST:
+            player1.boostPressed = true;
+            break;
+        case KEY.P2_LEFT:
+            player2.moveLeft = true;
+            break;
+        case KEY.P2_RIGHT:
+            player2.moveRight = true;
+            break;
+        case KEY.P2_BOOST:
+            player2.boostPressed = true;
             break;
     }
 }
@@ -230,17 +238,23 @@ function handleKeyUp(event)
 {
     switch (event.key)
     {
-        case 'ArrowLeft':
-            player2.moveLeft = false;
-            break;
-        case 'ArrowRight':
-            player2.moveRight = false;
-            break;
-        case 'a':
+        case KEY.P1_LEFT:
             player1.moveLeft = false;
             break;
-        case 'd':
+        case KEY.P1_RIGHT:
             player1.moveRight = false;
+            break;
+        case KEY.P1_BOOST:
+            player1.boostPressed = false;
+            break;
+        case KEY.P2_LEFT:
+            player2.moveLeft = false;
+            break;
+        case KEY.P2_RIGHT:
+            player2.moveRight = false;
+            break;
+        case KEY.P2_BOOST:
+            player2.boostPressed = false;
             break;
     }
 }
@@ -276,6 +290,19 @@ function updatePaddlePosition()
         if (player2.paddle.position.z > (G.arenaWidth / 2) - G.paddleLength / 2)
             player2.paddle.position.z = (G.arenaWidth / 2) - G.paddleLength / 2;
     }
+}
+
+function updateBoost()
+{
+    if (player1.boostPressed)
+        player1.increaseBoost();
+    else
+        player1.resetBoost();
+
+    if (player2.boostPressed)
+        player2.increaseBoost();
+    else
+        player2.resetBoost();
 }
 
 

@@ -16,6 +16,12 @@ export const paddleHeight = wallHeight;
 export const paddleThickness = 0.2;
 export const initialPaddleSpeed = 0.2;
 
+export const boostMeterWidth = paddleHeight;
+export const boostMeterThickness = 0.1;
+export const boostMeterLength = paddleLength;
+export const boostIncrement = 0.1;
+export const boostOffset = 1;
+
 // Player
 export const p1StartPos = {
     x: -(arenaLength / 2 - paddleThickness / 2),

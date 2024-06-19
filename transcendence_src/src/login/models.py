@@ -12,9 +12,8 @@ class Account(models.Model):
     wins = models.IntegerField(default=0)
     losses = models.IntegerField(default=0)
     friends = models.ManyToManyField("self", blank=True)
-    # status = models.BooleanField()
-    # gamehistory?
     # online_status?
+    # status = models.BooleanField()
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):

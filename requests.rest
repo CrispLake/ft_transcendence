@@ -78,6 +78,18 @@ Content-Type: application/json
 
 ###
 
+POST http://localhost:8000/login/register HTTP/1.1
+Content-Type: application/json
+
+{
+    "user": {
+        "username": "testUser3",
+        "password": "testPassword"
+    }
+}
+
+###
+
 # Login
 
 ###

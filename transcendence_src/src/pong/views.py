@@ -17,8 +17,18 @@ def match(request, player_id=None):
 
         serializer = MatchSerializer(matches, many=True)
         return Response(serializer.data)
-    
+
     elif request.method == 'POST':
+
+        player1_id = request.data.get('player1')
+        player2_id = request.data.get('player2')
+
+        if player1_id == player2_id:
+            return Response({'detail': 'Cannot create a match with same player multiple times'})
+
+        if request.user.id !=  player1_id and request.user.id != player2_id:
+            return Response({'detail': 'You do not have permissions to create this match'})
+
         serializer = MatchSerializer(data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()

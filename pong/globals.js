@@ -19,7 +19,8 @@ export const initialPaddleSpeed = 0.2;
 export const boostMeterWidth = paddleHeight;
 export const boostMeterThickness = 0.1;
 export const boostMeterLength = paddleLength;
-export const boostIncrement = 0.1;
+export const maxBoost = 1;
+export const boostIncrement = 0.02;
 export const boostOffset = 1;
 
 // Player
@@ -37,15 +38,21 @@ export const p2StartPos = {
 // Ball
 export const initialBallRadius = 0.2;
 export const initialBallSpeed = 0.2;
-export const initialStartingAngle = 30;
+export const initialStartingAngle = 90;
+/*
+    up = 0
+    right = 90
+    down = 180
+    left = 270
+*/
 export const speedIncrement = 0.01;
 export const ballStartPos = {
     x: 0,
     y: 0,
     z: 0
 };
-export const maxSpin = 20;         // grades
-export const spinReduction = 40;   // precentage 
+export const maxSpin = 0.01;         // grades
+export const spinReduction = 10;   // precentage 
 
 // Angles
 export const maxAngleDegrees = 20;
@@ -53,3 +60,4 @@ export const minAngle = PongMath.setMinAngle(maxAngleDegrees);
 export const maxAngle = PongMath.setMaxAngle(maxAngleDegrees);
 
 export const winningScore = 3;
+export const fps = 60;

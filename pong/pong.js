@@ -8,7 +8,7 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
-import { lerp, degToRad, radToDeg, calculate2DSpeed, vector2DToAngle, deriveXspeed, deriveZspeed, setMinAngle, setMaxAngle } from './math.js';
+import * as PongMath from './math.js';
 import * as G from './globals.js';
 import { speedUp } from './utilities.js';
 import * as COLOR from './colors.js';
@@ -103,12 +103,14 @@ UI.addTextObject(scene2D, 'p1', player1.name, new THREE.Vector3(-800, 500, 0), 4
 UI.addTextObject(scene2D, 'p2', player2.name, new THREE.Vector3(600, 500, 0), 40, COLOR.UI_NAMES);
 UI.addTextObject(scene2D, 'score', '0 - 0', new THREE.Vector3(-50, 500, 0), 50, COLOR.UI_SCORE);
 
-// Function to update the score
 function updateScore(player1Score, player2Score)
 {
     UI.updateTextObject("score", player1Score + " - " + player2Score);
-    resetBall();
-    resetPlayers();
+    ball.reset();
+    player1.reset();
+    player2.reset();
+    resetBounces(lastBounce);
+    sleepMillis(1000);
 }
 
 function gameEnded(score1, score2)
@@ -128,7 +130,7 @@ function resetGame(player1, player2)
 // ----Update and render----
 function update()
 {
-    requestAnimationFrame(update);
+    setTimeout(() => { requestAnimationFrame(update); }, 1000 / G.fps);
     updateBoost();
     updatePaddlePosition();
     updateBallPosition();
@@ -175,20 +177,6 @@ function sleepMillis(millis)
     var curDate = null;
     do { curDate = new Date(); }
     while(curDate-date < millis);
-}
-
-function resetPlayers()
-{
-    player1.reset();
-    player2.reset();
-}
-
-function resetBall()
-{
-    ball.setPos(0, 0, 0);
-    ball.angle = G.initialStartingAngle;
-    ball.setSpeed(G.initialBallSpeed);
-    sleepMillis(1000);
 }
 
 function goal()
@@ -332,65 +320,48 @@ function updateBallPosition()
     player2.box.setFromObject(player2.paddle);
     arena.leftWallBox.setFromObject(arena.leftSideWall);
     arena.rightWallBox.setFromObject(arena.rightSideWall);
-    ball.affectBySpin();
-    let newPosX = ball.mesh.position.x + ball.speedX;
-    let newPosZ = ball.mesh.position.z + ball.speedZ;
     
     if (ball.box.intersectsBox(player1.box) && !lastBounce.paddle1)
     {
         adjustSpin(player1);
+        player1.resetBoost();
         adjustAngle(player1.paddle);
+        ball.speedUp();
         ball.speedZ = -ball.speedZ;
-        ball.mesh.position.x += ball.speedX;
-        ball.mesh.position.z += ball.speedZ;
+        ball.updateAngle();
 		resetBounces(lastBounce);
 		lastBounce.paddle1 = true;
     }
     else if (ball.box.intersectsBox(player2.box) && !lastBounce.paddle2)
     {
         adjustSpin(player2);
-        adjustAngle(player2.paddle)
+        player2.resetBoost();
+        adjustAngle(player2.paddle);
+        ball.speedUp();
         ball.speedX = -ball.speedX;
         ball.speedZ = -ball.speedZ;
-        ball.mesh.position.x += ball.speedX;
-        ball.mesh.position.z += ball.speedZ;
+        ball.updateAngle();
 		resetBounces(lastBounce);
 		lastBounce.paddle2 = true;
     }
     else if (ball.box.intersectsBox(arena.leftWallBox) && !lastBounce.wallLeft)
     {
+        ball.reduceSpin();
         ball.speedZ = -ball.speedZ;
-        ball.mesh.position.x += ball.speedX;
-        ball.mesh.position.z += ball.speedZ;
+        ball.updateAngle();
 		resetBounces(lastBounce);
 		lastBounce.wallLeft = true;
     }
     else if (ball.box.intersectsBox(arena.rightWallBox) && !lastBounce.wallRight)
     {
+        ball.reduceSpin();
         ball.speedZ = -ball.speedZ;
-        ball.mesh.position.x += ball.speedX;
-        ball.mesh.position.z += ball.speedZ;
+        ball.updateAngle();
 		resetBounces(lastBounce);
 		lastBounce.wallRight = true;
     }
-    else
-    {
-        ball.mesh.position.x = newPosX;
-        ball.mesh.position.z = newPosZ;
-    }
-    ball.light.position.copy(ball.mesh.position);
-}
-
-function adjustAngle(paddle)
-{
-    const incomingAngle = vector2DToAngle(ball.speedX, ball.speedZ);
-    // console.log("Incoming angle (rad) = " + incomingAngle);
-    // console.log("Incoming angle (deg) = " + radToDeg(incomingAngle));
-    let impactPoint = ball.mesh.position.z - paddle.position.z;
-    let normalizedImpact = impactPoint / (G.paddleLength / 2);
-    ball.angle = lerp(normalizedImpact, -1, 1, G.minAngle, G.maxAngle);
-    ball.speed = calculate2DSpeed(ball.speedX, ball.speedZ);
-    ball.setSpeed(ball.speed + G.speedIncrement);
+    ball.affectBySpin();
+    ball.move();
 }
 
 function adjustSpin(player)
@@ -401,9 +372,18 @@ function adjustSpin(player)
         ball.reduceSpin();
     else
     {
-        const spinPower = ((player.moveLeft) ? 1 : -1) * player.sign * player.boostAmount;
+        let spinPower = ((player.moveLeft) ? 1 : -1) * player.sign * player.boostAmount;
+        spinPower = PongMath.lerp(spinPower, -G.maxBoost, G.maxBoost, -G.maxSpin, G.maxSpin);
         ball.addSpin(spinPower);
     }
+}
+
+function adjustAngle(paddle)
+{
+    const incomingAngle = PongMath.vector2DToAngle(ball.speedX, ball.speedZ);
+    let impactPoint = ball.mesh.position.z - paddle.position.z;
+    let normalizedImpact = impactPoint / (G.paddleLength / 2);
+    ball.angle = PongMath.lerp(normalizedImpact, -1, 1, G.minAngle, G.maxAngle);
 }
 
 

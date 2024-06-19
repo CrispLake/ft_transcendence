@@ -17,6 +17,7 @@ export class Player
         this.boostGeometry = new THREE.BoxGeometry(G.boostMeterWidth, G.boostMeterThickness, 0);
         this.boostMaterial = new THREE.MeshStandardMaterial({color: COLOR.BOOSTMETER, emissive: COLOR.BOOSTMETER})
         this.boostMeter = new THREE.Mesh(this.boostGeometry, this.boostMaterial);
+        this.paddleLength = G.paddleLength;
         this.score = 0;
         this.moveLeft = false;
         this.moveRight = false;
@@ -33,7 +34,7 @@ export class Player
     {
         scene.add(this.paddle);
         scene.add(this.light);
-        scene.add(this.boostMeter);
+        // scene.add(this.boostMeter);
     }
 
     setPos(x, y, z)
@@ -50,36 +51,50 @@ export class Player
         this.boostMeter.position.z = this.paddle.position.z;
     }
 
-    updateBoost()
+    removeBoostMeter()
     {
         this.scene.remove(this.boostMeter);
         this.boostGeometry.dispose();
-        this.boostGeometry = new THREE.BoxGeometry(G.boostMeterWidth, G.boostMeterThickness, this.boostAmount);
-        this.boostMeter = new THREE.Mesh(this.boostGeometry, this.boostMaterial);
-        this.boostMeter.position.set(this.paddle.position.x + this.boostOffset, this.paddle.position.y, this.paddle.position.z);
-        this.scene.add(this.boostMeter);
+    }
+
+    updateBoostMeter()
+    {
+        if (this.boostAmount == 0)
+        {
+            this.scene.remove(this.boostMeter);
+            this.boostGeometry.dispose();
+        }
+        else
+        {
+            this.scene.remove(this.boostMeter);
+            this.boostGeometry.dispose();
+            this.boostGeometry = new THREE.BoxGeometry(G.boostMeterWidth, G.boostMeterThickness, this.paddleLength * this.boostAmount);
+            this.boostMeter = new THREE.Mesh(this.boostGeometry, this.boostMaterial);
+            this.boostMeter.position.set(this.paddle.position.x + this.boostOffset, this.paddle.position.y, this.paddle.position.z);
+            this.scene.add(this.boostMeter);
+        }
     }
 
     increaseBoost()
     {
         this.boostAmount += G.boostIncrement;
-        if (this.boostAmount > G.paddleLength)
+        if (this.boostAmount > G.maxBoost)
         {
-            this.boostAmount = G.paddleLength;
+            this.boostAmount = 0;
         }
-        this.updateBoost();
+        this.updateBoostMeter();
     }
 
     resetBoost()
     {
         this.boostAmount = 0;
-        this.updateBoost();
+        this.updateBoostMeter();
     }
 
     reset()
     {
         this.setPos((G.arenaLength / 2 - G.paddleThickness / 2) * this.sign, 0, 0);
         this.boostAmount = 0;
-        this.updateBoost();
+        this.updateBoostMeter();
     }
 };

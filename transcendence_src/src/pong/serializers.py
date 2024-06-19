@@ -18,9 +18,3 @@ class MatchSerializer(serializers.ModelSerializer):
         if not obj.player2:
             return "Guest"
         return obj.player2.user.username
-
-# class MatchSerializer(serializers.ModelSerializer):
-
-#     class Meta:
-#         model = Match
-#         fields = ['id', 'player1', 'player1Score', 'player2', 'player2Score', 'date']

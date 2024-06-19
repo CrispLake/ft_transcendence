@@ -16,9 +16,13 @@ export class Ball
         this.setPos(pos.x, pos.y, pos.z);
         this.light.position.copy(this.mesh.position);
         this.speed = G.initialBallSpeed;
-        this.angle = G.initialStartingAngle;
+        this.angle = PongMath.degToRad(G.initialStartingAngle);
         this.speedX = PongMath.deriveXspeed(this.speed, this.angle);
         this.speedZ = PongMath.deriveZspeed(this.speed, this.angle);
+        console.log("angle = " + G.initialStartingAngle);
+        console.log("ballX = " + this.speedX);
+        console.log("ballZ = " + this.speedZ);
+        this.spin = 0;
         this.addToScene(scene);
     }
 
@@ -39,5 +43,58 @@ export class Ball
         this.speed = speed;
         this.speedX = PongMath.deriveXspeed(this.speed, this.angle);
         this.speedZ = PongMath.deriveZspeed(this.speed, this.angle);
+    }
+
+    speedUp()
+    {
+        this.speed = PongMath.calculate2DSpeed(this.speedX, this.speedZ);
+        this.setSpeed(this.speed + G.speedIncrement);
+    }
+
+    move()
+    {
+        this.speedX = PongMath.deriveXspeed(this.speed, this.angle);
+        this.speedZ = PongMath.deriveZspeed(this.speed, this.angle);
+        this.mesh.position.x += this.speedX;
+        this.mesh.position.z += this.speedZ;
+        this.light.position.copy(this.mesh.position);
+    }
+
+    updateAngle()
+    {
+        this.angle = PongMath.vector2DToAngle(this.speedX, this.speedZ);
+    }
+
+    addSpin(power)
+    {
+        if ((this.spin < 0 && power < 0) || (this.spin > 0 && power > 0))
+            this.spin += power;
+        else
+            this.spin = power;
+        if (this.spin > G.maxSpin)
+            this.spin = G.maxSpin;
+        else if (this.spin < -G.maxSpin)
+            this.spin = -G.maxSpin;
+    }
+
+    reduceSpin()
+    {
+        this.spin *= (100 - G.spinReduction) / 100;
+        // if (this.spin < 0.05)
+        //     this.spin = 0;
+    }
+
+    affectBySpin()
+    {
+        this.angle += this.spin;
+        this.angle = PongMath.within2Pi(this.angle);
+    }
+
+    reset()
+    {
+        this.setPos(0, 0, 0);
+        this.angle = PongMath.degToRad(G.initialStartingAngle);
+        this.setSpeed(G.initialBallSpeed);
+        this.spin = 0;
     }
 }

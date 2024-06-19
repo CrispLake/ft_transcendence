@@ -11,6 +11,7 @@ const GRAY = 0x555555;
 export const FLOOR = GRAY;
 export const WALL = PURPLE;
 export const PADDLE = CYAN;
+export const BOOSTMETER = WHITE;
 export const BALL = WHITE;
 export const PONG = BLACK;
 export const PONG_AURA = CYAN;

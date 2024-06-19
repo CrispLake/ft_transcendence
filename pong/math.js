@@ -18,19 +18,40 @@ export function calculate2DSpeed(deltaX, deltaZ)
     return (Math.sqrt(deltaX * deltaX + deltaZ * deltaZ));
 }
 
-export function vector2DToAngle(deltaX, deltaZ)
-{
-    return (Math.abs(Math.atan2(-deltaX, -deltaZ)));
-}
-
 export function deriveXspeed(speed, angle)
 {
-    return (speed * Math.sin(angle));
+    let speedX = speed * Math.sin(angle);
+    if (speedX > -0.001 && speedX < 0.001)
+        speedX = 0;
+    return (speedX);
 }
 
 export function deriveZspeed(speed, angle)
 {
-    return (speed * Math.cos(angle));
+    let speedZ = speed * Math.cos(angle);
+    if (speedZ > -0.001 && speedZ < 0.001)
+        speedZ = 0;
+    return (speedZ);
+}
+
+export function within2Pi(rad)
+{
+    if (rad < 0)
+    {
+        rad += (Math.PI * 2);
+    }
+    else if (rad > (Math.PI * 2))
+    {
+        rad -= (Math.PI * 2);
+    }
+    return (rad);
+}
+
+export function vector2DToAngle(deltaX, deltaZ)
+{
+    let rad = Math.atan2(deltaX, deltaZ);
+    rad = within2Pi(rad);
+    return (rad);
 }
 
 export function setMinAngle(degrees)

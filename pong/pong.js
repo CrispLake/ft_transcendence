@@ -8,7 +8,7 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
-import { lerp, degToRad, radToDeg, calculate2DSpeed, vector2DToAngle, deriveXspeed, deriveZspeed, setMinAngle, setMaxAngle } from './math.js';
+import * as PongMath from './math.js';
 import * as G from './globals.js';
 import { speedUp } from './utilities.js';
 import * as COLOR from './colors.js';
@@ -17,6 +17,8 @@ import { Ball } from './objects/Ball.js';
 import { Arena } from './objects/Arena.js';
 import { Text } from './objects/Text.js';
 import { UserInterface } from './objects/UserInterface.js';
+import * as KEY from './keys.js';
+import * as SETTINGS from './gameSetting.js';
 
 
 /*---- INITIALIZE ------------------------------------------------------------*/
@@ -101,12 +103,14 @@ UI.addTextObject(scene2D, 'p1', player1.name, new THREE.Vector3(-800, 500, 0), 4
 UI.addTextObject(scene2D, 'p2', player2.name, new THREE.Vector3(600, 500, 0), 40, COLOR.UI_NAMES);
 UI.addTextObject(scene2D, 'score', '0 - 0', new THREE.Vector3(-50, 500, 0), 50, COLOR.UI_SCORE);
 
-// Function to update the score
 function updateScore(player1Score, player2Score)
 {
     UI.updateTextObject("score", player1Score + " - " + player2Score);
-    resetBall();
-    resetPaddles();
+    ball.reset();
+    player1.reset();
+    player2.reset();
+    resetBounces(lastBounce);
+    sleepMillis(1000);
 }
 
 function gameEnded(score1, score2)
@@ -126,7 +130,8 @@ function resetGame(player1, player2)
 // ----Update and render----
 function update()
 {
-    requestAnimationFrame(update);
+    setTimeout(() => { requestAnimationFrame(update); }, 1000 / G.fps);
+    updateBoost();
     updatePaddlePosition();
     updateBallPosition();
     if (composer)
@@ -156,7 +161,7 @@ function update()
             // sendGameResults(winner, loser);
             resetGame(player1, player2);
         }
-        console.log("Score = " + player1.score + " - " + player2.score);
+        // console.log("Score = " + player1.score + " - " + player2.score);
         updateScore(player1.score, player2.score);
     }
     // Render the 2D scene
@@ -174,32 +179,18 @@ function sleepMillis(millis)
     while(curDate-date < millis);
 }
 
-function resetPaddles()
-{
-    player1.setPos(-(G.arenaLength / 2 - G.paddleThickness / 2), 0, 0);
-    player2.setPos((G.arenaLength / 2 - G.paddleThickness / 2), 0, 0);
-}
-
-function resetBall()
-{
-    ball.setPos(0, 0, 0);
-    ball.angle = G.initialStartingAngle;
-    ball.setSpeed(G.initialBallSpeed);
-    sleepMillis(1000);
-}
-
 function goal()
 {
     let goalOffSet = 1;
     if (ball.mesh.position.x <= player1.paddle.position.x - goalOffSet)
     {
-        console.log("player2 scored");
+        // console.log("player2 scored");
         player2.score++;
         return (true);
     }
     else if (ball.mesh.position.x >= player2.paddle.position.x + goalOffSet)
     {
-        console.log("player1 scored");
+        // console.log("player1 scored");
         player1.score++;
         return (true);
     }
@@ -211,17 +202,23 @@ function handleKeyDown(event)
 {
     switch (event.key)
     {
-        case 'ArrowLeft':
-            player2.moveLeft = true;
-            break;
-        case 'ArrowRight':
-            player2.moveRight = true;
-            break;
-        case 'a':
+        case KEY.P1_LEFT:
             player1.moveLeft = true;
             break;
-        case 'd':
+        case KEY.P1_RIGHT:
             player1.moveRight = true;
+            break;
+        case KEY.P1_BOOST:
+            player1.boostPressed = true;
+            break;
+        case KEY.P2_LEFT:
+            player2.moveLeft = true;
+            break;
+        case KEY.P2_RIGHT:
+            player2.moveRight = true;
+            break;
+        case KEY.P2_BOOST:
+            player2.boostPressed = true;
             break;
     }
 }
@@ -230,17 +227,23 @@ function handleKeyUp(event)
 {
     switch (event.key)
     {
-        case 'ArrowLeft':
-            player2.moveLeft = false;
-            break;
-        case 'ArrowRight':
-            player2.moveRight = false;
-            break;
-        case 'a':
+        case KEY.P1_LEFT:
             player1.moveLeft = false;
             break;
-        case 'd':
+        case KEY.P1_RIGHT:
             player1.moveRight = false;
+            break;
+        case KEY.P1_BOOST:
+            player1.boostPressed = false;
+            break;
+        case KEY.P2_LEFT:
+            player2.moveLeft = false;
+            break;
+        case KEY.P2_RIGHT:
+            player2.moveRight = false;
+            break;
+        case KEY.P2_BOOST:
+            player2.boostPressed = false;
             break;
     }
 }
@@ -278,6 +281,21 @@ function updatePaddlePosition()
     }
 }
 
+function updateBoost()
+{
+    if (SETTINGS.spin == false)
+        return ;
+    if (player1.boostPressed)
+        player1.increaseBoost();
+    else
+        player1.resetBoost();
+
+    if (player2.boostPressed)
+        player2.increaseBoost();
+    else
+        player2.resetBoost();
+}
+
 
 const lastBounce = {
 	wallLeft: false,
@@ -302,60 +320,70 @@ function updateBallPosition()
     player2.box.setFromObject(player2.paddle);
     arena.leftWallBox.setFromObject(arena.leftSideWall);
     arena.rightWallBox.setFromObject(arena.rightSideWall);
-    let newPosX = ball.mesh.position.x + ball.speedX;
-    let newPosZ = ball.mesh.position.z + ball.speedZ;
     
     if (ball.box.intersectsBox(player1.box) && !lastBounce.paddle1)
     {
+        adjustSpin(player1);
+        player1.resetBoost();
         adjustAngle(player1.paddle);
+        ball.speedUp();
         ball.speedZ = -ball.speedZ;
-        ball.mesh.position.x += ball.speedX;
-        ball.mesh.position.z += ball.speedZ;
+        ball.updateAngle();
 		resetBounces(lastBounce);
 		lastBounce.paddle1 = true;
     }
     else if (ball.box.intersectsBox(player2.box) && !lastBounce.paddle2)
     {
-        adjustAngle(player2.paddle)
+        adjustSpin(player2);
+        player2.resetBoost();
+        adjustAngle(player2.paddle);
+        ball.speedUp();
         ball.speedX = -ball.speedX;
         ball.speedZ = -ball.speedZ;
-        ball.mesh.position.x += ball.speedX;
-        ball.mesh.position.z += ball.speedZ;
+        ball.updateAngle();
 		resetBounces(lastBounce);
 		lastBounce.paddle2 = true;
     }
     else if (ball.box.intersectsBox(arena.leftWallBox) && !lastBounce.wallLeft)
     {
+        ball.reduceSpin();
         ball.speedZ = -ball.speedZ;
-        ball.mesh.position.x += ball.speedX;
-        ball.mesh.position.z += ball.speedZ;
+        ball.updateAngle();
 		resetBounces(lastBounce);
 		lastBounce.wallLeft = true;
     }
     else if (ball.box.intersectsBox(arena.rightWallBox) && !lastBounce.wallRight)
     {
+        ball.reduceSpin();
         ball.speedZ = -ball.speedZ;
-        ball.mesh.position.x += ball.speedX;
-        ball.mesh.position.z += ball.speedZ;
+        ball.updateAngle();
 		resetBounces(lastBounce);
 		lastBounce.wallRight = true;
     }
+    ball.affectBySpin();
+    ball.move();
+}
+
+function adjustSpin(player)
+{
+    if (SETTINGS.spin == false) return ;
+
+    if (!player.moveLeft && !player.moveRight)
+        ball.reduceSpin();
     else
     {
-        ball.mesh.position.x = newPosX;
-        ball.mesh.position.z = newPosZ;
+        let spinPower = ((player.moveLeft) ? 1 : -1) * player.sign * player.boostAmount;
+        spinPower = PongMath.lerp(spinPower, -G.maxBoost, G.maxBoost, -G.maxSpin, G.maxSpin);
+        ball.addSpin(spinPower);
     }
-    ball.light.position.copy(ball.mesh.position);
 }
 
 function adjustAngle(paddle)
 {
-    const incomingAngle = vector2DToAngle(ball.speedX, ball.speedZ);
+    const incomingAngle = PongMath.vector2DToAngle(ball.speedX, ball.speedZ);
     let impactPoint = ball.mesh.position.z - paddle.position.z;
     let normalizedImpact = impactPoint / (G.paddleLength / 2);
-    ball.angle = lerp(normalizedImpact, -1, 1, G.minAngle, G.maxAngle);
-    ball.speed = calculate2DSpeed(ball.speedX, ball.speedZ);
-    ball.setSpeed(ball.speed + G.speedIncrement);
+    ball.angle = PongMath.lerp(normalizedImpact, -1, 1, G.minAngle, G.maxAngle);
 }
 
 

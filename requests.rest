@@ -12,12 +12,12 @@
 ###
 
 GET http://localhost:8000/pong/match HTTP/1.1
-Authorization: Token 6de8c8393585d02922958136ff7609fe3440aaa6
+Authorization: Token 855ba830c100c7f927c41d406592d58319bd0240
 
 ###
 
 POST http://localhost:8000/pong/match HTTP/1.1
-Authorization: Token 6de8c8393585d02922958136ff7609fe3440aaa6
+Authorization: Token 855ba830c100c7f927c41d406592d58319bd0240
 Content-Type: application/json
 
 {
@@ -27,6 +27,10 @@ Content-Type: application/json
     "player2Score": 2
 }
 
+###
+
+GET http://localhost:8000/pong/match/1 HTTP/1.1
+Authorization: Token 855ba830c100c7f927c41d406592d58319bd0240
 
 ###
 

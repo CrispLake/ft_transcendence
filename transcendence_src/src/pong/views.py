@@ -7,20 +7,20 @@ from pong.serializers import MatchSerializer
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
-def match(request):
+def match(request, player_id=None):
+
     if request.method == 'GET':
-        matches = Match.objects.all()
+        if player_id is not None:
+            matches = Match.objects.filter(player1_id=player_id) | Match.objects.filter(player2_id=player_id)
+        else:
+            matches = Match.objects.all()
+
         serializer = MatchSerializer(matches, many=True)
         return Response(serializer.data)
     
     elif request.method == 'POST':
-        # print(request.data)
         serializer = MatchSerializer(data=request.data, partial=True)
         if serializer.is_valid():
-            # print(f'initial: ', serializer.initial_data)
-            # print(f'serializer_data: ', serializer.data)
-            # print('end')
-            # serializer.data = data
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         

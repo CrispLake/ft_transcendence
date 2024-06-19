@@ -20,7 +20,10 @@ export function calculate2DSpeed(deltaX, deltaZ)
 
 export function vector2DToAngle(deltaX, deltaZ)
 {
-    return (Math.abs(Math.atan2(-deltaX, -deltaZ)));
+    let rad = Math.atan2(deltaX, deltaZ);
+    if (rad < 0)
+        rad += Math.PI * 2;
+    return (rad);
 }
 
 export function deriveXspeed(speed, angle)

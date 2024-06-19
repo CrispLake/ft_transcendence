@@ -232,15 +232,6 @@ function handleKeyDown(event)
         case KEY.P2_BOOST:
             player2.boostPressed = true;
             break;
-        case 'p':
-            console.log("up     (1, 0) = " + vector2DToAngle(1, 0));
-            console.log("up     (1, 0) = " + radToDeg(vector2DToAngle(1, 0)));
-            console.log("left  (0, -1) = " + vector2DToAngle(0, -1));
-            console.log("left  (0, -1) = " + radToDeg(vector2DToAngle(0, -1)));
-            console.log("right  (0, 1) = " + vector2DToAngle(0, 1));
-            console.log("right  (0, 1) = " + radToDeg(vector2DToAngle(0, 1)));
-            console.log("down  (-1, 0) = " + vector2DToAngle(-1, 0));
-            console.log("down  (-1, 0) = " + radToDeg(vector2DToAngle(-1, 0)));
     }
 }
 

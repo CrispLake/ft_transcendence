@@ -14,8 +14,13 @@ def match(request):
         return Response(serializer.data)
     
     elif request.method == 'POST':
-        serializer = MatchSerializer(data=request.data)
+        # print(request.data)
+        serializer = MatchSerializer(data=request.data, partial=True)
         if serializer.is_valid():
+            # print(f'initial: ', serializer.initial_data)
+            # print(f'serializer_data: ', serializer.data)
+            # print('end')
+            # serializer.data = data
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         

@@ -24,6 +24,28 @@ Content-Type: application/json
     "players": [1, 2]
 }
 
+###
+
+POST http://localhost:8000/pong/match HTTP/1.1
+Authorization: Token a2dec50a6b5f9746629124060b70e0be85d46f36
+Content-Type: application/json
+
+{
+    "players": [
+    {
+        "account": {
+            "username": "testUser1"
+        },
+        "role": "abc"
+    },
+    {
+        "account": {
+            "username": "testUser2"
+        },
+        "role": "dce"
+    }]
+}
+
 
 ###
 

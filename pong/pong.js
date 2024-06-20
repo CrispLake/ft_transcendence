@@ -137,11 +137,9 @@ function resetGame(player1, player2)
 function update()
 {
     setTimeout(() => { requestAnimationFrame(update); }, 1000 / G.fps);
-    // const elapsedTime = clock.getElapsedTime();
-    // material.uniforms.time.value = elapsedTime;
     arena.update();
-    updateBoost();
-    updatePaddlePosition();
+    player1.update();
+    player2.update();
     updateBallPosition();
     if (composer)
     {
@@ -208,108 +206,6 @@ function goal()
     return (false);
 }
 
-// ----Key Input----
-function handleKeyDown(event)
-{
-    switch (event.key)
-    {
-        case KEY.P1_LEFT:
-            player1.moveLeft = true;
-            break;
-        case KEY.P1_RIGHT:
-            player1.moveRight = true;
-            break;
-        case KEY.P1_BOOST:
-            player1.boostPressed = true;
-            break;
-        case KEY.P2_LEFT:
-            player2.moveLeft = true;
-            break;
-        case KEY.P2_RIGHT:
-            player2.moveRight = true;
-            break;
-        case KEY.P2_BOOST:
-            player2.boostPressed = true;
-            break;
-    }
-}
-
-function handleKeyUp(event)
-{
-    switch (event.key)
-    {
-        case KEY.P1_LEFT:
-            player1.moveLeft = false;
-            break;
-        case KEY.P1_RIGHT:
-            player1.moveRight = false;
-            break;
-        case KEY.P1_BOOST:
-            player1.boostPressed = false;
-            break;
-        case KEY.P2_LEFT:
-            player2.moveLeft = false;
-            break;
-        case KEY.P2_RIGHT:
-            player2.moveRight = false;
-            break;
-        case KEY.P2_BOOST:
-            player2.boostPressed = false;
-            break;
-    }
-}
-
-document.addEventListener('keydown', handleKeyDown);
-document.addEventListener('keyup', handleKeyUp);
-
-console.log("PURPLE.red = " + COLOR.WALL.r);
-console.log("WHITE.red  = " + COLOR.WALL_LIGHT.r);
-
-// ----Update Paddle----
-function updatePaddlePosition()
-{
-    if (player1.moveLeft)
-    {
-        player1.move(-player1.speed);
-        if (player1.paddle.position.z < -(G.arenaWidth / 2) + G.paddleLength / 2)
-            player1.paddle.position.z = -(G.arenaWidth / 2) + G.paddleLength / 2;
-    }
-    if (player1.moveRight)
-    {
-        player1.move(player1.speed);
-        if (player1.paddle.position.z > (G.arenaWidth / 2) - G.paddleLength / 2)
-            player1.paddle.position.z = (G.arenaWidth / 2) - G.paddleLength / 2;
-    }
-    if (player2.moveLeft)
-    {
-        player2.move(-player2.speed);
-        if (player2.paddle.position.z < -(G.arenaWidth / 2) + G.paddleLength / 2)
-            player2.paddle.position.z = -(G.arenaWidth / 2) + G.paddleLength / 2;
-    }
-    if (player2.moveRight)
-    {
-        player2.move(player2.speed);
-        if (player2.paddle.position.z > (G.arenaWidth / 2) - G.paddleLength / 2)
-            player2.paddle.position.z = (G.arenaWidth / 2) - G.paddleLength / 2;
-    }
-}
-
-function updateBoost()
-{
-    if (SETTINGS.spin == false)
-        return ;
-    if (player1.boostPressed)
-        player1.increaseBoost();
-    else
-        player1.resetBoost();
-
-    if (player2.boostPressed)
-        player2.increaseBoost();
-    else
-        player2.resetBoost();
-}
-
-
 const lastBounce = {
 	wallLeft: false,
 	wallRight: false,
@@ -336,6 +232,7 @@ function updateBallPosition()
     
     if (ball.box.intersectsBox(player1.box) && !lastBounce.paddle1)
     {
+        player1.lightEffect();
         adjustSpin(player1);
         player1.resetBoost();
         adjustAngle(player1.paddle);
@@ -347,6 +244,7 @@ function updateBallPosition()
     }
     else if (ball.box.intersectsBox(player2.box) && !lastBounce.paddle2)
     {
+        player2.lightEffect();
         adjustSpin(player2);
         player2.resetBoost();
         adjustAngle(player2.paddle);
@@ -400,6 +298,61 @@ function adjustAngle(paddle)
     let normalizedImpact = impactPoint / (G.paddleLength / 2);
     ball.angle = PongMath.lerp(normalizedImpact, -1, 1, G.minAngle, G.maxAngle);
 }
+
+
+// ----Key Input----
+function handleKeyDown(event)
+{
+    switch (event.key)
+    {
+        case KEY.P1_LEFT:
+            player1.moveLeft = true;
+            break;
+        case KEY.P1_RIGHT:
+            player1.moveRight = true;
+            break;
+        case KEY.P1_BOOST:
+            player1.boostPressed = true;
+            break;
+        case KEY.P2_LEFT:
+            player2.moveLeft = true;
+            break;
+        case KEY.P2_RIGHT:
+            player2.moveRight = true;
+            break;
+        case KEY.P2_BOOST:
+            player2.boostPressed = true;
+            break;
+    }
+}
+
+function handleKeyUp(event)
+{
+    switch (event.key)
+    {
+        case KEY.P1_LEFT:
+            player1.moveLeft = false;
+            break;
+        case KEY.P1_RIGHT:
+            player1.moveRight = false;
+            break;
+        case KEY.P1_BOOST:
+            player1.boostPressed = false;
+            break;
+        case KEY.P2_LEFT:
+            player2.moveLeft = false;
+            break;
+        case KEY.P2_RIGHT:
+            player2.moveRight = false;
+            break;
+        case KEY.P2_BOOST:
+            player2.boostPressed = false;
+            break;
+    }
+}
+
+document.addEventListener('keydown', handleKeyDown);
+document.addEventListener('keyup', handleKeyUp);
 
 
 // ----Window resize----

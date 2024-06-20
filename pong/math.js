@@ -1,6 +1,18 @@
+import * as THREE from 'three';
+
 export function lerp(value, from_min, from_max, to_min, to_max)
 {
 	return (to_min + (to_max - to_min) * ((value - from_min) / (from_max - from_min)));
+}
+
+export function colorLerp(value, from_min, from_max, color0, color1)
+{
+    const factor = THREE.MathUtils.clamp((value - from_min) / (from_max - from_min), 0, 1);
+    return new THREE.Color(
+        THREE.MathUtils.lerp(color0.r, color1.r, factor),
+        THREE.MathUtils.lerp(color0.g, color1.g, factor),
+        THREE.MathUtils.lerp(color0.b, color1.b, factor)
+    );
 }
 
 export function degToRad(degrees)

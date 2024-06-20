@@ -9,11 +9,12 @@ export class Player
         this.scene = scene;
         this.name = name;
         this.sign = (pos.x > 0) ? 1 : -1;
+        this.color = (this.sign == -1) ? COLOR.PADDLE1 : COLOR.PADDLE2;
         this.geometry = new THREE.BoxGeometry(G.paddleThickness, G.wallHeight, G.paddleLength);
-        this.material = new THREE.MeshStandardMaterial({color: COLOR.PADDLE, emissive: COLOR.PADDLE});
+        this.material = new THREE.MeshStandardMaterial({color: this.color, emissive: this.color});
         this.paddle = new THREE.Mesh(this.geometry, this.material);
         this.box = new THREE.Box3();
-        this.light = new THREE.RectAreaLight(COLOR.PADDLE, G.paddleLightIntensity, G.paddleLength, G.paddleHeight);
+        this.light = new THREE.RectAreaLight(this.color, G.paddleLightIntensity, G.paddleLength, G.paddleHeight);
         this.boostGeometry = new THREE.BoxGeometry(G.boostMeterWidth, G.boostMeterThickness, 0);
         this.boostMaterial = new THREE.MeshStandardMaterial({color: COLOR.BOOSTMETER, emissive: COLOR.BOOSTMETER})
         this.boostMeter = new THREE.Mesh(this.boostGeometry, this.boostMaterial);

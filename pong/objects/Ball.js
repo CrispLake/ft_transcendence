@@ -19,9 +19,6 @@ export class Ball
         this.angle = PongMath.degToRad(G.initialStartingAngle);
         this.speedX = PongMath.deriveXspeed(this.speed, this.angle);
         this.speedZ = PongMath.deriveZspeed(this.speed, this.angle);
-        console.log("angle = " + G.initialStartingAngle);
-        console.log("ballX = " + this.speedX);
-        console.log("ballZ = " + this.speedZ);
         this.spin = 0;
         this.addToScene(scene);
     }

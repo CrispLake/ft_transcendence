@@ -1,11 +1,14 @@
 import * as THREE from 'three';
 import * as G from '../globals.js';
 import * as COLOR from '../colors.js';
+import { Wall } from './Wall.js';
 
 export class Arena
 {
     constructor(scene)
     {
+        this.scene = scene;
+
         // ----Back Wall----
         this.backWallGeometry = new THREE.BoxGeometry(25, 15, 2);
         this.backWallMeshMaterial = new THREE.MeshStandardMaterial({color: 0xffffff, emissive: COLOR.BACKWALL});
@@ -19,38 +22,32 @@ export class Arena
         this.floor.position.set(0, -(G.wallHeight / 2 + G.floorThickness / 2), 0);
 
         // ----Side Walls----
-        this.sideWallGeometry = new THREE.BoxGeometry(G.arenaLength, G.wallHeight, G.wallThickness);
-        this.wallMeshMaterial = new THREE.MeshStandardMaterial({color: COLOR.WALL, emissive: COLOR.WALL, wireframe: false});
-        this.leftSideWall = new THREE.Mesh(this.sideWallGeometry, this.wallMeshMaterial);
-        this.leftSideWall.position.set(0, 0, -(G.arenaWidth / 2 + G.wallThickness / 2));
-        this.leftWallBox = new THREE.Box3();
-        this.rightSideWall = new THREE.Mesh(this.sideWallGeometry, this.wallMeshMaterial);
-        this.rightSideWall.position.set(0, 0, (G.arenaWidth / 2 + G.wallThickness / 2));
-        this.rightWallBox = new THREE.Box3();
+        this.leftWall = new Wall(0, 0, -(G.arenaWidth / 2 + G.wallThickness / 2));
+        this.rightWall = new Wall(0, 0, (G.arenaWidth / 2 + G.wallThickness / 2));
         
         // ----General Light----
         this.ambientLight = new THREE.AmbientLight(COLOR.WHITE, 0.05);
 
-        // ----Wall Lights----
-        this.wallLightLeft = new THREE.RectAreaLight(COLOR.WALL, G.wallLightIntensity, G.arenaLength, G.wallHeight);
-        this.wallLightLeft.position.copy(this.leftSideWall.position);
-        this.wallLightLeft.lookAt(0, 0, 0);
-        this.wallLightRight = new THREE.RectAreaLight(COLOR.WALL, G.wallLightIntensity, G.arenaLength, G.wallHeight);
-        this.wallLightRight.position.copy(this.rightSideWall.position);
-        this.wallLightRight.lookAt(0, 0, 0);
-
         // Add everything to the scene
-        this.addToScene(scene);
+        this.addToScene();
     }
 
-    addToScene(scene)
+    addToScene()
     {
-        scene.add(this.backWall);
-        scene.add(this.floor);
-        scene.add(this.leftSideWall);
-        scene.add(this.rightSideWall);
-        scene.add(this.ambientLight);
-        scene.add(this.wallLightLeft);
-        scene.add(this.wallLightRight);
+        this.scene.add(this.backWall);
+        this.scene.add(this.floor);
+        this.scene.add(this.leftWall.mesh);
+        this.scene.add(this.rightWall.mesh);
+        this.scene.add(this.ambientLight);
+        this.scene.add(this.leftWall.light);
+        this.scene.add(this.rightWall.light);
+    }
+
+    update()
+    {
+        if (this.leftWall.effect)
+            this.leftWall.updateLightEffect();
+        if (this.rightWall.effect)
+            this.rightWall.updateLightEffect();
     }
 }

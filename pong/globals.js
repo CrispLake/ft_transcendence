@@ -52,7 +52,7 @@ export const ballStartPos = {
     y: 0,
     z: 0
 };
-export const maxSpin = 0.01;         // grades
+export const maxSpin = 0.01;       // grades
 export const spinReduction = 10;   // precentage 
 
 // Angles

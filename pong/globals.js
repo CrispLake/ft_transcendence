@@ -8,6 +8,7 @@ export const wallThickness = 0.2;
 export const floorThickness = 0.2;
 export const floorWidth = arenaWidth + floorThickness * 2;
 export const wallLightIntensity = 1;
+export const fadeTimeSec = 0.3;
 
 // Paddle
 export const paddleLightIntensity = 1;
@@ -55,7 +56,7 @@ export const maxSpin = 0.01;         // grades
 export const spinReduction = 10;   // precentage 
 
 // Angles
-export const maxAngleDegrees = 20;
+export const maxAngleDegrees = 30;
 export const minAngle = PongMath.setMinAngle(maxAngleDegrees);
 export const maxAngle = PongMath.setMaxAngle(maxAngleDegrees);
 

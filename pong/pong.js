@@ -103,6 +103,11 @@ UI.addTextObject(scene2D, 'p1', player1.name, new THREE.Vector3(-800, 500, 0), 4
 UI.addTextObject(scene2D, 'p2', player2.name, new THREE.Vector3(600, 500, 0), 40, COLOR.UI_NAMES);
 UI.addTextObject(scene2D, 'score', '0 - 0', new THREE.Vector3(-50, 500, 0), 50, COLOR.UI_SCORE);
 
+const clock = new THREE.Clock();
+
+
+
+
 function updateScore(player1Score, player2Score)
 {
     UI.updateTextObject("score", player1Score + " - " + player2Score);
@@ -122,6 +127,7 @@ function resetGame(player1, player2)
 {
     player1.score = 0;
     player2.score = 0;
+    updateScore(player1.score, player2.score);
 }
 
 
@@ -131,6 +137,9 @@ function resetGame(player1, player2)
 function update()
 {
     setTimeout(() => { requestAnimationFrame(update); }, 1000 / G.fps);
+    // const elapsedTime = clock.getElapsedTime();
+    // material.uniforms.time.value = elapsedTime;
+    arena.update();
     updateBoost();
     updatePaddlePosition();
     updateBallPosition();
@@ -161,8 +170,10 @@ function update()
             // sendGameResults(winner, loser);
             resetGame(player1, player2);
         }
-        // console.log("Score = " + player1.score + " - " + player2.score);
-        updateScore(player1.score, player2.score);
+        else
+        {
+            updateScore(player1.score, player2.score);
+        }
     }
     // Render the 2D scene
     renderer.autoClear = false;
@@ -251,6 +262,8 @@ function handleKeyUp(event)
 document.addEventListener('keydown', handleKeyDown);
 document.addEventListener('keyup', handleKeyUp);
 
+console.log("PURPLE.red = " + COLOR.WALL.r);
+console.log("WHITE.red  = " + COLOR.WALL_LIGHT.r);
 
 // ----Update Paddle----
 function updatePaddlePosition()
@@ -318,8 +331,8 @@ function updateBallPosition()
     ball.box.setFromObject(ball.mesh);
     player1.box.setFromObject(player1.paddle);
     player2.box.setFromObject(player2.paddle);
-    arena.leftWallBox.setFromObject(arena.leftSideWall);
-    arena.rightWallBox.setFromObject(arena.rightSideWall);
+    arena.leftWall.box.setFromObject(arena.leftWall.mesh);
+    arena.rightWall.box.setFromObject(arena.rightWall.mesh);
     
     if (ball.box.intersectsBox(player1.box) && !lastBounce.paddle1)
     {
@@ -344,16 +357,18 @@ function updateBallPosition()
 		resetBounces(lastBounce);
 		lastBounce.paddle2 = true;
     }
-    else if (ball.box.intersectsBox(arena.leftWallBox) && !lastBounce.wallLeft)
+    else if (ball.box.intersectsBox(arena.leftWall.box) && !lastBounce.wallLeft)
     {
+        arena.leftWall.lightEffect();
         ball.reduceSpin();
         ball.speedZ = -ball.speedZ;
         ball.updateAngle();
 		resetBounces(lastBounce);
 		lastBounce.wallLeft = true;
     }
-    else if (ball.box.intersectsBox(arena.rightWallBox) && !lastBounce.wallRight)
+    else if (ball.box.intersectsBox(arena.rightWall.box) && !lastBounce.wallRight)
     {
+        arena.rightWall.lightEffect();
         ball.reduceSpin();
         ball.speedZ = -ball.speedZ;
         ball.updateAngle();

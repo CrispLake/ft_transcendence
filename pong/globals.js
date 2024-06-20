@@ -52,10 +52,11 @@ export const ballStartPos = {
     z: 0
 };
 export const maxSpin = 0.01;         // grades
-export const spinReduction = 10;   // precentage 
+export const spinReduction = 10;   // precentage
+export const maxBallLightRotation = 0.3;
 
 // Angles
-export const maxAngleDegrees = 20;
+export const maxAngleDegrees = 30;
 export const minAngle = PongMath.setMinAngle(maxAngleDegrees);
 export const maxAngle = PongMath.setMaxAngle(maxAngleDegrees);
 

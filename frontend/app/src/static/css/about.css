@@ -24,7 +24,7 @@
 
 .author {
   padding: 4px;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, top 0.5s, left 0.5s, transform 0.5s;
 }
 
 .yellow {

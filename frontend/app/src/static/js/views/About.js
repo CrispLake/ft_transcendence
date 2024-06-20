@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 09:22:19 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/20 18:53:21 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/06/20 20:07:35 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,16 +19,22 @@ export default class extends AbstractView {
   // Suffles colors between author spans
   async Suffle() {
     const colors = ['yellow', 'pink', 'blue'];
-    const elements = document.querySelectorAll('.author');
+    const authors = document.querySelectorAll('.author');
 
-    elements.forEach((author, index) => {
+    authors.forEach((author) => {
       // Remove any previous color class
       author.className = 'author';
 
       // Assign a color class from the shuffled array
       if (Math.random() - 0.5 > 0) {
+        const randomSkewX = (Math.random() - 0.5) * 10;
+        const randomSkewY = (Math.random() - 0.5) * 10;
+        author.style.transform = `skew(${randomSkewX}deg, ${randomSkewY}deg)`;
+        
         const random_index = Math.floor(Math.random() * 3);
         author.classList.add(colors[random_index]);
+      } else {
+        author.style.transform = `skew(0deg, 0deg)`;
       }
     });
   }
@@ -54,23 +60,23 @@ export default class extends AbstractView {
           <h2 id="author-heading" class="font-heading">authors</h2>
 
           <div class="authors-row">
-            <span class="author">jmykkane</span> <span>\u00A0-\u00A0</span> <span class="author">frontend</span>
+              <span class="author">jmykkane</span> <span>\u00A0-\u00A0</span> <span class="author">frontend</span>
           </div>
 
           <div class="authors-row">
-            <span class="author">emajuri</span> <span>\u00A0-\u00A0</span> <span class="author">backend</span>
+              <span class="author">emajuri</span> <span>\u00A0-\u00A0</span> <span class="author">backend</span>
           </div>
 
           <div class="authors-row">
-            <span class="author">nona</span> <span>\u00A0-\u00A0</span> <span class="author">graphics</span>
+              <span class="author">nona</span> <span>\u00A0-\u00A0</span> <span class="author">graphics</span>
           </div>
 
           <div class="authors-row">
-            <span class="author">ekinnune</span> <span>\u00A0-\u00A0</span> <span class="author">gameplay</span>
+              <span class="author">ekinnune</span> <span>\u00A0-\u00A0</span> <span class="author">gameplay</span>
           </div>
 
           <div class="authors-row">
-            <span class="author">jon</span> <span>\u00A0-\u00A0</span> <span class="author">gameplay</span>
+              <span class="author">jon</span> <span>\u00A0-\u00A0</span> <span class="author">gameplay</span>
           </div>
           
         </div>

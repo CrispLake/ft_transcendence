@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:37:06 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/16 11:22:16 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/06/20 10:43:44 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,28 @@
 
 .nav__link {
   text-decoration: none;
-  color: black;
-  font-size: 2rem;
   padding-top: 0.5rem;
+  transition: 0.3s;
+  font-size: 2rem;
+  color: black;
+}
+
+.nav_button {
+  padding-right: 2rem;
+  align-items: center;
+  padding-left: 2rem;
+  display: flex;
+  height: 100%;
+}
+
+.nav_button:hover {
+  text-decoration: underline;
+  background-color: var(--pink);
 }
 
 .nav-links {
   width: 100%;
-  gap: 4rem;
+  height: calc(100% - 0.5rem);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -45,8 +59,7 @@
 
 
 
-
-
+/* PLAY BUTTON */
 .play-button-div {
   justify-content: end;
   align-items: center;
@@ -54,7 +67,6 @@
   height: 4rem;
   width: 33%;
 }
-
 .play-button {
   background-color: var(--orange);
   width: 12rem;
@@ -62,22 +74,18 @@
 
   transition: 0.3s;
 }
-
 path {
   stroke: var(--black);
 }
-
 .play-button:hover {
   cursor: pointer;
   background-color: var(--black);
 }
-
 .play-button:hover a,
 .play-button:hover path {
   color: var(--white);
   stroke: var(--white);
 }
-
 .play-button-text {
   justify-content: start;
   align-items: center;
@@ -86,16 +94,46 @@ path {
   width: 100%;
   padding-left: 1rem;
 }
-
 .icon-holder {
   align-items: center;
   display: flex;
   height: 100%;
   width: auto;
 }
-
 .play-button-icon {
   background: none;
   height: 50px;
   width: 50px;
+}
+
+
+
+/* PROFILE ICON */
+.profile-icon-div {
+  width: 64px;
+  height: 4rem;
+
+  transition: 0.3s;
+}
+.profile-icon-div:hover {
+  background-color: var(--yellow);
+  cursor: pointer;
+}
+.profile-icon-div svg {
+  transition: transform 0.15s;
+}
+.profile-icon-div:hover svg {
+  transform: scale(110%);
+}
+.profile-button-icon {
+  background: none;
+  height: 48px;
+  width: 48px;
+}
+.profile-button-holder {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  height: 100%;
+  width: 100%;
 }

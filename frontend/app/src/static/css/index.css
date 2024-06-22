@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 08:00:37 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/20 10:44:17 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/06/22 14:32:05 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,4 +86,16 @@ body {
 
   --bg-primary: rgb(255,255,255);
   --bg-secondary: rgb(239,237,238);
+}
+
+
+/* UTILITY CLASSES */
+.center {
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }

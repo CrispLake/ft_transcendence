@@ -6,9 +6,12 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:08:11 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/20 18:14:14 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/06/22 13:38:17 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+// NOTE: Each view that has event listeners will need their own version of
+// AddListeners() function and a list of those listeners
 
 // Each page will have own class exteninding this one with their own properties
 export default class {
@@ -16,11 +19,35 @@ export default class {
   constructor(params) {
     this.params = params; // parameters given to the class during creation
     this.listeners = false; // event listener functions to be added
+    this.auth = false; // if true, user needs to be authenticated
   }
 
   // Helper function to set title of the page
   setTitle(title) {
     document.title = title;
+  }
+
+  Authenticate() {
+    const key = localStorage.getItem('auth_token');
+    if (key) {
+      console.log('key WAS found');
+      return true;
+    } else {
+      console.log('key WAS NOT found');
+      return false;
+    }
+  }
+
+  CreateKey(token) {
+    localStorage.setItem('auth_token', token);
+  }
+
+  DeleteKey() {
+    localStorage.removeItem('auth_token');
+  }
+
+  GetKey() {
+    localStorage.getItem('auth_token');
   }
 
   // Helper function to return any html necessary for given view

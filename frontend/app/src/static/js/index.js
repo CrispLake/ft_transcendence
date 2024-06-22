@@ -6,11 +6,12 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 13:31:25 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/20 18:23:57 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/06/22 14:10:36 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import Profile from './views/Profile.js';
+import Login from './views/Login.js';
 import About from './views/About.js';
 import Home from './views/Home.js';
 
@@ -49,12 +50,12 @@ const router = async () => {
   const routes = [
     // { path: '/404', view: () => console.log('not found') },
     { path: '/', view: Home },
+    { path: '/login', view: Login },
     // { path: '/history', view: () => console.log('viewing history') },
     // { path: '/settings', view: () => console.log('viewing settings') },
     { path: '/profile', view: Profile },
-    { path: '/profile/:id', view: Profile },
+    // { path: '/profile/:id', view: Profile },
     { path: '/about', view: About },
-    // { path: '/login', view: Login },
     // { path: '/register', view: Register },
   ];
 
@@ -76,7 +77,21 @@ const router = async () => {
   };
 
   // Creating new instance of the view class
-  const view = new match.route.view(getParams(match));
+  let view = new match.route.view(getParams(match));
+
+  // Handle authentication if needed
+  // redirects to login if not authenticated
+  if (view.auth) {
+    if (!view.Authenticate()) {
+      console.log('not authenticated');
+      match = { route: routes[1], result: [location.pathname] };
+      view = new match.route.view(getParams(match));
+    }
+  }
+
+  // Injecting views HTML to the app
+  const app = document.querySelector('#app');
+  app.innerHTML = await view.getHtml();
 
   // If there are listeners, remove them
   if (event_listeners.length > 0) {
@@ -94,11 +109,7 @@ const router = async () => {
       event_listeners.push({type, func});
     });
   }
-
-  // Injecting views HTML to the app
-  const app = document.querySelector('#app');
-  app.innerHTML = await view.getHtml();
-};
+}
 
 // Makes "back" button go trough router
 window.addEventListener('popstate', router);

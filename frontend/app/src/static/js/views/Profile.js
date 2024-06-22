@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 09:22:19 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/20 11:41:52 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/06/22 13:24:16 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ export default class extends AbstractView {
   constructor(params) {
     super(params);
     this.setTitle('Profile');
+    this.auth = true;
   }
 
   async getHtml() {

@@ -23,6 +23,14 @@ import * as SETTINGS from './gameSetting.js';
 
 /*---- INITIALIZE ------------------------------------------------------------*/
 
+
+const lastBounce = {
+	wallLeft: false,
+	wallRight: false,
+	paddle1: false,
+	paddle2: false
+}
+
 RectAreaLightUniformsLib.init();
 const scene = new THREE.Scene();
 const arena = new Arena(scene);
@@ -294,14 +302,6 @@ function updateBoost()
         player2.increaseBoost();
     else
         player2.resetBoost();
-}
-
-
-const lastBounce = {
-	wallLeft: false,
-	wallRight: false,
-	paddle1: false,
-	paddle2: false
 }
 
 function resetBounces(bounces)

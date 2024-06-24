@@ -3,6 +3,29 @@ import * as COLOR from '../colors.js';
 import * as G from '../globals.js';
 import * as PongMath from '../math.js';
 
+const PENUMBRA = 0.1;
+const INTENSITY = 5;
+const ANGLE = 0.9;
+const QUARTER = Math.PI / 2; 
+
+class SpinLight {
+    constructor(color, angle, intensity, penumbra, position, targetPosition, scene) {
+        this.light = new THREE.SpotLight(color);
+        this.light.position.set(...position);
+        this.light.castShadow = true;
+        this.light.angle = angle;
+        this.light.intensity = intensity;
+        this.light.penumbra = penumbra;
+
+        this.target = new THREE.Object3D();
+        this.target.position.set(...targetPosition);
+        this.light.target = this.target;
+
+        scene.add(this.light);
+        scene.add(this.target);
+    }
+}
+
 export class Ball
 {
     constructor(scene, pos)
@@ -12,7 +35,7 @@ export class Ball
         this.material = new THREE.MeshBasicMaterial({color: COLOR.BALL});
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.box = new THREE.Box3();
-        this.light = new THREE.PointLight(COLOR.BALL, 1, 10, 0.5);
+        this.light = new THREE.PointLight(COLOR.BALL, 1, 0.1, 0);
         this.setPos(pos.x, pos.y, pos.z);
         this.light.position.copy(this.mesh.position);
         this.speed = G.initialBallSpeed;
@@ -23,35 +46,29 @@ export class Ball
         console.log("ballX = " + this.speedX);
         console.log("ballZ = " + this.speedZ);
 
-        // spinLight
-        this.spinLight = new THREE.SpotLight(COLOR.WALL);
-        this.spinLight.position.set(0, 0, 0);
-        this.spinLight.castShadow = true;
-        this.spinLight.angle = Math.PI / 4;
-        this.spinLight.intensity = 0.5;
-        // this.spinLight.penumbra = 0.01;
-        scene.add(this.spinLight);
-        this.spinLight2 = new THREE.SpotLight(COLOR.PADDLE);
-        this.spinLight2.position.set(0, 0, 0);
-        this.spinLight2.castShadow = true;
-        this.spinLight2.angle = Math.PI / 4;
-        this.spinLight2.intensity = 0.5;
-        // this.spinLight2.penumbra = 0.01;
-        scene.add(this.spinLight);
-        scene.add(this.spinLight2);
 
-        this.spinLightTarget = new THREE.Object3D();
-        this.spinLightTarget.position.set(10, -100, 10);
-        this.spinLightTarget2 = new THREE.Object3D();
-        this.spinLightTarget2.position.set(-10, -100, -10);
-        this.spinLight.target = this.spinLightTarget;
-        this.spinLight2.target = this.spinLightTarget2;
-        scene.add(this.spinLightTarget);
-        scene.add(this.spinLightTarget2);
-        this.spinRotationAngle = 10;
+        // spinLight
+        const positions = [
+            [0, -0.24, 0],
+            [0, -0.24, 0],
+            [0, -0.24, 0],
+            [0, -0.24, 0]
+        ];
+        const targetPositions = [
+            [1, -0.24, 0],
+            [0, -0.24, -1],
+            [0, -0.24, 1],
+            [-1, -0.24, 0]
+        ];
+        this.spinLights = [];
+        const colors = [COLOR.WALL, COLOR.PADDLE, COLOR.PADDLE, COLOR.WALL];
+        for (let i = 0; i < positions.length; i++) {
+            this.spinLights.push(new SpinLight(colors[i], ANGLE, INTENSITY, PENUMBRA, positions[i], targetPositions[i], scene));
+        }
         //----------
         this.spin = 0;
-
+        this.spinRotationAngle = 0;
+        
         this.addToScene(scene);
     }
 
@@ -81,37 +98,29 @@ export class Ball
     }
     move()
     {
-
+        // return ;
         // spinLight rotation
         this.spinLightRotationSpeed = PongMath.lerp(this.spin, -G.maxSpin, G.maxSpin, -G.maxBallLightRotation, G.maxBallLightRotation);
         this.spinRotationAngle += this.spinLightRotationSpeed;
-        if (this.spinRotationAngle > 360) {
-            this.spinRotationAngle -= 360;
+        if (this.spinRotationAngle > Math.PI * 2) {
+            this.spinRotationAngle -= Math.PI * 2;
         }
-        this.spinLightTarget.position.x = Math.sin(this.spinRotationAngle) * 360;
-        this.spinLightTarget.position.z = Math.cos(this.spinRotationAngle) * 360;        
-        this.spinLightTarget2.position.x = -(Math.sin(this.spinRotationAngle) * 360);
-        this.spinLightTarget2.position.z = -(Math.cos(this.spinRotationAngle) * 360);        
-
-        //---------
-
+        else if (this.spinRotationAngle < Math.PI * 2) {
+            this.spinRotationAngle += Math.PI * 2;
+        }
+        
         this.speedX = PongMath.deriveXspeed(this.speed, this.angle);
         this.speedZ = PongMath.deriveZspeed(this.speed, this.angle);
         this.mesh.position.x += this.speedX;
         this.mesh.position.z += this.speedZ;
         this.light.position.copy(this.mesh.position);
-
-        // spinLight position
-
-        this.spinLight.position.copy(this.mesh.position);
-        this.spinLight2.position.copy(this.mesh.position);
-        this.spinLight.position.y = 0;
-        this.spinLight2.position.y = 0;
-
-        // this.spinLight.position.y - 10;
-        // this.spinLight2.position.y - 10;
-        // this.spinLight.position.y += 1;
-        //----------
+        
+        for (let i = 0; i < this.spinLights.length; i++) {
+            this.spinLights[i].target.position.x = Math.sin(this.spinRotationAngle + (QUARTER * i)) * 360;
+            this.spinLights[i].target.position.z = Math.cos(this.spinRotationAngle + (QUARTER * i)) * 360;        
+            this.spinLights[i].light.position.copy(this.mesh.position);
+            this.spinLights[i].light.position.y = -0.24;
+        }
 
     }
 

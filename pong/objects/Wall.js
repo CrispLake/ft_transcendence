@@ -5,17 +5,17 @@ import * as PongMath from '../math.js';
 
 export class Wall
 {
-    constructor(x, y, z)
+    constructor(length, height, thickness, x, y, z)
     {
         // Wall
-        this.geometry = new THREE.BoxGeometry(G.arenaLength, G.wallHeight, G.wallThickness);
+        this.geometry = new THREE.BoxGeometry(length, height, thickness);
         this.material = new THREE.MeshStandardMaterial({color: COLOR.WALL, emissive: COLOR.WALL});
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.mesh.position.set(x, y, z);
         this.box = new THREE.Box3();
 
         // Light
-        this.light = new THREE.RectAreaLight(COLOR.WALL, G.wallLightIntensity, G.arenaLength, G.wallHeight);
+        this.light = new THREE.RectAreaLight(COLOR.WALL, G.wallLightIntensity, length, height);
         this.light.position.copy(this.mesh.position);
         this.light.lookAt(0, 0, 0);
 

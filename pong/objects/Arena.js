@@ -2,12 +2,19 @@ import * as THREE from 'three';
 import * as G from '../globals.js';
 import * as COLOR from '../colors.js';
 import { Wall } from './Wall.js';
+import { Text3D } from './Text3D.js';
 
 export class Arena
 {
-    constructor(scene)
+    constructor(scene, fontLoader, renderer, composer)
     {
         this.scene = scene;
+        this.fontLoader = fontLoader;
+        this.renderer = renderer;
+        this.composer = composer;
+
+        // ----PONG Text----
+        this.pongText = new Text3D(this.scene, 'PONG', new THREE.Vector3(0, 0, -10), 6, COLOR.PONG, fontLoader, renderer, composer);
 
         // ----Back Wall----
         this.backWallGeometry = new THREE.BoxGeometry(25, 15, 2);
@@ -22,8 +29,8 @@ export class Arena
         this.floor.position.set(0, -(G.wallHeight / 2 + G.floorThickness / 2), 0);
 
         // ----Side Walls----
-        this.leftWall = new Wall(0, 0, -(G.arenaWidth / 2 + G.wallThickness / 2));
-        this.rightWall = new Wall(0, 0, (G.arenaWidth / 2 + G.wallThickness / 2));
+        this.leftWall = new Wall(G.arenaLength, G.wallHeight, G.wallThickness, 0, 0, -(G.arenaWidth / 2 + G.wallThickness / 2));
+        this.rightWall = new Wall(G.arenaLength, G.wallHeight, G.wallThickness, 0, 0, (G.arenaWidth / 2 + G.wallThickness / 2));
         
         // ----General Light----
         this.ambientLight = new THREE.AmbientLight(COLOR.WHITE, 0.05);

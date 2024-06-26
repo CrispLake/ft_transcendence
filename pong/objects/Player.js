@@ -1,14 +1,16 @@
 import * as THREE from 'three';
 import * as COLOR from '../colors.js';
 import * as G from '../globals.js';
-import * as SETTINGS from '../gameSetting.js';
+// import * as SETTINGS from '../gameSetting.js';
 import * as PongMath from '../math.js';
 
 export class Player
 {
-    constructor(scene, pos, name)
+    constructor(scene, spin, pos, name)
     {
+        // this.game = game;
         this.scene = scene;
+        this.spin = spin;
         this.name = name;
         this.sign = (pos.x > 0) ? 1 : -1;
         this.color = (this.sign == -1) ? COLOR.PADDLE1 : COLOR.PADDLE2;
@@ -31,15 +33,15 @@ export class Player
         this.boostOffset = G.boostOffset * this.sign;
         this.setPos(pos.x, pos.y, pos.z);
         this.light.lookAt(0, 0, 0);
-        this.addToScene(scene);
+        this.addToScene();
         this.clock = new THREE.Clock();
         this.effect = false;
     }
 
-    addToScene(scene)
+    addToScene()
     {
-        scene.add(this.paddle);
-        scene.add(this.light);
+        this.scene.add(this.paddle);
+        this.scene.add(this.light);
         // scene.add(this.boostMeter);
     }
 
@@ -54,7 +56,11 @@ export class Player
     {
         this.paddle.position.z += movement;
         if (this.paddle.position.z < -(G.arenaWidth / 2) + G.paddleLength / 2)
+        {
             this.paddle.position.z = -(G.arenaWidth / 2) + G.paddleLength / 2;
+            console.log("Paddle hit left wall");
+        }
+            // this.paddle.position.z = -(G.arenaWidth / 2) + G.paddleLength / 2;
         if (this.paddle.position.z > (G.arenaWidth / 2) - G.paddleLength / 2)
             this.paddle.position.z = (G.arenaWidth / 2) - G.paddleLength / 2;
         this.light.position.copy(this.paddle.position);
@@ -147,7 +153,7 @@ export class Player
             this.move(-this.speed);
         if (this.moveRight)
             this.move(this.speed);
-        if (SETTINGS.spin == true)
+        if (this.spin == true)
             this.updateBoost();
     }
 };

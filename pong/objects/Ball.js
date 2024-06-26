@@ -5,7 +5,7 @@ import * as PongMath from '../math.js';
 
 export class Ball
 {
-    constructor(scene, pos)
+    constructor(scene, pos, spinSetting)
     {
         this.radius = G.initialBallRadius;
         this.geometry = new THREE.SphereGeometry(G.initialBallRadius, 32, 16);
@@ -20,6 +20,7 @@ export class Ball
         this.speedX = PongMath.deriveXspeed(this.speed, this.angle);
         this.speedZ = PongMath.deriveZspeed(this.speed, this.angle);
         this.spin = 0;
+        this.spinSetting = spinSetting;
         this.addToScene(scene);
     }
 
@@ -61,6 +62,14 @@ export class Ball
     {
         this.angle = PongMath.vector2DToAngle(this.speedX, this.speedZ);
     }
+        
+    adjustAngle(paddle)
+    {
+        const incomingAngle = PongMath.vector2DToAngle(this.speedX, this.speedZ);
+        let impactPoint = this.mesh.position.z - paddle.position.z;
+        let normalizedImpact = impactPoint / (G.paddleLength / 2);
+        this.angle = PongMath.lerp(normalizedImpact, -1, 1, G.minAngle, G.maxAngle);
+    }
 
     addSpin(power)
     {
@@ -72,6 +81,20 @@ export class Ball
             this.spin = G.maxSpin;
         else if (this.spin < -G.maxSpin)
             this.spin = -G.maxSpin;
+    }
+
+    adjustSpin(player)
+    {
+        if (this.spinSetting == false) return ;
+
+        if (!player.moveLeft && !player.moveRight)
+            this.reduceSpin();
+        else
+        {
+            let spinPower = ((player.moveLeft) ? 1 : -1) * player.sign * player.boostAmount;
+            spinPower = PongMath.lerp(spinPower, -G.maxBoost, G.maxBoost, -G.maxSpin, G.maxSpin);
+            this.addSpin(spinPower);
+        }
     }
 
     reduceSpin()

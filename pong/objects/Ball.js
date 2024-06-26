@@ -61,7 +61,7 @@ export class Ball
             [-1, -0.24, 0]
         ];
         this.spinLights = [];
-        const colors = [COLOR.WALL, COLOR.PADDLE, COLOR.PADDLE, COLOR.WALL];
+        const colors = [COLOR.WALL, COLOR.PADDLE, COLOR.WALL, COLOR.PADDLE];
         for (let i = 0; i < positions.length; i++) {
             this.spinLights.push(new SpinLight(colors[i], ANGLE, INTENSITY, PENUMBRA, positions[i], targetPositions[i], scene));
         }

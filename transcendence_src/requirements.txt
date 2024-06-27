@@ -1,2 +1,6 @@
 Django
 psycopg2-binary
+Pillow
+djangorestframework
+markdown
+django-filter

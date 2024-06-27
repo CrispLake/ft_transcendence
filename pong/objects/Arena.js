@@ -6,15 +6,26 @@ import { Text3D } from './Text3D.js';
 
 export class Arena
 {
-    constructor(scene, fontLoader, renderer, composer)
+    constructor(scene, fontLoader, renderer, composer, camera)
     {
+        console.log("Creating Arena...");
         this.scene = scene;
         this.fontLoader = fontLoader;
         this.renderer = renderer;
         this.composer = composer;
+        this.camera = camera;
 
         // ----PONG Text----
-        this.pongText = new Text3D(this.scene, 'PONG', new THREE.Vector3(0, 0, -10), 6, COLOR.PONG, fontLoader, renderer, composer);
+        this.pongText = new Text3D(
+            this.scene,
+            'PONG',
+            new THREE.Vector3(0, 0, -10),
+            6,
+            COLOR.PONG,
+            this.fontLoader,
+            this.renderer,
+            this.composer,
+            this.camera);
 
         // ----Back Wall----
         this.backWallGeometry = new THREE.BoxGeometry(25, 15, 2);

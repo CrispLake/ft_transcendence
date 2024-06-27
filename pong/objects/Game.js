@@ -33,9 +33,11 @@ export class Game
 		this.camera = this.createCamera();
 		this.renderer = this.createRenderer();
 		this.composer = new EffectComposer(this.renderer);
-		this.arena = this.createArena(this.scene, this.fontLoader, this.renderer, this.composer);
+		// this.arena = this.createArena(this.scene, this.fontLoader, this.renderer, this.composer, this.camera);
+		this.createArena();
 		this.update = this.update.bind(this);
 		console.log("Game Object Created!");
+
 		this.update();
 	}
 
@@ -70,10 +72,15 @@ export class Game
 
 	createArena()
 	{
-		if (this.settings.multiMode == false)
-			return (new Arena(this.scene, this.composer));
-		else
-			return (new Arena4Player(this.scene));
+		// if (this.settings.multiMode == false)
+			this.arena = new Arena(
+				this.scene,
+				this.fontLoader,
+				this.renderer,
+				this.composer,
+				this.camera);
+		// else
+		// 	this.arena = new Arena4Player(this.scene);
 	}
 
 	createPlayers()
@@ -138,39 +145,27 @@ export class Game
 
 	update()
 	{
-		console.log("Updating Game...");
 		setTimeout(() => { requestAnimationFrame(this.update); }, 1000 / G.fps);
 		this.players["p1"].update();
-		if (this.settings.multiMode == false)
-			this.players["p2"].update();
-		else
+		this.players["p2"].update();
+		if (this.settings.multiMode == true)
 		{
-			this.players["p2"].update();
 			this.players["p3"].update();
 			this.players["p4"].update();
 		}
-		// this.ball.update();
 		this.updateBallPosition();
-		if (this.composer)
-		{
-			console.log("Rendering with composer");
-			this.composer.render();
-		}
-		else
-		{
-			console.log("Rendering with renderer");
-			this.renderer.render(this.scene, this.camera);
-		}
+		this.arena.update();
 		if (this.goal())
-		{
-			if (this.gameEnded())
-				this.resetGame();
-			else
+			{
+				if (this.gameEnded())
+					this.resetGame();
+				else
 				this.updateScore();
 		}
-		// this.renderer.autoClear = false;
-		// this.renderer.clearDepth();
-		// this.renderer.render(this.scene2D, this.camera2D);
+		this.composer.render();
+		this.renderer.autoClear = false;
+    	this.renderer.clearDepth();
+		this.renderer.render(this.scene2D, this.camera2D);
 	}
 
 	updateBallPosition()

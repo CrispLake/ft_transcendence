@@ -10,21 +10,28 @@ import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
 
 export class Text3D
 {
-    constructor(scene, text, position, size, color, renderer, composer)
+	constructor(scene, text, position, size, color, fontLoader, renderer, composer, camera)
     {
-        // this.scene = scene;
-        // this.text = text;
-        // this.position = position;
-        // this.size = size;
-        // this.color = color;
-		// this.renderer = renderer;
-		// this.composer = composer;
-	
-		const fontLoader = new FontLoader();
-		let mesh;
-		fontLoader.load('./resources/font.json', function (font)
-		{
-			const textGeometry = new TextGeometry( 'PONG', 
+		console.log("Creating 3DText...")
+        this.scene = scene;
+        this.text = text;
+        this.position = position;
+        this.size = size;
+        this.color = color;
+
+		this.fontLoader = fontLoader;
+		this.renderer = renderer;
+		this.composer = composer;
+		this.camera = camera;
+		
+		this.create3DTextMesh();
+		console.log("3DText created!")
+    }
+
+	create3DTextMesh()
+	{
+		this.fontLoader.load('./resources/font.json', (font) => {
+			const textGeometry = new TextGeometry(this.text, 
 			{
 				font: font,
 				size: 6,
@@ -37,29 +44,37 @@ export class Text3D
 				bevelOffset: 0,
 				bevelSegments: 3
 			});
-			const textMaterial = new THREE.MeshBasicMaterial({color: COLOR.PONG});
-			mesh = new THREE.Mesh(textGeometry, textMaterial);
+			const textMaterial = new THREE.MeshBasicMaterial({color: this.color});
+			const mesh = new THREE.Mesh(textGeometry, textMaterial);
 			textGeometry.computeBoundingBox();
 			const boundingBox = textGeometry.boundingBox;
 			const textWidth = boundingBox.max.x - boundingBox.min.x;
-			mesh.position.x = -textWidth / 2;
-			scene.add(mesh);
-	
-			composer = new EffectComposer(renderer);
-			composer.addPass(new RenderPass(scene, camera));
-	
+			mesh.position.set(this.position.x - textWidth / 2, this.position.y, this.position.z);
+			this.scene.add(mesh);
+
+			this.composer.addPass(new RenderPass(this.scene, this.camera));
+			
 			// Create the OutlinePass
-			const outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera, [mesh]);
+			const outlinePass = new OutlinePass(
+				new THREE.Vector2(window.innerWidth, window.innerHeight),
+				this.scene,
+				this.camera,
+				[mesh]);
 			outlinePass.edgeStrength = 10; // Increase to make the edges glow more
 			outlinePass.edgeGlow = 1; // Increase to make the glow wider
-			outlinePass.visibleEdgeColor.set(COLOR.PONG_AURA); // Neon color
-			outlinePass.hiddenEdgeColor.set(COLOR.PONG_AURA); // Neon color
-			composer.addPass(outlinePass);
-	
+			outlinePass.visibleEdgeColor.set(COLOR.PONG_AURA);
+			outlinePass.hiddenEdgeColor.set(COLOR.PONG_AURA);
+			this.composer.addPass(outlinePass);
+			
 			// Add FXAA for better smoothing of edges
 			const effectFXAA = new ShaderPass(FXAAShader);
 			effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
-			composer.addPass(effectFXAA);
+			this.composer.addPass(effectFXAA);
 		});
-    }
+	}
+
+	render()
+	{
+		this.composer.render();
+	}
 }

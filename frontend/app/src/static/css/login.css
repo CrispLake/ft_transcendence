@@ -1,4 +1,130 @@
+.login-page {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  justify-content: start;
+  align-items: center;
+  display: flex;
+  min-height: 1000px;
+  min-width: 1000px;
+}
+
+.login-right {
+  position: absolute;
+  height: 750px;
+  width: 750px;
+
+  bottom: 10%;
+  right: 20.8%;
+  z-index: 1;
+
+  background-color: var(--pink);
+  transition: ease-in-out 0.1s;
+}
+
+.login-form {
+  position: absolute;
+  height: 50%;
+  left: 35%;
+  top: 25%;
+  padding-left: 8rem;
+  padding-right: 8rem;
+
+  z-index: 10;
+  background-color: var(--brown);
+  transition: ease-in-out 0.1s;
+}
+
+.login-left {
+  position: absolute;
+  height: 750px;
+  width: 750px;
+
+  top: 10%;
+  left: 20%;
+  z-index: 1;
+
+  transition: ease-in-out 0.1s;
+  background-color: var(--blue);
+}
+
+.login-bottom-right {
+  position: absolute;
+  height: 450px;
+  width: 450px;
+
+  top: 49%;
+  left: 30%;
+  z-index: 0;
+
+  transform: rotate(41deg);
+  transition: ease-in-out 0.1s;
+  background-color: var(--purple);
+}
+
+.login-top-right {
+  position: absolute;
+  height: 450px;
+  width: 750px;
+
+  top: 19%;
+  left: 40%;
+  z-index: 0;
+
+  transform: rotate(15deg);
+  transition: ease-in-out 0.1s;
+  background-color: var(--green);
+}
+
+.login-left:hover,
+.login-right:hover,
+.login-form:hover,
+.login-bottom-right:hover,
+.login-top-right:hover {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  cursor: pointer;
+}
+
 .login-heading {
   font-size: 98px !important;
   margin-bottom: 2rem;
+}
+
+.login-submit-button {
+  background-color: var(--black);
+  margin-top: 2rem;
+  color: var(--white);
+  cursor: pointer;
+  
+  width: 100%;
+
+  transition: 0.2s;
+
+  border: none;
+}
+
+#login-button-text{
+  align-items: start;
+  position: relative;
+  display: flex;
+  width: 100%;
+  left: 2.25rem;
+}
+
+.text-holder {
+  justify-content: center;
+  display: flex;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.login-submit-button:hover {
+  background-color: var(--yellow);
+  color: var(--black);
+}
+
+.login-input {
+  border: 3px solid var(--bg-secondary);
+  background-color: var(--bg-secondary);
 }

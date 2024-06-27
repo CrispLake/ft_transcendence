@@ -6,15 +6,19 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 09:22:19 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/20 20:07:35 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/06/27 08:39:19 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import AbstractView from "./AbstractView.js";
 
-
-
 export default class extends AbstractView {
+  
+  constructor(params) {
+    super(params);
+    this.setTitle('About');
+    this.listeners = true;
+  }
 
   // Suffles colors between author spans
   async Suffle() {
@@ -44,12 +48,8 @@ export default class extends AbstractView {
     document.addEventListener('click', this.Suffle);
   }
 
-  constructor(params) {
-    super(params);
-    this.setTitle('About');
-    this.listeners = [
-      { type: 'click', func: this.Suffle }
-    ];
+  RemoveListeners() {
+    document.removeEventListener('click', this.Suffle);
   }
 
   async getHtml() {

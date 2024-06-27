@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 08:00:37 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/22 14:32:05 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/06/27 07:01:30 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,9 @@ body {
   --yellow: rgb(255,221,1);
   --orange: rgb(238,120,1);
   --blue: rgb(191,238,255);
+  --brown: rgb(215,167,117);
+  --green: rgb(110,181,11);
+  --purple: rgb(184,93,152);
 
   --white: rgb(255,255,255);
   --black: rgb(0,0,0);
@@ -89,13 +92,13 @@ body {
 }
 
 
-/* UTILITY CLASSES */
-.center {
-  height: 100%;
-  width: 100%;
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+.error-message-div {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  background-color: rgb(237,67,55);
+  margin-top: 2rem;
+  height: 80px;
+  width: 100%;
+  
+  display: none;
 }

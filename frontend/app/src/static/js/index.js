@@ -6,9 +6,12 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 13:31:25 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/22 14:10:36 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/06/27 08:37:48 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+// Error pages
+import InternalError from './views/500.js';
 
 import Profile from './views/Profile.js';
 import Login from './views/Login.js';
@@ -16,7 +19,7 @@ import About from './views/About.js';
 import Home from './views/Home.js';
 
 // List of current event listeners
-const event_listeners = new Array();
+let views_memory = new Array();
 
 // No idea of this regeex lol
 const PathToRegex = path => new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
@@ -33,13 +36,18 @@ const getParams = (match) => {
 
 // Makes back and forward arrows work in browser 
 const navigateTo = (url) => {
+  console.log('navigating: ', url);
   history.pushState(null, null, url);
   router();
 };
 
 // All links or buttons that change content HAS to have 'data-link' attribute
 const navigationEventHandler = (event) => {
-  if (event.target.closest('[data-link]')) {
+  if (event.type === 'navigate') {
+    event.preventDefault();
+    navigateTo(event.detail.href);
+  }
+  else if (event.target.closest('[data-link]')) {
     event.preventDefault();
     navigateTo(event.target.href);
   }
@@ -51,6 +59,7 @@ const router = async () => {
     // { path: '/404', view: () => console.log('not found') },
     { path: '/', view: Home },
     { path: '/login', view: Login },
+    { path: '/500', view: InternalError },
     // { path: '/history', view: () => console.log('viewing history') },
     // { path: '/settings', view: () => console.log('viewing settings') },
     { path: '/profile', view: Profile },
@@ -58,6 +67,17 @@ const router = async () => {
     { path: '/about', view: About },
     // { path: '/register', view: Register },
   ];
+
+  // If there are listeners, remove them
+  if (views_memory.length > 0) {
+    console.log('removing listeners');
+    for (let i = views_memory.length - 1; i >= 0; i--) {
+      const view = views_memory[i];
+      console.log('view ', view);
+      view.RemoveListeners();
+      views_memory.splice(i, 1);
+    }
+  }
 
   // Check route list against browser address path
   // TODO: change directly to find if possible
@@ -84,8 +104,8 @@ const router = async () => {
   if (view.auth) {
     if (!view.Authenticate()) {
       console.log('not authenticated');
-      match = { route: routes[1], result: [location.pathname] };
-      view = new match.route.view(getParams(match));
+      view.Redirect('/login');
+      return;
     }
   }
 
@@ -93,21 +113,10 @@ const router = async () => {
   const app = document.querySelector('#app');
   app.innerHTML = await view.getHtml();
 
-  // If there are listeners, remove them
-  if (event_listeners.length > 0) {
-    for (let i = event_listeners.length - 1; i >= 0; i--) {
-      const {type, func} = event_listeners[i];
-      document.removeEventListener(type, func);
-      event_listeners.splice(i, 1);
-    }
-  }
-
   // Adding eventlisteners from view
   if (view.listeners !== false) {
     view.AddListeners();
-    view.listeners.map(({type, func}) => {
-      event_listeners.push({type, func});
-    });
+    views_memory.push(view);
   }
 }
 
@@ -118,6 +127,7 @@ window.addEventListener('popstate', router);
 document.addEventListener('DOMContentLoaded', () => {
   // Adding event listener for all the links in the page
   document.body.addEventListener('click', navigationEventHandler);
+  document.addEventListener('navigate', navigationEventHandler);
   
   // Initial run of the router to load home page
   router();

@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:37:06 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/22 14:10:12 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/06/22 17:43:50 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,16 +110,9 @@ path {
 
 /* PROFILE ICON */
 .profile-icon-div {
-  pointer-events: hover;
+  pointer-events: none;
   height: 4rem; 
   width: 64px;
-  z-index: 0;
-
-  transition: 0.3s;
-}
-.profile-icon-div:hover {
-  background-color: var(--yellow);
-  cursor: pointer;
 }
 .profile-icon-div svg {
   transition: transform 0.15s;
@@ -132,7 +125,6 @@ path {
   background: none;
   height: 48px;
   width: 48px;
-  z-index: 0;
 }
 .profile-button-holder {
   justify-content: center;
@@ -140,8 +132,11 @@ path {
   display: flex;
   height: 100%;
   width: 100%;
-  z-index: 0;
 }
 .profile-link {
-  z-index: 1;
+  transition: 0.3s;
+}
+.profile-link:hover {
+  background-color: var(--yellow);
+  cursor: pointer;
 }

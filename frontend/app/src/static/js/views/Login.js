@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/22 13:36:52 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/27 08:54:27 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/06/27 09:51:58 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ export default class extends AbstractView {
     this.suffle_time = 30;
     this.cycles = 2;
 
-    this.loginURL = 'https://localhost:8000/login';
+    this.loginURL = 'http://localhost:8000/login/login';
 
     this.LoginHandler = this.LoginHandler.bind(this);
     this.StartScramble = this.StartScramble.bind(this);
@@ -79,8 +79,14 @@ export default class extends AbstractView {
     const formData = new FormData(formElement);
     const payload = Object.fromEntries(formData);
 
-    const response = await axios.post(this.loginURL, payload);
-    console.log(response);
+    try {
+      const response = await axios.post(
+        this.loginURL,
+        payload
+      );
+    } catch(error) {
+      console.log(`Error logging in ${error}`);
+    }
   }
 
   AddListeners() {

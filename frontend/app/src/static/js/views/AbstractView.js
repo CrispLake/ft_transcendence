@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:08:11 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/27 08:32:49 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/06/27 12:48:03 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,17 +48,6 @@ export default class {
 
   GetKey() {
     localStorage.getItem('auth_token');
-  }
-
-  // content needs to be valid HTML to be injected
-  async AddElement(elementID, content) {
-    const element = document.findElementById(elementID);
-    if (!element) {
-      console.log(`Cannot find element with ID: ${elementID}`);
-      return;
-    }
-
-    element.innerHTML = content;
   }
 
   // AddListeners()

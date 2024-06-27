@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 08:00:37 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/27 07:01:30 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/06/27 12:43:29 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,16 +89,4 @@ body {
 
   --bg-primary: rgb(255,255,255);
   --bg-secondary: rgb(239,237,238);
-}
-
-
-
-.error-message-div {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  background-color: rgb(237,67,55);
-  margin-top: 2rem;
-  height: 80px;
-  width: 100%;
-  
-  display: none;
 }

@@ -6,10 +6,11 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/22 13:36:52 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/27 09:51:58 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/06/27 12:56:29 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+import { Notification } from "../notification.js";
 import AbstractView from "./AbstractView.js";
 
 export default class extends AbstractView {
@@ -84,8 +85,9 @@ export default class extends AbstractView {
         this.loginURL,
         payload
       );
+      this.Redirect(`/${event.target.href}`);
     } catch(error) {
-      console.log(`Error logging in ${error}`);
+      Notification('error-message', '<h3>Invalid credentials!</h3>', 1);
     }
   }
 

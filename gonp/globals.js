@@ -1,5 +1,19 @@
 import * as PongMath from './math.js';
 
+// Paddle
+export const paddleLightIntensity = 1;
+export const paddleLength = 1;
+export const paddleHeight = 1;
+export const paddleThickness = 1;
+export const initialPaddleSpeed = 0.2;
+
+export const boostMeterWidth = paddleHeight;
+export const boostMeterThickness = 0.1;
+export const boostMeterLength = paddleLength;
+export const maxBoost = 1;
+export const boostIncrement = 0.01;
+export const boostOffset = 1;
+
 // Arena
 export const laneLength = 25;
 export const laneHeight = 0.5;
@@ -14,20 +28,7 @@ export const wallThickness = 0.2;
 export const floorThickness = 0.2;
 export const floorWidth = arenaWidth + floorThickness * 2;
 export const wallLightIntensity = 1;
-
-// Paddle
-export const paddleLightIntensity = 1;
-export const paddleLength = laneThickness;
-export const paddleHeight = laneThickness;
-export const paddleThickness = laneThickness;
-export const initialPaddleSpeed = 0.2;
-
-export const boostMeterWidth = paddleHeight;
-export const boostMeterThickness = 0.1;
-export const boostMeterLength = paddleLength;
-export const maxBoost = 1;
-export const boostIncrement = 0.01;
-export const boostOffset = 1;
+export const laneY = (- (paddleThickness)) + laneHeight / 2;
 
 // Player
 export const p1StartPos = {
@@ -48,8 +49,8 @@ export const lanePositions = [
 ]
 
 // Pushers
-export const pusherSpeed = 0.2;
-
+export const pusherSpeed = 0.1;
+export const pusherMinSize = 0.2;
 // Ball
 export const initialBallRadius = 0.2;
 export const initialBallSpeed = 0.2;

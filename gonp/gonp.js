@@ -135,7 +135,57 @@ function resetGame(player1, player2)
 
 /*---- LOOP ------------------------------------------------------------------*/
 
+function setPushersColliding(colliding)
+{
+    for (let i = 0; i < player1.pushers.length; i++) {
+        player1.pushers[i].colliding = colliding;
+    }
+    for (let i = 0; i < player2.pushers.length; i++) {
+        player2.pushers[i].colliding = colliding;
+    }
+}
+
+function pushersLogic()
+{
+    setPushersColliding(false);
+    for (let i = 0; i < player1.pushers.length; i++) {
+        const obj1 = player1.pushers[i];
+        const box1 = obj1.box;
+
+        for (let j = 0; j < player2.pushers.length; j++) {
+            const obj2 = player2.pushers[j];
+            const box2 = obj2.box;
+
+            if (box1.intersectsBox(box2)) {
+                const overlapX = Math.min(box1.max.x, box2.max.x) - Math.max(box1.min.x, box2.min.x);
+                let mtv = new THREE.Vector3(overlapX, 0, 0);
+                if (obj1.colliding == false)
+                    obj1.mesh.position.x -= mtv.x / 2 - 0.005;
+                if (obj2.colliding == false)
+                    obj2.mesh.position.x += mtv.x / 2 - 0.005;
+                console.log("collision");
+                obj1.downSize();
+                obj2.downSize();
+                obj1.colliding = true;
+                obj2.colliding = true;
+                obj1.updateBoundingBox();
+                obj2.updateBoundingBox();
+            }
+        }
+    }
+    movePushers();
+}
+
 // ----Update and render----
+function movePushers() {
+    for (let i = 0; i < player1.pushers.length; i++) {
+        player1.movePusher(player1.pushers[i])
+    }
+    for (let i = 0; i < player2.pushers.length; i++) {
+        player2.movePusher(player2.pushers[i])
+    }
+}
+
 function update()
 {
     setTimeout(() => { requestAnimationFrame(update); }, 1000 / G.fps);
@@ -150,28 +200,30 @@ function update()
     {
         renderer.render(scene, camera);
     }
-    if (goal())
-    {
-        if (gameEnded(player1.score, player2.score))
-        {
-            let winner;
-            let loser;
-            if (player1.score >= G.winningScore)
-            {
-                winner = player1.name;
-                loser = player2.name;
-            }
-            else
-            {
-                winner = player2.name;
-                loser = player1.name;
-            }
-            // sendGameResults(winner, loser);
-            resetGame(player1, player2);
-        }
-        // console.log("Score = " + player1.score + " - " + player2.score);
-        updateScore(player1.score, player2.score);
-    }
+    pushersLogic();
+
+    // if (goal())
+    // {
+    //     if (gameEnded(player1.score, player2.score))
+    //     {
+    //         let winner;
+    //         let loser;
+    //         if (player1.score >= G.winningScore)
+    //         {
+    //             winner = player1.name;
+    //             loser = player2.name;
+    //         }
+    //         else
+    //         {
+    //             winner = player2.name;
+    //             loser = player1.name;
+    //         }
+    //         // sendGameResults(winner, loser);
+    //         resetGame(player1, player2);
+    //     }
+    //     // console.log("Score = " + player1.score + " - " + player2.score);
+    //     updateScore(player1.score, player2.score);
+    // }
     // Render the 2D scene
     renderer.autoClear = false;
     renderer.clearDepth();

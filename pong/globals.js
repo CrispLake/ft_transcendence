@@ -59,9 +59,19 @@ export const winningScore = 3;
 export const fps = 60;
 
 // 4 Player
-export const arenaWidth4Player = 30;
+export const arenaWidth4Player = 25;
 export const wallLength4Player = 5;
 export const p1StartPos4Player = new THREE.Vector3(-(arenaWidth4Player / 2 - paddleThickness / 2), 0, 0);
 export const p2StartPos4Player = new THREE.Vector3(arenaWidth4Player / 2 - paddleThickness / 2, 0, 0);
 export const p3StartPos4Player = new THREE.Vector3(0, 0, -(arenaWidth4Player / 2 - paddleThickness / 2));
 export const p4StartPos4Player = new THREE.Vector3(0, 0, arenaWidth4Player / 2 - paddleThickness / 2);
+export const startPos2P = {
+    p1: new THREE.Vector3(-(arenaLength / 2 - paddleThickness / 2), 0, 0),
+    p2: new THREE.Vector3(arenaLength / 2 - paddleThickness / 2, 0, 0)
+}
+export const startPos4P = {
+    p1: new THREE.Vector3(-(arenaWidth4Player / 2 - paddleThickness / 2), 0, 0),
+    p2: new THREE.Vector3(arenaWidth4Player / 2 - paddleThickness / 2, 0, 0),
+    p3: new THREE.Vector3(0, 0, -(arenaWidth4Player / 2 - paddleThickness / 2)),
+    p4: new THREE.Vector3(0, 0, arenaWidth4Player / 2 - paddleThickness / 2)
+}

@@ -6,13 +6,16 @@ import * as PongMath from '../math.js';
 
 export class Player
 {
-    constructor(scene, spin, pos, name)
+    constructor(scene, settings, playerNum, name)
     {
-        // this.game = game;
         this.scene = scene;
-        this.spin = spin;
+        this.settings = settings;
+        this.spin = this.settings.spin;
+        this.playerNum = playerNum;
         this.name = name;
-        this.sign = (pos.x > 0) ? 1 : -1;
+
+        this.setStartPos();
+        this.sign = (this.startPos.x > 0) ? 1 : -1;
         this.color = (this.sign == -1) ? COLOR.PADDLE1 : COLOR.PADDLE2;
         this.colorLight = (this.sign == -1) ? COLOR.PADDLE1_LIGHT : COLOR.PADDLE2_LIGHT;
         this.geometry = new THREE.BoxGeometry(G.paddleThickness, G.wallHeight, G.paddleLength);
@@ -32,7 +35,7 @@ export class Player
         this.boostAmount = 0;
         this.speed = G.initialPaddleSpeed;
         this.boostOffset = G.boostOffset * this.sign;
-        this.setPos(pos.x, pos.y, pos.z);
+        this.setPos(this.startPos.x, this.startPos.y, this.startPos.z);
         this.light.lookAt(0, 0, 0);
         this.addToScene();
         this.clockLight = new THREE.Clock();
@@ -169,6 +172,28 @@ export class Player
         this.scene.add(this.light);
     }
 
+    setStartPos()
+    {
+        if (this.settings.multiMode)
+        {
+            if (this.playerNum == 1)
+                this.startPos = G.startPos4P.p1;
+            else if (this.playerNum == 2)
+                this.startPos = G.startPos4P.p2;
+            else if (this.playerNum == 3)
+                this.startPos = G.startPos4P.p3;
+            else if (this.playerNum == 4)
+                this.startPos = G.startPos4P.p4;
+        }
+        else
+        {
+            if (this.playerNum == 1)
+                this.startPos = G.startPos2P.p1;
+            else if (this.playerNum == 2)
+                this.startPos = G.startPos2P.p2;
+        }
+    }
+
     setPos(x, y, z)
     {
         this.paddle.position.set(x, y, z);
@@ -189,7 +214,7 @@ export class Player
 
     reset()
     {
-        this.setPos((G.arenaLength / 2 - G.paddleThickness / 2) * this.sign, 0, 0);
+        this.setPos(this.startPos.x, this.startPos.y, this.startPos.z);
         this.boostAmount = 0;
         this.updateBoostMeter();
     }

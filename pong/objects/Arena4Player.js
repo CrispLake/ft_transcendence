@@ -2,28 +2,40 @@ import * as THREE from 'three';
 import * as G from '../globals.js';
 import * as COLOR from '../colors.js';
 import { Wall } from './Wall.js';
+import { Text3D } from './Text3D.js';
 
 export class Arena4Player
 {
-    constructor(scene)
+    constructor(scene, fontLoader, renderer, composer, camera)
     {
+        console.log("Creating Multiplayer Arena...");
         this.scene = scene;
+        this.fontLoader = fontLoader;
+        this.renderer = renderer;
+        this.composer = composer;
+        this.camera = camera;
 
-        // ----Back Wall----
-        this.backWallGeometry = new THREE.BoxGeometry(25, 15, 2);
-        this.backWallMeshMaterial = new THREE.MeshStandardMaterial({color: 0xffffff, emissive: COLOR.BACKWALL});
-        this.backWall = new THREE.Mesh(this.backWallGeometry, this.backWallMeshMaterial);
-        this.backWall.position.set(0, 0, -10.5);
+        // ----PONG Text----
+        this.pongText = new Text3D(
+            this.scene,
+            'PONG',
+            new THREE.Vector3(0, 0, -(G.arenaWidth4Player / 2 + 3)),
+            6,
+            COLOR.PONG,
+            this.fontLoader,
+            this.renderer,
+            this.composer,
+            this.camera);
         
         // ----Floor----
-        this.floorGeometry = new THREE.BoxGeometry(G.arenaLength, G.floorThickness, G.floorLength);
+        this.floorGeometry = new THREE.BoxGeometry(G.arenaWidth4Player, G.floorThickness, G.arenaWidth4Player);
         this.floorMeshMaterial = new THREE.MeshStandardMaterial({color: 0xffffff, emissive: COLOR.FLOOR, wireframe: false});
         this.floor = new THREE.Mesh(this.floorGeometry, this.floorMeshMaterial);
         this.floor.position.set(0, -(G.wallHeight / 2 + G.floorThickness / 2), 0);
 
         // ----Side Walls----
-        const distFromCenter = G.arenaSize4Player / 2 + G.wallThickness / 2;
-        const wallOffset = G.arenaSize4Player / 2 - G.wallLength4Player / 2;
+        const distFromCenter = G.arenaWidth4Player / 2 + G.wallThickness / 2;
+        const wallOffset = G.arenaWidth4Player / 2 - G.wallLength4Player / 2;
         this.walls = [];
         this.walls["wallLeftUp"] = new Wall(G.wallLength4Player, G.wallHeight, G.wallThickness, -distFromCenter, 0, -wallOffset);
         this.walls["wallLeftDown"] = new Wall(G.wallLength4Player, G.wallHeight, G.wallThickness, -distFromCenter, 0, wallOffset);
@@ -33,14 +45,20 @@ export class Arena4Player
         this.walls["wallTopRight"] = new Wall(G.wallLength4Player, G.wallHeight, G.wallThickness, wallOffset, 0, -distFromCenter);
         this.walls["wallBottomLeft"] = new Wall(G.wallLength4Player, G.wallHeight, G.wallThickness, -wallOffset, 0, distFromCenter);
         this.walls["wallBottomRight"] = new Wall(G.wallLength4Player, G.wallHeight, G.wallThickness, wallOffset, 0, distFromCenter);
-        // this.wallLeftUp = new Wall(G.wallLength4Player, G.wallHeight, G.wallThickness, -distFromCenter, 0, -wallOffset);
-        // this.wallLeftDown = new Wall(G.wallLength4Player, G.wallHeight, G.wallThickness, -distFromCenter, 0, wallOffset);
-        // this.wallRightUp = new Wall(G.wallLength4Player, G.wallHeight, G.wallThickness, distFromCenter, 0, -wallOffset);
-        // this.wallRightDown = new Wall(G.wallLength4Player, G.wallHeight, G.wallThickness, distFromCenter, 0, wallOffset);
-        // this.wallTopLeft = new Wall(G.wallLength4Player, G.wallHeight, G.wallThickness, -wallOffset, 0, -distFromCenter);
-        // this.wallTopRight = new Wall(G.wallLength4Player, G.wallHeight, G.wallThickness, wallOffset, 0, -distFromCenter);
-        // this.wallBottomLeft = new Wall(G.wallLength4Player, G.wallHeight, G.wallThickness, -wallOffset, 0, distFromCenter);
-        // this.wallBottomRight = new Wall(G.wallLength4Player, G.wallHeight, G.wallThickness, wallOffset, 0, distFromCenter);
+
+        this.walls["wallLeftUp"].geometry.rotateY(Math.PI / 2);
+        this.walls["wallLeftDown"].geometry.rotateY(Math.PI / 2);
+        this.walls["wallRightUp"].geometry.rotateY(Math.PI / 2);
+        this.walls["wallRightDown"].geometry.rotateY(Math.PI / 2);
+
+        this.walls["wallLeftUp"].light.lookAt(this.walls["wallLeftUp"].mesh.position.x + 1, 0, this.walls["wallLeftUp"].mesh.position.z);
+        this.walls["wallLeftDown"].light.lookAt(this.walls["wallLeftDown"].mesh.position.x + 1, 0, this.walls["wallLeftDown"].mesh.position.z);
+        this.walls["wallRightUp"].light.lookAt(this.walls["wallRightUp"].mesh.position.x - 1, 0, this.walls["wallRightUp"].mesh.position.z);
+        this.walls["wallRightDown"].light.lookAt(this.walls["wallRightDown"].mesh.position.x - 1, 0, this.walls["wallRightDown"].mesh.position.z);
+        this.walls["wallTopLeft"].light.lookAt(this.walls["wallTopLeft"].mesh.position.x, 0, this.walls["wallTopLeft"].mesh.position.z + 1);
+        this.walls["wallTopRight"].light.lookAt(this.walls["wallTopRight"].mesh.position.x, 0, this.walls["wallTopRight"].mesh.position.z + 1);
+        this.walls["wallBottomLeft"].light.lookAt(this.walls["wallBottomLeft"].mesh.position.x, 0, this.walls["wallBottomLeft"].mesh.position.z - 1);
+        this.walls["wallBottomRight"].light.lookAt(this.walls["wallBottomRight"].mesh.position.x, 0, this.walls["wallBottomRight"].mesh.position.z - 1);
 
         // ----General Light----
         this.ambientLight = new THREE.AmbientLight(COLOR.WHITE, 0.05);
@@ -54,24 +72,11 @@ export class Arena4Player
         this.scene.add(this.backWall);
         this.scene.add(this.floor);
         for (let wall in this.walls)
+        {
             this.scene.add(this.walls[wall].mesh);
-        // this.scene.add(this.wallLeftUp.mesh);
-        // this.scene.add(this.wallLeftDown.mesh);
-        // this.scene.add(this.wallRightUp.mesh);
-        // this.scene.add(this.wallRightDown.mesh);
-        // this.scene.add(this.wallTopLeft.mesh);
-        // this.scene.add(this.wallTopRight.mesh);
-        // this.scene.add(this.wallBottomLeft.mesh);
-        // this.scene.add(this.wallBottomRight.mesh);
-        // this.scene.add(this.ambientLight);
-        // this.scene.add(this.wallLeftUp.light);
-        // this.scene.add(this.wallLeftDown.light);
-        // this.scene.add(this.wallRightUp.light);
-        // this.scene.add(this.wallRightDown.light);
-        // this.scene.add(this.wallTopLeft.light);
-        // this.scene.add(this.wallTopRight.light);
-        // this.scene.add(this.wallBottomLeft.light);
-        // this.scene.add(this.wallBottomRight.light);
+            this.scene.add(this.walls[wall].light);
+        }
+        this.scene.add(this.ambientLight);
     }
 
     update()

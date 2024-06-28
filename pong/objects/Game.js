@@ -2,12 +2,7 @@ import * as THREE from 'three';
 import * as G from '../globals.js';
 import * as COLOR from '../colors.js';
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
-import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
-import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
-import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
 import { Settings } from './Settings.js';
 import { UserInterface } from './UserInterface.js';
 import { Arena } from './Arena.js';
@@ -33,7 +28,6 @@ export class Game
 		this.camera = this.createCamera();
 		this.renderer = this.createRenderer();
 		this.composer = new EffectComposer(this.renderer);
-		// this.arena = this.createArena(this.scene, this.fontLoader, this.renderer, this.composer, this.camera);
 		this.createArena();
 		this.update = this.update.bind(this);
 		console.log("Game Object Created!");
@@ -72,42 +66,47 @@ export class Game
 
 	createArena()
 	{
-		// if (this.settings.multiMode == false)
+		if (this.settings.multiMode == false)
 			this.arena = new Arena(
 				this.scene,
 				this.fontLoader,
 				this.renderer,
 				this.composer,
 				this.camera);
-		// else
-		// 	this.arena = new Arena4Player(this.scene);
+		else
+			this.arena = new Arena4Player(
+				this.scene,
+				this.fontLoader,
+				this.renderer,
+				this.composer,
+				this.camera);
 	}
 
 	createPlayers()
 	{
 		if (this.settings.multiMode == false)
 		{
-			this.players["p1"] = new Player(this.scene, this.settings.spin, G.p1StartPos, "Player1");
+			this.players["p1"] = new Player(this.scene, this.settings, 1, "Player1");
 			if (this.settings.players == 2)
-				this.players["p2"] = new Player(this.scene, this.settings.spin, G.p2StartPos, "Player2");
+				this.players["p2"] = new Player(this.scene, this.settings, 2, "Player2");
 			else
-				this.players["p2"] = new AI(this.settings.spin, G.p2StartPos, "AI");
+				this.players["p2"] = new AI(this, 2, "AI");
 		}
 		else
 		{
 			if (this.settings.players == 4)
-				this.players["p4"] = new Player(this.scene, this.settings.spin, G.p4StartPos4Player, "Player4");
+				this.players["p4"] = new Player(this.scene, this.settings, 4, "Player4");
 			else
-				this.players["p4"] = new AI(this.settings.spin, G.p4StartPos4Player, "AI4");
+				this.players["p4"] = new AI(this, 4, "AI4");
 			if (this.settings.players == 3)
-				this.players["p3"] = new Player(this.scene, this.settings.spin, G.p3StartPos4Player, "Player3");
+				this.players["p3"] = new Player(this.scene, this.settings, 3, "Player3");
 			else
-				this.players["p3"] = new AI(this.settings.spin, G.p3StartPos4Player, "AI3");
+				this.players["p3"] = new AI(this, 3, "AI3");
 			if (this.settings.players == 2)
-				this.players["p2"] = new Player(this.scene, this.settings.spin, G.p2StartPos4Player, "Player2");
+				this.players["p2"] = new Player(this.scene, this.settings, 2, "Player2");
 			else
-				this.players["p2"] = new AI(this.settings.spin, G.p2StartPos4Player, "AI2");
-			this.players["p1"] = new Player(this.scene, this.settings.spin, G.p1StartPos4Player, "Player1");
+				this.players["p2"] = new AI(this, 2, "AI2");
+			this.players["p1"] = new Player(this.scene, this.settings, 1, "Player1");
 		}
 	}
 	
@@ -153,7 +152,10 @@ export class Game
 			this.players["p3"].update();
 			this.players["p4"].update();
 		}
-		this.updateBallPosition();
+		if (this.settings.multiMode)
+			this.updateBallPosition4Player();
+		else
+			this.updateBallPosition();
 		this.arena.update();
 		if (this.goal())
 			{
@@ -218,6 +220,50 @@ export class Game
 			this.ball.updateAngle();
 			this.resetBounces();
 			this.lastBounce.wallRight = true;
+		}
+		this.ball.affectBySpin();
+		this.ball.move();
+	}
+
+	updateBallPosition4Player()
+	{
+		// Set hitboxes
+		this.ball.box.setFromObject(this.ball.mesh);
+		for (let player in this.players)
+			this.players[player].box.setFromObject(this.players[player].paddle);
+		for (let wall in this.arena.walls)
+			this.arena.walls[wall].box.setFromObject(this.arena.walls[wall].mesh);
+
+		// Check collisions
+		for (let player in this.players)
+		{
+			if (this.ball.box.intersectsBox(this.players[player].box))
+			{
+				this.players[player].lightEffect();
+				this.ball.adjustSpin(this.players[player]);
+				this.players[player].resetBoost();
+				this.ball.adjustAngle(this.players[player].paddle);
+				this.ball.speedUp();
+				if (player == "p2")
+					this.ball.speedX = -this.ball.speedX;
+				this.ball.speedZ = -this.ball.speedZ;
+				this.ball.updateAngle();
+				this.resetBounces();
+				// this.lastBounce.paddle1 = true;
+			}
+		}
+
+		for (let wall in this.arena.walls)
+		{
+			if (this.ball.box.intersectsBox(this.arena.walls[wall].box))
+			{
+				this.arena.walls[wall].lightEffect();
+				this.ball.reduceSpin();
+				this.ball.speedZ = -this.ball.speedZ;
+				this.ball.updateAngle();
+				this.resetBounces();
+				// this.lastBounce.wallLeft = true;
+			}
 		}
 		this.ball.affectBySpin();
 		this.ball.move();

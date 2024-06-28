@@ -61,6 +61,7 @@ function handleKeyUp(event)
             break;
         case KEY.P1_BOOST:
             game.players["p1"].boostPressed = false;
+            game.players["p1"].boostReleased = true;
             break;
         case KEY.P2_LEFT:
             game.players["p2"].moveLeft = false;
@@ -70,6 +71,7 @@ function handleKeyUp(event)
             break;
         case KEY.P2_BOOST:
             game.players["p2"].boostPressed = false;
+            game.players["p2"].boostReleased = true;
             break;
     }
 }

@@ -24,6 +24,8 @@ export const boostMeterLength = paddleLength;
 export const maxBoost = 1;
 export const boostIncrement = 0.02;
 export const boostOffset = 1;
+export const boostMeterAnimationTime = 1;
+export const boostAnimationMaxMovement = 0.4
 
 // Player
 export const p1StartPos = new THREE.Vector3(-(arenaLength / 2 - paddleThickness / 2), 0, 0);
@@ -46,7 +48,7 @@ export const ballStartPos = {
     z: 0
 };
 export const maxSpin = 0.01;       // grades
-export const spinReduction = 10;   // precentage 
+export const spinReduction = 10;   // precentage
 
 // Angles
 export const maxAngleDegrees = 30;

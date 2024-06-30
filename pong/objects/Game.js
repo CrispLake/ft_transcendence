@@ -182,7 +182,8 @@ export class Game
 		{
 			this.players["p1"].lightEffect();
 			this.ball.adjustSpin(this.players["p1"]);
-			this.players["p1"].resetBoost();
+			if (this.players["p1"].boostPressed)
+				this.players["p1"].resetBoost();
 			this.ball.adjustAngle(this.players["p1"].paddle);
 			this.ball.speedUp();
 			this.ball.speedZ = -this.ball.speedZ;
@@ -194,7 +195,8 @@ export class Game
 		{
 			this.players["p2"].lightEffect();
 			this.ball.adjustSpin(this.players["p2"]);
-			this.players["p2"].resetBoost();
+			if (this.players["p2"].boostPressed)
+				this.players["p2"].resetBoost();
 			this.ball.adjustAngle(this.players["p2"].paddle);
 			this.ball.speedUp();
 			this.ball.speedX = -this.ball.speedX;

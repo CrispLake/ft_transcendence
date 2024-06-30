@@ -21,7 +21,6 @@ export class Game
 		this.players = [];
 		this.createPlayers();
 		this.ball = new Ball(this.scene, G.ballStartPos, this.settings.spin);
-		this.lastBounce = this.createBounceCheck();
 		this.fontLoader = new FontLoader();
 		this.ui = new UserInterface(this.scene, this.fontLoader);
 		this.initializeUI();
@@ -109,36 +108,6 @@ export class Game
 			this.players["p1"] = new Player(this.scene, this.settings, 1, "Player1");
 		}
 	}
-	
-	createBounceCheck()
-	{
-		if (this.settings.multiMode == false)
-		{
-			return {
-				wallLeft: false,
-				wallRight: false,
-				paddle1: false,
-				paddle2: false
-			};
-		}
-		else
-		{
-			return {
-				leftWallUp: false,
-				leftWallDown: false,
-				rightWallUp: false,
-				rightWallDown: false,
-				topWallLeft: false,
-				topWallRight: false,
-				bottomWallLeft: false,
-				bottomWallRight: false,
-				paddle1: false,
-				paddle2: false,
-				paddle3: false,
-				paddle4: false
-			};
-		}
-	}
 
 	// ----Game Functions----
 
@@ -173,12 +142,12 @@ export class Game
 	updateBallPosition()
 	{
 		this.ball.box.setFromObject(this.ball.mesh);
-		this.players["p1"].box.setFromObject(this.players["p1"].paddle);
-		this.players["p2"].box.setFromObject(this.players["p2"].paddle);
-		this.arena.leftWall.box.setFromObject(this.arena.leftWall.mesh);
-		this.arena.rightWall.box.setFromObject(this.arena.rightWall.mesh);
+		for (let player in this.players)
+			this.players[player].box.setFromObject(this.players[player].paddle);
+		for (let wall in this.arena.walls)
+			this.arena.walls[wall].box.setFromObject(this.arena.walls[wall].mesh);
 		
-		if (this.ball.box.intersectsBox(this.players["p1"].box) && !this.lastBounce.paddle1)
+		if (this.ball.box.intersectsBox(this.players["p1"].box) && !this.players["p1"].bounce)
 		{
 			this.players["p1"].lightEffect();
 			this.ball.adjustSpin(this.players["p1"]);
@@ -189,9 +158,9 @@ export class Game
 			this.ball.speedZ = -this.ball.speedZ;
 			this.ball.updateAngle();
 			this.resetBounces();
-			this.lastBounce.paddle1 = true;
+			this.players["p1"].bounce = true;
 		}
-		else if (this.ball.box.intersectsBox(this.players["p2"].box) && !this.lastBounce.paddle2)
+		else if (this.ball.box.intersectsBox(this.players["p2"].box) && !this.players["p2"].bounce)
 		{
 			this.players["p2"].lightEffect();
 			this.ball.adjustSpin(this.players["p2"]);
@@ -203,25 +172,25 @@ export class Game
 			this.ball.speedZ = -this.ball.speedZ;
 			this.ball.updateAngle();
 			this.resetBounces();
-			this.lastBounce.paddle2 = true;
+			this.players["p2"].bounce = true;
 		}
-		else if (this.ball.box.intersectsBox(this.arena.leftWall.box) && !this.lastBounce.wallLeft)
+		else if (this.ball.box.intersectsBox(this.arena.walls["leftWall"].box) && !this.arena.walls["leftWall"].bounce)
 		{
-			this.arena.leftWall.lightEffect();
+			this.arena.walls["leftWall"].lightEffect();
 			this.ball.reduceSpin();
 			this.ball.speedZ = -this.ball.speedZ;
 			this.ball.updateAngle();
 			this.resetBounces();
-			this.lastBounce.wallLeft = true;
+			this.arena.walls["leftWall"].bounce = true;
 		}
-		else if (this.ball.box.intersectsBox(this.arena.rightWall.box) && !this.lastBounce.wallRight)
+		else if (this.ball.box.intersectsBox(this.arena.walls["rightWall"].box) && !this.arena.walls["rightWall"].bounce)
 		{
-			this.arena.rightWall.lightEffect();
+			this.arena.walls["rightWall"].lightEffect();
 			this.ball.reduceSpin();
 			this.ball.speedZ = -this.ball.speedZ;
 			this.ball.updateAngle();
 			this.resetBounces();
-			this.lastBounce.wallRight = true;
+			this.arena.walls["rightWall"].bounce = true;
 		}
 		this.ball.affectBySpin();
 		this.ball.move();
@@ -251,7 +220,7 @@ export class Game
 				this.ball.speedZ = -this.ball.speedZ;
 				this.ball.updateAngle();
 				this.resetBounces();
-				// this.lastBounce.paddle1 = true;
+				this.players[player].bounce = true;
 			}
 		}
 
@@ -264,7 +233,7 @@ export class Game
 				this.ball.speedZ = -this.ball.speedZ;
 				this.ball.updateAngle();
 				this.resetBounces();
-				// this.lastBounce.wallLeft = true;
+				this.arena.walls[wall].bounce = true;
 			}
 		}
 		this.ball.affectBySpin();
@@ -311,28 +280,10 @@ export class Game
 
 	resetBounces()
 	{
-		if (this.settings.multiMode == false)
-		{
-			this.lastBounce.wallLeft = false;
-			this.lastBounce.wallRight = false;
-			this.lastBounce.paddle1 = false;
-			this.lastBounce.paddle2 = false;
-		}
-		else
-		{
-			this.lastBounce.leftWallUp = false;
-			this.lastBounce.leftWallDown = false;
-			this.lastBounce.rightWallUp = false;
-			this.lastBounce.rightWallDown = false;
-			this.lastBounce.topWallLeft = false;
-			this.lastBounce.topWallRight = false;
-			this.lastBounce.bottomWallLeft = false;
-			this.lastBounce.bottomWallRight = false;
-			this.lastBounce.paddle1 = false;
-			this.lastBounce.paddle2 = false;
-			this.lastBounce.paddle3 = false;
-			this.lastBounce.paddle4 = false;
-		}
+		for (let wall in this.arena.walls)
+			this.arena.walls[wall].bounce = false;
+		for (let player in this.players)
+			this.players[player].bounce = false;
 	}
 
 	sleepMillis(millis)

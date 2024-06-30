@@ -12,7 +12,6 @@ export class Text3D
 {
 	constructor(scene, text, position, size, color, fontLoader, renderer, composer, camera)
     {
-		console.log("Creating 3DText...")
         this.scene = scene;
         this.text = text;
         this.position = position;
@@ -25,7 +24,6 @@ export class Text3D
 		this.camera = camera;
 		
 		this.create3DTextMesh();
-		console.log("3DText created!")
     }
 
 	create3DTextMesh()

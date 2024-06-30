@@ -42,6 +42,7 @@ export class Player
         this.clockBoostMeter = new THREE.Clock();
         this.effect = false;
         this.boostMeterAnimation = false;
+        this.bounce = false;
     }
     
 

@@ -22,6 +22,8 @@ export class Wall
         // Time
         this.clock = new THREE.Clock();
         this.effect = false;
+
+        this.bounce = false;
     }
 
     lightEffect()

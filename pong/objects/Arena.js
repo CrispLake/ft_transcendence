@@ -8,7 +8,6 @@ export class Arena
 {
     constructor(scene, fontLoader, renderer, composer, camera)
     {
-        console.log("Creating Arena...");
         this.scene = scene;
         this.fontLoader = fontLoader;
         this.renderer = renderer;
@@ -40,8 +39,9 @@ export class Arena
         this.floor.position.set(0, -(G.wallHeight / 2 + G.floorThickness / 2), 0);
 
         // ----Side Walls----
-        this.leftWall = new Wall(G.arenaLength, G.wallHeight, G.wallThickness, 0, 0, -(G.arenaWidth / 2 + G.wallThickness / 2));
-        this.rightWall = new Wall(G.arenaLength, G.wallHeight, G.wallThickness, 0, 0, (G.arenaWidth / 2 + G.wallThickness / 2));
+        this.walls = [];
+        this.walls["leftWall"] = new Wall(G.arenaLength, G.wallHeight, G.wallThickness, 0, 0, -(G.arenaWidth / 2 + G.wallThickness / 2));
+        this.walls["rightWall"] = new Wall(G.arenaLength, G.wallHeight, G.wallThickness, 0, 0, (G.arenaWidth / 2 + G.wallThickness / 2));
         
         // ----General Light----
         this.ambientLight = new THREE.AmbientLight(COLOR.WHITE, 0.05);
@@ -54,18 +54,20 @@ export class Arena
     {
         this.scene.add(this.backWall);
         this.scene.add(this.floor);
-        this.scene.add(this.leftWall.mesh);
-        this.scene.add(this.rightWall.mesh);
         this.scene.add(this.ambientLight);
-        this.scene.add(this.leftWall.light);
-        this.scene.add(this.rightWall.light);
+        for (let wall in this.walls)
+        {
+            this.scene.add(this.walls[wall].mesh);
+            this.scene.add(this.walls[wall].light);
+        }
     }
 
     update()
     {
-        if (this.leftWall.effect)
-            this.leftWall.updateLightEffect();
-        if (this.rightWall.effect)
-            this.rightWall.updateLightEffect();
+        for (let wall in this.walls)
+        {
+            if (this.walls[wall].effect)
+                this.walls[wall].updateLightEffect();
+        }
     }
 }

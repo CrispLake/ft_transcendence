@@ -46,6 +46,24 @@ function handleKeyDown(event)
         case KEY.P2_BOOST:
             game.players["p2"].boostPressed = true;
             break;
+        case KEY.P3_LEFT:
+            game.players["p3"].moveLeft = true;
+            break;
+        case KEY.P3_RIGHT:
+            game.players["p3"].moveRight = true;
+            break;
+        case KEY.P3_BOOST:
+            game.players["p3"].boostPressed = true;
+            break;
+        case KEY.P4_LEFT:
+            game.players["p4"].moveLeft = true;
+            break;
+        case KEY.P4_RIGHT:
+            game.players["p4"].moveRight = true;
+            break;
+        case KEY.P4_BOOST:
+            game.players["p4"].boostPressed = true;
+            break;
     }
 }
 
@@ -72,6 +90,26 @@ function handleKeyUp(event)
         case KEY.P2_BOOST:
             game.players["p2"].boostPressed = false;
             game.players["p2"].boostReleased = true;
+            break;
+        case KEY.P3_LEFT:
+            game.players["p3"].moveLeft = false;
+            break;
+        case KEY.P3_RIGHT:
+            game.players["p3"].moveRight = false;
+            break;
+        case KEY.P3_BOOST:
+            game.players["p3"].boostPressed = false;
+            game.players["p3"].boostReleased = true;
+            break;
+        case KEY.P4_LEFT:
+            game.players["p4"].moveLeft = false;
+            break;
+        case KEY.P4_RIGHT:
+            game.players["p4"].moveRight = false;
+            break;
+        case KEY.P4_BOOST:
+            game.players["p4"].boostPressed = false;
+            game.players["p4"].boostReleased = true;
             break;
     }
 }

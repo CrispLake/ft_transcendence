@@ -93,20 +93,30 @@ export class Game
 		}
 		else
 		{
-			if (this.settings.players == 4)
+			if (this.settings.players > 3)
 				this.players["p4"] = new Player(this.scene, this.settings, 4, "Player4");
 			else
 				this.players["p4"] = new AI(this, 4, "AI4");
-			if (this.settings.players == 3)
+			if (this.settings.players > 2)
 				this.players["p3"] = new Player(this.scene, this.settings, 3, "Player3");
 			else
 				this.players["p3"] = new AI(this, 3, "AI3");
-			if (this.settings.players == 2)
+			if (this.settings.players > 2)
 				this.players["p2"] = new Player(this.scene, this.settings, 2, "Player2");
 			else
 				this.players["p2"] = new AI(this, 2, "AI2");
 			this.players["p1"] = new Player(this.scene, this.settings, 1, "Player1");
+
+			this.rotatePlayers();
 		}
+	}
+
+	rotatePlayers()
+	{
+		this.players["p3"].paddle.rotation.y = Math.PI / 2;
+		this.players["p4"].paddle.rotation.y = Math.PI / 2;
+		this.players["p3"].light.lookAt(0, 0, 0);
+		this.players["p4"].light.lookAt(0, 0, 0);
 	}
 
 	// ----Game Functions----
@@ -272,8 +282,10 @@ export class Game
 	{
 		this.ui.updateTextObject("score", this.players["p1"].score + " - " + this.players["p2"].score);
 		this.ball.reset();
-		this.players["p1"].reset();
-		this.players["p2"].reset();
+		for (let player in this.players)
+			this.players[player].reset();
+		// this.players["p1"].reset();
+		// this.players["p2"].reset();
 		this.resetBounces();
 		this.sleepMillis(1000);
 	}

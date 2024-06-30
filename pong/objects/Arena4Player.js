@@ -84,21 +84,5 @@ export class Arena4Player
         for (let wall in this.walls)
             if (this.walls[wall].effect)
                 this.walls[wall].updateLightEffect();
-        // if (this.wallLeftUp.effect)
-        //     this.wallLeftUp.updateLightEffect();
-        // if (this.wallLeftDown.effect)
-        //     this.wallLeftDown.updateLightEffect();
-        // if (this.wallRightUp.effect)
-        //     this.wallRightUp.updateLightEffect();
-        // if (this.wallRightDown.effect)
-        //     this.wallRightDown.updateLightEffect();
-        // if (this.wallTopLeft.effect)
-        //     this.wallTopLeft.updateLightEffect();
-        // if (this.wallTopRight.effect)
-        //     this.wallTopRight.updateLightEffect();
-        // if (this.wallBottomLeft.effect)
-        //     this.wallBottomLeft.updateLightEffect();
-        // if (this.wallBottomRight.effect)
-        //     this.wallBottomRight.updateLightEffect();
     }
 }

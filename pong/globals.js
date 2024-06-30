@@ -27,19 +27,16 @@ export const boostOffset = 1;
 export const boostMeterAnimationTime = 1;
 export const boostAnimationMaxMovement = 0.4
 
-// Player
-export const p1StartPos = new THREE.Vector3(-(arenaLength / 2 - paddleThickness / 2), 0, 0);
-export const p2StartPos = new THREE.Vector3(arenaLength / 2 - paddleThickness / 2, 0, 0);
 
 // Ball
 export const initialBallRadius = 0.2;
 export const initialBallSpeed = 0.2;
 export const initialStartingAngle = 90;
 /*
-    up = 0
-    right = 90
-    down = 180
-    left = 270
+up = 0
+right = 90
+down = 180
+left = 270
 */
 export const speedIncrement = 0.01;
 export const ballStartPos = {
@@ -61,6 +58,10 @@ export const fps = 60;
 // 4 Player
 export const arenaWidth4Player = 25;
 export const wallLength4Player = 5;
+
+// Start Positions
+export const p1StartPos = new THREE.Vector3(-(arenaLength / 2 - paddleThickness / 2), 0, 0);
+export const p2StartPos = new THREE.Vector3(arenaLength / 2 - paddleThickness / 2, 0, 0);
 export const p1StartPos4Player = new THREE.Vector3(-(arenaWidth4Player / 2 - paddleThickness / 2), 0, 0);
 export const p2StartPos4Player = new THREE.Vector3(arenaWidth4Player / 2 - paddleThickness / 2, 0, 0);
 export const p3StartPos4Player = new THREE.Vector3(0, 0, -(arenaWidth4Player / 2 - paddleThickness / 2));

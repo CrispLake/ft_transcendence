@@ -1,11 +1,16 @@
+# User update
 
-# GET localhost:8080/display HTTP/1.1
-# content-type: application/json
+###
 
-# {
-#     "name": "sample",
-#     "time": "Wed, 21 Oct 2015 18:27:50 GMT"
-# }
+PUT http://localhost:8000/login/account/update HTTP/1.1
+Authorization: 855ba830c100c7f927c41d406592d58319bd0240
+Content-Type: application/json
+
+{
+    "wins": 1
+}
+
+###
 
 # CSRF TOKEN
 
@@ -20,6 +25,7 @@ GET http://localhost:8000/login/csrf-token HTTP/1.1
 ###
 
 GET http://localhost:8000/login/register HTTP/1.1
+Authorization: Token 855ba830c100c7f927c41d406592d58319bd0240
 
 ###
 

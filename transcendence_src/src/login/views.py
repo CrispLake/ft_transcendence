@@ -7,6 +7,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from django.middleware.csrf import get_token
+from rest_framework.permissions import IsAuthenticated
 
 class CustomAuthToken(ObtainAuthToken):
 
@@ -47,7 +48,7 @@ def get_csrf_token(request):
     return Response({'csrfToken': token})
 
 @api_view(['PUT'])
-@permission_classes(['IsAuthenticated'])
+@permission_classes([IsAuthenticated])
 def update_account(request):
     account = request.user.account
     serializer = AccountSerializer(account, data=request.data, partial=True)
@@ -57,9 +58,13 @@ def update_account(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
-@permission_classes(['IsAuthenticated'])
+@permission_classes([IsAuthenticated])
 def update_user(request):
     user = request.user
+
+    if 'password' in request.data:
+        return Response({"detail": "Use the change-password endpoint to update password."}, status=status.HTTP_400_BAD_REQUEST)
+
     serializer = UserSerializer(user, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
@@ -67,14 +72,18 @@ def update_user(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
-@permission_classes(['IsAuthenticated'])
+@permission_classes([IsAuthenticated])
 def change_password(request):
     user = request.user
-    serializer = PasswordSerializer(data=request.data)
+    serializer = UserSerializer(user, data=request.data, partial=True)
     if serializer.is_valid():
-        if not user.check_password(serializer.data.get("old_password")):
-            return Response({"old_password": "Wrong password."}, status=status.HTTP_400_BAD_REQUEST)
-        user.set_password(serializer.data.get("new_password"))
+        user.set_password(serializer.validated_data['password'])
         user.save()
-        return Response({"status": "password set"}, status=status.HTTP_200_OK)
+
+        Token.objects.filter(user=user).delete()
+
+        new_token = Token.objects.create(user=user)
+
+        return Response({"status": "password set", "token": new_token.key}, status=status.HTTP_200_OK)
+
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

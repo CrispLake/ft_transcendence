@@ -14,16 +14,17 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         return user
 
-
 class AccountSerializer(serializers.ModelSerializer):
     user = UserSerializer()
 
     class Meta:
         model = Account
-        fields = ['id', 'user', 'pfp', 'wins', 'losses', 'friends']
+        fields = ['id', 'user', 'pfp', 'wins', 'losses', 'friends', 'matches_as_player1', 'matches_as_player2']
         extra_kwargs = {
             'friends': {'required': False},
-            'pfp': {'required': False}
+            'pfp': {'required': False},
+            'matches_as_player1': {'required': False},
+            'matches_as_player2': {'required': False},
         }
     
     def create(self, validated_data):

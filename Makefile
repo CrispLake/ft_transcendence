@@ -19,3 +19,9 @@ restart:
 
 prune:
 	docker system prune -f
+
+sh:
+	docker compose exec transcendence bash
+
+down:
+	docker compose -f $(COMPOSE) down

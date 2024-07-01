@@ -9,7 +9,6 @@ from rest_framework.response import Response
 from django.middleware.csrf import get_token
 
 class CustomAuthToken(ObtainAuthToken):
-
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
@@ -23,12 +22,12 @@ class CustomAuthToken(ObtainAuthToken):
 
 @api_view(['GET', 'POST'])
 def register(request):
-    if request.method == "GET":
+    if request.method == 'GET':
         accounts = Account.objects.all()
         serializer = AccountSerializer(accounts, many=True)
         return Response(serializer.data)
 
-    elif request.method == "POST":
+    elif request.method == 'POST':
         data = request.data
 
         serializer = AccountSerializer(data=data)

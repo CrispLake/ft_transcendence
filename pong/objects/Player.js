@@ -17,8 +17,6 @@ export class Player
         this.setStartPos();
         this.setPlayerColor();
         this.sign = (this.playerNum % 2 == 0) ? 1 : -1;
-        this.color = (this.sign == -1) ? COLOR.PADDLE1 : COLOR.PADDLE2;
-        this.colorLight = (this.sign == -1) ? COLOR.PADDLE1_LIGHT : COLOR.PADDLE2_LIGHT;
         this.geometry = new THREE.BoxGeometry(G.paddleThickness, G.wallHeight, G.paddleLength);
         this.material = new THREE.MeshStandardMaterial({color: this.color, emissive: this.color});
         this.paddle = new THREE.Mesh(this.geometry, this.material);

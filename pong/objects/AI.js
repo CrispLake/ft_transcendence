@@ -6,14 +6,18 @@ import * as PongMath from '../math.js';
 
 export class AI
 {
-    constructor(game, pos, name)
+    constructor(game, playerNum, name)
     {
-		this.game = game;
+        this.game = game;
         this.scene = game.scene;
+        this.settings = game.settings;
+        this.spin = this.settings.spin;
+        this.playerNum = playerNum;
         this.name = name;
-        this.sign = (pos.x > 0) ? 1 : -1;
-        this.color = (this.sign == -1) ? COLOR.PADDLE1 : COLOR.PADDLE2;
-        this.colorLight = (this.sign == -1) ? COLOR.PADDLE1_LIGHT : COLOR.PADDLE2_LIGHT;
+        this.setAlignment();
+        this.setStartPos();
+        this.setPlayerColor();
+        this.sign = (this.playerNum % 2 == 0) ? 1 : -1;
         this.geometry = new THREE.BoxGeometry(G.paddleThickness, G.wallHeight, G.paddleLength);
         this.material = new THREE.MeshStandardMaterial({color: this.color, emissive: this.color});
         this.paddle = new THREE.Mesh(this.geometry, this.material);
@@ -26,17 +30,104 @@ export class AI
         this.score = 0;
         this.moveLeft = false;
         this.moveRight = false;
+        this.setMovingBoundaries();
         this.boostPressed = false;
+        this.boostReleased = false;
         this.boostAmount = 0;
         this.speed = G.initialPaddleSpeed;
         this.boostOffset = G.boostOffset * this.sign;
-        this.setPos(pos.x, pos.y, pos.z);
+        this.setPos(this.startPos.x, this.startPos.y, this.startPos.z);
         this.light.lookAt(0, 0, 0);
         this.addToScene();
         this.clockLight = new THREE.Clock();
+        this.clockBoostMeter = new THREE.Clock();
         this.effect = false;
-    }
+        this.boostMeterAnimation = false;
+        this.bounce = false;
         
+    }
+    
+    // ----Initialization Functions----
+    
+    addToScene()
+    {
+        this.scene.add(this.paddle);
+        this.scene.add(this.light);
+    }
+
+    setStartPos()
+    {
+        if (this.settings.multiMode)
+        {
+            if (this.playerNum == 1)
+                this.startPos = G.startPos4P.p1;
+            else if (this.playerNum == 2)
+                this.startPos = G.startPos4P.p2;
+            else if (this.playerNum == 3)
+                this.startPos = G.startPos4P.p3;
+            else if (this.playerNum == 4)
+                this.startPos = G.startPos4P.p4;
+        }
+        else
+        {
+            if (this.playerNum == 1)
+                this.startPos = G.startPos2P.p1;
+            else if (this.playerNum == 2)
+                this.startPos = G.startPos2P.p2;
+        }
+    }
+
+    setPos(x, y, z)
+    {
+        this.paddle.position.set(x, y, z);
+        this.light.position.copy(this.paddle.position);
+        this.boostMeter.position.set(x + this.boostOffset, y, z);
+    }
+
+    setAlignment()
+    {
+        if (this.playerNum < 3)
+            this.alignment = G.vertical;
+        else
+            this.alignment = G.horizontal;
+    }
+
+    setPlayerColor()
+    {
+        if (this.playerNum == 1)
+        {
+            this.color = COLOR.PADDLE1;
+            this.colorLight = COLOR.PADDLE1_LIGHT;
+        }
+        else if (this.playerNum == 2)
+        {
+            this.color = COLOR.PADDLE2;
+            this.colorLight = COLOR.PADDLE2_LIGHT;
+        }
+        else if (this.playerNum == 3)
+        {
+            this.color = COLOR.PADDLE3;
+            this.colorLight = COLOR.PADDLE3_LIGHT;
+        }
+        else if (this.playerNum == 4)
+        {
+            this.color = COLOR.PADDLE4;
+            this.colorLight = COLOR.PADDLE4_LIGHT;
+        }
+    }
+
+    setMovingBoundaries()
+    {
+        if (this.settings.multiMode)
+        {
+            this.movementBoundary = G.arenaWidth4Player / 2 - G.wallLength4Player - this.paddleLength / 2;
+        }
+        else
+        {
+            this.movementBoundary = G.arenaWidth / 2 - G.paddleLength / 2;
+        }
+    }
+
 
     // ----Boost Meter----
 
@@ -53,7 +144,10 @@ export class AI
         {
             this.boostGeometry = new THREE.BoxGeometry(G.boostMeterWidth, G.boostMeterThickness, this.paddleLength * this.boostAmount);
             this.boostMeter = new THREE.Mesh(this.boostGeometry, this.boostMaterial);
-            this.boostMeter.position.set(this.paddle.position.x + this.boostOffset, this.paddle.position.y, this.paddle.position.z);
+            if (this.playerNum < 3)
+                this.boostMeter.position.set(this.paddle.position.x + this.boostOffset, this.paddle.position.y, this.paddle.position.z);
+            else
+                this.boostMeter.position.set(this.paddle.position.x, this.paddle.position.y, this.paddle.position.z + this.boostOffset);
             this.scene.add(this.boostMeter);
         }
     }
@@ -157,23 +251,58 @@ export class AI
     }
 
 
-    // ----AI----
+    // ----Player----
 
-    addToScene()
+    move(movement)
     {
-        this.scene.add(this.paddle);
-        this.scene.add(this.light);
+        if (this.alignment == G.vertical)
+        {
+            this.paddle.position.z += movement;
+            if (this.paddle.position.z < -this.movementBoundary)
+                this.paddle.position.z = -this.movementBoundary;
+            if (this.paddle.position.z > this.movementBoundary)
+                this.paddle.position.z = this.movementBoundary;
+            this.boostMeter.position.z = this.paddle.position.z;
+        }
+        else
+        {
+            this.paddle.position.x += movement;
+            if (this.paddle.position.x < -this.movementBoundary)
+                this.paddle.position.x = -this.movementBoundary;
+            if (this.paddle.position.x > this.movementBoundary)
+                this.paddle.position.x = this.movementBoundary;
+            this.boostMeter.position.x = this.paddle.position.x;
+        }
+        this.light.position.copy(this.paddle.position);
     }
 
-    setPos(x, y, z)
+    reset()
     {
-        this.paddle.position.set(x, y, z);
-        this.light.position.copy(this.paddle.position);
-        this.boostMeter.position.set(x + this.boostOffset, y, z);
+        this.setPos(this.startPos.x, this.startPos.y, this.startPos.z);
+        this.boostAmount = 0;
+        this.updateBoostMeter();
     }
 
     update()
     {
-        this.paddle.position.z = this.game.ball.mesh.position.z;
+        if (this.effect)
+            this.updateLightEffect();
+        if (this.alignment == G.vertical)
+        {
+            this.paddle.position.z = this.game.ball.mesh.position.z;
+            if (this.paddle.position.z < -this.movementBoundary)
+                this.paddle.position.z = -this.movementBoundary;
+            else if (this.paddle.position.z > this.movementBoundary)
+                this.paddle.position.z = this.movementBoundary;
+        }
+        else
+        {
+            this.paddle.position.x = this.game.ball.mesh.position.x;
+            if (this.paddle.position.x < -this.movementBoundary)
+                this.paddle.position.x = -this.movementBoundary;
+            else if (this.paddle.position.x > this.movementBoundary)
+                this.paddle.position.x = this.movementBoundary;
+        }
+        this.light.position.copy(this.paddle.position);
     }
 };

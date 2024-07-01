@@ -5,7 +5,7 @@ export class Settings
 		// this.multiMode = false;
 		// this.players = 2;
 		this.multiMode = true;
-		this.players = 4;
+		this.players = 1;
 		this.spin = true;
 	}
 }

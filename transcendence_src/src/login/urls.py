@@ -8,4 +8,6 @@ urlpatterns  = [
     path('account/update', views.update_account, name='update-account'),
     path('user/change-username', views.update_user, name='update-user'),
     path('user/change-password', views.change_password, name='change-password'),
+    path('friend-request/send', views.send_friend_request, name='send-friend-request'),
+    path('friend-request/respond/<int:request_id>', views.respond_to_friend_request, name='respond-to-friend-request'),
 ]

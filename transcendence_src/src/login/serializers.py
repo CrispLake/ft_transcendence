@@ -1,6 +1,13 @@
 from rest_framework import serializers
-from login.models import Account
+from login.models import Account, FriendRequest
+from pong.serializers import MatchSerializer
 from django.contrib.auth.models import User
+
+class FriendRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FriendRequest
+        fields = ['id', 'from_user', 'to_user', 'timestamp', 'status']
+        read_only_fields = ['from_user', 'timestamp', 'status']
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,15 +23,19 @@ class UserSerializer(serializers.ModelSerializer):
 
 class AccountSerializer(serializers.ModelSerializer):
     user = UserSerializer()
+    sent_requests = FriendRequestSerializer(many=True, read_only=True)
+    received_requests = FriendRequestSerializer(many=True, read_only=True)
 
     class Meta:
         model = Account
-        fields = ['id', 'user', 'pfp', 'wins', 'losses', 'friends', 'matches_as_player1', 'matches_as_player2']
+        fields = ['id', 'user', 'pfp', 'wins', 'losses', 'friends', 'matches_as_player1', 'matches_as_player2', 'sent_requests', 'received_requests']
         extra_kwargs = {
             'friends': {'required': False},
             'pfp': {'required': False},
             'matches_as_player1': {'required': False},
             'matches_as_player2': {'required': False},
+            'sent_requests': {'required': False},
+            'received_requests': {'required': False},
         }
     
     def create(self, validated_data):

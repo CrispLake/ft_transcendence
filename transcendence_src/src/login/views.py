@@ -10,7 +10,6 @@ from django.middleware.csrf import get_token
 from rest_framework.permissions import IsAuthenticated
 
 class CustomAuthToken(ObtainAuthToken):
-
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
@@ -24,7 +23,7 @@ class CustomAuthToken(ObtainAuthToken):
 
 @api_view(['GET', 'POST'])
 def register(request):
-    if request.method == "GET":
+    if request.method == 'GET':
         if not request.user.is_authenticated:
             return Response({'detail': 'Authentication required for GET requests.'}, status=status.HTTP_403_FORBIDDEN)
         
@@ -32,7 +31,7 @@ def register(request):
         serializer = AccountSerializer(accounts, many=True)
         return Response(serializer.data)
 
-    elif request.method == "POST":
+    elif request.method == 'POST':
         data = request.data
 
         serializer = AccountSerializer(data=data)

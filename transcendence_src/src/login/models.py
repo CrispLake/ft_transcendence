@@ -15,6 +15,9 @@ class Account(models.Model):
     # online_status?
     # status = models.BooleanField()
 
+    class Meta:
+        ordering = ['user']
+
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:

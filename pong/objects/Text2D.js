@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
-export class Text
+export class Text2D
 {
     constructor(scene, text, position, size, color, fontLoader)
     {
@@ -12,10 +12,10 @@ export class Text
         this.color = color;
         this.fontLoader = fontLoader;
         this.mesh = null;
-        this.createTextMesh();
+        this.create2DTextMesh();
     }
 
-    createTextMesh()
+    create2DTextMesh()
     {
         this.fontLoader.load('./resources/font.json', (font) => {
             const textGeometry = new TextGeometry(this.text,
@@ -39,10 +39,10 @@ export class Text
         });
     }
 
-    updateText(newText)
+    update2DText(newText)
     {
         this.scene.remove(this.mesh);
         this.text = newText;
-        this.createTextMesh();
+        this.create2DTextMesh();
     }
 }

@@ -5,23 +5,48 @@ import * as PongMath from '../math.js';
 
 export class Wall
 {
-    constructor(x, y, z)
+    constructor(alignment, length, height, thickness, x, y, z)
     {
+        this.alignment = alignment;
+
         // Wall
-        this.geometry = new THREE.BoxGeometry(G.arenaLength, G.wallHeight, G.wallThickness);
+        this.geometry = new THREE.BoxGeometry(length, height, thickness);
         this.material = new THREE.MeshStandardMaterial({color: COLOR.WALL, emissive: COLOR.WALL});
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.mesh.position.set(x, y, z);
         this.box = new THREE.Box3();
 
+        if (this.alignment == G.vertical)
+            this.geometry.rotateY(Math.PI / 2);
+
         // Light
-        this.light = new THREE.RectAreaLight(COLOR.WALL, G.wallLightIntensity, G.arenaLength, G.wallHeight);
+        this.light = new THREE.RectAreaLight(COLOR.WALL, G.wallLightIntensity, length, height);
         this.light.position.copy(this.mesh.position);
-        this.light.lookAt(0, 0, 0);
+        this.setLightDirection();
 
         // Time
         this.clock = new THREE.Clock();
         this.effect = false;
+
+        this.bounce = false;
+    }
+
+    setLightDirection()
+    {
+        if (this.alignment == G.vertical)
+        {
+            if (this.mesh.position.x > 0)
+                this.light.lookAt(this.mesh.position.x - 1, 0, this.mesh.position.z);
+            else
+                this.light.lookAt(this.mesh.position.x + 1, 0, this.mesh.position.z);
+        }
+        else
+        {
+            if (this.mesh.position.z > 0)
+                this.light.lookAt(this.mesh.position.x, 0, this.mesh.position.z - 1);
+            else
+                this.light.lookAt(this.mesh.position.x, 0, this.mesh.position.z + 1);
+        }
     }
 
     lightEffect()

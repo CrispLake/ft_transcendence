@@ -1,4 +1,4 @@
-import { Text } from './Text.js';
+import { Text2D } from './Text2D.js';
 
 export class UserInterface
 {
@@ -11,7 +11,7 @@ export class UserInterface
 
     addTextObject(scene, name, text, position, size, color)
     {
-        const textObject = new Text(scene, text, position, size, color, this.fontLoader);
+        const textObject = new Text2D(scene, text, position, size, color, this.fontLoader);
         this.textObjects[name] = textObject;
     }
 
@@ -19,7 +19,7 @@ export class UserInterface
     {
         if (this.textObjects[name])
         {
-            this.textObjects[name].updateText(newText);
+            this.textObjects[name].update2DText(newText);
         }
     }
 }

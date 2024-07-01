@@ -4,12 +4,13 @@ import * as G from '../globals.js';
 // import * as SETTINGS from '../gameSetting.js';
 import * as PongMath from '../math.js';
 
-export class Player
+export class AI
 {
-    constructor(scene, settings, playerNum, name)
+    constructor(game, playerNum, name)
     {
-        this.scene = scene;
-        this.settings = settings;
+        this.game = game;
+        this.scene = game.scene;
+        this.settings = game.settings;
         this.spin = this.settings.spin;
         this.playerNum = playerNum;
         this.name = name;
@@ -286,11 +287,22 @@ export class Player
     {
         if (this.effect)
             this.updateLightEffect();
-        if (this.moveLeft)
-            this.move(-this.speed);
-        if (this.moveRight)
-            this.move(this.speed);
-        if (this.spin == true)
-            this.updateBoost();
+        if (this.alignment == G.vertical)
+        {
+            this.paddle.position.z = this.game.ball.mesh.position.z;
+            if (this.paddle.position.z < -this.movementBoundary)
+                this.paddle.position.z = -this.movementBoundary;
+            else if (this.paddle.position.z > this.movementBoundary)
+                this.paddle.position.z = this.movementBoundary;
+        }
+        else
+        {
+            this.paddle.position.x = this.game.ball.mesh.position.x;
+            if (this.paddle.position.x < -this.movementBoundary)
+                this.paddle.position.x = -this.movementBoundary;
+            else if (this.paddle.position.x > this.movementBoundary)
+                this.paddle.position.x = this.movementBoundary;
+        }
+        this.light.position.copy(this.paddle.position);
     }
 };

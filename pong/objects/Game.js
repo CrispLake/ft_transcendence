@@ -163,9 +163,9 @@ export class Game
 			this.ball.adjustSpin(this.players["p1"]);
 			if (this.players["p1"].boostPressed)
 				this.players["p1"].resetBoost();
-			this.ball.adjustAngle(this.players["p1"].paddle);
+			this.ball.adjustAngle(this.players["p1"]);
 			this.ball.speedUp();
-			this.ball.speedZ = -this.ball.speedZ;
+
 			this.ball.updateAngle();
 			this.resetBounces();
 			this.players["p1"].bounce = true;
@@ -176,10 +176,8 @@ export class Game
 			this.ball.adjustSpin(this.players["p2"]);
 			if (this.players["p2"].boostPressed)
 				this.players["p2"].resetBoost();
-			this.ball.adjustAngle(this.players["p2"].paddle);
+			this.ball.adjustAngle(this.players["p2"]);
 			this.ball.speedUp();
-			this.ball.speedX = -this.ball.speedX;
-			this.ball.speedZ = -this.ball.speedZ;
 			this.ball.updateAngle();
 			this.resetBounces();
 			this.players["p2"].bounce = true;
@@ -223,11 +221,8 @@ export class Game
 				this.players[player].lightEffect();
 				this.ball.adjustSpin(this.players[player]);
 				this.players[player].resetBoost();
-				this.ball.adjustAngle(this.players[player].paddle);
+				this.ball.adjustAngle(this.players[player]);
 				this.ball.speedUp();
-				if (player == "p2")
-					this.ball.speedX = -this.ball.speedX;
-				this.ball.speedZ = -this.ball.speedZ;
 				this.ball.updateAngle();
 				this.resetBounces();
 				this.players[player].bounce = true;
@@ -240,7 +235,10 @@ export class Game
 			{
 				this.arena.walls[wall].lightEffect();
 				this.ball.reduceSpin();
-				this.ball.speedZ = -this.ball.speedZ;
+				if (this.arena.walls[wall].alignment == G.vertical)
+					this.ball.speedX = -this.ball.speedX;
+				else
+					this.ball.speedZ = -this.ball.speedZ;
 				this.ball.updateAngle();
 				this.resetBounces();
 				this.arena.walls[wall].bounce = true;
@@ -284,8 +282,6 @@ export class Game
 		this.ball.reset();
 		for (let player in this.players)
 			this.players[player].reset();
-		// this.players["p1"].reset();
-		// this.players["p2"].reset();
 		this.resetBounces();
 		this.sleepMillis(1000);
 	}

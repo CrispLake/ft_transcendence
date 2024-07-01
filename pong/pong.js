@@ -19,7 +19,7 @@ import { Game } from './objects/Game.js';
 
 RectAreaLightUniformsLib.init();
 const game = new Game();
-// const controls = new OrbitControls(game.camera, game.renderer.domElement);
+const controls = new OrbitControls(game.camera, game.renderer.domElement);
 
 
 // ----Event Listeners----

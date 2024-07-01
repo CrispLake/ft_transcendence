@@ -7,7 +7,7 @@ export const arenaWidth = 15;
 export const wallHeight = 0.5;
 export const wallThickness = 0.2;
 export const floorThickness = 0.2;
-export const floorWidth = arenaWidth + floorThickness * 2;
+export const floorWidth = arenaWidth + wallThickness * 2;
 export const wallLightIntensity = 1;
 export const fadeTimeSec = 0.3;
 
@@ -54,6 +54,9 @@ export const maxAngle = PongMath.setMaxAngle(maxAngleDegrees);
 
 export const winningScore = 3;
 export const fps = 60;
+
+export const horizontal = 0;
+export const vertical = 1;
 
 // 4 Player
 export const arenaWidth4Player = 25;

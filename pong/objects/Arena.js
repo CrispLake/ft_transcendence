@@ -40,8 +40,8 @@ export class Arena
 
         // ----Side Walls----
         this.walls = [];
-        this.walls["leftWall"] = new Wall(G.arenaLength, G.wallHeight, G.wallThickness, 0, 0, -(G.arenaWidth / 2 + G.wallThickness / 2));
-        this.walls["rightWall"] = new Wall(G.arenaLength, G.wallHeight, G.wallThickness, 0, 0, (G.arenaWidth / 2 + G.wallThickness / 2));
+        this.walls["leftWall"] = new Wall(G.horizontal, G.arenaLength, G.wallHeight, G.wallThickness, 0, 0, -(G.arenaWidth / 2 + G.wallThickness / 2));
+        this.walls["rightWall"] = new Wall(G.horizontal, G.arenaLength, G.wallHeight, G.wallThickness, 0, 0, (G.arenaWidth / 2 + G.wallThickness / 2));
         
         // ----General Light----
         this.ambientLight = new THREE.AmbientLight(COLOR.WHITE, 0.05);

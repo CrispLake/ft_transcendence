@@ -13,7 +13,7 @@ export class Player
         this.spin = this.settings.spin;
         this.playerNum = playerNum;
         this.name = name;
-
+        this.setAlignment();
         this.setStartPos();
         this.setPlayerColor();
         this.sign = (this.playerNum % 2 == 0) ? 1 : -1;
@@ -27,11 +27,11 @@ export class Player
         this.boostGeometry = new THREE.BoxGeometry(G.boostMeterWidth, G.boostMeterThickness, 0);
         this.boostMaterial = new THREE.MeshStandardMaterial({color: COLOR.BOOSTMETER, emissive: COLOR.BOOSTMETER})
         this.boostMeter = new THREE.Mesh(this.boostGeometry, this.boostMaterial);
-        this.setMoveAxis();
         this.paddleLength = G.paddleLength;
         this.score = 0;
         this.moveLeft = false;
         this.moveRight = false;
+        this.setMovingBoundaries();
         this.boostPressed = false;
         this.boostReleased = false;
         this.boostAmount = 0;
@@ -85,6 +85,14 @@ export class Player
         this.boostMeter.position.set(x + this.boostOffset, y, z);
     }
 
+    setAlignment()
+    {
+        if (this.playerNum < 3)
+            this.alignment = G.vertical;
+        else
+            this.alignment = G.horizontal;
+    }
+
     setPlayerColor()
     {
         if (this.playerNum == 1)
@@ -109,12 +117,16 @@ export class Player
         }
     }
 
-    setMoveAxis()
+    setMovingBoundaries()
     {
-        if (this.playerNum < 3)
-            this.moveAxis = "z";
+        if (this.settings.multiMode)
+        {
+            this.movementBoundary = G.arenaWidth4Player / 2 - G.wallLength4Player - this.paddleLength / 2;
+        }
         else
-            this.moveAxis = "x";
+        {
+            this.movementBoundary = G.arenaWidth / 2 - G.paddleLength / 2;
+        }
     }
 
 
@@ -133,7 +145,10 @@ export class Player
         {
             this.boostGeometry = new THREE.BoxGeometry(G.boostMeterWidth, G.boostMeterThickness, this.paddleLength * this.boostAmount);
             this.boostMeter = new THREE.Mesh(this.boostGeometry, this.boostMaterial);
-            this.boostMeter.position.set(this.paddle.position.x + this.boostOffset, this.paddle.position.y, this.paddle.position.z);
+            if (this.playerNum < 3)
+                this.boostMeter.position.set(this.paddle.position.x + this.boostOffset, this.paddle.position.y, this.paddle.position.z);
+            else
+                this.boostMeter.position.set(this.paddle.position.x, this.paddle.position.y, this.paddle.position.z + this.boostOffset);
             this.scene.add(this.boostMeter);
         }
     }
@@ -241,22 +256,22 @@ export class Player
 
     move(movement)
     {
-        if (this.moveAxis == "z")
+        if (this.alignment == G.vertical)
         {
             this.paddle.position.z += movement;
-            if (this.paddle.position.z < -(G.arenaWidth / 2) + G.paddleLength / 2)
-                this.paddle.position.z = -(G.arenaWidth / 2) + G.paddleLength / 2;
-            if (this.paddle.position.z > (G.arenaWidth / 2) - G.paddleLength / 2)
-                this.paddle.position.z = (G.arenaWidth / 2) - G.paddleLength / 2;
+            if (this.paddle.position.z < -this.movementBoundary)
+                this.paddle.position.z = -this.movementBoundary;
+            if (this.paddle.position.z > this.movementBoundary)
+                this.paddle.position.z = this.movementBoundary;
             this.boostMeter.position.z = this.paddle.position.z;
         }
         else
         {
             this.paddle.position.x += movement;
-            if (this.paddle.position.x < -(G.arenaLength / 2) + G.paddleLength / 2)
-                this.paddle.position.x = -(G.arenaLength / 2) + G.paddleLength / 2;
-            if (this.paddle.position.x > (G.arenaLength / 2) - G.paddleLength / 2)
-                this.paddle.position.x = (G.arenaLength / 2) - G.paddleLength / 2;
+            if (this.paddle.position.x < -this.movementBoundary)
+                this.paddle.position.x = -this.movementBoundary;
+            if (this.paddle.position.x > this.movementBoundary)
+                this.paddle.position.x = this.movementBoundary;
             this.boostMeter.position.x = this.paddle.position.x;
         }
         this.light.position.copy(this.paddle.position);

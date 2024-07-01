@@ -63,12 +63,28 @@ export class Ball
         this.angle = PongMath.vector2DToAngle(this.speedX, this.speedZ);
     }
         
-    adjustAngle(paddle)
+    adjustAngle(player)
     {
         const incomingAngle = PongMath.vector2DToAngle(this.speedX, this.speedZ);
-        let impactPoint = this.mesh.position.z - paddle.position.z;
+        let impactPoint;
+        if (player.alignment == G.vertical)
+            impactPoint = this.mesh.position.z - player.paddle.position.z;
+        else
+            impactPoint = this.mesh.position.x - player.paddle.position.x;
         let normalizedImpact = impactPoint / (G.paddleLength / 2);
-        this.angle = PongMath.lerp(normalizedImpact, -1, 1, G.minAngle, G.maxAngle);
+        if (player.playerNum == 1)
+            this.angle = PongMath.lerp(normalizedImpact, -1, 1, PongMath.degToRad(180) - G.minAngle, G.minAngle);
+        else if (player.playerNum == 2)
+            this.angle = PongMath.lerp(normalizedImpact, -1, 1, PongMath.degToRad(180) + G.minAngle, PongMath.degToRad(360) - G.minAngle);
+        else if (player.playerNum == 3)
+        {
+            this.angle = PongMath.lerp(normalizedImpact, -1, 1, PongMath.degToRad(270) + G.minAngle, PongMath.degToRad(450) - G.minAngle);
+            this.angle = PongMath.within2Pi(this.angle);
+        }
+        else if (player.playerNum == 4)
+        {
+            this.angle = PongMath.lerp(normalizedImpact, -1, 1, PongMath.degToRad(270) - G.minAngle, PongMath.degToRad(90) + G.minAngle);
+        }
     }
 
     addSpin(power)
@@ -100,8 +116,6 @@ export class Ball
     reduceSpin()
     {
         this.spin *= (100 - G.spinReduction) / 100;
-        // if (this.spin < 0.05)
-        //     this.spin = 0;
     }
 
     affectBySpin()

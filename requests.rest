@@ -13,8 +13,8 @@ Content-Type: application/json
 
 ###
 
-PUT http://localhost:8000/login/user/update HTTP/1.1
-Authorization: Token 328096435f1f55b5fd1c68500634c8bac6d28281
+PUT http://localhost:8000/login/user/change-username HTTP/1.1
+Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
 Content-Type: application/json
 
 {

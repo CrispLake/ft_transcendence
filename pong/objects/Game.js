@@ -251,15 +251,41 @@ export class Game
 	goal()
 	{
 		let goalOffSet = 1;
-		if (this.ball.mesh.position.x <= this.players["p1"].paddle.position.x - goalOffSet)
+		if (this.settings.multiMode)
 		{
-			this.players["p2"].score++;
-			return (true);
+			if (this.ball.mesh.position.x <= this.players["p1"].paddle.position.x - goalOffSet)
+			{
+				this.players["p2"].score++;
+				return (true);
+			}
+			else if (this.ball.mesh.position.x >= this.players["p2"].paddle.position.x + goalOffSet)
+			{
+				this.players["p1"].score++;
+				return (true);
+			}
+			else if (this.ball.mesh.position.z <= this.players["p3"].paddle.position.z - goalOffSet)
+			{
+				this.players["p3"].score++;
+				return (true);
+			}
+			else if (this.ball.mesh.position.z >= this.players["p4"].paddle.position.z + goalOffSet)
+			{
+				this.players["p4"].score++;
+				return (true);
+			}
 		}
-		else if (this.ball.mesh.position.x >= this.players["p2"].paddle.position.x + goalOffSet)
+		else
 		{
-			this.players["p1"].score++;
-			return (true);
+			if (this.ball.mesh.position.x <= this.players["p1"].paddle.position.x - goalOffSet)
+			{
+				this.players["p2"].score++;
+				return (true);
+			}
+			else if (this.ball.mesh.position.x >= this.players["p2"].paddle.position.x + goalOffSet)
+			{
+				this.players["p1"].score++;
+				return (true);
+			}
 		}
 		return (false)
 	}

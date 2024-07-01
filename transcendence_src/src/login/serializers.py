@@ -46,10 +46,3 @@ class AccountSerializer(serializers.ModelSerializer):
         
         else:
             raise serializers.ValidationError(user_serializer.errors)
-
-class SimpleAccountSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source='user.username')
-
-    class Meta:
-        model = Account
-        fields = ['id', 'username']

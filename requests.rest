@@ -1,12 +1,3 @@
-
-# GET localhost:8080/display HTTP/1.1
-# content-type: application/json
-
-# {
-#     "name": "sample",
-#     "time": "Wed, 21 Oct 2015 18:27:50 GMT"
-# }
-
 # Matches
 
 ###
@@ -18,6 +9,18 @@ Authorization: Token 855ba830c100c7f927c41d406592d58319bd0240
 
 POST http://localhost:8000/pong/match HTTP/1.1
 Authorization: Token 855ba830c100c7f927c41d406592d58319bd0240
+Content-Type: application/json
+
+{
+    "player1": 1,
+    "player1Score": 3,
+    "player2Score": 2
+}
+
+###
+
+POST http://localhost:8000/pong/match HTTP/1.1
+Authorization: Token 855ba830c100c7f927c41d406592d58319bd0240, Token 1a3d6fe4659ff8d6c8c40c244f4404f0d7079990
 Content-Type: application/json
 
 {

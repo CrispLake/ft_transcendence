@@ -6,10 +6,11 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 12:45:45 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/27 12:55:08 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/06/27 12:57:49 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+// Using this requires inner div with id of 'notification-div'
 export const Notification = async (elementID, content, type) => {
   // mode following C style return codes
   const ERROR = 1;

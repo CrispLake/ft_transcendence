@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/22 13:36:52 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/27 12:56:29 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/06/27 12:58:39 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,11 +125,11 @@ export default class extends AbstractView {
       <div class="login-page">
 
         <div class="login-left"></div>
-
-
+        
         <div class="login-form">
           <h2 class="font-sub login-heading">&lt;Login&gt;</h2>
             <form id="login-form" action="" method="">
+            
               <label class="font-text" for="username">username:</label>
               <input class="font-text login-input" type="text" id="username" name="username" required><br><br>
               
@@ -142,9 +142,7 @@ export default class extends AbstractView {
                 </div>
               </button>
               
-              <div id="error-message" class="error-message-div">
-                
-              </div>
+              <div id="notification-div"></div>
 
             </form>
         </div>

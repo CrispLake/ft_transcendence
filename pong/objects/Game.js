@@ -10,6 +10,7 @@ import { Arena4Player } from './Arena4Player.js';
 import { Player } from './Player.js';
 import { AI } from './AI.js';
 import { Ball } from './Ball.js';
+import * as PongMath from '../math.js';
 
 export class Game
 {
@@ -29,6 +30,7 @@ export class Game
 		this.composer = new EffectComposer(this.renderer);
 		this.createArena();
 		this.update = this.update.bind(this);
+		this.cameraRotate = false;
 		console.log("Game Object Created!");
 
 		this.update();
@@ -121,9 +123,38 @@ export class Game
 
 	// ----Game Functions----
 
+	rotateCamera()
+	{
+		let x = this.camera.position.x;
+		let z = this.camera.position.z;
+		let radius = Math.sqrt(x * x + z * z);
+		let angle = PongMath.vector2DToAngle(x, z);
+
+		angle += (Math.PI * 2) / (G.cameraOrbitTimeSec * G.fps);
+		angle = PongMath.within2Pi(angle);
+
+		this.camera.position.x = radius * Math.sin(angle);
+		this.camera.position.z = radius * Math.cos(angle);
+		this.camera.lookAt(0, 0, 0);
+	}
+
+	updateCamera()
+	{
+		if (this.cameraRotate)
+		{
+			this.rotateCamera();
+		}
+	}
+
+	toggleCameraRotation()
+	{
+		this.cameraRotate = !this.cameraRotate;
+	}
+
 	update()
 	{
 		setTimeout(() => { requestAnimationFrame(this.update); }, 1000 / G.fps);
+		this.updateCamera();
 		this.players["p1"].update();
 		this.players["p2"].update();
 		if (this.settings.multiMode == true)

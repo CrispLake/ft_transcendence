@@ -64,6 +64,9 @@ function handleKeyDown(event)
         case KEY.P4_BOOST:
             game.players["p4"].boostPressed = true;
             break;
+        case "p":
+            game.toggleCameraRotation();
+            break;
     }
 }
 

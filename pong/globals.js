@@ -10,6 +10,7 @@ export const floorThickness = 0.2;
 export const floorWidth = arenaWidth + wallThickness * 2;
 export const wallLightIntensity = 1;
 export const fadeTimeSec = 0.3;
+export const cameraOrbitTimeSec = 120;
 
 // Paddle
 export const paddleLightIntensity = 1;

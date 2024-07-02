@@ -37,23 +37,15 @@ class AccountSerializer(serializers.ModelSerializer):
             'sent_requests': {'required': False},
             'received_requests': {'required': False},
         }
-    
+
     def create(self, validated_data):
         user_data = validated_data.pop('user')
-        # pfp_data = validated_data.pop('pfp', None)
-
         user_serializer = UserSerializer(data=user_data)
         
         if user_serializer.is_valid():
             user = user_serializer.save()
             account = Account.objects.create(user=user, **validated_data)
-
-            # if pfp_data:
-            #     account.pfp = self.handle_base64_pfp(pfp_data, user.username)
-            #     account.save
-
             return account
 
-        
         else:
             raise serializers.ValidationError(user_serializer.errors)

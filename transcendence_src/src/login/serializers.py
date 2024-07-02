@@ -23,19 +23,13 @@ class UserSerializer(serializers.ModelSerializer):
 
 class AccountSerializer(serializers.ModelSerializer):
     user = UserSerializer()
-    sent_requests = FriendRequestSerializer(many=True, read_only=True)
-    received_requests = FriendRequestSerializer(many=True, read_only=True)
 
     class Meta:
         model = Account
-        fields = ['id', 'user', 'pfp', 'wins', 'losses', 'friends', 'matches_as_player1', 'matches_as_player2', 'sent_requests', 'received_requests']
+        fields = ['id', 'user', 'pfp', 'wins', 'losses', 'friends']
         extra_kwargs = {
             'friends': {'required': False},
             'pfp': {'required': False},
-            'matches_as_player1': {'required': False},
-            'matches_as_player2': {'required': False},
-            'sent_requests': {'required': False},
-            'received_requests': {'required': False},
         }
 
     def create(self, validated_data):

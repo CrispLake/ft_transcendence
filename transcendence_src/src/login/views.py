@@ -5,7 +5,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from login.models import Account, FriendRequest
-from login.serializers import AccountSerializer, UserSerializer
+from login.serializers import AccountSerializer, UserSerializer, FriendRequestSerializer
 from django.contrib.auth.models import User
 from django.middleware.csrf import get_token
 
@@ -86,6 +86,14 @@ def change_password(request):
         return Response({"status": "password set", "token": new_token.key}, status=status.HTTP_200_OK)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def request_list(request, user_id):
+    if request.method == 'GET':
+        requests = FriendRequest.objects.filter(from_user=user_id) | FriendRequest.objects.filter(to_user=user_id)
+        serializer = FriendRequestSerializer(requests, many=True)
+        return Response(serializer.data)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

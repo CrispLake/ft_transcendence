@@ -7,13 +7,13 @@ Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
 Content-Type: application/json
 
 {
-    "to_user": 2
+    "to_user": 1
 }
-
 
 ###
 
-POST http://localhost:8000/friend-request/respond/
+GET http://localhost:8000/friend-request/1
+Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
 
 ###
 
@@ -90,7 +90,6 @@ POST http://localhost:8000/match HTTP/1.1
 Authorization: Token 855ba830c100c7f927c41d406592d58319bd0240
 Content-Type: application/json
 
-
 {
     "player1": 1,
     "player1Score": 3,
@@ -113,7 +112,7 @@ Content-Type: application/json
 ###
 
 GET http://localhost:8000/match/1 HTTP/1.1
-Authorization: Token 855ba830c100c7f927c41d406592d58319bd0240
+Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
 
 ###
 

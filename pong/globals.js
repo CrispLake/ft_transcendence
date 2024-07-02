@@ -46,11 +46,13 @@ export const ballStartPos = {
 };
 export const maxSpin = 0.01;       // grades
 export const spinReduction = 10;   // precentage
+export const maxAngleIncreaseFromSpinBounce = PongMath.degToRad(40);
 
 // Angles
 export const maxAngleDegrees = 30;
 export const minAngle = PongMath.setMinAngle(maxAngleDegrees);
 export const maxAngle = PongMath.setMaxAngle(maxAngleDegrees);
+export const minAngleFromWall = 30;
 
 export const winningScore = 3;
 export const fps = 60;

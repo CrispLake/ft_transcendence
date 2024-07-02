@@ -153,7 +153,6 @@ export class Player
 
     resetBoostAnimation()
     {
-        console.log("Resetting boost animation");
         this.boostMeter.position.set(this.paddle.position.x + this.boostOffset, this.paddle.position.y, this.paddle.position.z);
         this.boostMeter.material.emissive.set(COLOR.BOOSTMETER);
         this.boostMeterAnimation = false;
@@ -163,7 +162,6 @@ export class Player
 
     startBoostMeterAnimation()
     {
-        console.log("Starting boost animation");
         this.boostMeterAnimation = true;
         this.clockBoostMeter.start();
     }

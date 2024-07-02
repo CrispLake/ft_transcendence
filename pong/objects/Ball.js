@@ -63,9 +63,8 @@ export class Ball
         this.angle = PongMath.vector2DToAngle(this.speedX, this.speedZ);
     }
         
-    adjustAngle(player)
+    bounceFromPlayer(player)
     {
-        const incomingAngle = PongMath.vector2DToAngle(this.speedX, this.speedZ);
         let impactPoint;
         if (player.alignment == G.vertical)
             impactPoint = this.mesh.position.z - player.paddle.position.z;
@@ -85,6 +84,91 @@ export class Ball
         {
             this.angle = PongMath.lerp(normalizedImpact, -1, 1, PongMath.degToRad(270) - G.minAngle, PongMath.degToRad(90) + G.minAngle);
         }
+    }
+
+    wallUp(wall)
+    {
+        return (wall.alignment == G.horizontal && this.speedZ < 0);
+    }
+
+    wallDown(wall)
+    {
+        return (wall.alignment == G.horizontal && this.speedZ > 0);
+    }
+
+    wallLeft(wall)
+    {
+        return (wall.alignment == G.vertical && this.speedX < 0);
+    }
+
+    wallRight(wall)
+    {
+        return (wall.alignment == G.vertical && this.speedX > 0);
+    }
+
+    getDirection(wall)
+    {
+        if (this.wallLeft(wall))
+            return 1;
+        if (this.wallRight(wall))
+            return 2;
+        if (this.wallUp(wall))
+            return 3;
+        if (this.wallDown(wall))
+            return 4;
+        return 0;
+    }
+
+    bounceFromWall(wall)
+    {
+        // Get direction to wall from center
+        let direction = this.getDirection(wall);
+
+        // Change direction based on wall alignment
+        if (wall.alignment == G.vertical)
+            this.speedX = -this.speedX;
+        else
+        this.speedZ = -this.speedZ;
+
+        // Update angle based on the new direction
+        this.updateAngle();
+
+        // Change angle based on spin against the wall
+        let angleIncrease = PongMath.lerp(this.spin, -G.maxSpin, G.maxSpin, -G.maxAngleIncreaseFromSpinBounce, G.maxAngleIncreaseFromSpinBounce);
+        this.angle += angleIncrease;
+        this.angle = PongMath.within2Pi(this.angle);
+
+        // Keep angle within reasonable values
+        this.angle = PongMath.radToDeg(this.angle);
+        if (direction == 1)
+        {
+            if (this.angle < 270 && this.angle > 180 - G.minAngleFromWall)
+                this.angle = 180 - G.minAngleFromWall;
+            else if (this.angle > 270 && this.angle < G.minAngleFromWall)
+                this.angle = G.minAngleFromWall;
+        }
+        else if (direction == 2)
+        {
+            if (this.angle > 90 && this.angle < 180 + G.minAngleFromWall)
+                this.angle = 180 + G.minAngleFromWall;
+            else if (this.angle < 90 && this.angle > 360 - G.minAngleFromWall)
+                this.angle = 360 - G.minAngleFromWall;
+        }
+        else if (direction == 3)
+        {
+            if (this.angle > 180 && this.angle < 270 + G.minAngleFromWall)
+                this.angle = 270 + G.minAngleFromWall;
+            else if (this.angle < 180 && this.angle > 90 - G.minAngleFromWall)
+                this.angle = 90 - G.minAngleFromWall;
+        }
+        else if (direction == 4)
+        {
+            if (this.angle < 360 && this.angle > 270 - G.minAngleFromWall)
+                this.angle = 270 - G.minAngleFromWall;
+            else if (this.angle > 0 && this.angle < 90 + G.minAngleFromWall)
+                this.angle = 90 + G.minAngleFromWall;
+        }
+        this.angle = PongMath.degToRad(this.angle);
     }
 
     addSpin(power)

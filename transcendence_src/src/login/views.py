@@ -126,15 +126,11 @@ def respond_to_friend_request(request, request_id):
         return Response({'status': 'not authorized'}, status=status.HTTP_403_FORBIDDEN)
 
     if request.data.get('accept'):
-        friend_request.status = 'accepted'
         request.user.account.friends.add(friend_request.from_user.account)
         friend_request.from_user.account.friends.add(request.user.account)
-        friend_request.save()
         friend_request.delete()
         return Response({'status': 'friend request accepted'}, status=status.HTTP_200_OK)
     else:
-        friend_request.status = 'rejected'
-        friend_request.save()
         friend_request.delete()
         return Response({'status': 'friend request rejected'}, status=status.HTTP_200_OK)
 

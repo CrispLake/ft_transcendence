@@ -98,16 +98,17 @@ Content-Type: application/json
 
 ###
 
-# Matches
+# Matches pong 2p
 
 ###
 
-GET http://localhost:8000/match HTTP/1.1
-Authorization: Token 855ba830c100c7f927c41d406592d58319bd0240
+GET http://localhost:8000/pong-2p HTTP/1.1
+Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
+
 
 ###
 
-POST http://localhost:8000/match HTTP/1.1
+POST http://localhost:8000/pong-2p HTTP/1.1
 Authorization: Token 855ba830c100c7f927c41d406592d58319bd0240
 Content-Type: application/json
 
@@ -119,7 +120,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8000/match HTTP/1.1
+POST http://localhost:8000/pong-2p HTTP/1.1
 Authorization: Token 855ba830c100c7f927c41d406592d58319bd0240, Token 1a3d6fe4659ff8d6c8c40c244f4404f0d7079990
 Content-Type: application/json
 
@@ -132,7 +133,46 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:8000/match/1 HTTP/1.1
+GET http://localhost:8000/pong-2p/1 HTTP/1.1
+Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
+
+###
+
+# Matches pong 4p
+
+###
+
+GET http://localhost:8000/pong-4p HTTP/1.1
+Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
+
+###
+
+POST http://localhost:8000/pong-4p HTTP/1.1
+Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
+Content-Type: application/json
+
+{
+    "player1": 2,
+    "player1Score": 3,
+    "player2Score": 2
+}
+
+###
+
+POST http://localhost:8000/pong-4p HTTP/1.1
+Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58, Token 1a3d6fe4659ff8d6c8c40c244f4404f0d7079990
+Content-Type: application/json
+
+{
+    "player1": 1,
+    "player1Score": 3,
+    "player2": 2,
+    "player2Score": 2
+}
+
+###
+
+GET http://localhost:8000/pong-4p/1 HTTP/1.1
 Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
 
 ###

@@ -8,9 +8,9 @@ export class Pusher {
         this.lane = player.currentLane;
         this.size = player.boostAmount;
         this.geometry = new THREE.BoxGeometry(
-            G.paddleThickness * player.boostAmount,
-            G.paddleHeight * player.boostAmount,
-            G.paddleLength * player.boostAmount
+            G.playerThickness * player.boostAmount,
+            G.playerHeight * player.boostAmount,
+            G.playerLength * player.boostAmount
         );
         this.material = new THREE.MeshStandardMaterial({
             color: player.color,
@@ -18,13 +18,12 @@ export class Pusher {
         });
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.mesh.position.set(
-            player.paddle.position.x,
-            player.paddle.position.y,
-            player.paddle.position.z
+            player.mesh.position.x,
+            player.mesh.position.y,
+            player.mesh.position.z
         );
         this.colliding = false;
         this.box = new THREE.Box3().setFromObject(this.mesh);
-        // Ensure the mesh is added to the scene
         player.scene.add(this.mesh);
     }
     updateBoundingBox() {
@@ -38,9 +37,9 @@ export class Pusher {
             return;
         }
         this.mesh.scale.set(
-            G.paddleThickness * this.size / this.mesh.geometry.parameters.width,
-            G.paddleHeight * this.size / this.mesh.geometry.parameters.height,
-            G.paddleLength * this.size / this.mesh.geometry.parameters.depth
+            G.playerThickness * this.size / this.mesh.geometry.parameters.width,
+            G.playerHeight * this.size / this.mesh.geometry.parameters.height,
+            G.playerLength * this.size / this.mesh.geometry.parameters.depth
         );
         this.mesh.position.y = G.laneY + (this.box.max.y / 2) + (G.laneThickness / 2);
         this.updateBoundingBox();
@@ -53,21 +52,21 @@ export class Player {
         this.name = name;
         this.sign = pos.x > 0 ? 1 : -1;
         this.color = color;
-        this.geometry = new THREE.BoxGeometry(G.paddleThickness, G.paddleHeight, G.paddleLength);
+        this.geometry = new THREE.BoxGeometry(G.playerThickness, G.playerHeight, G.playerLength);
         this.material = new THREE.MeshStandardMaterial({
             color: color,
             emissive: color
         });
-        this.paddle = new THREE.Mesh(this.geometry, this.material);
-        this.box = new THREE.Box3().setFromObject(this.paddle);
-        this.light = new THREE.RectAreaLight(color, G.paddleLightIntensity, G.paddleLength, G.paddleHeight);
+        this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.box = new THREE.Box3().setFromObject(this.mesh);
+        this.light = new THREE.RectAreaLight(color, G.playerLightIntensity, G.playerLength, G.playerHeight);
         this.boostGeometry = new THREE.BoxGeometry(G.boostMeterWidth, G.boostMeterThickness, 0);
         this.boostMaterial = new THREE.MeshStandardMaterial({
             color: COLOR.BOOSTMETER,
             emissive: COLOR.BOOSTMETER
         });
         this.boostMeter = new THREE.Mesh(this.boostGeometry, this.boostMaterial);
-        this.paddleLength = G.paddleLength;
+        this.meshLength = G.playerLength;
         this.score = 0;
         this.moveLeft = false;
         this.moveRight = false;
@@ -90,14 +89,14 @@ export class Player {
 
     }
     addToScene(scene) {
-        scene.add(this.paddle);
+        scene.add(this.mesh);
         scene.add(this.light);
-        // scene.add(this.boostMeter);
+        scene.add(this.boostMeter);
     }
 
     setPos(x, y, z) {
-        this.paddle.position.set(x, y, z);
-        this.light.position.copy(this.paddle.position);
+        this.mesh.position.set(x, y, z);
+        this.light.position.copy(this.mesh.position);
         this.boostMeter.position.set(x, y, z);
     }
 
@@ -115,7 +114,6 @@ export class Player {
         pusher.updateBoundingBox();
     }
     move() {
-        this.movePushers();
         if (this.moveRight) {
             this.moveRight = false;
             this.currentLane++;
@@ -128,9 +126,9 @@ export class Player {
         } else if (this.currentLane > 2) {
             this.currentLane = 0;
         }
-        this.paddle.position.z = G.lanePositions[this.currentLane];
-        this.boostMeter.position.z = this.paddle.position.z;
-        this.boostMeter.position.y = this.paddle.position.y + G.paddleHeight / 2 + G.boostMeterThickness / 2;
+        this.mesh.position.z = G.lanePositions[this.currentLane];
+        this.boostMeter.position.z = this.mesh.position.z;
+        this.boostMeter.position.y = this.mesh.position.y + G.playerHeight / 2 + G.boostMeterThickness / 2;
     }
 
     removeBoostMeter() {
@@ -144,15 +142,15 @@ export class Player {
         } else {
             this.removeBoostMeter();
             this.boostGeometry = new THREE.BoxGeometry(
-                G.paddleLength * this.boostAmount,
+                G.playerLength * this.boostAmount,
                 G.boostMeterThickness,
-                this.paddleLength * this.boostAmount
+                this.meshLength * this.boostAmount
             );
             this.boostMeter = new THREE.Mesh(this.boostGeometry, this.boostMaterial);
             this.boostMeter.position.set(
-                this.paddle.position.x,
-                this.paddle.position.y,
-                this.paddle.position.z + 2
+                this.mesh.position.x,
+                this.mesh.position.y,
+                this.mesh.position.z + 2
             );
             this.scene.add(this.boostMeter);
         }
@@ -179,7 +177,7 @@ export class Player {
 
     reset() {
         this.setPos(
-            (G.arenaLength / 2 - G.paddleThickness / 2) * this.sign,
+            (G.arenaLength / 2 - G.playerThickness / 2) * this.sign,
             0,
             0
         );

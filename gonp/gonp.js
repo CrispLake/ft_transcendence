@@ -10,10 +10,8 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
 import * as PongMath from './math.js';
 import * as G from './globals.js';
-import { speedUp } from './utilities.js';
 import * as COLOR from './colors.js';
 import { Player } from './objects/Player.js';
-import { Ball } from './objects/Ball.js';
 import { Arena } from './objects/Arena.js';
 import { Text } from './objects/Text.js';
 import { UserInterface } from './objects/UserInterface.js';
@@ -23,25 +21,17 @@ import * as SETTINGS from './gameSetting.js';
 
 /*---- INITIALIZE ------------------------------------------------------------*/
 
-
-const lastBounce = {
-	wallLeft: false,
-	wallRight: false,
-	paddle1: false,
-	paddle2: false
-}
-
 RectAreaLightUniformsLib.init();
 const scene = new THREE.Scene();
 const arena = new Arena(scene);
-let player1 = new Player(scene, G.p1StartPos, 'Jesse', COLOR.PLAYER1);
-let player2 = new Player(scene, G.p2StartPos, 'James', COLOR.PLAYER2);
+let player1 = new Player(scene, G.p1StartPos, 'BLU', COLOR.PLAYER1);
+let player2 = new Player(scene, G.p2StartPos, 'RED', COLOR.PLAYER2);
 // let ball = new Ball(scene, G.ballStartPos);
 
 // -----Camera Setup----
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
 camera.lookAt(0, 0, 0);
-camera.position.set(-22, 25, 23);
+camera.position.set(0, 25, 20);
 
 // ----Renderer Setup----
 const renderer = new THREE.WebGLRenderer();
@@ -70,7 +60,7 @@ fontLoader.load('./resources/font.json', function (font)
 		bevelOffset: 0,
 		bevelSegments: 3
 	});
-    const textMaterial = new THREE.MeshBasicMaterial({color: COLOR.PONG});
+    const textMaterial = new THREE.MeshBasicMaterial({color: COLOR.PLAYER1LANE});
     textMesh = new THREE.Mesh(textGeometry, textMaterial);
     textGeometry.computeBoundingBox();
     const boundingBox = textGeometry.boundingBox;
@@ -85,8 +75,8 @@ fontLoader.load('./resources/font.json', function (font)
     const outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera, [textMesh]);
     outlinePass.edgeStrength = 10; // Increase to make the edges glow more
     outlinePass.edgeGlow = 1; // Increase to make the glow wider
-    outlinePass.visibleEdgeColor.set(0xFF00FF); // Neon color
-    outlinePass.hiddenEdgeColor.set(0xFF00FF); // Neon color
+    outlinePass.visibleEdgeColor.set(COLOR.PLAYER2); // Neon color
+    outlinePass.hiddenEdgeColor.set(COLOR.PLAYER2); // Neon color
     composer.addPass(outlinePass);
 
     // Add FXAA for better smoothing of edges
@@ -104,34 +94,6 @@ const camera2D = new THREE.OrthographicCamera(
     0.1, 1000
 );
 camera2D.position.z = 4;
-
-// const UI = new UserInterface(scene, fontLoader);
-
-// UI.addTextObject(scene2D, 'p1', player1.name, new THREE.Vector3(-800, 500, 0), 40, COLOR.UI_NAMES);
-// UI.addTextObject(scene2D, 'p2', player2.name, new THREE.Vector3(600, 500, 0), 40, COLOR.UI_NAMES);
-// UI.addTextObject(scene2D, 'score', '0 - 0', new THREE.Vector3(-50, 500, 0), 50, COLOR.UI_SCORE);
-
-// function updateScore(player1Score, player2Score)
-// {
-//     UI.updateTextObject("score", player1Score + " - " + player2Score);
-//     ball.reset();
-//     player1.reset();
-//     player2.reset();
-//     resetBounces(lastBounce);
-//     sleepMillis(1000);
-// }
-
-function gameEnded(score1, score2)
-{
-    return (score1 >= G.winningScore || score2 >= G.winningScore);
-}
-
-function resetGame(player1, player2)
-{
-    player1.score = 0;
-    player2.score = 0;
-}
-
 
 /*---- LOOP ------------------------------------------------------------------*/
 
@@ -182,7 +144,7 @@ function movePushers() {
     for (let i = 0; i < player1.pushers.length; i++) {
         pusher = player1.pushers[i];
         player1.movePusher(pusher);
-        if (pusher.mesh.position.x >= player2.paddle.position.x) {
+        if (pusher.mesh.position.x >= player2.mesh.position.x) {
             arena.lanes[pusher.lane].player1scored(pusher.size);
             pusher.player.removePusher(pusher);
         }
@@ -190,7 +152,7 @@ function movePushers() {
     for (let i = 0; i < player2.pushers.length; i++) {
         pusher = player2.pushers[i];
         player2.movePusher(pusher)
-        if (pusher.mesh.position.x <= player1.paddle.position.x) {
+        if (pusher.mesh.position.x <= player1.mesh.position.x) {
             arena.lanes[pusher.lane].player2scored(pusher.size);
             pusher.player.removePusher(pusher);
         }
@@ -201,8 +163,8 @@ function update()
 {
     setTimeout(() => { requestAnimationFrame(update); }, 1000 / G.fps);
     updateBoost();
-    updatePaddlePosition();
-    // updateBallPosition();
+    updatePlayerPosition();
+    pushersLogic();
     if (composer)
     {
         composer.render();
@@ -211,31 +173,7 @@ function update()
     {
         renderer.render(scene, camera);
     }
-    pushersLogic();
 
-    // if (goal())
-    // {
-    //     if (gameEnded(player1.score, player2.score))
-    //     {
-    //         let winner;
-    //         let loser;
-    //         if (player1.score >= G.winningScore)
-    //         {
-    //             winner = player1.name;
-    //             loser = player2.name;
-    //         }
-    //         else
-    //         {
-    //             winner = player2.name;
-    //             loser = player1.name;
-    //         }
-    //         // sendGameResults(winner, loser);
-    //         resetGame(player1, player2);
-    //     }
-    //     // console.log("Score = " + player1.score + " - " + player2.score);
-    //     updateScore(player1.score, player2.score);
-    // }
-    // Render the 2D scene
     renderer.autoClear = false;
     renderer.clearDepth();
     renderer.render(scene2D, camera2D);
@@ -248,24 +186,6 @@ function sleepMillis(millis)
     var curDate = null;
     do { curDate = new Date(); }
     while(curDate-date < millis);
-}
-
-function goal()
-{
-    // let goalOffSet = 1;
-    // if (ball.mesh.position.x <= player1.paddle.position.x - goalOffSet)
-    // {
-    //     // console.log("player2 scored");
-    //     player2.score++;
-    //     return (true);
-    // }
-    // else if (ball.mesh.position.x >= player2.paddle.position.x + goalOffSet)
-    // {
-    //     // console.log("player1 scored");
-    //     player1.score++;
-    //     return (true);
-    // }
-    // return (false);
 }
 
 
@@ -328,9 +248,7 @@ function handleKeyUp(event)
 document.addEventListener('keydown', handleKeyDown);
 document.addEventListener('keyup', handleKeyUp);
 
-
-// ----Update Paddle----
-function updatePaddlePosition()
+function updatePlayerPosition()
 {
     player1.move();
     player2.move();
@@ -339,58 +257,19 @@ function updatePaddlePosition()
 
 function updateBoost()
 {
-    if (SETTINGS.spin == false)
-        return ;
-    if (player1.boostPressed)
+    if (player1.boostPressed) {
         player1.increaseBoost();
-    else
+    }
+    else {
         player1.resetBoost();
-
-    if (player2.boostPressed)
+    }
+    if (player2.boostPressed) {
         player2.increaseBoost();
-    else
+    }
+    else {
         player2.resetBoost();
-}
-
-function resetBounces(bounces)
-{
-	bounces.wallLeft = false;
-	bounces.wallRight = false;
-	bounces.paddle1 = false;
-	bounces.paddle2 = false;
-}
-
-// ----Update Ball----
-function updateBallPosition()
-{
-    ball.box.setFromObject(ball.mesh);
-    player1.box.setFromObject(player1.paddle);
-    player2.box.setFromObject(player2.paddle);
-    
-}
-
-function adjustSpin(player)
-{
-    if (SETTINGS.spin == false) return ;
-
-    if (!player.moveLeft && !player.moveRight)
-        ball.reduceSpin();
-    else
-    {
-        let spinPower = ((player.moveLeft) ? 1 : -1) * player.sign * player.boostAmount;
-        spinPower = PongMath.lerp(spinPower, -G.maxBoost, G.maxBoost, -G.maxSpin, G.maxSpin);
-        ball.addSpin(spinPower);
     }
 }
-
-function adjustAngle(paddle)
-{
-    const incomingAngle = PongMath.vector2DToAngle(ball.speedX, ball.speedZ);
-    let impactPoint = ball.mesh.position.z - paddle.position.z;
-    let normalizedImpact = impactPoint / (G.paddleLength / 2);
-    ball.angle = PongMath.lerp(normalizedImpact, -1, 1, G.minAngle, G.maxAngle);
-}
-
 
 // ----Window resize----
 window.addEventListener( 'resize', onWindowResize, false );
@@ -402,26 +281,3 @@ function onWindowResize( event )
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
 }
-
-
-/*
-    TODO: Send post request when game ends. Might need to add axios path to html file.
-*/
-
-// import axios from 'axios';
-
-// function sendGameResults(winners, losers)
-// {
-//     const data = {
-//         winners: winners,
-//         losers: losers,
-//     };
-
-//     axios.post('localhost:8000/matches', data)
-//         .then(response => {
-//             console.log('Success:', response.data);
-//         })
-//         .catch(error => {
-//             console.error('Error:', error);
-//         });
-// }

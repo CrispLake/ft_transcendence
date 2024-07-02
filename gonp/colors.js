@@ -16,6 +16,8 @@ export const WALL = WHITE;
 export const PADDLE = CYAN;
 export const PLAYER1 = BLUE;
 export const PLAYER2 = RED;
+export const PLAYER1LANE = 0x3333BB;
+export const PLAYER2LANE = 0xBB3333;
 
 export const BOOSTMETER = WHITE;
 export const BALL = WHITE;

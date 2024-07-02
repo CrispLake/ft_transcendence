@@ -7,13 +7,13 @@ export class Lane
 {
     constructor(posZ) {
         this.colors = [
-            new THREE.Color(COLOR.PLAYER2),   // Color for the first section
-            new THREE.Color(COLOR.WALL),   // Color for the second section
-            new THREE.Color(COLOR.PLAYER1)    // Color for the third section
+            new THREE.Color(COLOR.PLAYER2LANE),
+            new THREE.Color(COLOR.WALL),
+            new THREE.Color(COLOR.PLAYER1LANE)
         ];
         this.sectionPositions = [
-            0 - G.laneLength / 2,  // End of the first section
-            0 + G.laneLength / 2   // End of the second section
+            G.laneOriginX - G.laneLength / 2, // Player2 section
+            G.laneOriginX + G.laneLength / 2 // Player1 section
         ];
         this.vertexShader = `
             varying vec3 vPosition;
@@ -48,7 +48,7 @@ export class Lane
             }
         });
         this.mesh = new THREE.Mesh(this.geometry, this.material);
-        this.mesh.position.set(0, G.laneY, posZ);
+        this.mesh.position.set(G.laneOriginX, G.laneY, posZ);
     }
     setSectionPos(leftPos, rightPos) {
         this.sectionPositions[0] = leftPos;
@@ -56,6 +56,10 @@ export class Lane
     }
     player1scored(amount) {
         amount *= 5;
+        if (this.sectionPositions[1] - amount < G.laneOriginX - G.laneLength / 2) {
+            this.setSectionPos(G.laneOriginX - G.laneLength / 2, G.laneOriginX - G.laneLength / 2)
+            return ;
+        }
         if (this.sectionPositions[0] > this.sectionPositions[1] - amount) {
             this.setSectionPos(this.sectionPositions[1] - amount, this.sectionPositions[1] - amount)            
         }
@@ -65,6 +69,10 @@ export class Lane
     }
     player2scored(amount) {        
         amount *= 5;
+        if (this.sectionPositions[0] + amount > G.laneOriginX + G.laneLength / 2) {
+            this.setSectionPos(G.laneOriginX + G.laneLength / 2, G.laneOriginX + G.laneLength / 2)
+            return ;
+        }
         if (this.sectionPositions[0] + amount > this.sectionPositions[1]) {
             this.setSectionPos(this.sectionPositions[0] + amount, this.sectionPositions[0] + amount)            
         }

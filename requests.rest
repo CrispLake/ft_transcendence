@@ -1,8 +1,53 @@
+# Friends
+
+###
+
+POST http://localhost:8000/friend-request/send
+Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
+Content-Type: application/json
+
+{
+    "to_user": 2
+}
+
+###
+
+GET http://localhost:8000/friend-request/list
+Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
+
+###
+
+user1
+Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
+user2
+Authorization: Token 1a3d6fe4659ff8d6c8c40c244f4404f0d7079990
+###
+
+POST http://localhost:8000/friend-request/respond/3
+Authorization: Token 1a3d6fe4659ff8d6c8c40c244f4404f0d7079990
+Content-Type: application/json
+
+{
+    "accept": true
+}
+
+###
+
+POST http://localhost:8000/friend-remove/1
+Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
+
+###
+
+GET http://localhost:8000/register HTTP/1.1
+Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
+
+###
+
 # User update
 
 ###
 
-PUT http://localhost:8000/login/account/update HTTP/1.1
+PUT http://localhost:8000/account/update HTTP/1.1
 Authorization: Token 026f7008cd7cd287a4c934e0896316ae6bca3efa
 Content-Type: application/json
 
@@ -13,7 +58,7 @@ Content-Type: application/json
 
 ###
 
-PUT http://localhost:8000/login/user/change-username HTTP/1.1
+PUT http://localhost:8000/user/change-username HTTP/1.1
 Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
 Content-Type: application/json
 
@@ -23,7 +68,7 @@ Content-Type: application/json
 
 ###
 
-PUT http://localhost:8000/login/user/change-password HTTP/1.1
+PUT http://localhost:8000/user/change-password HTTP/1.1
 Authorization: Token 026f7008cd7cd287a4c934e0896316ae6bca3efa
 Content-Type: application/json
 
@@ -33,7 +78,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8000/login/login HTTP/1.1
+POST http://localhost:8000/login HTTP/1.1
 Content-Type: application/json
 
 {
@@ -43,11 +88,11 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8000/login/login HTTP/1.1
+POST http://localhost:8000/login HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "testUser1",
+    "username": "testUser2",
     "password": "testPassword"
 }
 
@@ -57,15 +102,14 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:8000/pong/match HTTP/1.1
+GET http://localhost:8000/match HTTP/1.1
 Authorization: Token 855ba830c100c7f927c41d406592d58319bd0240
 
 ###
 
-POST http://localhost:8000/pong/match HTTP/1.1
+POST http://localhost:8000/match HTTP/1.1
 Authorization: Token 855ba830c100c7f927c41d406592d58319bd0240
 Content-Type: application/json
-
 
 {
     "player1": 1,
@@ -75,7 +119,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8000/pong/match HTTP/1.1
+POST http://localhost:8000/match HTTP/1.1
 Authorization: Token 855ba830c100c7f927c41d406592d58319bd0240, Token 1a3d6fe4659ff8d6c8c40c244f4404f0d7079990
 Content-Type: application/json
 
@@ -88,8 +132,8 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:8000/pong/match/1 HTTP/1.1
-Authorization: Token 855ba830c100c7f927c41d406592d58319bd0240
+GET http://localhost:8000/match/1 HTTP/1.1
+Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
 
 ###
 
@@ -97,7 +141,7 @@ Authorization: Token 855ba830c100c7f927c41d406592d58319bd0240
 
 ###
 
-GET http://localhost:8000/login/csrf-token HTTP/1.1
+GET http://localhost:8000/csrf-token HTTP/1.1
 
 ###
 
@@ -105,12 +149,12 @@ GET http://localhost:8000/login/csrf-token HTTP/1.1
 
 ###
 
-GET http://localhost:8000/login/register HTTP/1.1
-Authorization: Token 82f6917eb874407a8aeb1ba526452204478d9f90
+GET http://localhost:8000/register HTTP/1.1
+Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
 
 ###
 
-POST http://localhost:8000/login/register HTTP/1.1
+POST http://localhost:8000/register HTTP/1.1
 Content-Type: application/json
 
 {
@@ -122,7 +166,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8000/login/register HTTP/1.1
+POST http://localhost:8000/register HTTP/1.1
 Content-Type: application/json
 
 {
@@ -134,7 +178,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8000/login/register HTTP/1.1
+POST http://localhost:8000/register HTTP/1.1
 Content-Type: application/json
 
 {
@@ -150,7 +194,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8000/login/login HTTP/1.1
+POST http://localhost:8000/login HTTP/1.1
 Content-Type: application/json
 
 {
@@ -160,7 +204,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8000/login/login HTTP/1.1
+POST http://localhost:8000/login HTTP/1.1
 Content-Type: application/json
 
 {
@@ -170,7 +214,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8000/login/login HTTP/1.1
+POST http://localhost:8000/login HTTP/1.1
 Content-Type: application/json
 
 {
@@ -181,6 +225,6 @@ Content-Type: application/json
 ###
 
 
-POST http://localhost:8000/login/login HTTP/1.1
+POST http://localhost:8000/login HTTP/1.1
 
 ###

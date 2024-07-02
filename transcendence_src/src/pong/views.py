@@ -28,7 +28,10 @@ def match(request, player_id=None):
         player2_id = request.data.get('player2')
 
         if player1_id is None:
-            return Response({'detail': 'Player IDs are required.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'Player ID is required.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if player1_id is player2_id:
+            return Response({'detail': 'Player IDs can not be same'}, status=status.HTTP_400_BAD_REQUEST)
 
         tokens = [token.strip() for token in request.headers.get('Authorization', '').replace('Token ', '').split(',')]
         valid_user_ids = [user.id for user in User.objects.filter(auth_token__key__in=tokens)]

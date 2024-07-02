@@ -1,13 +1,13 @@
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from login.models import Account
-from login.serializers import AccountSerializer, UserSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
-from rest_framework.response import Response
-from django.middleware.csrf import get_token
 from rest_framework.permissions import IsAuthenticated
+from login.models import Account, FriendRequest
+from login.serializers import AccountSerializer, UserSerializer, FriendRequestSerializer
+from django.contrib.auth.models import User
+from django.middleware.csrf import get_token
 
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
@@ -83,6 +83,72 @@ def change_password(request):
 
         new_token = Token.objects.create(user=user)
 
-        return Response({"status": "password set", "token": new_token.key}, status=status.HTTP_200_OK)
+        return Response({'status': 'password set', 'token': new_token.key}, status=status.HTTP_200_OK)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def request_list(request):
+    user_id = request.user.id
+    requests = FriendRequest.objects.filter(from_user=user_id) | FriendRequest.objects.filter(to_user=user_id)
+    serializer = FriendRequestSerializer(requests, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def send_friend_request(request):
+    to_user_id = request.data.get('to_user')
+
+    if to_user_id is request.user.id:
+        return Response({'detail': 'Can not send friend request to itself'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if request.user.account.friends.filter(id=to_user_id).exists():
+        return Response({'detail': 'Already friend'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        to_user = User.objects.get(id=to_user_id)
+    except User.DoesNotExist:
+        return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+    friend_request, created = FriendRequest.objects.get_or_create(from_user=request.user, to_user=to_user)
+
+    if created:
+        return Response({'status': 'friend request sent'}, status=status.HTTP_201_CREATED)
+    else:
+        return Response({'status': 'friend request already sent'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def respond_to_friend_request(request, request_id):
+    friend_request = FriendRequest.objects.get(id=request_id)
+    if friend_request.to_user != request.user:
+        return Response({'status': 'not authorized'}, status=status.HTTP_403_FORBIDDEN)
+
+    if request.data.get('accept'):
+        request.user.account.friends.add(friend_request.from_user.account)
+        friend_request.from_user.account.friends.add(request.user.account)
+        friend_request.delete()
+        return Response({'status': 'friend request accepted'}, status=status.HTTP_200_OK)
+    else:
+        friend_request.delete()
+        return Response({'status': 'friend request rejected'}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def remove_friend(request, remove_id):
+    try:
+        to_remove = User.objects.get(id=remove_id)
+    except User.DoesNotExist:
+        return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+    user_account = request.user.account
+    to_remove_account = to_remove.account
+
+    if not user_account.friends.filter(id=remove_id).exists():
+        return Response({'error': 'This user is not in your friends list'}, status=status.HTTP_400_BAD_REQUEST)
+
+    user_account.friends.remove(to_remove_account)
+    to_remove_account.friends.remove(user_account)
+
+    return Response({'status': 'friend removed'}, status=status.HTTP_200_OK)

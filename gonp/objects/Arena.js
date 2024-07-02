@@ -54,25 +54,43 @@ export class Lane
         this.sectionPositions[0] = leftPos;
         this.sectionPositions[1] = rightPos;
     }
+    player1scored(amount) {
+        amount *= 5;
+        if (this.sectionPositions[0] > this.sectionPositions[1] - amount) {
+            this.setSectionPos(this.sectionPositions[1] - amount, this.sectionPositions[1] - amount)            
+        }
+        else {
+            this.setSectionPos(this.sectionPositions[0], this.sectionPositions[1] - amount)
+        }
+    }
+    player2scored(amount) {        
+        amount *= 5;
+        if (this.sectionPositions[0] + amount > this.sectionPositions[1]) {
+            this.setSectionPos(this.sectionPositions[0] + amount, this.sectionPositions[0] + amount)            
+        }
+        else {
+            this.setSectionPos(this.sectionPositions[0] + amount, this.sectionPositions[1])
+        }
+    }
 }
 
 export class Arena
 {
     constructor(scene)
     {
-        this.lane1 = new Lane(G.lanePositions[0]);
-        this.lane2 = new Lane(G.lanePositions[1]);
-        this.lane3 = new Lane(G.lanePositions[2]);
+        this.lanes = [];
+        this.lanes.push(new Lane(G.lanePositions[0]));
+        this.lanes.push(new Lane(G.lanePositions[1]));
+        this.lanes.push(new Lane(G.lanePositions[2]));
         this.ambientLight = new THREE.AmbientLight(COLOR.WHITE, 0.05);
         this.addToScene(scene);
-        this.lane1.setSectionPos(-10, 1)
     }
-
+    
     addToScene(scene)
     {
         scene.add(this.ambientLight);
-        scene.add(this.lane1.mesh);
-        scene.add(this.lane2.mesh);
-        scene.add(this.lane3.mesh);
+        for (let i = 0; i < this.lanes.length; i++) {
+            scene.add(this.lanes[i].mesh);
+        }
     }
 }

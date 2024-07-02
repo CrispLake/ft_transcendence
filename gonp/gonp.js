@@ -178,11 +178,22 @@ function pushersLogic()
 
 // ----Update and render----
 function movePushers() {
+    let pusher;
     for (let i = 0; i < player1.pushers.length; i++) {
-        player1.movePusher(player1.pushers[i])
+        pusher = player1.pushers[i];
+        player1.movePusher(pusher);
+        if (pusher.mesh.position.x >= player2.paddle.position.x) {
+            arena.lanes[pusher.lane].player1scored(pusher.size);
+            pusher.player.removePusher(pusher);
+        }
     }
     for (let i = 0; i < player2.pushers.length; i++) {
-        player2.movePusher(player2.pushers[i])
+        pusher = player2.pushers[i];
+        player2.movePusher(pusher)
+        if (pusher.mesh.position.x <= player1.paddle.position.x) {
+            arena.lanes[pusher.lane].player2scored(pusher.size);
+            pusher.player.removePusher(pusher);
+        }
     }
 }
 

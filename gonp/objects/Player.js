@@ -34,10 +34,7 @@ export class Pusher {
         this.size -= 0.001;
         console.log(this.size);
         if (this.size < G.pusherMinSize) {
-            // Remove the pusher from the pushers array and the scene
-            this.player.pushers = this.player.pushers.filter(obj => obj !== this);
-            this.player.scene.remove(this.mesh);
-            console.log("removed pusher");
+            this.player.removePusher(this);
             return;
         }
         this.mesh.scale.set(
@@ -84,7 +81,14 @@ export class Player {
         this.addToScene(scene);
         this.pushers = [];
     }
+    removePusher(pusher)
+    {
+        this.pushers = this.pushers.filter(obj => obj !== pusher);
+        this.scene.remove(pusher.mesh);
+        console.log("removed pusher");
+        return;
 
+    }
     addToScene(scene) {
         scene.add(this.paddle);
         scene.add(this.light);

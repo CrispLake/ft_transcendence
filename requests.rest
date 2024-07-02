@@ -12,17 +12,23 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:8000/friend-request/1
+GET http://localhost:8000/friend-request/list
 Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
 
 ###
 
-POST http://localhost:8000/friend-request/respond/1
+user1
+Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
+user2
+Authorization: Token 1a3d6fe4659ff8d6c8c40c244f4404f0d7079990
+###
+
+POST http://localhost:8000/friend-request/respond/3
 Authorization: Token 1a3d6fe4659ff8d6c8c40c244f4404f0d7079990
 Content-Type: application/json
 
 {
-    "accept": true
+    "accept": false
 }
 
 ###

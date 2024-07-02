@@ -89,10 +89,9 @@ def change_password(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def request_list(request, user_id):
+def request_list(request):
     if request.method == 'GET':
-        if request.user.id is not user_id:
-            return Response({'status': 'not authorized'}, status=status.HTTP_403_FORBIDDEN)
+        user_id = request.user.id
         requests = FriendRequest.objects.filter(from_user=user_id) | FriendRequest.objects.filter(to_user=user_id)
         serializer = FriendRequestSerializer(requests, many=True)
         return Response(serializer.data)
@@ -104,6 +103,9 @@ def send_friend_request(request):
 
     if to_user_id is request.user.id:
         return Response({'detail': 'Can not send friend request to itself'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if request.user.account.friends.filter(id=to_user_id).exists():
+        return Response({'detail': 'Already friend'}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
         to_user = User.objects.get(id=to_user_id)
@@ -129,8 +131,10 @@ def respond_to_friend_request(request, request_id):
         request.user.account.friends.add(friend_request.from_user.account)
         friend_request.from_user.account.friends.add(request.user.account)
         friend_request.save()
+        friend_request.delete()
         return Response({'status': 'friend request accepted'}, status=status.HTTP_200_OK)
     else:
         friend_request.status = 'rejected'
         friend_request.save()
+        friend_request.delete()
         return Response({'status': 'friend request rejected'}, status=status.HTTP_200_OK)

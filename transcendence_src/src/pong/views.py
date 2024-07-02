@@ -28,7 +28,7 @@ def match(request, player_id=None):
         player2_id = request.data.get('player2')
 
         if player1_id is None:
-            return Response({'detail': 'Player ID are required.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'Player ID is required.'}, status=status.HTTP_400_BAD_REQUEST)
         
         if player1_id is player2_id:
             return Response({'detail': 'Player IDs can not be same'}, status=status.HTTP_400_BAD_REQUEST)

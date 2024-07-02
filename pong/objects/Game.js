@@ -163,9 +163,8 @@ export class Game
 				this.players[player].lightEffect();
 				this.ball.adjustSpin(this.players[player]);
 				this.players[player].resetBoost();
-				this.ball.adjustAngle(this.players[player]);
+				this.ball.bounceFromPlayer(this.players[player]);
 				this.ball.speedUp();
-				this.ball.updateAngle();
 				this.resetBounces();
 				this.players[player].bounce = true;
 			}
@@ -177,11 +176,7 @@ export class Game
 			{
 				this.arena.walls[wall].lightEffect();
 				this.ball.reduceSpin();
-				if (this.arena.walls[wall].alignment == G.vertical)
-					this.ball.speedX = -this.ball.speedX;
-				else
-					this.ball.speedZ = -this.ball.speedZ;
-				this.ball.updateAngle();
+				this.ball.bounceFromWall(this.arena.walls[wall]);
 				this.resetBounces();
 				this.arena.walls[wall].bounce = true;
 			}

@@ -12,7 +12,7 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:8000/friend-request/1
+GET http://localhost:8000/friend-request/2
 Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
 
 ###

@@ -83,7 +83,7 @@ def change_password(request):
 
         new_token = Token.objects.create(user=user)
 
-        return Response({"status": "password set", "token": new_token.key}, status=status.HTTP_200_OK)
+        return Response({'status': 'password set', 'token': new_token.key}, status=status.HTTP_200_OK)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -91,6 +91,8 @@ def change_password(request):
 @permission_classes([IsAuthenticated])
 def request_list(request, user_id):
     if request.method == 'GET':
+        if request.user.id is not user_id:
+            return Response({'status': 'not authorized'}, status=status.HTTP_403_FORBIDDEN)
         requests = FriendRequest.objects.filter(from_user=user_id) | FriendRequest.objects.filter(to_user=user_id)
         serializer = FriendRequestSerializer(requests, many=True)
         return Response(serializer.data)

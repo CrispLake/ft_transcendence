@@ -28,8 +28,13 @@ Authorization: Token 1a3d6fe4659ff8d6c8c40c244f4404f0d7079990
 Content-Type: application/json
 
 {
-    "accept": false
+    "accept": true
 }
+
+###
+
+POST http://localhost:8000/friend-remove/1
+Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
 
 ###
 

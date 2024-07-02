@@ -7,13 +7,23 @@ Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
 Content-Type: application/json
 
 {
-    "to_user": 1
+    "to_user": 2
 }
 
 ###
 
-GET http://localhost:8000/friend-request/2
+GET http://localhost:8000/friend-request/1
 Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
+
+###
+
+POST http://localhost:8000/friend-request/respond/1
+Authorization: Token 1a3d6fe4659ff8d6c8c40c244f4404f0d7079990
+Content-Type: application/json
+
+{
+    "accept": true
+}
 
 ###
 
@@ -71,7 +81,7 @@ POST http://localhost:8000/login HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "testUser1",
+    "username": "testUser2",
     "password": "testPassword"
 }
 

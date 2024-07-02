@@ -101,6 +101,10 @@ def request_list(request, user_id):
 @permission_classes([IsAuthenticated])
 def send_friend_request(request):
     to_user_id = request.data.get('to_user')
+
+    if to_user_id is request.user.id:
+        return Response({'detail': 'Can not send friend request to itself'}, status=status.HTTP_400_BAD_REQUEST)
+
     try:
         to_user = User.objects.get(id=to_user_id)
     except User.DoesNotExist:

@@ -131,10 +131,7 @@ export class Game
 			this.players["p3"].update();
 			this.players["p4"].update();
 		}
-		if (this.settings.multiMode)
-			this.updateBallPosition4Player();
-		else
-			this.updateBallPosition();
+		this.updateBallPosition();
 		this.arena.update();
 		if (this.goal())
 			{
@@ -151,61 +148,6 @@ export class Game
 
 	updateBallPosition()
 	{
-		this.ball.box.setFromObject(this.ball.mesh);
-		for (let player in this.players)
-			this.players[player].box.setFromObject(this.players[player].paddle);
-		for (let wall in this.arena.walls)
-			this.arena.walls[wall].box.setFromObject(this.arena.walls[wall].mesh);
-		
-		if (this.ball.box.intersectsBox(this.players["p1"].box) && !this.players["p1"].bounce)
-		{
-			this.players["p1"].lightEffect();
-			this.ball.adjustSpin(this.players["p1"]);
-			if (this.players["p1"].boostPressed)
-				this.players["p1"].resetBoost();
-			this.ball.adjustAngle(this.players["p1"]);
-			this.ball.speedUp();
-
-			this.ball.updateAngle();
-			this.resetBounces();
-			this.players["p1"].bounce = true;
-		}
-		else if (this.ball.box.intersectsBox(this.players["p2"].box) && !this.players["p2"].bounce)
-		{
-			this.players["p2"].lightEffect();
-			this.ball.adjustSpin(this.players["p2"]);
-			if (this.players["p2"].boostPressed)
-				this.players["p2"].resetBoost();
-			this.ball.adjustAngle(this.players["p2"]);
-			this.ball.speedUp();
-			this.ball.updateAngle();
-			this.resetBounces();
-			this.players["p2"].bounce = true;
-		}
-		else if (this.ball.box.intersectsBox(this.arena.walls["leftWall"].box) && !this.arena.walls["leftWall"].bounce)
-		{
-			this.arena.walls["leftWall"].lightEffect();
-			this.ball.reduceSpin();
-			this.ball.speedZ = -this.ball.speedZ;
-			this.ball.updateAngle();
-			this.resetBounces();
-			this.arena.walls["leftWall"].bounce = true;
-		}
-		else if (this.ball.box.intersectsBox(this.arena.walls["rightWall"].box) && !this.arena.walls["rightWall"].bounce)
-		{
-			this.arena.walls["rightWall"].lightEffect();
-			this.ball.reduceSpin();
-			this.ball.speedZ = -this.ball.speedZ;
-			this.ball.updateAngle();
-			this.resetBounces();
-			this.arena.walls["rightWall"].bounce = true;
-		}
-		this.ball.affectBySpin();
-		this.ball.move();
-	}
-
-	updateBallPosition4Player()
-	{
 		// Set hitboxes
 		this.ball.box.setFromObject(this.ball.mesh);
 		for (let player in this.players)
@@ -216,7 +158,7 @@ export class Game
 		// Check collisions
 		for (let player in this.players)
 		{
-			if (this.ball.box.intersectsBox(this.players[player].box))
+			if (this.ball.box.intersectsBox(this.players[player].box) && !this.players[player].bounce)
 			{
 				this.players[player].lightEffect();
 				this.ball.adjustSpin(this.players[player]);
@@ -231,7 +173,7 @@ export class Game
 
 		for (let wall in this.arena.walls)
 		{
-			if (this.ball.box.intersectsBox(this.arena.walls[wall].box))
+			if (this.ball.box.intersectsBox(this.arena.walls[wall].box) && !this.arena.walls[wall].bounce)
 			{
 				this.arena.walls[wall].lightEffect();
 				this.ball.reduceSpin();

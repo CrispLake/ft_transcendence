@@ -44,9 +44,11 @@ export class Game
 		this.camera2D = new THREE.OrthographicCamera(-window.innerWidth / 2, window.innerWidth / 2, window.innerHeight / 2, -window.innerHeight / 2, 0.1, 1000);
 		this.camera2D.position.z = 4;
 		this.ui = new UserInterface(this.scene2D, this.fontLoader);
-		this.ui.addTextObject(this.scene2D, 'p1', this.players["p1"].name, new THREE.Vector3(-800, 500, 0), 40, COLOR.UI_NAMES);
-		this.ui.addTextObject(this.scene2D, 'p2', this.players["p2"].name, new THREE.Vector3(600, 500, 0), 40, COLOR.UI_NAMES);
-		this.ui.addTextObject(this.scene2D, 'score', '0 - 0', new THREE.Vector3(-50, 500, 0), 50, COLOR.UI_SCORE);
+
+		this.ui.addPlayerCard(this.players["p1"]);
+		this.ui.addPlayerCard(this.players["p2"]);
+		this.ui.addPlayerCard(this.players["p3"]);
+		this.ui.addPlayerCard(this.players["p4"]);
 	}
 
 	createCamera()

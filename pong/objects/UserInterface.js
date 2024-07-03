@@ -1,4 +1,5 @@
 import { Text2D } from './Text2D.js';
+import { PlayerCard } from './PlayerCard.js';
 
 export class UserInterface
 {
@@ -7,6 +8,7 @@ export class UserInterface
         this.scene = scene;
         this.fontLoader = fontLoader;
         this.textObjects = {};
+        this.playerCards = {};
     }
 
     addTextObject(scene, name, text, position, size, color)
@@ -21,5 +23,11 @@ export class UserInterface
         {
             this.textObjects[name].update2DText(newText);
         }
+    }
+
+    addPlayerCard(player)
+    {
+        let playerCard = new PlayerCard(player, this.scene, this.fontLoader);
+        this.playerCards[player.playerName] = playerCard;
     }
 }

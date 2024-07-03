@@ -30,7 +30,6 @@ export class Game
 		this.createArena();
 		this.update = this.update.bind(this);
 		console.log("Game Object Created!");
-
 		this.update();
 	}
 
@@ -145,21 +144,17 @@ export class Game
     	this.renderer.clearDepth();
 		this.renderer.render(this.scene2D, this.camera2D);
 	}
-
 	updateBallPosition()
 	{
-		// Set hitboxes
-		this.ball.box.setFromObject(this.ball.mesh);
-		for (let player in this.players)
-			this.players[player].box.setFromObject(this.players[player].paddle);
-		for (let wall in this.arena.walls)
-			this.arena.walls[wall].box.setFromObject(this.arena.walls[wall].mesh);
 
-		// Check collisions
 		for (let player in this.players)
 		{
-			if (this.ball.box.intersectsBox(this.players[player].box) && !this.players[player].bounce)
+			if (this.ball.box.intersectsBox(this.players[player].box))
 			{
+				if (this.players[player].bounce == true)
+				{
+					continue ;
+				}
 				this.players[player].lightEffect();
 				this.ball.adjustSpin(this.players[player]);
 				this.players[player].resetBoost();
@@ -167,20 +162,30 @@ export class Game
 				this.ball.speedUp();
 				this.resetBounces();
 				this.players[player].bounce = true;
+				this.ball.affectBySpin();
+				this.ball.move();
+				return ;
 			}
 		}
-
 		for (let wall in this.arena.walls)
 		{
-			if (this.ball.box.intersectsBox(this.arena.walls[wall].box) && !this.arena.walls[wall].bounce)
+			if (this.ball.box.intersectsBox(this.arena.walls[wall].box))
 			{
+				if (this.arena.walls[wall].bounce == true)
+				{
+					continue ;
+				}
 				this.arena.walls[wall].lightEffect();
 				this.ball.reduceSpin();
 				this.ball.bounceFromWall(this.arena.walls[wall]);
 				this.resetBounces();
 				this.arena.walls[wall].bounce = true;
+				this.ball.affectBySpin();
+				this.ball.move();
+				return ;
 			}
 		}
+		this.resetBounces();
 		this.ball.affectBySpin();
 		this.ball.move();
 	}

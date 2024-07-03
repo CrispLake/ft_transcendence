@@ -32,6 +32,7 @@ export const boostAnimationMaxMovement = 0.4
 export const initialBallRadius = 0.2;
 export const initialBallSpeed = 0.2;
 export const initialStartingAngle = 90;
+export const maxBallRotationSpeed = 0.3;
 /*
 up = 0
 right = 90

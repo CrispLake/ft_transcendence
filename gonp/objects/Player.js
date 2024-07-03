@@ -4,6 +4,44 @@ import * as G from '../globals.js';
 
 export class Pusher {
     constructor(player) {
+
+        //Pirsm test
+        // Define vertices for a triangular prism
+        this.vertices = new Float32Array([
+            // Bottom face (vertices arranged in counter-clockwise order)
+            0.5, -0.5, -0.5,  // Vertex 0
+            -0.5, -0.5, -0.5,  // Vertex 1
+             0.5, -0.5,  0.5,  // Vertex 2
+            // Top face (vertices arranged in counter-clockwise order)
+             0.5,  0.5, -0.5,  // Vertex 3
+            -0.5,  0.5, -0.5,  // Vertex 4
+             0.5,  0.5,  0.5   // Vertex 5
+        ]);
+        
+        // Define indices for the faces
+        this.indices = [
+            // Bottom face
+            0, 1, 2,
+            // Top face
+            3, 5, 4,
+            // Side faces
+            0, 3, 1,
+            1, 3, 4,
+            1, 4, 2,
+            2, 4, 5,
+            2, 5, 0,
+            0, 5, 3
+        ];
+
+        // Create the geometry
+        // // Create the material
+        // this.material = new THREE.MeshStandardMaterial({ color: player.color, flatShading: true });
+        // Create the mesh
+        
+        // Add the mesh to the scene
+        // scene.add(prism);
+        //--------------------------
+        
         this.player = player;
         this.lane = player.currentLane;
         this.size = player.boostAmount;
@@ -14,7 +52,8 @@ export class Pusher {
         );
         this.material = new THREE.MeshStandardMaterial({
             color: player.color,
-            emissive: player.color
+            emissive: player.color,
+            side: THREE.DoubleSide
         });
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.mesh.position.set(
@@ -22,8 +61,11 @@ export class Pusher {
             player.mesh.position.y,
             player.mesh.position.z
         );
+        this.mesh.rotation.set(0, (Math.PI / 2), 0);
+        // this.mesh.rotation.y = 30;
         this.colliding = false;
         this.box = new THREE.Box3().setFromObject(this.mesh);
+        console.log(this.mesh.rotation.x + " " + this.mesh.y + " " + this.mesh.z + " ")
         player.scene.add(this.mesh);
     }
     updateBoundingBox() {

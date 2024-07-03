@@ -9,13 +9,53 @@ export class Ball
     {
         this.radius = G.initialBallRadius;
         this.geometry = new THREE.SphereGeometry(G.initialBallRadius, 32, 16);
-        this.material = new THREE.MeshBasicMaterial({color: COLOR.BALL});
+
+        // this.material = new THREE.MeshBasicMaterial({color: COLOR.BALL});
+
+        // This shader segments the ball into 4 vertical slices, edit any of the colors below to visally represnt spin.
+        this.material = new THREE.ShaderMaterial({
+            uniforms: {
+                color1: { value: new THREE.Color(COLOR.WHITE) },
+                color2: { value: new THREE.Color(COLOR.WHITE) },
+                color3: { value: new THREE.Color(COLOR.WHITE) },
+                color4: { value: new THREE.Color(COLOR.WHITE) },
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform vec3 color1;
+                uniform vec3 color2;
+                uniform vec3 color3;
+                uniform vec3 color4;
+                varying vec2 vUv;
+                void main() {
+                    vec3 mixedColor;
+                    if (vUv.x < 0.25) {
+                        mixedColor = mix(color1, color2, smoothstep(0.0, 0.25, vUv.x));
+                    } else if (vUv.x < 0.5) {
+                        mixedColor = mix(color2, color3, smoothstep(0.25, 0.5, vUv.x));
+                    } else if (vUv.x < 0.75) {
+                        mixedColor = mix(color3, color4, smoothstep(0.5, 0.75, vUv.x));
+                    } else {
+                        mixedColor = mix(color4, color1, smoothstep(0.75, 1.0, vUv.x));
+                    }
+                    gl_FragColor = vec4(mixedColor, 1.0);
+                }
+            `,
+        });
+        //----------
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.box = new THREE.Box3();
         this.light = new THREE.PointLight(COLOR.BALL, 1, 10, 0.5);
         this.setPos(pos.x, pos.y, pos.z);
         this.light.position.copy(this.mesh.position);
         this.speed = G.initialBallSpeed;
+        this.spinRotationAngle = 0;
         this.angle = PongMath.degToRad(G.initialStartingAngle);
         this.speedX = PongMath.deriveXspeed(this.speed, this.angle);
         this.speedZ = PongMath.deriveZspeed(this.speed, this.angle);
@@ -53,12 +93,23 @@ export class Ball
 
     move()
     {
+        this.spinRotationSpeed = PongMath.lerp(this.spin, -G.maxSpin, G.maxSpin, -G.maxBallRotationSpeed, G.maxBallRotationSpeed);
+        this.spinRotationAngle += this.spinRotationSpeed;
+        if (this.spinRotationAngle > Math.PI * 2) {
+            this.spinRotationAngle -= Math.PI * 2;
+        }
+        else if (this.spinRotationAngle < Math.PI * 2) {
+            this.spinRotationAngle += Math.PI * 2;
+        }
+        
         this.speedX = PongMath.deriveXspeed(this.speed, this.angle);
         this.speedZ = PongMath.deriveZspeed(this.speed, this.angle);
         this.mesh.position.x += this.speedX;
         this.mesh.position.z += this.speedZ;
         this.light.position.copy(this.mesh.position);
         this.box.setFromObject(this.mesh);
+        this.mesh.rotation.set(0, this.spinRotationAngle, 0);
+
     }
 
     updateAngle()

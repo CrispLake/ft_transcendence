@@ -20,11 +20,11 @@ export class Player
         this.geometry = new THREE.BoxGeometry(G.paddleThickness, G.wallHeight, G.paddleLength);
         this.material = new THREE.MeshStandardMaterial({color: this.color, emissive: this.color});
         this.paddle = new THREE.Mesh(this.geometry, this.material);
-        this.box = new THREE.Box3();
         this.light = new THREE.RectAreaLight(this.color, G.paddleLightIntensity, G.paddleLength, G.paddleHeight);
         this.boostGeometry = new THREE.BoxGeometry(G.boostMeterWidth, G.boostMeterThickness, 0);
         this.boostMaterial = new THREE.MeshStandardMaterial({color: COLOR.BOOSTMETER, emissive: COLOR.BOOSTMETER})
         this.boostMeter = new THREE.Mesh(this.boostGeometry, this.boostMaterial);
+        this.box = new THREE.Box3();
         this.paddleLength = G.paddleLength;
         this.score = 0;
         this.moveLeft = false;
@@ -43,7 +43,7 @@ export class Player
         this.effect = false;
         this.boostMeterAnimation = false;
         this.bounce = false;
-        
+        this.box.setFromObject(this.paddle);
     }
     
     // ----Initialization Functions----
@@ -271,6 +271,7 @@ export class Player
             this.boostMeter.position.x = this.paddle.position.x;
         }
         this.light.position.copy(this.paddle.position);
+        this.box.setFromObject(this.paddle);
     }
 
     reset()
@@ -278,6 +279,7 @@ export class Player
         this.setPos(this.startPos.x, this.startPos.y, this.startPos.z);
         this.boostAmount = 0;
         this.updateBoostMeter();
+        this.box.setFromObject(this.paddle);
     }
 
     update()

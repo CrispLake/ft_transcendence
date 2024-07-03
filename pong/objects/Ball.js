@@ -22,6 +22,7 @@ export class Ball
         this.spin = 0;
         this.spinSetting = spinSetting;
         this.addToScene(scene);
+        this.box.setFromObject(this.mesh);
     }
 
     addToScene(scene)
@@ -34,6 +35,7 @@ export class Ball
     {
         this.mesh.position.set(x, y, z);
         this.light.position.copy(this.mesh.position);
+        this.box.setFromObject(this.mesh);
     }
 
     setSpeed(speed)
@@ -56,6 +58,7 @@ export class Ball
         this.mesh.position.x += this.speedX;
         this.mesh.position.z += this.speedZ;
         this.light.position.copy(this.mesh.position);
+        this.box.setFromObject(this.mesh);
     }
 
     updateAngle()

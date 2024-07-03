@@ -15,7 +15,7 @@ export class Wall
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.mesh.position.set(x, y, z);
         this.box = new THREE.Box3();
-
+        this.box.setFromObject(this.mesh);
         if (this.alignment == G.vertical)
             this.geometry.rotateY(Math.PI / 2);
 

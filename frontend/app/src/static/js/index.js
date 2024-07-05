@@ -27,13 +27,17 @@ const PathToRegex = path => new RegExp("^" + path.replace(/\//g, "\\/").replace(
 
 // No idea of this regeex lol
 const getParams = (match) => {
-  const values = match.result.slice(1);
-  const keys = Array.from(match.route.path.matchAll(/:(\w+)/g).map(result => result[1]));
-
-  return Object.fromEntries(keys.map((key, index) => {
-    return [key, values[index]];
-  }));
-};
+    const values = match.result.slice(1);
+    if (values.length < 1) {
+      return;
+    }
+    const keys = Array.from(match.route.path.matchAll(/:(\w+)/g).map(result => result[1]));
+  
+    return Object.fromEntries(keys.map((key, index) => {
+      return [key, values[index]];
+    }));
+  };
+  
 
 // Makes back and forward arrows work in browser 
 const navigateTo = (url) => {

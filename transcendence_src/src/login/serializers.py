@@ -1,6 +1,13 @@
 from rest_framework import serializers
-from login.models import Account
+from login.models import Account, FriendRequest
+from pong.serializers import MatchSerializer
 from django.contrib.auth.models import User
+
+class FriendRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FriendRequest
+        fields = ['id', 'from_user', 'to_user', 'timestamp', 'status']
+        read_only_fields = ['from_user', 'timestamp', 'status']
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,27 +30,17 @@ class AccountSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'friends': {'required': False},
             'pfp': {'required': False},
-            'matches_as_player1': {'required': False},
-            'matches_as_player2': {'required': False},
         }
-    
+
     def create(self, validated_data):
         user_data = validated_data.pop('user')
-        # pfp_data = validated_data.pop('pfp', None)
-
         user_serializer = UserSerializer(data=user_data)
         
         if user_serializer.is_valid():
             user = user_serializer.save()
             account = Account.objects.create(user=user, **validated_data)
-
-            # if pfp_data:
-            #     account.pfp = self.handle_base64_pfp(pfp_data, user.username)
-            #     account.save
-
             return account
 
-        
         else:
             raise serializers.ValidationError(user_serializer.errors)
 

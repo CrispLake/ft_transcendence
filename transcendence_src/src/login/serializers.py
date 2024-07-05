@@ -26,7 +26,7 @@ class AccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ['id', 'user', 'pfp', 'wins', 'losses', 'friends', 'matches_as_player1', 'matches_as_player2']
+        fields = ['id', 'user', 'pfp', 'wins', 'losses', 'friends']
         extra_kwargs = {
             'friends': {'required': False},
             'pfp': {'required': False},

@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/22 13:36:52 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/27 12:58:39 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/03 09:15:08 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,11 +123,10 @@ export default class extends AbstractView {
   async getHtml() {
     return `
       <div class="login-page">
-
-        <div class="login-left"></div>
         
         <div class="login-form">
           <h2 class="font-sub login-heading">&lt;Login&gt;</h2>
+          <a class="font-text sign-up" href="/register" data-link>Dont have an account? Sign up!</a>
             <form id="login-form" action="" method="">
             
               <label class="font-text" for="username">username:</label>
@@ -147,10 +146,6 @@ export default class extends AbstractView {
             </form>
         </div>
 
-        
-        <div class="login-right"></div>
-        <div class="login-bottom-right"></div>
-        <div class="login-top-right"></div>
       </div>
     `
   }

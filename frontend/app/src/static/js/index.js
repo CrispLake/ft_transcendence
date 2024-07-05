@@ -6,13 +6,14 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 13:31:25 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/27 08:55:57 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/03 09:15:44 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 // Error pages
 import InternalError from './views/500.js';
 
+import Register from './views/Register.js';
 import Profile from './views/Profile.js';
 import Login from './views/Login.js';
 import About from './views/About.js';
@@ -59,6 +60,7 @@ const router = async () => {
     // { path: '/404', view: () => console.log('not found') },
     { path: '/', view: Home },
     { path: '/login', view: Login },
+    { path: '/register', view: Register },
     { path: '/500', view: InternalError },
     // { path: '/history', view: () => console.log('viewing history') },
     // { path: '/settings', view: () => console.log('viewing settings') },

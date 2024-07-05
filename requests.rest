@@ -248,7 +248,7 @@ POST http://localhost:8000/login HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "testUser2",
+    "username": "testUser1",
     "password": "testPassword"
 }
 

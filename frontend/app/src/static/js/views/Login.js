@@ -85,6 +85,7 @@ export default class extends AbstractView {
         this.loginURL,
         payload
       );
+      this.CreateKey(response.token)
       this.Redirect(`/${event.target.href}`);
     } catch(error) {
         console.log('Invalid credentials!!');

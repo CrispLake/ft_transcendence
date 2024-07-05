@@ -24,7 +24,7 @@ export default class extends AbstractView {
     this.suffle_time = 30;
     this.cycles = 2;
 
-    this.loginURL = 'http://localhost:8000/login/login';
+    this.loginURL = 'http://localhost:8000/login';
 
     this.LoginHandler = this.LoginHandler.bind(this);
     this.StartScramble = this.StartScramble.bind(this);

@@ -18,7 +18,7 @@ export default class extends AbstractView {
     super(params);
     this.setTitle('Register');
 
-    this.registerURL = 'http://localhost:8000/login/register';
+    this.registerURL = 'http://localhost:8000/register';
   }
 
   async getHtml() {

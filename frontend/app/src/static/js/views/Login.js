@@ -87,7 +87,8 @@ export default class extends AbstractView {
       );
       this.Redirect(`/${event.target.href}`);
     } catch(error) {
-      Notification('error-message', '<h3>Invalid credentials!</h3>', 1);
+        console.log('Invalid credentials!!');
+        Notification('error-message', '<h3>Invalid credentials!</h3>', 1);
     }
   }
 

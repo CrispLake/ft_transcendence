@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 13:31:25 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/03 09:15:44 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/07 10:01:19 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ import Profile from './views/Profile.js';
 import Login from './views/Login.js';
 import About from './views/About.js';
 import Home from './views/Home.js';
+import Pong from './views/Pong.js';
 
 // List of current event listeners
 let views_memory = new Array();
@@ -71,6 +72,7 @@ const router = async () => {
     { path: '/profile', view: Profile },
     // { path: '/profile/:id', view: Profile },
     { path: '/about', view: About },
+    { path: '/play', view: Pong },
     // { path: '/register', view: Register },
   ];
 

@@ -22,7 +22,7 @@ export class Game
 		this.createPlayers();
 		this.ball = new Ball(this.scene, G.ballStartPos, this.settings.spin);
 		this.fontLoader = new FontLoader();
-		this.ui = new UserInterface(this.scene, this.fontLoader);
+		this.ui = null;
 		this.initializeUI();
 		this.camera = this.createCamera();
 		this.renderer = this.createRenderer();
@@ -59,9 +59,7 @@ export class Game
 	{
 		const renderer = new THREE.WebGLRenderer();
 		renderer.setSize(window.innerWidth, window.innerHeight);
-    const app = document.getElementById('app');
-    app.innerHTML = renderer.domElement;
-		return (renderer);
+		return renderer;
 	}
 
 	createArena()
@@ -146,7 +144,7 @@ export class Game
 		}
 		this.composer.render();
 		this.renderer.autoClear = false;
-    	this.renderer.clearDepth();
+    this.renderer.clearDepth();
 		this.renderer.render(this.scene2D, this.camera2D);
 	}
 

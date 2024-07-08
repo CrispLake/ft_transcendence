@@ -11,8 +11,9 @@ export class UserInterface
 
     addTextObject(scene, name, text, position, size, color)
     {
-        const textObject = new Text2D(scene, text, position, size, color, this.fontLoader);
-        this.textObjects[name] = textObject;
+      console.log(`Scene: ${scene} name: ${name} text: ${text} pos: ${position} size: ${size} col: ${color}`);
+      const textObject = new Text2D(scene, text, position, size, color, this.fontLoader);
+      this.textObjects[name] = textObject;
     }
 
     updateTextObject(name, newText)

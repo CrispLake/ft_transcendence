@@ -5,20 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/02 06:33:29 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/07 11:22:53 by jmykkane         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Home.js                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/22 13:34:37 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/08 11:22:23 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +22,18 @@ export default class extends AbstractView {
     super(params);
     this.setTitle('Pong');
     this.listeners = true;
+    this.childs = true;
     
     // Game variables
-    this.game = null;
+    this.game = new Game();
     this.controls = null;
+
+    // Binding 'this' for external use
+    this.onWindowResize = this.onWindowResize.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleKeyUp = this.handleKeyUp.bind(this);
+    this.getHtml = this.getHtml.bind(this);
+    this.init = this.init.bind(this);
   }
 
   init() {
@@ -45,7 +41,7 @@ export default class extends AbstractView {
       this.game = new Game();
     }
     if (this.controls === null) {
-      this.controls = new OrbitControls(game.camera, game.renderer.domElement);
+      this.controls = new OrbitControls(this.game.camera, this. game.renderer.domElement);
     }
 
     RectAreaLightUniformsLib.init();
@@ -149,8 +145,6 @@ export default class extends AbstractView {
     window.addEventListener('resize', this.onWindowResize, false);
     document.addEventListener('keydown', this.handleKeyDown);
     document.addEventListener('keyup', this.handleKeyUp);
-    
-    this.init();
   }
 
   RemoveListeners() {
@@ -160,9 +154,7 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
-    return `
-      <h1>Hello World</h1>
-    `
+    return this.game.renderer.domElement;
   }
   
 }

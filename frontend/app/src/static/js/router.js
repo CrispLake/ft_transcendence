@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   index.js                                           :+:      :+:    :+:   */
+/*   router.js                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 13:31:25 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/07 10:01:19 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/08 11:22:56 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,12 @@ const router = async () => {
 
   // Injecting views HTML to the app
   const app = document.querySelector('#app');
-  app.innerHTML = await view.getHtml();
+  if (view.childs) {
+    app.innerHTML = '';
+    app.appendChild(await view.getHtml());
+  } else {
+    app.innerHTML = await view.getHtml();
+  }
 
   // Adding eventlisteners from view
   if (view.listeners !== false) {

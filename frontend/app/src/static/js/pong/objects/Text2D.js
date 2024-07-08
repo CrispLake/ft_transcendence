@@ -17,7 +17,9 @@ export class Text2D
 
     create2DTextMesh()
     {
-        this.fontLoader.load('./resources/font.json', (font) => {
+        console.log('here 1');
+        this.fontLoader.load('/static/fonts/font.json', (font) => {
+          console.log('here 2');
             const textGeometry = new TextGeometry(this.text,
             {
                 font: font,

@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:08:11 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/27 12:48:03 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/07 15:27:24 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ export default class {
     this.params = params; // parameters given to the class during creation
     this.listeners = false; // event listener functions to be added
     this.auth = false; // if true, user needs to be authenticated
+    this.childs = false; // if true, router will use appendChild instead of innerHtml
   }
 
   // Helper function to set title of the page
@@ -62,7 +63,7 @@ export default class {
 
   // Helper function to return any html necessary for given view
   async getHtml() {
-    return "";
+    return '';
   }
 
 }

@@ -68,7 +68,7 @@ const router = async () => {
     { path: '/500', view: InternalError },
     // { path: '/history', view: () => console.log('viewing history') },
     // { path: '/settings', view: () => console.log('viewing settings') },
-    { path: '/profile', view: Profile },
+    { path: '/profile:id', view: Profile },
     // { path: '/profile/:id', view: Profile },
     { path: '/about', view: About },
     // { path: '/register', view: Register },

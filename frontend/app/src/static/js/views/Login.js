@@ -86,6 +86,8 @@ export default class extends AbstractView {
         payload
       );
       this.CreateKey(response.token)
+      localStorage.setItem('user_id', response.user_id);
+      localStorage.setItem('username', response.username);
       this.Redirect(`/${event.target.href}`);
     } catch(error) {
         console.log('Invalid credentials!!');

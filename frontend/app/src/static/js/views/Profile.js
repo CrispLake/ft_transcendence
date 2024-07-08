@@ -20,10 +20,11 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
+    const profileId = this.params.id ? this.params.id : 'Unknown ID'; // Safe access to this.params.id
     return `
       <div class="profile-div">
         <div class="profile-card">
-          <h1 class="font-heading">PROFILE: ${this.params.id}</h1>
+          <h1 class="font-heading">PROFILE: ${profileId}</h1>
           <h2>test</h2>
         </div>
       </div>

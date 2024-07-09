@@ -6,7 +6,7 @@
 /*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 09:22:19 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/09 15:43:45 by emajuri          ###   ########.fr       */
+/*   Updated: 2024/07/09 16:09:06 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,9 +65,14 @@ export default class extends AbstractView {
         const losses = this.profileData.losses;
         const total = wins + losses;
         const winrate = ((wins / total) * 100);
+
+        const imageurl = "static/images/pfp.png";
+        const pfp = `<img src="${imageurl}" alt="Profile picture">`
+
         return `
             <div class="profile-div">
                 <div class="profile-card">
+                    ${pfp}
                     <h1 class="font-heading">${profileName}</h1>
                     <h2>total games: ${total}</h2>
                     <h2>wins: ${wins}</h2>

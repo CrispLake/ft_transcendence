@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AbstractView.js                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:08:11 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/27 12:48:03 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/09 14:19:53 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ export default class {
   }
 
   GetKey() {
-    localStorage.getItem('auth_token');
+    return localStorage.getItem('auth_token');
   }
 
   // AddListeners()

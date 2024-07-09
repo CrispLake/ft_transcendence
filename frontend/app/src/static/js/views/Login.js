@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Login.js                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/22 13:36:52 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/03 09:15:08 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/09 14:29:33 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,9 +85,7 @@ export default class extends AbstractView {
         this.loginURL,
         payload
       );
-      this.CreateKey(response.token)
-      localStorage.setItem('user_id', response.user_id);
-      localStorage.setItem('username', response.username);
+      this.CreateKey(response.data.token);
       this.Redirect(`/${event.target.href}`);
     } catch(error) {
         console.log('Invalid credentials!!');

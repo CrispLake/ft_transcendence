@@ -3,32 +3,73 @@
 /*                                                        :::      ::::::::   */
 /*   Profile.js                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 09:22:19 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/22 13:24:16 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/09 15:28:06 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import AbstractView from "./AbstractView.js";
+import AbstractView from './AbstractView.js'; // Adjust the import as necessary
 
 export default class extends AbstractView {
-  constructor(params) {
-    super(params);
-    this.setTitle('Profile');
-    this.auth = true;
-  }
+    constructor(params) {
+        super(params);
+        this.setTitle('Profile');
+        this.auth = true;
+        this.profileData = null; // Initialize profile data
+        this.profileURL = 'http://localhost:8000/account';
+    }
 
-  async getHtml() {
-    const profileId = this.params.id ? this.params.id : 'Unknown ID'; // Safe access to this.params.id
-    return `
-      <div class="profile-div">
-        <div class="profile-card">
-          <h1 class="font-heading">PROFILE: ${profileId}</h1>
-          <h2>test</h2>
-        </div>
-      </div>
-    `
-  }
-  
+    async fetchProfileData() {
+        const token = this.GetKey();
+        if (!token) {
+            console.log('No auth token found');
+        }
+
+        try {
+            const response = await axios.get(this.profileURL, {
+                headers: {'Authorization': `Token ${token}`}
+            });
+            this.profileData = response.data;
+            console.log(this.profileData)
+        } catch (error) {
+            console.error('Error fetching profile data', error);
+            // Handle error, e.g., by setting an error message
+            this.profileData = { error: 'Failed to load profile data' };
+        }
+    }
+
+    async getHtml() {
+        // Fetch the profile data
+        await this.fetchProfileData();
+
+        if (this.profileData.error) {
+            return `
+                <div class="profile-div">
+                    <div class="profile-card">
+                        <h1 class="font-heading">PROFILE: Error</h1>
+                        <h2>${this.profileData.error}</h2>
+                    </div>
+                </div>
+            `;
+        }
+
+        const profileName = this.profileData.user.username;
+        const wins = this.profileData.wins;
+        const losses = this.profileData.losses;
+        const total = wins + losses;
+        const winrate = ((wins / total) * 100);
+        return `
+            <div class="profile-div">
+                <div class="profile-card">
+                    <h1 class="font-heading">${profileName}</h1>
+                    <h2>total games: ${total}</h2>
+                    <h2>wins: ${wins}</h2>
+                    <h2>losses: ${losses}</h2>
+                    <h2>winrate: ${isNaN(winrate) ? '0' : winrate.toFixed(2)}%</h2>
+                </div>
+            </div>
+        `;
+    }
 }

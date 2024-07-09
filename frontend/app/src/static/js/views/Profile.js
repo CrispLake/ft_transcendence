@@ -6,7 +6,7 @@
 /*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 09:22:19 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/09 15:28:06 by emajuri          ###   ########.fr       */
+/*   Updated: 2024/07/09 15:43:45 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ export default class extends AbstractView {
         super(params);
         this.setTitle('Profile');
         this.auth = true;
+        this.params = params;
         this.profileData = null; // Initialize profile data
         this.profileURL = 'http://localhost:8000/account';
     }
@@ -27,12 +28,16 @@ export default class extends AbstractView {
             console.log('No auth token found');
         }
 
+        let url = this.profileURL;
+        if (this.params && this.params.id){
+            url += `/${this.params.id}`;
+        }
+
         try {
-            const response = await axios.get(this.profileURL, {
+            const response = await axios.get(url, {
                 headers: {'Authorization': `Token ${token}`}
             });
             this.profileData = response.data;
-            console.log(this.profileData)
         } catch (error) {
             console.error('Error fetching profile data', error);
             // Handle error, e.g., by setting an error message

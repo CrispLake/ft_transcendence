@@ -65,9 +65,11 @@ export default class extends AbstractView {
         const losses = this.profileData.losses;
         const total = wins + losses;
         const winrate = ((wins / total) * 100);
+        const winrateF = isNaN(winrate) ? '0' : winrate.toFixed(2);
 
-        const imageurl = "static/images/pfp.png";
-        const pfp = `<img src="${imageurl}" alt="Profile picture">`
+        const imageUrl = "static/images/pfp.png";
+        const pfp = `<img src="${imageUrl}" alt="Profile picture">`;
+        const matchHistory = `/history/${this.profileData.id}`;
 
         return `
             <div class="profile-div">
@@ -77,7 +79,9 @@ export default class extends AbstractView {
                     <h2>total games: ${total}</h2>
                     <h2>wins: ${wins}</h2>
                     <h2>losses: ${losses}</h2>
-                    <h2>winrate: ${isNaN(winrate) ? '0' : winrate.toFixed(2)}%</h2>
+                    <h2>winrate: ${winrateF}%</h2>
+                    <a href="/settings" data-link>Settings</a>
+                    <button href="${matchHistory}">History</button>
                 </div>
             </div>
         `;

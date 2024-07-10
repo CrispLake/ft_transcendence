@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://db.onlinewebfonts.com/c/0e39a4b06a027c967cdf68c149ed586f?family=Coluna-CondensedBold" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Lekton" />
+	<link rel="stylesheet" href="/static/css/profile.css">
+	<link rel="stylesheet" href="/static/css/friends.css">
+	<link rel="stylesheet" href="/static/css/about.css">
+	<link rel="stylesheet" href="/static/css/login.css">
+	<link rel="stylesheet" href="/static/css/index.css">
+	<link rel="stylesheet" href="/static/css/home.css">
+	<link rel="stylesheet" href="/static/css/nav.css">
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js" integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<title>ft_trancendence</title>
+</head>
+<body>
+	<!-- NAV BAR -->
+	<nav class="nav font-heading">
+
+		<!-- LEFT SIDE LOGO -->
+		<div class="nav-logo">
+			<h1 class="font-sub">ft_trancendence</h1>
+		</div>
+		
+		<!-- NAVBAR MIDDLE LINKS -->
+		<div class="nav-links">
+			<a href="/" class="nav__link nav_button" data-link>Home</a>
+			<a href="/history" class="nav__link nav_button" data-link>History</a>
+			<a href="/settings" class="nav__link nav_button" data-link>Settings</a>
+			<a href="/about" class="nav__link nav_button" data-link>About</a>
+		</div>
+
+		<div class="play-button-div">
+
+			<!-- PROFILE ICON BUTTON -->
+			<a href="/profile" class="profile-link" data-link>
+				<div class="profile-icon-div">
+					<div class="profile-button-holder">
+						<svg class="profile-button-icon" viewBox="0 0 32 32" id="Stock_cut" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <desc></desc> <g> <circle cx="16" cy="16" fill="none" r="15" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"></circle> <path d="M26,27L26,27 c0-5.523-4.477-10-10-10h0c-5.523,0-10,4.477-10,10v0" fill="none" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"></path> <circle cx="16" cy="11" fill="none" r="6" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"></circle> </g> </g></svg>
+					</div>
+				</div>
+			</a>
+			
+			<!-- RIGHT SIDE PLAY BUTTON -->
+			<div class="play-button">
+				<div class="play-button-text">
+					<a href="/play" class="nav__link" data-link>PLAY NOW</a>
+					<div class="icon-holder">
+						<svg class="play-button-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M6 12H18M18 12L13 7M18 12L13 17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+						</svg>
+					</div>
+				</div>
+			</div>
+		</div>
+	</nav>
+
+	<div class="friends-div">
+		<p class="font-heading friends-text">FRIENDS</p>
+	</div>
+
+	<!-- DYNAMIC CONTENT WILL LOAD INSIDE THIS DIV -->
+	<div id="app"></div>
+
+	<script type="module" src="/static/js/index.js"></script>
+</body>
+</html>

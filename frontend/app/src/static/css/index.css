@@ -1,0 +1,109 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   index.css                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/16 08:00:37 by jmykkane          #+#    #+#             */
+/*   Updated: 2024/06/27 13:00:33 by jmykkane         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+body {
+  flex-direction: column;
+  display: flex;
+
+  width: 100dvw;
+  height: 100dvh;
+  max-width:100%;
+  max-height: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  
+  background-color: white;
+  padding: 0;
+  margin: 0;
+}
+
+#app {
+  position: relative;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+/* MAIN HEADINGS --> drukbold */
+@font-face {
+  font-family: 'drukbold';
+  src: url('https://github.com/benshrimpton/shulamit/raw/master/wp-content/.themes/shulamit/css/fonts/DrukText-Bold.ttf');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Coluna-CondensedBold";
+  src: url("https://db.onlinewebfonts.com/t/0e39a4b06a027c967cdf68c149ed586f.eot");
+  src: url("https://db.onlinewebfonts.com/t/0e39a4b06a027c967cdf68c149ed586f.eot?#iefix")format("embedded-opentype"),
+  url("https://db.onlinewebfonts.com/t/0e39a4b06a027c967cdf68c149ed586f.woff2")format("woff2"),
+  url("https://db.onlinewebfonts.com/t/0e39a4b06a027c967cdf68c149ed586f.woff")format("woff"),
+  url("https://db.onlinewebfonts.com/t/0e39a4b06a027c967cdf68c149ed586f.ttf")format("truetype"),
+  url("https://db.onlinewebfonts.com/t/0e39a4b06a027c967cdf68c149ed586f.svg#Coluna-CondensedBold")format("svg");
+}
+
+.font-heading {
+  font-family: 'Coluna-CondensedBold';
+  letter-spacing: 5px;
+  font-size: 128px;
+  font-weight: 400;
+}
+
+.font-sub {
+  font-family: 'Chakra Petch', sans-serif;
+  font-size: 48px;
+  font-weight: 500;
+}
+
+.font-text {
+  font-family: 'Lekton';
+  line-height: 32px;
+  font-weight: 500;
+  font-size: 24px;
+}
+
+
+/* DEFINE ALL GLOBAL COLORS */
+:root {
+  --pink: rgb(245,197,195);
+  --yellow: rgb(255,221,1);
+  --orange: rgb(238,120,1);
+  --blue: rgb(191,238,255);
+  --brown: rgb(215,167,117);
+  --green: rgb(110,181,11);
+  --purple: rgb(184,93,152);
+
+  --white: rgb(255,255,255);
+  --black: rgb(0,0,0);
+
+  --bg-primary: rgb(255,255,255);
+  --bg-secondary: rgb(239,237,238);
+}
+
+
+/* NOTE: Global notification function */
+.notification-div {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  background-color: rgb(237,67,55);
+  margin-top: 2rem;
+  height: 80px;
+  width: 100%;
+  
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: ease-in-out 0.3s;
+}

@@ -1,0 +1,40 @@
+.about-heading {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.authors-div {
+  flex-direction: column;
+  align-items: center;
+  display: flex;
+  margin-top: 4rem;
+}
+
+.authors-row {
+  flex-direction: row;
+  display: flex;
+}
+
+#author-heading {
+  color: var(--black);
+  font-size: 64px;
+}
+
+.author {
+  padding: 4px;
+  transition: background-color 0.3s, top 0.5s, left 0.5s, transform 0.5s;
+}
+
+.yellow {
+  background-color: var(--yellow);
+}
+
+.pink {
+  background-color: var(--pink);
+}
+
+.blue {
+  background-color: var(--blue);
+}

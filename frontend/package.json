@@ -1,0 +1,16 @@
+{
+  "name": "trancendence",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+	"start": "nodemon --watch app --watch public app/server.js 3000 -e js,css,html,jpg,png"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^4.19.2",
+	"axios": "^1.7.2"
+  }
+}

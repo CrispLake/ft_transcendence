@@ -19,7 +19,9 @@ export default class extends AbstractView {
         this.auth = true;
         this.params = params;
         this.listeners = true;
-        this.profileURL = 'http://localhost:8000/account';
+
+        this.usernameURL = 'http://localhost:8000/account/change-username';
+        this.passwordURL = 'http://localhost:8000/account/change-password';
 
         this.UsernameHandler = this.UsernameHandler.bind(this);
         this.PasswordHandler = this.PasswordHandler.bind(this);
@@ -28,6 +30,26 @@ export default class extends AbstractView {
     async UsernameHandler(event) {
         event.preventDefault();
         console.log('Changing username');
+
+        const formElement = await document.getElementById('change-username-form');
+        if (!formElement) {
+            this.Redirect('/500');
+            return;
+        }
+
+        const formData = new FormData(formElement);
+        const payload = Object.fromEntries(formData);
+
+        const token = this.GetKey();
+        try {
+            const response = await axios.put(
+                this.usernameURL,
+                payload, {
+                headers: {'Authorization': `Token ${token}`}
+                });
+        } catch (error) {
+            console.error('Error changing username');
+        }
     }
 
     async PasswordHandler(event) {

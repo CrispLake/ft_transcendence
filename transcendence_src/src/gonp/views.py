@@ -81,8 +81,17 @@ def gonp_4p(request, player_id=None):
 
         if player1_id not in valid_user_ids:
             return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
+
         if player2_id is not None:
             if player2_id not in valid_user_ids:
+                return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
+
+        if player3_id is not None:
+            if player3_id not in valid_user_ids:
+                return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
+
+        if player4_id is not None:
+            if player4_id not in valid_user_ids:
                 return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
 
         serializer = Gonp4PSerializer(data=request.data, partial=True)

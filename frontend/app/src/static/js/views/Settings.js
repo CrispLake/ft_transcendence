@@ -18,11 +18,47 @@ export default class extends AbstractView {
         this.setTitle('Profile');
         this.auth = true;
         this.params = params;
+        this.listeners = true;
         this.profileURL = 'http://localhost:8000/account';
+
+        this.UsernameHandler = this.UsernameHandler.bind(this);
+        this.PasswordHandler = this.PasswordHandler.bind(this);
     }
 
     async UsernameHandler(event) {
         event.preventDefault();
+        console.log('Changing username');
+    }
+
+    async PasswordHandler(event) {
+        event.preventDefault();
+        console.log('Changing password');
+    }
+
+    AddListeners() {
+        const usernameForm = document.getElementById('change-username-form');
+        const passwordForm = document.getElementById('change-password-form');
+
+        if (usernameForm && passwordForm) {
+            usernameForm.addEventListener('submit', this.UsernameHandler);
+            passwordForm.addEventListener('submit', this.PasswordHandler);
+        } else {
+            console.log('505 - Internal server error - could not find submit buttons');
+            this.Redirect('/500');
+        }
+    }
+
+    RemoveListeners() {
+        const usernameForm = document.getElementById('change-username-form');
+        const passwordForm = document.getElementById('change-password-form');
+
+        if (usernameForm && passwordForm) {
+            usernameForm.removeEventListener('submit', this.UsernameHandler);
+            passwordForm.removeEventListener('submit', this.PasswordHandler);
+        } else {
+            console.log('505 - Internal server error - could not find submit buttons');
+            this.Redirect('/500');
+        }
     }
 
     async getHtml() {

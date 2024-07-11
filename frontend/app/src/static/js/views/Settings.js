@@ -29,7 +29,6 @@ export default class extends AbstractView {
 
     async UsernameHandler(event) {
         event.preventDefault();
-        console.log('Changing username');
 
         const formElement = await document.getElementById('change-username-form');
         if (!formElement) {
@@ -39,6 +38,8 @@ export default class extends AbstractView {
 
         const formData = new FormData(formElement);
         const payload = Object.fromEntries(formData);
+
+        console.log(payload);
 
         const token = this.GetKey();
         try {
@@ -55,6 +56,30 @@ export default class extends AbstractView {
     async PasswordHandler(event) {
         event.preventDefault();
         console.log('Changing password');
+
+        const formElement = await document.getElementById('change-password-form');
+        if (!formElement) {
+            this.Redirect('/500');
+            return;
+        }
+
+        const formData = new FormData(formElement);
+        const payload = Object.fromEntries(formData);
+
+        console.log(payload);
+
+        const token = this.GetKey();
+        try {
+            const response = await axios.put(
+                this.passwordURL,
+                payload, {
+                headers: {'Authorization': `Token ${token}`}
+                });
+            this.DeleteKey();
+            this.CreateKey(response.data.token);
+        } catch (error) {
+            console.error('Error changing password');
+        }
     }
 
     AddListeners() {

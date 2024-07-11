@@ -145,6 +145,10 @@ export default class extends AbstractView {
 
                             </form>
                         </div>
+
+                        <div class="change-form">
+                            <h2>Change Profile Picture</h2>
+                        </div>
                 </div>
             </div>
         `;

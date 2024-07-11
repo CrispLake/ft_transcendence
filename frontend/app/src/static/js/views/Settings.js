@@ -39,8 +39,6 @@ export default class extends AbstractView {
         const formData = new FormData(formElement);
         const payload = Object.fromEntries(formData);
 
-        console.log(payload);
-
         const token = this.GetKey();
         try {
             const response = await axios.put(
@@ -66,8 +64,6 @@ export default class extends AbstractView {
         const formData = new FormData(formElement);
         const payload = Object.fromEntries(formData);
 
-        console.log(payload);
-
         const token = this.GetKey();
         try {
             const response = await axios.put(
@@ -75,6 +71,7 @@ export default class extends AbstractView {
                 payload, {
                 headers: {'Authorization': `Token ${token}`}
                 });
+            //Remove old key and add the new key received in the response
             this.DeleteKey();
             this.CreateKey(response.data.token);
         } catch (error) {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   index.js                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 13:31:25 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/03 09:15:44 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/09 15:38:31 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ import Profile from './views/Profile.js';
 import Login from './views/Login.js';
 import About from './views/About.js';
 import Home from './views/Home.js';
+import Settings from './views/Settings.js';
 
 // List of current event listeners
 let views_memory = new Array();
@@ -67,9 +68,9 @@ const router = async () => {
     { path: '/register', view: Register },
     { path: '/500', view: InternalError },
     // { path: '/history', view: () => console.log('viewing history') },
-    // { path: '/settings', view: () => console.log('viewing settings') },
+    { path: '/settings', view: Settings },
     { path: '/profile', view: Profile },
-    // { path: '/profile/:id', view: Profile },
+    { path: '/profile/:id', view: Profile },
     { path: '/about', view: About },
     // { path: '/register', view: Register },
   ];

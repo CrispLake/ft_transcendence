@@ -1,3 +1,8 @@
+# Profile
+
+GET http://localhost:8000/account
+Authorization: Token e3770a085d86b87b6c2cb1d78d684eec69009a18
+
 # Friends
 
 ###
@@ -58,7 +63,7 @@ Content-Type: application/json
 
 ###
 
-PUT http://localhost:8000/user/change-username HTTP/1.1
+PUT http://localhost:8000/account/change-username HTTP/1.1
 Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
 Content-Type: application/json
 
@@ -68,7 +73,7 @@ Content-Type: application/json
 
 ###
 
-PUT http://localhost:8000/user/change-password HTTP/1.1
+PUT http://localhost:8000/account/change-password HTTP/1.1
 Authorization: Token 026f7008cd7cd287a4c934e0896316ae6bca3efa
 Content-Type: application/json
 

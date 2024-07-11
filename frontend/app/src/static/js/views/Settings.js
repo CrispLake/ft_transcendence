@@ -136,7 +136,7 @@ export default class extends AbstractView {
                             <form id="change-password-form" action="" method="">
 
                             <label class="font-text" for="password">password:</label>
-                            <input class="font-text login-input" type="text" id="password" name="password" required><br><br>
+                            <input class="font-text login-input" type="password" id="password" name="password" required><br><br>
 
                             <button class="font-sub change-password-submit-button" id="changepasswordSubmitButton" type="submit">
                                 <div class="text-holder">

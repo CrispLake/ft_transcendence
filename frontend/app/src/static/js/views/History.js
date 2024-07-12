@@ -41,24 +41,21 @@ export default class extends AbstractView {
             <ul>
                 ${games.map(game => `
                     <li>
-                        <span class="username" data-id="${game.player1}">${game.player1Username !== 'Guest' ? game.player1Username : game.player1Username}</span> 
+                        <span class="${game.player1Username !== 'Guest' ? 'username' : 'guest'}" data-id="${game.player1}">${game.player1Username}</span> 
                         (${game.player1Score}) vs 
-                        <span class="username" data-id="${game.player2}">${game.player2Username !== 'Guest' ? game.player2Username : game.player2Username}</span> 
+                        <span class="${game.player2Username !== 'Guest' ? 'username' : 'guest'}" data-id="${game.player2}">${game.player2Username}</span> 
                         (${game.player2Score}) on ${new Date(game.date).toLocaleString()}
                     </li>
                 `).join('')}
             </ul>
         `;
-
+    
         // Add event listeners to usernames
         const usernameElements = categoryContent.querySelectorAll('.username');
         usernameElements.forEach(usernameElement => {
             usernameElement.addEventListener('click', () => {
                 const playerId = usernameElement.getAttribute('data-id');
-                const username = usernameElement.textContent;
-                if (username !== 'Guest') {
-                    this.Redirect(`/profile/${playerId}`);
-                }
+                this.Redirect(`/profile/${playerId}`);
             });
         });
     }

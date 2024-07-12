@@ -38,3 +38,19 @@ body {
 .tab-content.active {
     display: block;
 }
+
+.username {
+    color: blue; /* Link color */
+    text-decoration: underline; /* Underline to mimic a link */
+    cursor: pointer; /* Change cursor to pointer */
+}
+
+.username:hover {
+    color: darkblue; /* Darker color on hover */
+}
+
+.guest {
+    color: black; /* Guest color */
+    text-decoration: none; /* No underline */
+    cursor: default; /* Default cursor */
+}

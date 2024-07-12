@@ -4,15 +4,15 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
 from django.db.models import F
-from .authentication import MultiTokenAuthentication
-from pong.models import Match, Pong_4p
+from pong.authentication import MultiTokenAuthentication
+from .models import Gonp_4p, Gonp_2p
 from login.models import Account
-from pong.serializers import MatchSerializer, Pong4PSerializer
+from .serializers import Gonp2PSerializer, Gonp4PSerializer
 
-def update_2p_score(player_id, my_score, other_score):
+def update_score(player_id, my_score):
     if player_id is not None:
         player = Account.objects.get(id=player_id)
-        if my_score > other_score:
+        if my_score is not 0:
             player.wins = F('wins') + 1
         else:
             player.losses = F('losses') + 1
@@ -21,14 +21,14 @@ def update_2p_score(player_id, my_score, other_score):
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 @authentication_classes([MultiTokenAuthentication])
-def pong_2p(request, player_id=None):
+def gonp_2p(request, player_id=None):
     if request.method == 'GET':
         if player_id is not None:
-            matches = Match.objects.filter(player1_id=player_id) | Match.objects.filter(player2_id=player_id)
+            matches = Gonp_2p.objects.filter(player1_id=player_id) | Gonp_2p.objects.filter(player2_id=player_id)
         else:
-            matches = Match.objects.all()
+            matches = Gonp_2p.objects.all()
 
-        serializer = MatchSerializer(matches, many=True)
+        serializer = Gonp2PSerializer(matches, many=True)
         return Response(serializer.data)
 
     elif request.method == 'POST':
@@ -50,15 +50,15 @@ def pong_2p(request, player_id=None):
             if player2_id not in valid_user_ids:
                 return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
 
-        serializer = MatchSerializer(data=request.data, partial=True)
+        serializer = Gonp2PSerializer(data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
 
             player1_score = serializer.data['player1Score']
             player2_score = serializer.data['player2Score']
 
-            update_2p_score(player1_id, player1_score, player2_score)
-            update_2p_score(player2_id, player2_score, player1_score)
+            update_score(player1_id, player1_score)
+            update_score(player2_id, player2_score)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -69,27 +69,17 @@ def check_unique_ids(a, b, c, d):
     non_none_ids = [id for id in ids if id is not None]
     return len(non_none_ids) == len(set(non_none_ids))
 
-def update_4p_score(player_id, my_score):
-    if player_id is not None:
-        player = Account.objects.get(id=player_id)
-        # checking if health is not 0 we won
-        if my_score is not 0:
-            player.wins = F('wins') + 1
-        else:
-            player.losses = F('losses') + 1
-        player.save() 
-
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 @authentication_classes([MultiTokenAuthentication])
-def pong_4p(request, player_id=None):
+def gonp_4p(request, player_id=None):
     if request.method == 'GET':
         if player_id is not None:
-            matches = Pong_4p.objects.filter(player1_id=player_id) | Pong_4p.objects.filter(player2_id=player_id) | Pong_4p.objects.filter(player3_id=player_id) | Pong_4p.objects.filter(player4_id=player_id)
+            matches = Gonp_4p.objects.filter(player1_id=player_id) | Gonp_4p.objects.filter(player2_id=player_id) | Gonp_4p.objects.filter(player3_id=player_id) | Gonp_4p.objects.filter(player4_id=player_id)
         else:
-            matches = Pong_4p.objects.all()
+            matches = Gonp_4p.objects.all()
 
-        serializer = Pong4PSerializer(matches, many=True)
+        serializer = Gonp4PSerializer(matches, many=True)
         return Response(serializer.data)
 
     elif request.method == 'POST':
@@ -100,7 +90,7 @@ def pong_4p(request, player_id=None):
 
         if player1_id is None:
             return Response({'detail': 'Player ID is required.'}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         if check_unique_ids(player1_id, player2_id, player3_id, player4_id) is False:
             return Response({'detail': 'Player IDs can not be same'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -122,7 +112,7 @@ def pong_4p(request, player_id=None):
             if player4_id not in valid_user_ids:
                 return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
 
-        serializer = Pong4PSerializer(data=request.data, partial=True)
+        serializer = Gonp4PSerializer(data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
 
@@ -131,10 +121,10 @@ def pong_4p(request, player_id=None):
             player3_score = serializer.data['player3Score']
             player4_score = serializer.data['player4Score']
 
-            update_4p_score(player1_id, player1_score)
-            update_4p_score(player2_id, player2_score)
-            update_4p_score(player3_id, player3_score)
-            update_4p_score(player4_id, player4_score)
+            update_score(player1_id, player1_score)
+            update_score(player2_id, player2_score)
+            update_score(player3_id, player3_score)
+            update_score(player4_id, player4_score)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 

@@ -1,3 +1,8 @@
+# Profile
+
+GET http://localhost:8000/account
+Authorization: Token e3770a085d86b87b6c2cb1d78d684eec69009a18
+
 # Friends
 
 ###
@@ -39,7 +44,7 @@ Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
 ###
 
 GET http://localhost:8000/register HTTP/1.1
-Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
+Authorization: Token 14c4426c3fe27289d66ef70adc15766a6914be8d
 
 ###
 
@@ -58,7 +63,7 @@ Content-Type: application/json
 
 ###
 
-PUT http://localhost:8000/user/change-username HTTP/1.1
+PUT http://localhost:8000/account/change-username HTTP/1.1
 Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
 Content-Type: application/json
 
@@ -68,7 +73,7 @@ Content-Type: application/json
 
 ###
 
-PUT http://localhost:8000/user/change-password HTTP/1.1
+PUT http://localhost:8000/account/change-password HTTP/1.1
 Authorization: Token 026f7008cd7cd287a4c934e0896316ae6bca3efa
 Content-Type: application/json
 
@@ -103,13 +108,13 @@ Content-Type: application/json
 ###
 
 GET http://localhost:8000/pong-2p HTTP/1.1
-Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
+Authorization: Token 14c4426c3fe27289d66ef70adc15766a6914be8d
 
 
 ###
 
 POST http://localhost:8000/pong-2p HTTP/1.1
-Authorization: Token 855ba830c100c7f927c41d406592d58319bd0240
+Authorization: Token 14c4426c3fe27289d66ef70adc15766a6914be8d
 Content-Type: application/json
 
 {
@@ -121,7 +126,7 @@ Content-Type: application/json
 ###
 
 POST http://localhost:8000/pong-2p HTTP/1.1
-Authorization: Token 855ba830c100c7f927c41d406592d58319bd0240, Token 1a3d6fe4659ff8d6c8c40c244f4404f0d7079990
+Authorization: Token 14c4426c3fe27289d66ef70adc15766a6914be8d, Token 9349a1e70a153ffb928fdf30bd0e0acd9b4423f6
 Content-Type: application/json
 
 {
@@ -148,19 +153,19 @@ Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
 ###
 
 POST http://localhost:8000/pong-4p HTTP/1.1
-Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
+Authorization: Token 14c4426c3fe27289d66ef70adc15766a6914be8d
 Content-Type: application/json
 
 {
-    "player1": 2,
-    "player1Score": 3,
+    "player1": 1,
+    "player1Score": 0,
     "player2Score": 2
 }
 
 ###
 
 POST http://localhost:8000/pong-4p HTTP/1.1
-Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58, Token 1a3d6fe4659ff8d6c8c40c244f4404f0d7079990
+Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58, Token 9349a1e70a153ffb928fdf30bd0e0acd9b4423f6
 Content-Type: application/json
 
 {

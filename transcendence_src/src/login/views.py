@@ -21,6 +21,20 @@ class CustomAuthToken(ObtainAuthToken):
             'username': user.username
         })
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def profile(request, id=None):
+    if id is None:
+        id = request.user.id
+
+    try:
+        account = Account.objects.get(id=id)
+    except Account.DoesNotExist:
+        return Response({'detail': 'User doesn\'t exist.'}, status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = AccountSerializer(account)
+    return Response(serializer.data)
+
 @api_view(['GET', 'POST'])
 def register(request):
     if request.method == 'GET':
@@ -62,7 +76,7 @@ def update_user(request):
     user = request.user
 
     if 'password' in request.data:
-        return Response({"detail": "Use the change-password endpoint to update password."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'Use the change-password endpoint to update password.'}, status=status.HTTP_400_BAD_REQUEST)
 
     serializer = UserSerializer(user, data=request.data, partial=True)
     if serializer.is_valid():

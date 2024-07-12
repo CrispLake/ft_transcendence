@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:08:11 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/07 15:27:24 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/12 06:00:37 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ export default class {
   }
 
   GetKey() {
-    localStorage.getItem('auth_token');
+    return localStorage.getItem('auth_token');
   }
 
   // AddListeners()

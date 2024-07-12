@@ -8,6 +8,14 @@
   right: 0;
 }
 
+.friends-parent {
+  position: relative;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
 .friends-button {
   justify-content: center;
   align-items: center;
@@ -87,4 +95,78 @@ path {
 .button-up path {
   fill: var(--white);
   transform: scaleY(-1);
+}
+
+.friend-list {
+  position: relative;
+  padding: 0 !important;
+  margin: 0 !important;
+  list-style: none;
+  overflow: hidden;
+  gap: 0;
+}
+
+.friend-list li {
+  margin-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding-left: 1rem;
+}
+
+.friend-list p {
+  transition: ease-in 0.1s;
+  font-size: 18px;
+  padding: 0;
+  margin: 0;
+}
+
+.friend:hover p {
+  text-decoration: underline;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.search-bar {
+  position: absolute;
+  height: 4rem;
+  width: 100%;
+  bottom: 50px;
+  font-size: 32px !important;
+  justify-content:space-between;
+  align-items: center;
+  display: flex;
+
+  color: var(--white);
+  border-top: solid 1px;
+  transition: ease 0.3s;
+}
+
+.search-bar:hover {
+  background-color: var(--yellow);
+  cursor: pointer;
+}
+
+.search-text {
+  margin-top: 0.5rem;
+  margin-left: 1rem;
+  transition: ease 0.15s;
+  text-decoration: none;
+  color: var(--white);
+}
+
+.search-bar:hover a {
+  color: var(--black);
+}
+
+.search-icon {
+  margin-right: 1rem;
+  height: 50px;
+  width: 50px;
+}
+
+.search-icon path {
+  stroke: var(--white);
+}
+
+.search-bar:hover path {
+  stroke: var(--black);
 }

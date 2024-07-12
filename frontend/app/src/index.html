@@ -64,33 +64,31 @@
 
 	
 	<div id="dropDownDiv" class="friends-div">
-		<div class="friends-drop hide">
-			<ul>
-				<li>
-					<p>Player_123</p>
-				</li>
-				<li>
-					<p>hiver_0</p>
-				</li>
-				<li>
-					<p>noob85303</p>
-				</li>
-				<li>
-					<p>Destroyer666</p>
-				</li>
-			</ul>
+		<div class="friends-parent">		
+			<div class="friends-drop hide">
+				<ul class="friend-list font-sub">
+					<li class="friend"><p>Player_123</p></li>
+					<li class="friend"><p>hiver_0</p></li>
+					<li class="friend"><p>noob85303</p></li>
+					<li class="friend"><p>Destroyer666</p></li>
+				</ul>
+				<div class="search-bar font-heading">
+					<a href="/search" class="search-text" data-link>SEARCH</a>
+					<svg class="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M11 6C13.7614 6 16 8.23858 16 11M16.6588 16.6549L21 21M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+				</div>
+			</div>
+			<button id ="dropDownButton" class="friends-button" onclick="toggleView()">
+				<p class="font-heading friends-text">FRIENDS</p>
+				<svg class="arrow-up-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+					<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+					<g id="SVGRepo_iconCarrier">
+					<!-- Adjusted path to center within the 24x24 viewBox -->
+					<path d="M12 9.29289L16.2929 13.5858C16.6834 13.9763 16.6834 14.6095 16.2929 15C15.9024 15.3905 15.2692 15.3905 14.8787 15L12 12.1213L9.12132 15C8.7308 15.3905 8.09763 15.3905 7.70711 15C7.31658 14.6095 7.31658 13.9763 7.70711 13.5858L12 9.29289Z" fill="#0F0F0F"></path>
+					</g>
+				</svg>
+			</button>
 		</div>
-		<button id ="dropDownButton" class="friends-button" onclick="toggleView()">
-			<p class="font-heading friends-text">FRIENDS</p>
-			<svg class="arrow-up-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-				<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-				<g id="SVGRepo_iconCarrier">
-				  <!-- Adjusted path to center within the 24x24 viewBox -->
-				  <path d="M12 9.29289L16.2929 13.5858C16.6834 13.9763 16.6834 14.6095 16.2929 15C15.9024 15.3905 15.2692 15.3905 14.8787 15L12 12.1213L9.12132 15C8.7308 15.3905 8.09763 15.3905 7.70711 15C7.31658 14.6095 7.31658 13.9763 7.70711 13.5858L12 9.29289Z" fill="#0F0F0F"></path>
-				</g>
-			  </svg>
-		</button>
 	</div>
 
 	<!-- DYNAMIC CONTENT WILL LOAD INSIDE THIS DIV -->

@@ -108,13 +108,13 @@ Content-Type: application/json
 ###
 
 GET http://localhost:8000/pong-2p HTTP/1.1
-Authorization: Token 14c4426c3fe27289d66ef70adc15766a6914be8d
+Authorization: Token 5e51412eb219272dfb0f7973db19bef905f53064
 
 
 ###
 
 POST http://localhost:8000/pong-2p HTTP/1.1
-Authorization: Token 14c4426c3fe27289d66ef70adc15766a6914be8d
+Authorization: Token 5e51412eb219272dfb0f7973db19bef905f53064
 Content-Type: application/json
 
 {
@@ -126,7 +126,7 @@ Content-Type: application/json
 ###
 
 POST http://localhost:8000/pong-2p HTTP/1.1
-Authorization: Token 14c4426c3fe27289d66ef70adc15766a6914be8d, Token 9349a1e70a153ffb928fdf30bd0e0acd9b4423f6
+Authorization: Token 5e51412eb219272dfb0f7973db19bef905f53064, Token fb5b94ef38e83235abc095e03438fd2bda88fe3b
 Content-Type: application/json
 
 {
@@ -138,8 +138,8 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:8000/pong-2p/1 HTTP/1.1
-Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
+GET http://localhost:8000/pong-2p/2 HTTP/1.1
+Authorization: Token 5e51412eb219272dfb0f7973db19bef905f53064
 
 ###
 
@@ -205,7 +205,7 @@ Content-Type: application/json
 {
     "user": {
         "username": "testUser1",
-        "password": "testPassword"
+        "password": "test"
     }
 }
 
@@ -217,7 +217,7 @@ Content-Type: application/json
 {
     "user": {
         "username": "testUser2",
-        "password": "testPassword"
+        "password": "test"
     }
 }
 
@@ -229,7 +229,7 @@ Content-Type: application/json
 {
     "user": {
         "username": "testUser3",
-        "password": "testPassword"
+        "password": "test"
     }
 }
 
@@ -254,7 +254,7 @@ Content-Type: application/json
 
 {
     "username": "testUser1",
-    "password": "testPassword"
+    "password": "test"
 }
 
 ###
@@ -264,7 +264,7 @@ Content-Type: application/json
 
 {
     "username": "testUser2",
-    "password": "testPassword"
+    "password": "test"
 }
 
 ###

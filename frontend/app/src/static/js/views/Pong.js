@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/08 11:22:23 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/11 15:26:57 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,8 @@ export default class extends AbstractView {
         break;
     }
   }
+
+  // rematchHandler
 
   handleKeyUp(event) {
     switch (event.key) {

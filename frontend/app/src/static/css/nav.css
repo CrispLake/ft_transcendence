@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:37:06 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/22 17:43:50 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/12 07:04:52 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@
 
   transition: 0.3s;
 }
-path {
+.icon-holder path {
   stroke: var(--black);
 }
 .play-button:hover {

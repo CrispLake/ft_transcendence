@@ -1,25 +1,90 @@
 .friends-div {
   position: absolute;
   width: 12rem;
-  height: 4rem;  
+  height: 4rem;
+
+  z-index: 1;
   bottom: 0;
   right: 0;
+}
 
-  display: flex;
-  justify-content: start;
+.friends-button {
+  justify-content: center;
   align-items: center;
+  display: flex;
+  height: 100%;
+  width: 100%;
 
-  background-color: var(--orange);
+  border-top: 0;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: solid 1px;
+
+  transition: 0.3s;
+  background-color: var(--yellow);
+}
+
+.arrow-up-icon {
+  background: none;
+  height: 65px;
+  width: 65px;
+  pointer-events: none;
 }
 
 .friends-button:hover {
   cursor: pointer;
+  background-color: var(--black);
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  z-index: 10;
+}
+
+.friends-button:hover p,
+.friends-button:hover path {
+  color: var(--white);
+  fill: var(--white);
 }
 
 .friends-text {
   font-size: 2rem !important;
-  padding-top: 0.5rem;
+  margin-top: 2.5rem;
   margin-left: 1rem;
+  margin-right: 0;
+  pointer-events: none;
+}
+
+.friends-drop {
+  background-color: var(--black);
+  color: var(--white);
+  position: relative;
+
+  width: 12rem;
+  height: 550px;
+  top: 4rem;
+
+  z-index: 1;
+  display: block;
+  position: absolute;
+}
+
+.show {
+  transition: transform 0.2s cubic-bezier(.72,.25,.11,1.29) !important;
+  transform: translate(0px, -500px);
+}
+
+.hide {
+  transition: transform 0.175s ease-out;
+}
+
+.button-up {
+  background-color: var(--black);
+  color: var(--white);
+}
+
+path {
+  transition: transform 0.7s ease-in-out;
+  transform-origin: center;
+}
+
+.button-up path {
+  fill: var(--white);
+  transform: scaleY(-1);
 }

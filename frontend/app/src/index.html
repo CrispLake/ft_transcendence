@@ -16,6 +16,8 @@
 	<link rel="stylesheet" href="/static/css/nav.css">
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js" integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="/static/js/friends.js"></script>
+
 	<title>ft_trancendence</title>
 </head>
 <body>
@@ -60,8 +62,35 @@
 		</div>
 	</nav>
 
-	<div class="friends-div">
-		<p class="font-heading friends-text">FRIENDS</p>
+	
+	<div id="dropDownDiv" class="friends-div">
+		<div class="friends-drop hide">
+			<ul>
+				<li>
+					<p>Player_123</p>
+				</li>
+				<li>
+					<p>hiver_0</p>
+				</li>
+				<li>
+					<p>noob85303</p>
+				</li>
+				<li>
+					<p>Destroyer666</p>
+				</li>
+			</ul>
+		</div>
+		<button id ="dropDownButton" class="friends-button" onclick="toggleView()">
+			<p class="font-heading friends-text">FRIENDS</p>
+			<svg class="arrow-up-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+				<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+				<g id="SVGRepo_iconCarrier">
+				  <!-- Adjusted path to center within the 24x24 viewBox -->
+				  <path d="M12 9.29289L16.2929 13.5858C16.6834 13.9763 16.6834 14.6095 16.2929 15C15.9024 15.3905 15.2692 15.3905 14.8787 15L12 12.1213L9.12132 15C8.7308 15.3905 8.09763 15.3905 7.70711 15C7.31658 14.6095 7.31658 13.9763 7.70711 13.5858L12 9.29289Z" fill="#0F0F0F"></path>
+				</g>
+			  </svg>
+		</button>
 	</div>
 
 	<!-- DYNAMIC CONTENT WILL LOAD INSIDE THIS DIV -->

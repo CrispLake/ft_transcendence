@@ -33,7 +33,7 @@ const getParams = (match) => {
     if (values.length < 1) {
       return;
     }
-    const keys = Array.from(match.route.path.matchAll(/:(\w+)/g).map(result => result[1]));
+    const keys = [...match.route.path.matchAll(/:(\w+)/g)].map(result => result[1]);
   
     return Object.fromEntries(keys.map((key, index) => {
       return [key, values[index]];

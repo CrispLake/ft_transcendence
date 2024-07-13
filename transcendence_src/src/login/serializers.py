@@ -31,8 +31,8 @@ class FriendSerializer(serializers.ModelSerializer):
 
 
 class AccountSerializer(serializers.ModelSerializer):
+    friends = FriendSerializer(many=True, read_only=True)
     user = UserSerializer()
-    friends = FriendSerializer(many=True)
 
     class Meta:
         model = Account

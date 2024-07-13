@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 06:52:04 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/13 08:16:37 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/13 14:21:41 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,15 +54,16 @@ window.onclick = (event) => {
 // Pull friends data from backend
 // http://localhost:8000/friend-request/list
 // TODO: will probably need a payload with the token?
-const fetchData = () => {
+const fetchData = async () => {
   try {
     if (!view.Authenticate()) {
       console.log('No token found in loginDataFetch, exit!');
       // view.Redirect('/login');
       return;
     }
-    const payload = { token: view.GetKey() }
-    const response = axios.get('http://localhost:8000/friend-request/list');
+    const response = await axios.get('http://localhost:8000/account', {
+      headers: { 'Authorization': `Token ${view.GetKey()}` }
+    });
     return response.data;
   }
   catch(error) {
@@ -76,18 +77,21 @@ const fetchData = () => {
 // Example:   <li class="friend"> <p>Player_123</p> </li>
 // TODO: make parser
 const parseData = (data) => {
-  console.log(data);
-  return `
-    <li class="friend"><p>Player_123</p></li>
-    <li class="friend"><p>hiver_0</p></li>
-    <li class="friend"><p>noob85303</p></li>
-    <li class="friend"><p>Destroyer666</p></li>
-  `
+  let res = '';
+
+  console.log('in paraseDATA: ', data);
+
+  data.friends.forEach(friend => {
+    res += `<li class="friend"><a href="/profile/${friend.user.id}">${friend.user.username}</a></li>`;
+    console.log(res);
+  });
+
+  return res;
 }
 
 
 // This function will be called when user logs in to fetch friend list data and inject it
-const loginDataFetch = (event) => {
+const loginDataFetch = async (event) => {
   // Prevent default behaviour of event triggered
   event.preventDefault();
 
@@ -98,13 +102,10 @@ const loginDataFetch = (event) => {
   }
 
   // Fetch friendlist from backend
-  const response = fetchData();
-  if (response.error) {
-    return;
-  }
+  const response = await fetchData();
 
   // Parse data to an html content
-  const content = parseData(response);
+  const content = await parseData(response);
   // Set content
   friendList.innerHTML = content;
 }

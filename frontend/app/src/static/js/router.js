@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 13:31:25 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/13 08:26:16 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/13 14:21:51 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ const router = async () => {
 
   // Handle authentication if needed
   // redirects to login if not authenticated
+  // view.DeleteKey();
   if (view.auth) {
     if (!view.Authenticate()) {
       console.log('not authenticated');

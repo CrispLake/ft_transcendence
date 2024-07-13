@@ -1,8 +1,4 @@
 {
-<<<<<<< HEAD
-  "type": "module",
-=======
->>>>>>> origin/master
   "name": "trancendence",
   "version": "1.0.0",
   "main": "server.js",

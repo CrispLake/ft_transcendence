@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 13:31:25 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/11 15:27:32 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/13 08:26:16 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@ import InternalError from './views/500.js';
 
 import Register from './views/Register.js';
 import Profile from './views/Profile.js';
+import Search from './views/Search.js';
 import Login from './views/Login.js';
 import About from './views/About.js';
 import Home from './views/Home.js';
@@ -73,6 +74,7 @@ const router = async () => {
     // { path: '/profile/:id', view: Profile },
     { path: '/about', view: About },
     { path: '/play', view: Pong },
+    { path: '/search', view: Search },
     // { path: '/register', view: Register },
   ];
 

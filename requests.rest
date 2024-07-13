@@ -1,14 +1,19 @@
 # Profile
 
 GET http://localhost:8000/account
-Authorization: Token e3770a085d86b87b6c2cb1d78d684eec69009a18
+Authorization: Token 91975a4745dcf9a9a858a04cea79674c8444fb85
 
 # Friends
 
 ###
 
+GET http://localhost:8000/account/1
+Authorization: Token 91975a4745dcf9a9a858a04cea79674c8444fb85
+
+###
+
 POST http://localhost:8000/friend-request/send
-Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
+Authorization: Token ab8c2ca26dc7c9f051815101a01a0bee91f2dbea
 Content-Type: application/json
 
 {
@@ -18,7 +23,7 @@ Content-Type: application/json
 ###
 
 GET http://localhost:8000/friend-request/list
-Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
+Authorization: Token ab8c2ca26dc7c9f051815101a01a0bee91f2dbea
 
 ###
 
@@ -28,8 +33,8 @@ user2
 Authorization: Token 1a3d6fe4659ff8d6c8c40c244f4404f0d7079990
 ###
 
-POST http://localhost:8000/friend-request/respond/3
-Authorization: Token 1a3d6fe4659ff8d6c8c40c244f4404f0d7079990
+POST http://localhost:8000/friend-request/respond/1
+Authorization: Token 91975a4745dcf9a9a858a04cea79674c8444fb85
 Content-Type: application/json
 
 {
@@ -253,7 +258,7 @@ POST http://localhost:8000/login HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "testUser2",
+    "username": "testUser1",
     "password": "testPassword"
 }
 

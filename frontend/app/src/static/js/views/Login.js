@@ -6,9 +6,15 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/22 13:36:52 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/12 06:01:01 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/13 08:05:02 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+// loginEvent:
+// Will be triggered after succesfull login
+// Will trigger functions like fetching friend list
+// Will contain { detail: [RESPONSE STATUS] }
+
 
 import { Notification } from "../notification.js";
 import AbstractView from "./AbstractView.js";
@@ -79,12 +85,14 @@ export default class extends AbstractView {
     
     const formData = new FormData(formElement);
     const payload = Object.fromEntries(formData);
-
+    
     try {
       const response = await axios.post(
         this.loginURL,
         payload
       );
+      const loginEvent = new CustomEvent('loginEvent', {detail: response.status}); // Custom event to be triggered when submitted
+      window.dispatchEvent(loginEvent);
       this.CreateKey(response.data.token);
       this.Redirect(`/${event.target.href}`);
     } catch(error) {

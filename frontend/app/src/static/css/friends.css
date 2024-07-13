@@ -74,7 +74,7 @@
 }
 
 .show {
-  transition: transform 0.2s cubic-bezier(.72,.25,.11,1.29) !important;
+  transition: transform 0.2s ease-in-out !important;
   transform: translate(0px, -500px);
 }
 

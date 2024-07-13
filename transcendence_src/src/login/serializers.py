@@ -12,7 +12,7 @@ class FriendRequestSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'password']
+        fields = ['id', 'username', 'password']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -20,9 +20,19 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
+    
+
+class FriendSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Account
+        fields = ['user']
+
 
 class AccountSerializer(serializers.ModelSerializer):
     user = UserSerializer()
+    friends = FriendSerializer(many=True)
 
     class Meta:
         model = Account

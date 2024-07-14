@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 09:22:19 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/27 08:06:29 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/14 08:23:21 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,7 @@ export default class extends AbstractView {
   async getHtml() {
     return `
       <div class="profile-div">
-        <div class="profile-card">
-          <h1 class="font-heading">404 - Not Found</h1>
-        </div>
+        <h1 class="font-heading">404 - Not Found</h1>
       </div>
     `
   }

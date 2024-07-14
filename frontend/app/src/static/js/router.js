@@ -6,12 +6,13 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 13:31:25 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/13 14:21:51 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/14 08:23:54 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 // Error pages
 import InternalError from './views/500.js';
+import NotFoundError from './views/404.js';
 
 import Register from './views/Register.js';
 import Profile from './views/Profile.js';
@@ -63,7 +64,7 @@ const navigationEventHandler = (event) => {
 const router = async () => {
   // Define all possible routes for the frontend
   const routes = [
-    // { path: '/404', view: () => console.log('not found') },
+    { path: '/404', view: NotFoundError },
     { path: '/', view: Home },
     { path: '/login', view: Login },
     { path: '/register', view: Register },
@@ -71,11 +72,10 @@ const router = async () => {
     // { path: '/history', view: () => console.log('viewing history') },
     // { path: '/settings', view: () => console.log('viewing settings') },
     { path: '/profile', view: Profile },
-    // { path: '/profile/:id', view: Profile },
+    { path: '/profile/:id', view: Profile },
     { path: '/about', view: About },
     { path: '/play', view: Pong },
     { path: '/search', view: Search },
-    // { path: '/register', view: Register },
   ];
 
   // If there are listeners, remove them

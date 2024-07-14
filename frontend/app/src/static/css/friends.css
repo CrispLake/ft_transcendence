@@ -112,14 +112,16 @@ path {
   padding-left: 1rem;
 }
 
-.friend-list p {
+.friend-list a {
   transition: ease-in 0.1s;
+  text-decoration: none;
   font-size: 18px;
+  color: var(--white);
   padding: 0;
   margin: 0;
 }
 
-.friend:hover p {
+.friend:hover a {
   text-decoration: underline;
   font-size: 22px;
   cursor: pointer;

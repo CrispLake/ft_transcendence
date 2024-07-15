@@ -184,7 +184,7 @@ export class Game
 				if (this.gameEnded())
 					this.resetGame();
 				else
-				this.updateScore();
+					this.updateScore();
 		}
 		this.composer.render();
 		this.renderer.autoClear = false;
@@ -239,39 +239,30 @@ export class Game
 	goal()
 	{
 		let goalOffSet = 1;
+		if (this.ball.mesh.position.x <= this.players["p1"].paddle.position.x - goalOffSet)
+		{
+			this.players["p1"].loseLife(1);
+			this.ui.playerCards[this.players["p1"].name].decreaseLife(1);
+			return (true);
+		}
+		else if (this.ball.mesh.position.x >= this.players["p2"].paddle.position.x + goalOffSet)
+		{
+			this.players["p2"].loseLife(1);
+			this.ui.playerCards[this.players["p2"].name].decreaseLife(1);
+			return (true);
+		}
 		if (this.settings.multiMode)
 		{
-			if (this.ball.mesh.position.x <= this.players["p1"].paddle.position.x - goalOffSet)
+			if (this.ball.mesh.position.z <= this.players["p3"].paddle.position.z - goalOffSet)
 			{
-				this.players["p2"].score++;
-				return (true);
-			}
-			else if (this.ball.mesh.position.x >= this.players["p2"].paddle.position.x + goalOffSet)
-			{
-				this.players["p1"].score++;
-				return (true);
-			}
-			else if (this.ball.mesh.position.z <= this.players["p3"].paddle.position.z - goalOffSet)
-			{
-				this.players["p3"].score++;
+				this.players["p3"].loseLife(1);
+				this.ui.playerCards[this.players["p3"].name].decreaseLife(1);
 				return (true);
 			}
 			else if (this.ball.mesh.position.z >= this.players["p4"].paddle.position.z + goalOffSet)
 			{
-				this.players["p4"].score++;
-				return (true);
-			}
-		}
-		else
-		{
-			if (this.ball.mesh.position.x <= this.players["p1"].paddle.position.x - goalOffSet)
-			{
-				this.players["p2"].score++;
-				return (true);
-			}
-			else if (this.ball.mesh.position.x >= this.players["p2"].paddle.position.x + goalOffSet)
-			{
-				this.players["p1"].score++;
+				this.players["p4"].loseLife(1);
+				this.ui.playerCards[this.players["p4"].name].decreaseLife(1);
 				return (true);
 			}
 		}
@@ -280,22 +271,30 @@ export class Game
 
 	gameEnded()
 	{
-		return (this.players["p1"].score == G.winningScore || this.players["p2"].score == G.winningScore);
+		for (let player in this.players)
+		{
+			if (this.players[player].lives == 0)
+				return (true);
+		}
+		return (false);
 	}
 
 	resetGame()
 	{
-		this.players["p1"].score = 0;
-		this.players["p2"].score = 0;
+		for (let player in this.players)
+			this.players[player].reset();
+		for (let playerCard in this.ui.playerCards)
+			this.ui.playerCards[playerCard].resetLife();
 		this.updateScore();
 	}
 
 	updateScore()
 	{
-		this.ui.updateTextObject("score", this.players["p1"].score + " - " + this.players["p2"].score);
-		this.ball.reset();
 		for (let player in this.players)
 			this.players[player].reset();
+		for (let playerCard in this.ui.playerCards)
+			this.ui.playerCards[playerCard].updateLife();
+		this.ball.reset();
 		this.resetBounces();
 		this.sleepMillis(1000);
 	}

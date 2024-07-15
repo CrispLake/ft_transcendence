@@ -36,3 +36,4 @@ export const UI_NAME = CYAN;
 export const UI_SCORE = WHITE;
 export const UI_PLAYERCARD_BG = DARK_GRAY;
 export const UI_PLAYERCARD_BORDER = PURPLE;
+export const UI_LIFE = CYAN;

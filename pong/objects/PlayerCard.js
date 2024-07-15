@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import * as G from '../globals.js';
 import * as COLOR from '../colors.js';
 import { Text2D } from './Text2D.js';
+import { Life } from './Life.js';
 
 export class PlayerCard
 {
@@ -16,11 +17,11 @@ export class PlayerCard
         this.createCardBackground();
         this.createBorder();
         this.createName();
+        this.createLifeArray();
     }
 
     setPosition()
     {
-        console.log("playerNum = " + this.playerNum);
         if (this.playerNum == 1)
             this.position = G.p1CardPos;
         else if (this.playerNum == 2)
@@ -29,9 +30,6 @@ export class PlayerCard
             this.position = G.p3CardPos;
         else if (this.playerNum == 4)
             this.position = G.p4CardPos;
-        console.log("x = " + this.position.x);
-        console.log("y = " + this.position.y);
-        console.log("z = " + this.position.z);
     }
 
     createCardBackground()
@@ -64,9 +62,22 @@ export class PlayerCard
 
     createName()
     {
-        this.namePosition = this.position;
+        this.namePosition = new THREE.Vector3(this.position.x, this.position.y, this.position.z);
         this.nameText = new Text2D(this.scene, this.name, this.namePosition, G.playerCardNameSize, COLOR.UI_NAME, this.fontLoader);
         this.namePosition.y += G.playerCardHeight / 2 - Math.min(10, G.playerCardHeight * 0.95);
+    }
+
+    createLifeArray()
+    {
+        this.lifeArray = [];
+        for (let i = 0; i < G.lives; i++)
+            this.lifeArray.push(new Life(this.scene, this.position, i));
+    }
+
+    updateLife()
+    {
+        for (let i = G.lives; i > this.lives && i > 0; i--)
+            this.lifeArray[i - 1].empty();
     }
 
     decreaseLife(lives)
@@ -75,5 +86,13 @@ export class PlayerCard
             this.lives -= lives;
         else
             this.lives = 0;
+        this.updateLife();
+    }
+
+    resetLife()
+    {
+        for (let i = this.lives; i < G.lives; i++)
+            this.lifeArray[i].fill();
+        this.lives = G.lives;
     }
 }

@@ -28,6 +28,6 @@ export class UserInterface
     addPlayerCard(player)
     {
         let playerCard = new PlayerCard(player, this.scene, this.fontLoader);
-        this.playerCards[player.playerName] = playerCard;
+        this.playerCards[player.name] = playerCard;
     }
 }

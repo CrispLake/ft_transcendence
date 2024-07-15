@@ -56,7 +56,7 @@ export const maxAngle = PongMath.setMaxAngle(maxAngleDegrees);
 export const minAngleFromWall = 30;
 
 export const winningScore = 3;
-export const lives = 3;
+export const lives = 2;
 export const fps = 60;
 
 export const horizontal = 0;
@@ -90,6 +90,14 @@ export const playerCardWidth = PongMath.widthPercentage(8);
 export const playerCardThickness = 0.2;
 export const playerCardBorderThickness = 4;
 export const playerCardNameSize = playerCardWidth / 6;
+
+const lifeArrayWidth = playerCardWidth * 0.8;
+export const lifeGap = 5;
+export const lifeWidth = Math.min(20, (lifeArrayWidth - lifeGap * (lives - 1)) / lives);
+export const lifeHeight = Math.min(lifeWidth * 1.5, playerCardHeight * 0.3);
+export const lifeThickness = 0.2;
+export const lifeBorderThickness = 2;
+
 const margin = PongMath.widthPercentage(2);
 const cardDistFromTop = window.innerHeight / 2 - playerCardHeight / 2 - margin;
 const cardDistFromSide = window.innerWidth / 2 - playerCardWidth / 2 - margin;

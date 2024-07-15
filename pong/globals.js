@@ -56,7 +56,7 @@ export const maxAngle = PongMath.setMaxAngle(maxAngleDegrees);
 export const minAngleFromWall = 30;
 
 export const winningScore = 3;
-export const lives = 2;
+export const lives = 4;
 export const fps = 60;
 
 export const horizontal = 0;

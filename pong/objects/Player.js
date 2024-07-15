@@ -262,6 +262,11 @@ export class Player
         this.lives = lives;
     }
 
+    resetLife()
+    {
+        this.lives = G.lives;
+    }
+
 
     // ----Player----
 

@@ -180,11 +180,11 @@ export class Game
 		this.updateBallPosition();
 		this.arena.update();
 		if (this.goal())
-			{
-				if (this.gameEnded())
-					this.resetGame();
-				else
-					this.updateScore();
+		{
+			if (this.gameEnded())
+				this.resetGame();
+			else
+				this.resetPositions();
 		}
 		this.composer.render();
 		this.renderer.autoClear = false;
@@ -282,18 +282,16 @@ export class Game
 	resetGame()
 	{
 		for (let player in this.players)
-			this.players[player].reset();
+			this.players[player].resetLife();
 		for (let playerCard in this.ui.playerCards)
 			this.ui.playerCards[playerCard].resetLife();
-		this.updateScore();
+		this.resetPositions();
 	}
 
-	updateScore()
+	resetPositions()
 	{
 		for (let player in this.players)
 			this.players[player].reset();
-		for (let playerCard in this.ui.playerCards)
-			this.ui.playerCards[playerCard].updateLife();
 		this.ball.reset();
 		this.resetBounces();
 		this.sleepMillis(1000);

@@ -85,15 +85,15 @@ export const startPos4P = {
 }
 
 // UI
-export const playerCardHeight = PongMath.widthPercentage(12);
+export const playerCardHeight = PongMath.widthPercentage(6);
 export const playerCardWidth = PongMath.widthPercentage(8);
 export const playerCardThickness = 0.2;
 export const playerCardBorderThickness = 4;
 export const playerCardNameSize = playerCardWidth / 6;
 
 const lifeArrayWidth = playerCardWidth * 0.8;
-export const lifeGap = 5;
-export const lifeWidth = Math.min(20, (lifeArrayWidth - lifeGap * (lives - 1)) / lives);
+export const lifeGap = 8;
+export const lifeWidth = Math.max(20, (lifeArrayWidth - lifeGap * (lives - 1)) / lives);
 export const lifeHeight = Math.min(lifeWidth * 1.5, playerCardHeight * 0.3);
 export const lifeThickness = 0.2;
 export const lifeBorderThickness = 2;

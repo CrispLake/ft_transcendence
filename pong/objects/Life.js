@@ -38,6 +38,7 @@ export class Life
         let posLast = this.position.x + distance / 2;
 
         this.position.x = PongMath.lerp(i, 0, G.lives - 1, posFirst, posLast);
+        this.position.y -= G.playerCardHeight / 2 - G.lifeHeight / 2 - G.playerCardHeight * 0.1;
         this.background.position.set(this.position.x, this.position.y, this.position.z);
         this.borderTop.position.set(this.position.x, this.position.y + G.lifeHeight / 2, this.position.z);
         this.borderBottom.position.set(this.position.x, this.position.y - G.lifeHeight / 2, this.position.z);

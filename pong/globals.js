@@ -85,18 +85,15 @@ export const startPos4P = {
 }
 
 // UI
-export const playerCardHeight = 10;
-export const playerCardWidth = 6;
+export const playerCardHeight = PongMath.widthPercentage(12);
+export const playerCardWidth = PongMath.widthPercentage(8);
 export const playerCardThickness = 0.2;
-export const playerCardNameSize = 30;
-const margin = 10;
+export const playerCardBorderThickness = 4;
+export const playerCardNameSize = playerCardWidth / 6;
+const margin = PongMath.widthPercentage(2);
 const cardDistFromTop = window.innerHeight / 2 - playerCardHeight / 2 - margin;
 const cardDistFromSide = window.innerWidth / 2 - playerCardWidth / 2 - margin;
-export const p1CardPos = new THREE.Vector3(-cardDistFromSide, cardDistFromTop, 0);
-export const p2CardPos = new THREE.Vector3(cardDistFromSide, -cardDistFromTop, 0);
-export const p3CardPos = new THREE.Vector3(-cardDistFromSide, -cardDistFromTop, 0);
-export const p4CardPos = new THREE.Vector3(cardDistFromSide, cardDistFromTop, 0);
-// export const p1CardPos = new THREE.Vector3(0, 0, 0);
-// export const p2CardPos = new THREE.Vector3(0, 0, 0);
-// export const p3CardPos = new THREE.Vector3(0, 0, 0);
-// export const p4CardPos = new THREE.Vector3(0, 0, 0);
+export const p1CardPos = new THREE.Vector3(-cardDistFromSide, -cardDistFromTop, 0);
+export const p2CardPos = new THREE.Vector3(cardDistFromSide, cardDistFromTop, 0);
+export const p3CardPos = new THREE.Vector3(-cardDistFromSide, cardDistFromTop, 0);
+export const p4CardPos = new THREE.Vector3(cardDistFromSide, -cardDistFromTop, 0);

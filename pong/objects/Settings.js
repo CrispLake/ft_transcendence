@@ -2,8 +2,8 @@ export class Settings
 {
 	constructor()
 	{
-		this.multiMode = true;
-		this.players = 4;
+		this.multiMode = false;
+		this.players = 2;
 		this.spin = true;
 	}
 }

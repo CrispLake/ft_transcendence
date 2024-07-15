@@ -9,6 +9,7 @@ const ORANGE = new THREE.Color(0xff7722);
 const WHITE = new THREE.Color(0xffffff);
 const BLACK = new THREE.Color(0x000000);
 const GRAY = new THREE.Color(0x555555);
+const DARK_GRAY = new THREE.Color(0x222222);
 
 // ----Object Colors----
 export const FLOOR = GRAY;
@@ -33,4 +34,5 @@ export const BALL = WHITE;
 
 export const UI_NAME = CYAN;
 export const UI_SCORE = WHITE;
+export const UI_PLAYERCARD_BG = DARK_GRAY;
 export const UI_PLAYERCARD_BORDER = PURPLE;

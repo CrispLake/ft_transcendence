@@ -38,7 +38,7 @@ export class Text2D
             const boundingBox = textGeometry.boundingBox;
             this.textWidth = boundingBox.max.x - boundingBox.min.x;
             this.textHeight = boundingBox.max.y - boundingBox.min.y;
-            this.mesh.position.set(this.position.x - this.textWidth / 2, this.position.y - this.textHeight / 2, this.position.z);
+            this.mesh.position.set(this.position.x - this.textWidth / 2, this.position.y - this.textHeight, this.position.z);
             this.scene.add(this.mesh);
         });
     }

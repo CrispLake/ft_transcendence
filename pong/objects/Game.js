@@ -23,9 +23,8 @@ export class Game
 		this.createPlayers();
 		this.ball = new Ball(this.scene, G.ballStartPos, this.settings.spin);
 		this.fontLoader = new FontLoader();
-		this.ui = new UserInterface(this.scene, this.fontLoader);
 		this.initializeUI();
-		this.camera = this.createCamera();
+		this.gameCamera = this.createCamera();
 		this.renderer = this.createRenderer();
 		this.composer = new EffectComposer(this.renderer);
 		this.createArena();
@@ -36,19 +35,25 @@ export class Game
 		this.update();
 	}
 
-	// ----Initialization Functions----
+	
+	//--------------------------------------------------------------------------
+	//	INITIALIZE
+	//--------------------------------------------------------------------------
 
 	initializeUI()
 	{
-		this.scene2D = new THREE.Scene();
-		this.camera2D = new THREE.OrthographicCamera(-window.innerWidth / 2, window.innerWidth / 2, window.innerHeight / 2, -window.innerHeight / 2, 0.1, 1000);
-		this.camera2D.position.z = 4;
-		this.ui = new UserInterface(this.scene2D, this.fontLoader);
+		this.uiScene = new THREE.Scene();
+		this.uiCamera = new THREE.OrthographicCamera(-window.innerWidth / 2, window.innerWidth / 2, window.innerHeight / 2, -window.innerHeight / 2, 0.1, 1000);
+		this.uiCamera.position.z = 4;
+		this.ui = new UserInterface(this.uiScene, this.fontLoader);
 
 		this.ui.addPlayerCard(this.players["p1"]);
 		this.ui.addPlayerCard(this.players["p2"]);
-		this.ui.addPlayerCard(this.players["p3"]);
-		this.ui.addPlayerCard(this.players["p4"]);
+		if (this.settings.multiMode)
+		{
+			this.ui.addPlayerCard(this.players["p3"]);
+			this.ui.addPlayerCard(this.players["p4"]);
+		}
 	}
 
 	createCamera()
@@ -75,14 +80,14 @@ export class Game
 				this.fontLoader,
 				this.renderer,
 				this.composer,
-				this.camera);
+				this.gameCamera);
 		else
 			this.arena = new Arena4Player(
 				this.scene,
 				this.fontLoader,
 				this.renderer,
 				this.composer,
-				this.camera);
+				this.gameCamera);
 	}
 
 	createPlayers()
@@ -123,21 +128,24 @@ export class Game
 		this.players["p4"].light.lookAt(0, 0, 0);
 	}
 
-	// ----Game Functions----
+
+	//--------------------------------------------------------------------------
+	//	CAMERA ROTATION
+	//--------------------------------------------------------------------------
 
 	rotateCamera()
 	{
-		let x = this.camera.position.x;
-		let z = this.camera.position.z;
+		let x = this.gameCamera.position.x;
+		let z = this.gameCamera.position.z;
 		let radius = Math.sqrt(x * x + z * z);
 		let angle = PongMath.vector2DToAngle(x, z);
 
 		angle += (Math.PI * 2) / (G.cameraOrbitTimeSec * G.fps);
 		angle = PongMath.within2Pi(angle);
 
-		this.camera.position.x = radius * Math.sin(angle);
-		this.camera.position.z = radius * Math.cos(angle);
-		this.camera.lookAt(0, 0, 0);
+		this.gameCamera.position.x = radius * Math.sin(angle);
+		this.gameCamera.position.z = radius * Math.cos(angle);
+		this.gameCamera.lookAt(0, 0, 0);
 	}
 
 	updateCamera()
@@ -152,6 +160,11 @@ export class Game
 	{
 		this.cameraRotate = !this.cameraRotate;
 	}
+
+
+	//--------------------------------------------------------------------------
+	//	UPDATE
+	//--------------------------------------------------------------------------
 
 	update()
 	{
@@ -176,7 +189,7 @@ export class Game
 		this.composer.render();
 		this.renderer.autoClear = false;
     	this.renderer.clearDepth();
-		this.renderer.render(this.scene2D, this.camera2D);
+		this.renderer.render(this.uiScene, this.uiCamera);
 	}
 
 	updateBallPosition()
@@ -217,6 +230,11 @@ export class Game
 		this.ball.affectBySpin();
 		this.ball.move();
 	}
+
+
+	//--------------------------------------------------------------------------
+	//	GAME FUNCTIONS
+	//--------------------------------------------------------------------------
 
 	goal()
 	{

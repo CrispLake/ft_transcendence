@@ -75,3 +75,8 @@ export function setMaxAngle(degrees)
 {
     return (Math.PI - degToRad(degrees));
 }
+
+export function widthPercentage(percentage)
+{
+    return (window.innerWidth * percentage / 100);
+}

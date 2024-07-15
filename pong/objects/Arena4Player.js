@@ -55,7 +55,6 @@ export class Arena4Player
 
     addToScene()
     {
-        this.scene.add(this.backWall);
         this.scene.add(this.floor);
         for (let wall in this.walls)
         {

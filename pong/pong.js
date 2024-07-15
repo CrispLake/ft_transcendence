@@ -19,7 +19,7 @@ import { Game } from './objects/Game.js';
 
 RectAreaLightUniformsLib.init();
 const game = new Game();
-const controls = new OrbitControls(game.camera, game.renderer.domElement);
+const controls = new OrbitControls(game.gameCamera, game.renderer.domElement);
 
 
 // ----Event Listeners----
@@ -63,6 +63,9 @@ function handleKeyDown(event)
             break;
         case KEY.P4_BOOST:
             game.players["p4"].boostPressed = true;
+            break;
+        case "p":
+            game.toggleCameraRotation();
             break;
     }
 }
@@ -125,8 +128,8 @@ function onWindowResize( event )
     var width = window.innerWidth;
     var height = window.innerHeight;
     game.renderer.setSize(width, height);
-    game.camera.aspect = width / height;
-    game.camera.updateProjectionMatrix();
+    game.gameCamera.aspect = width / height;
+    game.gameCamera.updateProjectionMatrix();
 }
 
 

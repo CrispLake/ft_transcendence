@@ -10,6 +10,7 @@ import { Arena4Player } from './Arena4Player.js';
 import { Player } from './Player.js';
 import { AI } from './AI.js';
 import { Ball } from './Ball.js';
+import * as PongMath from '../math.js';
 
 export class Game
 {
@@ -22,28 +23,36 @@ export class Game
 		this.createPlayers();
 		this.ball = new Ball(this.scene, G.ballStartPos, this.settings.spin);
 		this.fontLoader = new FontLoader();
-		this.ui = new UserInterface(this.scene, this.fontLoader);
 		this.initializeUI();
-		this.camera = this.createCamera();
+		this.gameCamera = this.createCamera();
 		this.renderer = this.createRenderer();
 		this.composer = new EffectComposer(this.renderer);
 		this.createArena();
 		this.update = this.update.bind(this);
+		this.cameraRotate = false;
 		console.log("Game Object Created!");
 		this.update();
 	}
 
-	// ----Initialization Functions----
+	
+	//--------------------------------------------------------------------------
+	//	INITIALIZE
+	//--------------------------------------------------------------------------
 
 	initializeUI()
 	{
-		this.scene2D = new THREE.Scene();
-		this.camera2D = new THREE.OrthographicCamera(-window.innerWidth / 2, window.innerWidth / 2, window.innerHeight / 2, -window.innerHeight / 2, 0.1, 1000);
-		this.camera2D.position.z = 4;
-		this.ui = new UserInterface(this.scene2D, this.fontLoader);
-		this.ui.addTextObject(this.scene2D, 'p1', this.players["p1"].name, new THREE.Vector3(-800, 500, 0), 40, COLOR.UI_NAMES);
-		this.ui.addTextObject(this.scene2D, 'p2', this.players["p2"].name, new THREE.Vector3(600, 500, 0), 40, COLOR.UI_NAMES);
-		this.ui.addTextObject(this.scene2D, 'score', '0 - 0', new THREE.Vector3(-50, 500, 0), 50, COLOR.UI_SCORE);
+		this.uiScene = new THREE.Scene();
+		this.uiCamera = new THREE.OrthographicCamera(-window.innerWidth / 2, window.innerWidth / 2, window.innerHeight / 2, -window.innerHeight / 2, 0.1, 1000);
+		this.uiCamera.position.z = 4;
+		this.ui = new UserInterface(this.uiScene, this.fontLoader);
+
+		this.ui.addPlayerCard(this.players["p1"]);
+		this.ui.addPlayerCard(this.players["p2"]);
+		if (this.settings.multiMode)
+		{
+			this.ui.addPlayerCard(this.players["p3"]);
+			this.ui.addPlayerCard(this.players["p4"]);
+		}
 	}
 
 	createCamera()
@@ -70,14 +79,14 @@ export class Game
 				this.fontLoader,
 				this.renderer,
 				this.composer,
-				this.camera);
+				this.gameCamera);
 		else
 			this.arena = new Arena4Player(
 				this.scene,
 				this.fontLoader,
 				this.renderer,
 				this.composer,
-				this.camera);
+				this.gameCamera);
 	}
 
 	createPlayers()
@@ -118,11 +127,48 @@ export class Game
 		this.players["p4"].light.lookAt(0, 0, 0);
 	}
 
-	// ----Game Functions----
+
+	//--------------------------------------------------------------------------
+	//	CAMERA ROTATION
+	//--------------------------------------------------------------------------
+
+	rotateCamera()
+	{
+		let x = this.gameCamera.position.x;
+		let z = this.gameCamera.position.z;
+		let radius = Math.sqrt(x * x + z * z);
+		let angle = PongMath.vector2DToAngle(x, z);
+
+		angle += (Math.PI * 2) / (G.cameraOrbitTimeSec * G.fps);
+		angle = PongMath.within2Pi(angle);
+
+		this.gameCamera.position.x = radius * Math.sin(angle);
+		this.gameCamera.position.z = radius * Math.cos(angle);
+		this.gameCamera.lookAt(0, 0, 0);
+	}
+
+	updateCamera()
+	{
+		if (this.cameraRotate)
+		{
+			this.rotateCamera();
+		}
+	}
+
+	toggleCameraRotation()
+	{
+		this.cameraRotate = !this.cameraRotate;
+	}
+
+
+	//--------------------------------------------------------------------------
+	//	UPDATE
+	//--------------------------------------------------------------------------
 
 	update()
 	{
 		setTimeout(() => { requestAnimationFrame(this.update); }, 1000 / G.fps);
+		this.updateCamera();
 		this.players["p1"].update();
 		this.players["p2"].update();
 		if (this.settings.multiMode == true)
@@ -133,16 +179,16 @@ export class Game
 		this.updateBallPosition();
 		this.arena.update();
 		if (this.goal())
-			{
-				if (this.gameEnded())
-					this.resetGame();
-				else
-				this.updateScore();
+		{
+			if (this.gameEnded())
+				this.resetGame();
+			else
+				this.resetPositions();
 		}
 		this.composer.render();
 		this.renderer.autoClear = false;
     	this.renderer.clearDepth();
-		this.renderer.render(this.scene2D, this.camera2D);
+		this.renderer.render(this.uiScene, this.uiCamera);
 	}
 	updateBallPosition()
 	{
@@ -190,42 +236,38 @@ export class Game
 		this.ball.move();
 	}
 
+
+	//--------------------------------------------------------------------------
+	//	GAME FUNCTIONS
+	//--------------------------------------------------------------------------
+
 	goal()
 	{
 		let goalOffSet = 1;
+		if (this.ball.mesh.position.x <= this.players["p1"].paddle.position.x - goalOffSet)
+		{
+			this.players["p1"].loseLife(1);
+			this.ui.playerCards[this.players["p1"].name].decreaseLife(1);
+			return (true);
+		}
+		else if (this.ball.mesh.position.x >= this.players["p2"].paddle.position.x + goalOffSet)
+		{
+			this.players["p2"].loseLife(1);
+			this.ui.playerCards[this.players["p2"].name].decreaseLife(1);
+			return (true);
+		}
 		if (this.settings.multiMode)
 		{
-			if (this.ball.mesh.position.x <= this.players["p1"].paddle.position.x - goalOffSet)
+			if (this.ball.mesh.position.z <= this.players["p3"].paddle.position.z - goalOffSet)
 			{
-				this.players["p2"].score++;
-				return (true);
-			}
-			else if (this.ball.mesh.position.x >= this.players["p2"].paddle.position.x + goalOffSet)
-			{
-				this.players["p1"].score++;
-				return (true);
-			}
-			else if (this.ball.mesh.position.z <= this.players["p3"].paddle.position.z - goalOffSet)
-			{
-				this.players["p3"].score++;
+				this.players["p3"].loseLife(1);
+				this.ui.playerCards[this.players["p3"].name].decreaseLife(1);
 				return (true);
 			}
 			else if (this.ball.mesh.position.z >= this.players["p4"].paddle.position.z + goalOffSet)
 			{
-				this.players["p4"].score++;
-				return (true);
-			}
-		}
-		else
-		{
-			if (this.ball.mesh.position.x <= this.players["p1"].paddle.position.x - goalOffSet)
-			{
-				this.players["p2"].score++;
-				return (true);
-			}
-			else if (this.ball.mesh.position.x >= this.players["p2"].paddle.position.x + goalOffSet)
-			{
-				this.players["p1"].score++;
+				this.players["p4"].loseLife(1);
+				this.ui.playerCards[this.players["p4"].name].decreaseLife(1);
 				return (true);
 			}
 		}
@@ -234,22 +276,28 @@ export class Game
 
 	gameEnded()
 	{
-		return (this.players["p1"].score == G.winningScore || this.players["p2"].score == G.winningScore);
+		for (let player in this.players)
+		{
+			if (this.players[player].lives == 0)
+				return (true);
+		}
+		return (false);
 	}
 
 	resetGame()
 	{
-		this.players["p1"].score = 0;
-		this.players["p2"].score = 0;
-		this.updateScore();
+		for (let player in this.players)
+			this.players[player].resetLife();
+		for (let playerCard in this.ui.playerCards)
+			this.ui.playerCards[playerCard].resetLife();
+		this.resetPositions();
 	}
 
-	updateScore()
+	resetPositions()
 	{
-		this.ui.updateTextObject("score", this.players["p1"].score + " - " + this.players["p2"].score);
-		this.ball.reset();
 		for (let player in this.players)
 			this.players[player].reset();
+		this.ball.reset();
 		this.resetBounces();
 		this.sleepMillis(1000);
 	}

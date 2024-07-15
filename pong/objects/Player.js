@@ -26,7 +26,7 @@ export class Player
         this.boostMeter = new THREE.Mesh(this.boostGeometry, this.boostMaterial);
         this.box = new THREE.Box3();
         this.paddleLength = G.paddleLength;
-        this.score = 0;
+        this.lives = G.lives;
         this.moveLeft = false;
         this.moveRight = false;
         this.setMovingBoundaries();
@@ -245,6 +245,26 @@ export class Player
         this.light.color.set(color);
         if (elapsedTime >= G.fadeTimeSec)
             this.resetLightEffect();
+    }
+
+
+    // ----Life----
+
+    loseLife(lifeAmount)
+    {
+        this.lives -= lifeAmount;
+        if (this.lives < 0)
+            this.lives == 0;
+    }
+
+    setLife(lives)
+    {
+        this.lives = lives;
+    }
+
+    resetLife()
+    {
+        this.lives = G.lives;
     }
 
 

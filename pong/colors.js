@@ -4,6 +4,7 @@ import * as THREE from 'three';
 const PURPLE = new THREE.Color(0xff00ff);
 const CYAN = new THREE.Color(0x11ffff);
 const RED = new THREE.Color(0xff1111);
+const GREEN = new THREE.Color(0x11ff11);
 const YELLOW = new THREE.Color(0xffff11);
 const ORANGE = new THREE.Color(0xff7722);
 const WHITE = new THREE.Color(0xffffff);
@@ -37,3 +38,6 @@ export const UI_SCORE = WHITE;
 export const UI_PLAYERCARD_BG = DARK_GRAY;
 export const UI_PLAYERCARD_BORDER = PURPLE;
 export const UI_LIFE = WHITE;
+
+export const POWER_PADDLE_LONG = GREEN;
+export const POWER_PADDLE_SHORT = RED;

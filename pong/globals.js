@@ -50,22 +50,29 @@ export const maxSpin = 0.01;       // grades
 export const spinReduction = 10;   // precentage
 export const maxAngleIncreaseFromSpinBounce = PongMath.degToRad(40);
 
+
 // Angles
 export const maxAngleDegrees = 30;
 export const minAngle = PongMath.setMinAngle(maxAngleDegrees);
 export const maxAngle = PongMath.setMaxAngle(maxAngleDegrees);
 export const minAngleFromWall = 30;
 
+
+// Game Settings
 export const winningScore = 3;
 export const lives = 4;
 export const fps = 60;
 
+
+// Helper Macros
 export const horizontal = 0;
 export const vertical = 1;
+
 
 // 4 Player
 export const arenaWidth4Player = 25;
 export const wallLength4Player = 5;
+
 
 // Start Positions
 export const p1StartPos = new THREE.Vector3(-(arenaLength / 2 - paddleThickness / 2), 0, 0);
@@ -84,6 +91,7 @@ export const startPos4P = {
     p3: new THREE.Vector3(0, 0, -(arenaWidth4Player / 2 - paddleThickness / 2)),
     p4: new THREE.Vector3(0, 0, arenaWidth4Player / 2 - paddleThickness / 2)
 }
+
 
 // UI
 export const playerCardHeight = PongMath.widthPercentage(6);
@@ -106,3 +114,17 @@ export const p1CardPos = new THREE.Vector3(-cardDistFromSide, -cardDistFromTop, 
 export const p2CardPos = new THREE.Vector3(cardDistFromSide, cardDistFromTop, 0);
 export const p3CardPos = new THREE.Vector3(-cardDistFromSide, cardDistFromTop, 0);
 export const p4CardPos = new THREE.Vector3(cardDistFromSide, -cardDistFromTop, 0);
+
+
+// Powerup
+export const POWER_PADDLE_LONG = 0;
+export const POWER_PADDLE_SHORT = 1;
+export const POWER_LIFE_PLUS = 2;
+export const POWER_LIFE_MINUS = 3;
+export const POWER_SPEED_PLUS = 4;
+export const POWER_SPEED_MINUS = 5;
+export const powerupIntervalSec = 2;
+export const powerupSize = 1;
+export const powerupRotationSpeed = 0.01;
+export const powerupWidthMargin = arenaWidth * 0.1;
+export const powerupLengthMargin = arenaLength * 0.1;

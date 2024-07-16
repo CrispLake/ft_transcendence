@@ -11,6 +11,7 @@ import { Player } from './Player.js';
 import { AI } from './AI.js';
 import { Ball } from './Ball.js';
 import * as PongMath from '../math.js';
+import { PowerupManager } from './PowerupManager.js';
 
 export class Game
 {
@@ -18,16 +19,17 @@ export class Game
 	{
 		console.log("Creating Game Object...");
 		this.settings = new Settings();
-		this.scene = new THREE.Scene();
+		this.gameScene = new THREE.Scene();
 		this.players = [];
 		this.createPlayers();
-		this.ball = new Ball(this.scene, G.ballStartPos, this.settings.spin);
+		this.ball = new Ball(this.gameScene, G.ballStartPos, this.settings.spin);
 		this.fontLoader = new FontLoader();
 		this.initializeUI();
 		this.gameCamera = this.createCamera();
 		this.renderer = this.createRenderer();
 		this.composer = new EffectComposer(this.renderer);
 		this.createArena();
+		this.powerupManager = new PowerupManager(this.gameScene);
 		this.update = this.update.bind(this);
 		this.cameraRotate = false;
 		console.log("Game Object Created!");
@@ -75,14 +77,14 @@ export class Game
 	{
 		if (this.settings.multiMode == false)
 			this.arena = new Arena(
-				this.scene,
+				this.gameScene,
 				this.fontLoader,
 				this.renderer,
 				this.composer,
 				this.gameCamera);
 		else
 			this.arena = new Arena4Player(
-				this.scene,
+				this.gameScene,
 				this.fontLoader,
 				this.renderer,
 				this.composer,
@@ -93,27 +95,27 @@ export class Game
 	{
 		if (this.settings.multiMode == false)
 		{
-			this.players["p1"] = new Player(this.scene, this.settings, 1, "Player1");
+			this.players["p1"] = new Player(this.gameScene, this.settings, 1, "Player1");
 			if (this.settings.players == 2)
-				this.players["p2"] = new Player(this.scene, this.settings, 2, "Player2");
+				this.players["p2"] = new Player(this.gameScene, this.settings, 2, "Player2");
 			else
 				this.players["p2"] = new AI(this, 2, "AI");
 		}
 		else
 		{
 			if (this.settings.players > 3)
-				this.players["p4"] = new Player(this.scene, this.settings, 4, "Player4");
+				this.players["p4"] = new Player(this.gameScene, this.settings, 4, "Player4");
 			else
 				this.players["p4"] = new AI(this, 4, "AI4");
 			if (this.settings.players > 2)
-				this.players["p3"] = new Player(this.scene, this.settings, 3, "Player3");
+				this.players["p3"] = new Player(this.gameScene, this.settings, 3, "Player3");
 			else
 				this.players["p3"] = new AI(this, 3, "AI3");
 			if (this.settings.players > 2)
-				this.players["p2"] = new Player(this.scene, this.settings, 2, "Player2");
+				this.players["p2"] = new Player(this.gameScene, this.settings, 2, "Player2");
 			else
 				this.players["p2"] = new AI(this, 2, "AI2");
-			this.players["p1"] = new Player(this.scene, this.settings, 1, "Player1");
+			this.players["p1"] = new Player(this.gameScene, this.settings, 1, "Player1");
 
 			this.rotatePlayers();
 		}
@@ -168,14 +170,15 @@ export class Game
 	update()
 	{
 		setTimeout(() => { requestAnimationFrame(this.update); }, 1000 / G.fps);
+		this.powerupManager.update();
 		this.updateCamera();
 		this.players["p1"].update();
 		this.players["p2"].update();
 		if (this.settings.multiMode == true)
-		{
-			this.players["p3"].update();
-			this.players["p4"].update();
-		}
+			{
+				this.players["p3"].update();
+				this.players["p4"].update();
+			}
 		this.updateBallPosition();
 		this.arena.update();
 		if (this.goal())
@@ -184,12 +187,14 @@ export class Game
 				this.resetGame();
 			else
 				this.resetPositions();
+			this.powerupManager.restart();
 		}
 		this.composer.render();
 		this.renderer.autoClear = false;
     	this.renderer.clearDepth();
 		this.renderer.render(this.uiScene, this.uiCamera);
 	}
+
 	updateBallPosition()
 	{
 
@@ -229,6 +234,13 @@ export class Game
 				this.ball.affectBySpin();
 				this.ball.move();
 				return ;
+			}
+		}
+		if (this.powerupManager.powerup != null)
+		{
+			if (this.ball.box.intersectsBox(this.powerupManager.powerup.box))
+			{
+				this.powerupManager.powerupPicked();
 			}
 		}
 		this.resetBounces();

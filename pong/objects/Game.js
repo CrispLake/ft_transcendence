@@ -203,9 +203,13 @@ export class Game
 			if (this.ball.box.intersectsBox(this.players[player].box))
 			{
 				if (this.players[player].bounce == true)
-				{
 					continue ;
-				}
+
+				// Set player who touched the ball to active, rest to inactive.
+				for (let p in this.players)
+					this.players[p].active = false;
+				this.players[player].active = true;
+				
 				this.players[player].lightEffect();
 				this.ball.adjustSpin(this.players[player]);
 				this.players[player].resetBoost();
@@ -223,9 +227,7 @@ export class Game
 			if (this.ball.box.intersectsBox(this.arena.walls[wall].box))
 			{
 				if (this.arena.walls[wall].bounce == true)
-				{
 					continue ;
-				}
 				this.arena.walls[wall].lightEffect();
 				this.ball.reduceSpin();
 				this.ball.bounceFromWall(this.arena.walls[wall]);
@@ -240,6 +242,15 @@ export class Game
 		{
 			if (this.ball.box.intersectsBox(this.powerupManager.powerup.box))
 			{
+				for (let player in this.players)
+				{
+					if (this.players[player].active)
+					{
+						console.log("Active player = " + this.players[player].playerNum);
+						this.powerupManager.powerup.activate(this.players[player]);
+						break;
+					}
+				}
 				this.powerupManager.powerupPicked();
 			}
 		}

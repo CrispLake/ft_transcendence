@@ -42,6 +42,7 @@ export class Player
         this.clockBoostMeter = new THREE.Clock();
         this.effect = false;
         this.boostMeterAnimation = false;
+        this.active = false;
         this.bounce = false;
         this.box.setFromObject(this.paddle);
     }
@@ -123,7 +124,7 @@ export class Player
         }
         else
         {
-            this.movementBoundary = G.arenaWidth / 2 - G.paddleLength / 2;
+            this.movementBoundary = G.arenaWidth / 2 - this.paddleLength / 2;
         }
     }
 
@@ -268,6 +269,19 @@ export class Player
     }
 
 
+    // ----Paddle----
+
+    resize(length)
+    {
+        this.paddleLength = length;
+        const newGeometry = new THREE.BoxGeometry(G.paddleThickness, G.wallHeight, length);
+        this.paddle.geometry.dispose();
+        this.paddle.geometry = newGeometry;
+        this.light.width = length;
+        this.setMovingBoundaries();
+    }
+
+
     // ----Player----
 
     move(movement)
@@ -296,6 +310,8 @@ export class Player
 
     reset()
     {
+        if (this.paddleLength != G.paddleLength)
+            this.resize(G.paddleLength);
         this.setPos(this.startPos.x, this.startPos.y, this.startPos.z);
         this.boostAmount = 0;
         this.updateBoostMeter();

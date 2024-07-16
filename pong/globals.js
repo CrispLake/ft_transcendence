@@ -128,3 +128,7 @@ export const powerupSize = 1;
 export const powerupRotationSpeed = 0.01;
 export const powerupWidthMargin = arenaWidth * 0.1;
 export const powerupLengthMargin = arenaLength * 0.1;
+
+export const paddleSizeIncrement = 1;
+export const minPaddleLength = arenaWidth * 0.05;
+export const maxPaddleLength = arenaWidth * 0.5;

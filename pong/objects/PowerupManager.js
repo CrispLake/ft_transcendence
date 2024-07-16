@@ -75,8 +75,6 @@ export class PowerupManager
         const randomIndex = Math.floor(Math.random() * this.availablePowerups.length);
         this.powerup = this.availablePowerups.splice(randomIndex, 1)[0];
 
-        console.log(this.powerup.message);
-
         const randomPosition = this.getRandomPosition();
         this.powerup.mesh.position.set(randomPosition.x, randomPosition.y, randomPosition.z);
         this.powerup.box.setFromObject(this.powerup.mesh);
@@ -103,6 +101,18 @@ export class powerPaddleLong
         this.mesh.rotation.y += G.powerupRotationSpeed;
         this.box.setFromObject(this.mesh);
     }
+
+    activate(player)
+    {
+        console.log(this.message);
+        if (player.paddleLength < G.maxPaddleLength)
+        {
+            let newPaddleLength = player.paddleLength + G.paddleSizeIncrement;
+            if (newPaddleLength > G.maxPaddleLength)
+                newPaddleLength = G.maxPaddleLength;
+            player.resize(newPaddleLength);
+        }
+    }
 }
 
 export class powerPaddleShort
@@ -122,5 +132,17 @@ export class powerPaddleShort
     {
         this.mesh.rotation.y += G.powerupRotationSpeed;
         this.box.setFromObject(this.mesh);
+    }
+
+    activate(player)
+    {
+        console.log(this.message);
+        if (player.paddleLength > G.minPaddleLength)
+        {
+            let newPaddleLength = player.paddleLength - G.paddleSizeIncrement;
+            if (newPaddleLength < G.minPaddleLength)
+                newPaddleLength = G.minPaddleLength;
+            player.resize(newPaddleLength);
+        }
     }
 }

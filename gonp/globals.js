@@ -11,6 +11,7 @@ export const boostMeterThickness = 0.1;
 export const boostMeterLength = playerLength;
 export const maxBoost = 1;
 export const boostIncrement = 0.01;
+export const boostDecrement = boostIncrement * 2;
 export const boostOffset = 1;
 
 // Arena
@@ -51,5 +52,6 @@ export const lanePositions = [
 // Pushers
 export const pusherSpeed = 0.2;
 export const pusherMinSize = 0.2;
+export const pusherMaxSize = 1;
 
 export const fps = 60;

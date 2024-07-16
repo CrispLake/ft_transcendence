@@ -65,19 +65,32 @@ export class Pusher {
         // this.mesh.rotation.y = 30;
         this.colliding = false;
         this.box = new THREE.Box3().setFromObject(this.mesh);
-        console.log(this.mesh.rotation.x + " " + this.mesh.y + " " + this.mesh.z + " ")
-        player.scene.add(this.mesh);
+		this.boostCooldown = false;
+		player.scene.add(this.mesh);
     }
     updateBoundingBox() {
         this.box.setFromObject(this.mesh);
     }
     downSize() {
         this.size -= 0.001;
-        console.log(this.size);
         if (this.size < G.pusherMinSize) {
             this.player.removePusher(this);
             return;
         }
+        this.mesh.scale.set(
+            G.playerThickness * this.size / this.mesh.geometry.parameters.width,
+            G.playerHeight * this.size / this.mesh.geometry.parameters.height,
+            G.playerLength * this.size / this.mesh.geometry.parameters.depth
+        );
+        this.mesh.position.y = G.laneY + (this.box.max.y / 2) + (G.laneThickness / 2);
+        this.updateBoundingBox();
+    }
+    upSize() {
+        if (this.size >= G.pusherMaxSize) {
+            return;
+        }
+		console.log("bigger");
+        this.size += 0.001;
         this.mesh.scale.set(
             G.playerThickness * this.size / this.mesh.geometry.parameters.width,
             G.playerHeight * this.size / this.mesh.geometry.parameters.height,
@@ -126,9 +139,6 @@ export class Player {
     {
         this.pushers = this.pushers.filter(obj => obj !== pusher);
         this.scene.remove(pusher.mesh);
-        console.log("removed pusher");
-        return;
-
     }
     addToScene(scene) {
         scene.add(this.mesh);
@@ -148,14 +158,39 @@ export class Player {
         }
     }
     movePusher(pusher) {
-        if (pusher.colliding == true) {
+		// for (let i = this.pushers.length - 1; i >= 0; i--)
+		let secondPusher;
+		for (let i =  0; i < this.pushers.length; i++)
+		{
+			secondPusher = this.pushers[i]; 
+			if (pusher == secondPusher) {
+				break ;
+			}
+			if (pusher.box.intersectsBox(secondPusher.box)) {
+				this.feedPusher(pusher, secondPusher)
+                const overlapX = Math.min(pusher.box.max.x, secondPusher.box.max.x) - Math.max(pusher.box.min.x, secondPusher.box.min.x);
+                let mtv = new THREE.Vector3(overlapX, 0, 0);
+                pusher.mesh.position.x += (mtv.x / 2 - 0.005) * this.sign;
+				pusher.updateBoundingBox()
+				return ;
+			}
+
+		}
+		if (pusher.colliding == true) {
             return ;
         }
         pusher.mesh.position.x -= G.pusherSpeed * this.sign;
         pusher.mesh.position.y = G.laneY + (pusher.box.max.y / 2) + (G.laneThickness / 2);
         pusher.updateBoundingBox();
     }
-    move() {
+	feedPusher(feeder, reciever) {
+		feeder.downSize();
+		feeder.downSize();
+		reciever.upSize();
+		reciever.upSize();
+	}
+
+	move() {
         if (this.moveRight) {
             this.moveRight = false;
             this.currentLane++;
@@ -170,6 +205,7 @@ export class Player {
         }
         this.mesh.position.z = G.lanePositions[this.currentLane];
         this.boostMeter.position.z = this.mesh.position.z;
+        this.boostMeter.position.x = this.mesh.position.x;		
         this.boostMeter.position.y = this.mesh.position.y + G.playerHeight / 2 + G.boostMeterThickness / 2;
     }
 
@@ -177,9 +213,19 @@ export class Player {
         this.scene.remove(this.boostMeter);
         this.boostGeometry.dispose();
     }
-
+	logicLoop()
+	{
+		this.move();
+		if (this.boostPressed && !this.boostCooldown) {
+			this.increaseBoost();
+		}
+		else {
+			this.decreaseBoost();
+		}
+	}
     updateBoostMeter() {
         if (this.boostAmount == 0) {
+			this.boostCooldown = false;
             this.removeBoostMeter();
         } else {
             this.removeBoostMeter();
@@ -191,15 +237,15 @@ export class Player {
             this.boostMeter = new THREE.Mesh(this.boostGeometry, this.boostMaterial);
             this.boostMeter.position.set(
                 this.mesh.position.x,
-                this.mesh.position.y,
-                this.mesh.position.z + 2
+                this.mesh.position.y + G.playerHeight / 2 + G.boostMeterThickness / 2,
+                this.mesh.position.z
             );
             this.scene.add(this.boostMeter);
         }
     }
 
     increaseBoost() {
-        if (this.boostAmount < G.maxBoost) {
+        if (this.boostAmount < G.maxBoost && !this.boostCooldown) {
             this.boostAmount += G.boostIncrement;
         }
         this.updateBoostMeter();
@@ -207,7 +253,7 @@ export class Player {
 
     spawnPusher() {
         this.pushers.push(new Pusher(this));
-    }
+	}
 
     resetBoost() {
         if (this.boostAmount > G.pusherMinSize) {
@@ -216,6 +262,20 @@ export class Player {
         this.boostAmount = 0;
         this.updateBoostMeter();
     }
+    decreaseBoost() {
+        if (this.boostAmount > G.pusherMinSize && !this.boostCooldown) {
+            this.spawnPusher();
+			this.boostCooldown = true;
+		}
+        if (this.boostAmount <= 0) {
+			this.boostAmount = 0;
+			this.boostCooldown = false;
+		}
+		else {
+			this.boostAmount -= G.boostDecrement;
+		}
+		this.updateBoostMeter();
+	    }
 
     reset() {
         this.setPos(

@@ -76,23 +76,41 @@ export class PlayerCard
 
     updateLife()
     {
-        for (let i = G.lives; i > this.lives && i > 0; i--)
+        for (let i = 0; i < this.lives; i++)
+            this.lifeArray[i].fill();
+    }
+
+    emptyArray()
+    {
+        for (let i = this.lives; i > 0; i--)
             this.lifeArray[i - 1].empty();
+    }
+
+    setLife(lives)
+    {
+        this.emptyArray();
+        this.lives = lives;
+        this.updateLife();
     }
 
     decreaseLife(lives)
     {
-        if (this.lives > lives)
-            this.lives -= lives;
+        if (this.lives - lives < 0)
+            this.setLife(0);
         else
-            this.lives = 0;
-        this.updateLife();
+            this.setLife(this.lives - lives);
+    }
+
+    increaseLife(lives)
+    {
+        if (this.lives + lives > G.lives)
+            this.setLife(G.lives);
+        else
+            this.setLife(this.lives + lives);
     }
 
     resetLife()
     {
-        for (let i = this.lives; i < G.lives; i++)
-            this.lifeArray[i].fill();
-        this.lives = G.lives;
+        this.setLife(G.lives);
     }
 }

@@ -9,14 +9,16 @@ export class PowerupManager
     {
         this.scene = scene;
         this.powerups = [
-            new powerPaddleLong(),
-            new powerPaddleShort()
+            new PowerPaddleLong(),
+            new PowerPaddleShort(),
+            new PowerLifePlus()
         ]
         this.availablePowerups = [...this.powerups];
         this.powerup = null;
-        this.timer = new THREE.Clock();
-        this.timer.start();
+        this.spawnTimer = new THREE.Clock();
+        this.activeTimer = new THREE.Clock();
         this.arenaIsEmpty = true;
+        this.spawnTimer.start();
     }
 
     resetPowerups()
@@ -26,32 +28,39 @@ export class PowerupManager
 
     update()
     {
-        if (this.timer.getElapsedTime() >= G.powerupIntervalSec && this.arenaIsEmpty)
+        if (this.spawnTimer.getElapsedTime() >= G.powerupIntervalSec && this.arenaIsEmpty)
         {
             this.spawnPowerup();
             this.arenaIsEmpty = false;
+            this.spawnTimer.stop();
+            this.activeTimer.start();
         }
         if (this.arenaIsEmpty == false && this.powerup != null)
         {
             this.powerup.mesh.rotation.y += G.powerupRotationSpeed;
+        }
+        if (this.activeTimer.getElapsedTime() >= G.powerupMaxTimeSec)
+        {
+            this.removePowerup();
         }
     }
 
     restart()
     {
         this.resetPowerups();
-        this.powerupPicked();
-        this.timer.start();
+        this.removePowerup();
+        this.spawnTimer.start();
     }
 
-    powerupPicked()
+    removePowerup()
     {
         if (this.powerup)
         {
             this.scene.remove(this.powerup.mesh);
             this.powerup = null;
             this.arenaIsEmpty = true;
-            this.timer.start();
+            this.activeTimer.stop();
+            this.spawnTimer.start();
         }
     }
 
@@ -83,7 +92,7 @@ export class PowerupManager
 }
 
 
-export class powerPaddleLong
+export class PowerPaddleLong
 {
     constructor()
     {
@@ -115,7 +124,7 @@ export class powerPaddleLong
     }
 }
 
-export class powerPaddleShort
+export class PowerPaddleShort
 {
     constructor()
     {
@@ -143,6 +152,36 @@ export class powerPaddleShort
             if (newPaddleLength < G.minPaddleLength)
                 newPaddleLength = G.minPaddleLength;
             player.resize(newPaddleLength);
+        }
+    }
+}
+
+export class PowerLifePlus
+{
+    constructor()
+    {
+        this.geometry = new THREE.BoxGeometry(G.powerupSize, G.powerupSize, G.powerupSize);
+        this.material = new THREE.MeshStandardMaterial({color: COLOR.POWER_LIFE_PLUS, emissive: COLOR.POWER_LIFE_PLUS});
+        this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.box = new THREE.Box3();
+        this.box.setFromObject(this.mesh);
+        this.power = G.POWER_LIFE_PLUS;
+        this.message = "Life Plus";
+    }
+
+    rotate()
+    {
+        this.mesh.rotation.y += G.powerupRotationSpeed;
+        this.box.setFromObject(this.mesh);
+    }
+
+    activate(player)
+    {
+        console.log(this.message);
+        if (player.lives < G.lives)
+        {
+            player.lives++;
+            player.setLife(player.lives);
         }
     }
 }

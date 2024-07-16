@@ -6,8 +6,9 @@ import * as PongMath from '../math.js';
 
 export class Player
 {
-    constructor(scene, settings, playerNum, name)
+    constructor(game, scene, settings, playerNum, name)
     {
+        this.game = game;
         this.scene = scene;
         this.settings = settings;
         this.spin = this.settings.spin;
@@ -261,6 +262,7 @@ export class Player
     setLife(lives)
     {
         this.lives = lives;
+        this.game.ui.playerCards[this.name].setLife(this.lives);
     }
 
     resetLife()
@@ -279,6 +281,7 @@ export class Player
         this.paddle.geometry = newGeometry;
         this.light.width = length;
         this.setMovingBoundaries();
+        this.move(0);   // We use this function to correct possible resizing ouutside boundaries. Here we also set boostMeter, light and box position.
     }
 
 

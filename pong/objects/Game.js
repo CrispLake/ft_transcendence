@@ -95,27 +95,27 @@ export class Game
 	{
 		if (this.settings.multiMode == false)
 		{
-			this.players["p1"] = new Player(this.gameScene, this.settings, 1, "Player1");
+			this.players["p1"] = new Player(this, this.gameScene, this.settings, 1, "Player1");
 			if (this.settings.players == 2)
-				this.players["p2"] = new Player(this.gameScene, this.settings, 2, "Player2");
+				this.players["p2"] = new Player(this, this.gameScene, this.settings, 2, "Player2");
 			else
 				this.players["p2"] = new AI(this, 2, "AI");
 		}
 		else
 		{
 			if (this.settings.players > 3)
-				this.players["p4"] = new Player(this.gameScene, this.settings, 4, "Player4");
+				this.players["p4"] = new Player(this, this.gameScene, this.settings, 4, "Player4");
 			else
 				this.players["p4"] = new AI(this, 4, "AI4");
 			if (this.settings.players > 2)
-				this.players["p3"] = new Player(this.gameScene, this.settings, 3, "Player3");
+				this.players["p3"] = new Player(this, this.gameScene, this.settings, 3, "Player3");
 			else
 				this.players["p3"] = new AI(this, 3, "AI3");
 			if (this.settings.players > 2)
-				this.players["p2"] = new Player(this.gameScene, this.settings, 2, "Player2");
+				this.players["p2"] = new Player(this, this.gameScene, this.settings, 2, "Player2");
 			else
 				this.players["p2"] = new AI(this, 2, "AI2");
-			this.players["p1"] = new Player(this.gameScene, this.settings, 1, "Player1");
+			this.players["p1"] = new Player(this, this.gameScene, this.settings, 1, "Player1");
 
 			this.rotatePlayers();
 		}
@@ -251,7 +251,7 @@ export class Game
 						break;
 					}
 				}
-				this.powerupManager.powerupPicked();
+				this.powerupManager.removePowerup();
 			}
 		}
 		this.resetBounces();

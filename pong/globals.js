@@ -123,9 +123,12 @@ export const POWER_LIFE_PLUS = 2;
 export const POWER_LIFE_MINUS = 3;
 export const POWER_SPEED_PLUS = 4;
 export const POWER_SPEED_MINUS = 5;
-export const powerupIntervalSec = 2;
-export const powerupSize = 1;
+
+export const powerupIntervalSec = 5;
+export const powerupMaxTimeSec = 8;
 export const powerupRotationSpeed = 0.01;
+
+export const powerupSize = 1;
 export const powerupWidthMargin = arenaWidth * 0.1;
 export const powerupLengthMargin = arenaLength * 0.1;
 

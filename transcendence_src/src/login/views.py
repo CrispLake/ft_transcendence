@@ -35,6 +35,20 @@ def profile(request, id=None):
     serializer = AccountSerializer(account)
     return Response(serializer.data)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def profile_from_username(request, username=None):
+    if username is None:
+        return Respone({'detail': 'Impossible request'}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        account = Account.objects.get(user__username=username)
+    except Account.DoesNotExist:
+        return Response({'detail': 'User doesn\'t exist.'}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = AccountSerializer(account)
+    return Response(serializer.data)
+
 @api_view(['GET', 'POST'])
 def register(request):
     if request.method == 'GET':

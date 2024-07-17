@@ -93,11 +93,11 @@ export class Arena
         this.floor.geometry = newFloorGeometry;
         this.width = width;
 
-        this.walls["leftWall"].mesh.position.z = -(this.width / 2 + G.wallThickness / 2);
-        this.walls["leftWall"].light.position.z = -(this.width / 2 + G.wallThickness / 2);
+        this.walls["leftWall"].mesh.position.z = -(this.width / 2 - G.wallThickness / 2);
+        this.walls["leftWall"].light.position.z = -(this.width / 2 - G.wallThickness / 2);
         this.walls["leftWall"].box.setFromObject(this.walls["leftWall"].mesh);
-        this.walls["rightWall"].mesh.position.z = this.width / 2 + G.wallThickness / 2;
-        this.walls["rightWall"].light.position.z = this.width / 2 + G.wallThickness / 2;
+        this.walls["rightWall"].mesh.position.z = this.width / 2 - G.wallThickness / 2;
+        this.walls["rightWall"].light.position.z = this.width / 2 - G.wallThickness / 2;
         this.walls["rightWall"].box.setFromObject(this.walls["rightWall"].mesh);
     }
 

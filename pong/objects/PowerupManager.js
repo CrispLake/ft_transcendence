@@ -158,5 +158,10 @@ export class PowerupManager
         this.wavyWalls = false;
         this.wavyWallsTimer.stop();
         this.game.arena.setWidth(G.arenaWidth);
+        for (let player in this.game.players)
+        {
+            this.game.players[player].setMovingBoundaries();
+            this.game.players[player].stayWithinBoundaries();
+        }
     }
 }

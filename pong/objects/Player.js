@@ -48,7 +48,10 @@ export class Player
         this.box.setFromObject(this.paddle);
     }
     
-    // ----Initialization Functions----
+
+    //--------------------------------------------------------------------------
+    //  INITIALIZE
+    //--------------------------------------------------------------------------
     
     addToScene()
     {
@@ -117,12 +120,17 @@ export class Player
         }
     }
 
+
+    //--------------------------------------------------------------------------
+    //  BOUNDARIES
+    //--------------------------------------------------------------------------
+
     setMovingBoundaries()
     {
         if (this.settings.multiMode)
             this.movementBoundary = this.game.arena.width / 2 - G.wallLength4Player - this.paddleLength / 2;
         else
-            this.movementBoundary = this.game.arena.width / 2 - this.paddleLength / 2;
+            this.movementBoundary = this.game.arena.width / 2 - G.wallThickness - this.paddleLength / 2;
     }
 
     stayWithinBoundaries()
@@ -147,8 +155,10 @@ export class Player
         this.box.setFromObject(this.paddle);
     }
 
-    
-    // ----Boost Meter----
+
+    //--------------------------------------------------------------------------
+    //  BOOST METER
+    //--------------------------------------------------------------------------
 
     removeBoostMeter()
     {
@@ -202,7 +212,9 @@ export class Player
     }
 
 
-    // ----Boost----
+    //--------------------------------------------------------------------------
+    //  BOOST
+    //--------------------------------------------------------------------------
 
     increaseBoost()
     {
@@ -239,7 +251,9 @@ export class Player
     }
 
 
-    // ----Light----
+    //--------------------------------------------------------------------------
+    //  LIGHT
+    //--------------------------------------------------------------------------
 
     resetLightEffect()
     {
@@ -268,7 +282,9 @@ export class Player
     }
 
 
-    // ----Life----
+    //--------------------------------------------------------------------------
+    //  LIFE
+    //--------------------------------------------------------------------------
 
     loseLife(lifeAmount)
     {
@@ -289,7 +305,9 @@ export class Player
     }
 
 
-    // ----Paddle----
+    //--------------------------------------------------------------------------
+    //  PADDLE
+    //--------------------------------------------------------------------------
 
     resize(length)
     {
@@ -303,7 +321,9 @@ export class Player
     }
 
 
-    // ----Player----
+    //--------------------------------------------------------------------------
+    //  PLAYER FUNCTIONS
+    //--------------------------------------------------------------------------
 
     move(movement)
     {

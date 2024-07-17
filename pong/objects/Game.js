@@ -91,22 +91,6 @@ export class Game
 				this.gameCamera);
 	}
 
-	// createPlayers()
-	// {
-	// 	let maxPlayers = 2;
-	// 	if (this.settings.multiMode == true)
-	// 		maxPlayers = 4;
-	// 	for (let i = 0; i < this.settings.players && i < maxPlayers; i++)
-	// 		this.players.push(new Player(this, this.gameScene, this.settings, i + 1, "Player" + (i + 1)));
-	// 	while (i < maxPlayers)
-	// 	{
-	// 		this.players.push(new AI(this, i + 1, "AI"));
-	// 		i++;
-	// 	}
-	// 	if (this.settings.multiMode)
-	// 		this.rotatePlayers();
-	// }
-
 	createPlayers()
 	{
 		this.players = [];
@@ -176,13 +160,15 @@ export class Game
 		setTimeout(() => { requestAnimationFrame(this.update); }, 1000 / G.fps);
 		this.powerupManager.update();
 		this.updateCamera();
-		this.players["p1"].update();
-		this.players["p2"].update();
-		if (this.settings.multiMode == true)
-			{
-				this.players["p3"].update();
-				this.players["p4"].update();
-			}
+		for (let player in this.players)
+			this.players[player].update();
+		// this.players["p1"].update();
+		// this.players["p2"].update();
+		// if (this.settings.multiMode == true)
+		// 	{
+		// 		this.players["p3"].update();
+		// 		this.players["p4"].update();
+		// 	}
 		this.updateBallPosition();
 		this.arena.update();
 		if (this.goal())
@@ -251,7 +237,6 @@ export class Game
 				{
 					if (this.players[player].active)
 					{
-						console.log("Active player = " + this.players[player].playerNum);
 						this.powerupManager.powerup.activate(this.players[player]);
 						break;
 					}

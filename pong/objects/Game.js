@@ -33,7 +33,6 @@ export class Game
 		this.cameraRotate = false;
 		console.log("Game Object Created!");
 		this.update();
-		this.activePlayer = 0;	// Stores the number of the last player touching the ball. 0 means no one has touched it.
 	}
 
 	
@@ -162,13 +161,6 @@ export class Game
 		this.updateCamera();
 		for (let player in this.players)
 			this.players[player].update();
-		// this.players["p1"].update();
-		// this.players["p2"].update();
-		// if (this.settings.multiMode == true)
-		// 	{
-		// 		this.players["p3"].update();
-		// 		this.players["p4"].update();
-		// 	}
 		this.updateBallPosition();
 		this.arena.update();
 		if (this.goal())
@@ -187,7 +179,6 @@ export class Game
 
 	updateBallPosition()
 	{
-
 		for (let player in this.players)
 		{
 			if (this.ball.box.intersectsBox(this.players[player].box))
@@ -199,7 +190,6 @@ export class Game
 				for (let p in this.players)
 					this.players[p].active = false;
 				this.players[player].active = true;
-				this.activePlayer = this.players[player].playerNum;
 				
 				this.players[player].lightEffect();
 				this.ball.adjustSpin(this.players[player]);

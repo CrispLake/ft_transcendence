@@ -41,5 +41,6 @@ export const UI_LIFE = WHITE;
 
 export const POWER_PADDLE_LONG = GREEN;
 export const POWER_PADDLE_SHORT = RED;
-export const POWER_LIFE_PLUS = CYAN;
+export const POWER_LIFE_PLUS_INNER = GREEN;
+export const POWER_LIFE_PLUS_FRAME = WHITE;
 export const POWER_WAVY_WALLS = PURPLE;

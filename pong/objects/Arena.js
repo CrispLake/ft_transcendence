@@ -68,17 +68,6 @@ export class Arena
 
     update()
     {
-        // if (this.wavyWalls == true)
-        // {
-        //     this.width += Math.sin(this.wavyWallTimer.getElapsedTime());
-        //     console.log("Time  = " + this.wavyWallTimer.getElapsedTime());
-        //     console.log("Width = " + this.width);
-        //     if (this.wavyWallTimer.getElapsedTime() > G.wavyWallsTimeSec)
-        //     {
-        //         this.wavyWalls = false;
-        //         this.wavyWallTimer.stop();
-        //     }
-        // }
         for (let wall in this.walls)
         {
             if (this.walls[wall].effect)
@@ -100,10 +89,4 @@ export class Arena
         this.walls["rightWall"].light.position.z = this.width / 2 - G.wallThickness / 2;
         this.walls["rightWall"].box.setFromObject(this.walls["rightWall"].mesh);
     }
-
-    // startWavyWalls()
-    // {
-    //     this.wavyWalls = true;
-    //     this.wavyWallTimer.start();
-    // }
 }

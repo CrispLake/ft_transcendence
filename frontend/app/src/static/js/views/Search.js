@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 08:17:31 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/13 13:02:39 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/17 08:13:59 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,85 @@ export default class extends AbstractView {
       super(params);
       this.setTitle('Search For Friends');
       this.auth = false; //TODO: switch to true
+      this.listeners = true;
   }
 
-  
+  async searchHandler(event) {
+    event.preventDefault();
+
+    const searchIcon = await document.getElementById('searcher');
+    if (!searchIcon) { return ;}
+    searchIcon.classList.toggle('show-loader');
+    searchIcon.classList.toggle('hide-loader');
+    
+    const loadingIcon = await document.getElementById('loader');
+    if (!loadingIcon) { return ;}
+    loadingIcon.classList.toggle('show-loader');
+    loadingIcon.classList.toggle('hide-loader');
+
+
+    const form = await document.getElementById('query');
+    if (!form) { return; }
+    form.value = '';
+    
+    // TODO: remove
+    function wait(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    const data = { 
+      username: 'Hiver123',
+      id: 2
+    }
+
+    try {
+      // TODO: create request to backend when endpoint is added
+      // const response = axios.get('http://localhost:8000/')
+      
+      await wait(1500);
+        
+    }
+    catch(error) {
+      console.log('axios error in search');
+    }
+
+    loadingIcon.classList.toggle('show-loader');
+    loadingIcon.classList.toggle('hide-loader');
+    searchIcon.classList.toggle('show-loader');
+    searchIcon.classList.toggle('hide-loader');
+
+    const resultDiv = await document.getElementById('searchResult');
+
+    const yes = 1;
+    if (yes === 1) {
+      resultDiv.innerHTML = `
+        <div class="search-result">
+          <a class="font-text result-text" href="/profile/${data.id}">${data.username}</a>
+        </div>
+      `;
+    }
+    else {
+      resultDiv.innerHTML = `
+        <span class="font-text">user not found...</span>
+      `;
+    }
+  }  
+
+  AddListeners() {
+    const form = document.getElementById('search-form-button');
+    if (!form) {
+      return;
+    }
+
+    form.addEventListener('click', this.searchHandler);
+  }
+
+  RemoveListeners() {
+    const form = document.getElementById('search-form-button');
+    if (!form) { return; }
+    form.removeEventListener('click', this.searchHandler);
+  }
 
   async getHtml() {
-
     return `
       <div class="search-div">
         <div class="search-left">
@@ -33,11 +106,22 @@ export default class extends AbstractView {
             </p>
           </div>
           <div class="search-left-input">
-            <input type="text" placeholder="Peers...?">
-            <button>
-              <svg class="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M11 6C13.7614 6 16 8.23858 16 11M16.6588 16.6549L21 21M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
-            </button>
+
+            <form id="search-form" role="search" action="" method="">
+              <input type="search" id="query" name="q"
+              placeholder="&lt;Search&gt;"
+              aria-label="Search through site content">
+              <button id="search-form-button" type="submit">
+                <div id="loader" class="loading hide-loader"> </div>
+                <svg id="searcher" class="search-icon show-loader" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M11 6C13.7614 6 16 8.23858 16 11M16.6588 16.6549L21 21M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+              </button>
+            </form>
           </div>
+          
+          <div id="searchResult" class="results">
+          
+          </div>
+          
         </div>
 
         <div class="search-right">

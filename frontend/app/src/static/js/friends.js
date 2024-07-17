@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 06:52:04 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/14 08:44:20 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/14 08:46:30 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,19 +116,15 @@ const loginDataFetch = async (event) => {
 }
 
 const fillFriendList = () => {
-  console.log('fillFriendList called');
   if (friendData.length < 1) {
-    console.log('exit str len');
     return;
   }
 
   const friendList = document.getElementById('friendList');
   if (!friendList) {
-    console.log('exit friendlist elem')
     return;
   }
   
-  console.log(`Setting friendlit to ${friendData}`);
   friendList.innerHTML = friendData;
 }
 

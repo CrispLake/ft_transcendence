@@ -108,13 +108,13 @@ Content-Type: application/json
 ###
 
 GET http://localhost:8000/pong-2p HTTP/1.1
-Authorization: Token 5e51412eb219272dfb0f7973db19bef905f53064
+Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
 
 
 ###
 
 POST http://localhost:8000/pong-2p HTTP/1.1
-Authorization: Token 5e51412eb219272dfb0f7973db19bef905f53064
+Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
 Content-Type: application/json
 
 {
@@ -126,7 +126,7 @@ Content-Type: application/json
 ###
 
 POST http://localhost:8000/pong-2p HTTP/1.1
-Authorization: Token 5e51412eb219272dfb0f7973db19bef905f53064, Token fb5b94ef38e83235abc095e03438fd2bda88fe3b
+Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b, Token d7666b33106ca023ac17cd750f2074b86605bab2
 Content-Type: application/json
 
 {
@@ -139,7 +139,7 @@ Content-Type: application/json
 ###
 
 GET http://localhost:8000/pong-2p/2 HTTP/1.1
-Authorization: Token 5e51412eb219272dfb0f7973db19bef905f53064
+Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
 
 ###
 

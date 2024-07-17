@@ -135,3 +135,6 @@ export const powerupLengthMargin = arenaLength * 0.1;
 export const paddleSizeIncrement = 1;
 export const minPaddleLength = arenaWidth * 0.05;
 export const maxPaddleLength = arenaWidth * 0.5;
+export const wavyWallsDurationSec = 6;
+export const wavyWallsCycles = 4;
+export const maxDivergencePercentage = 0.2;

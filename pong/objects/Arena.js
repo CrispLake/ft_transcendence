@@ -14,6 +14,10 @@ export class Arena
         this.composer = composer;
         this.camera = camera;
 
+        this.width = G.floorWidth;
+        // this.wavyWalls = false;
+        // this.wavyWallTimer = new THREE.Clock();
+
         // ----PONG Text----
         this.pongText = new Text3D(
             this.scene,
@@ -33,7 +37,7 @@ export class Arena
         this.backWall.position.set(0, 0, -10.5);
         
         // ----Floor----
-        this.floorGeometry = new THREE.BoxGeometry(G.arenaLength, G.floorThickness, G.floorWidth);
+        this.floorGeometry = new THREE.BoxGeometry(G.arenaLength, G.floorThickness, this.width);
         this.floorMeshMaterial = new THREE.MeshStandardMaterial({color: 0xffffff, emissive: COLOR.FLOOR, wireframe: false});
         this.floor = new THREE.Mesh(this.floorGeometry, this.floorMeshMaterial);
         this.floor.position.set(0, -(G.wallHeight / 2 + G.floorThickness / 2), 0);
@@ -64,10 +68,42 @@ export class Arena
 
     update()
     {
+        // if (this.wavyWalls == true)
+        // {
+        //     this.width += Math.sin(this.wavyWallTimer.getElapsedTime());
+        //     console.log("Time  = " + this.wavyWallTimer.getElapsedTime());
+        //     console.log("Width = " + this.width);
+        //     if (this.wavyWallTimer.getElapsedTime() > G.wavyWallsTimeSec)
+        //     {
+        //         this.wavyWalls = false;
+        //         this.wavyWallTimer.stop();
+        //     }
+        // }
         for (let wall in this.walls)
         {
             if (this.walls[wall].effect)
                 this.walls[wall].updateLightEffect();
         }
     }
+
+    setWidth(width)
+    {
+        const newFloorGeometry = new THREE.BoxGeometry(G.arenaLength, G.floorThickness, width);
+        this.floor.geometry.dispose();
+        this.floor.geometry = newFloorGeometry;
+        this.width = width;
+
+        this.walls["leftWall"].mesh.position.z = -(this.width / 2 + G.wallThickness / 2);
+        this.walls["leftWall"].light.position.z = -(this.width / 2 + G.wallThickness / 2);
+        this.walls["leftWall"].box.setFromObject(this.walls["leftWall"].mesh);
+        this.walls["rightWall"].mesh.position.z = this.width / 2 + G.wallThickness / 2;
+        this.walls["rightWall"].light.position.z = this.width / 2 + G.wallThickness / 2;
+        this.walls["rightWall"].box.setFromObject(this.walls["rightWall"].mesh);
+    }
+
+    // startWavyWalls()
+    // {
+    //     this.wavyWalls = true;
+    //     this.wavyWallTimer.start();
+    // }
 }

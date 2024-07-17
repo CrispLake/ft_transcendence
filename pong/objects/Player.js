@@ -120,16 +120,34 @@ export class Player
     setMovingBoundaries()
     {
         if (this.settings.multiMode)
+            this.movementBoundary = this.game.arena.width / 2 - G.wallLength4Player - this.paddleLength / 2;
+        else
+            this.movementBoundary = this.game.arena.width / 2 - this.paddleLength / 2;
+    }
+
+    stayWithinBoundaries()
+    {
+        if (this.alignment == G.vertical)
         {
-            this.movementBoundary = G.arenaWidth4Player / 2 - G.wallLength4Player - this.paddleLength / 2;
+            if (this.paddle.position.z < -this.movementBoundary)
+                this.paddle.position.z = -this.movementBoundary;
+            if (this.paddle.position.z > this.movementBoundary)
+                this.paddle.position.z = this.movementBoundary;
+            this.boostMeter.position.z = this.paddle.position.z;
         }
         else
         {
-            this.movementBoundary = G.arenaWidth / 2 - this.paddleLength / 2;
+            if (this.paddle.position.x < -this.movementBoundary)
+                this.paddle.position.x = -this.movementBoundary;
+            if (this.paddle.position.x > this.movementBoundary)
+                this.paddle.position.x = this.movementBoundary;
+            this.boostMeter.position.x = this.paddle.position.x;
         }
+        this.light.position.copy(this.paddle.position);
+        this.box.setFromObject(this.paddle);
     }
 
-
+    
     // ----Boost Meter----
 
     removeBoostMeter()

@@ -20,20 +20,20 @@ export class Game
 		console.log("Creating Game Object...");
 		this.settings = new Settings();
 		this.gameScene = new THREE.Scene();
-		this.players = [];
-		this.createPlayers();
-		this.ball = new Ball(this.gameScene, G.ballStartPos, this.settings.spin);
 		this.fontLoader = new FontLoader();
-		this.initializeUI();
 		this.gameCamera = this.createCamera();
 		this.renderer = this.createRenderer();
 		this.composer = new EffectComposer(this.renderer);
 		this.createArena();
-		this.powerupManager = new PowerupManager(this.gameScene);
+		this.createPlayers();
+		this.ball = new Ball(this.gameScene, G.ballStartPos, this.settings.spin);
+		this.initializeUI();
+		this.powerupManager = new PowerupManager(this);
 		this.update = this.update.bind(this);
 		this.cameraRotate = false;
 		console.log("Game Object Created!");
 		this.update();
+		this.activePlayer = 0;	// Stores the number of the last player touching the ball. 0 means no one has touched it.
 	}
 
 	
@@ -91,34 +91,38 @@ export class Game
 				this.gameCamera);
 	}
 
+	// createPlayers()
+	// {
+	// 	let maxPlayers = 2;
+	// 	if (this.settings.multiMode == true)
+	// 		maxPlayers = 4;
+	// 	for (let i = 0; i < this.settings.players && i < maxPlayers; i++)
+	// 		this.players.push(new Player(this, this.gameScene, this.settings, i + 1, "Player" + (i + 1)));
+	// 	while (i < maxPlayers)
+	// 	{
+	// 		this.players.push(new AI(this, i + 1, "AI"));
+	// 		i++;
+	// 	}
+	// 	if (this.settings.multiMode)
+	// 		this.rotatePlayers();
+	// }
+
 	createPlayers()
 	{
-		if (this.settings.multiMode == false)
-		{
-			this.players["p1"] = new Player(this, this.gameScene, this.settings, 1, "Player1");
-			if (this.settings.players == 2)
-				this.players["p2"] = new Player(this, this.gameScene, this.settings, 2, "Player2");
-			else
-				this.players["p2"] = new AI(this, 2, "AI");
-		}
-		else
-		{
-			if (this.settings.players > 3)
-				this.players["p4"] = new Player(this, this.gameScene, this.settings, 4, "Player4");
-			else
-				this.players["p4"] = new AI(this, 4, "AI4");
-			if (this.settings.players > 2)
-				this.players["p3"] = new Player(this, this.gameScene, this.settings, 3, "Player3");
-			else
-				this.players["p3"] = new AI(this, 3, "AI3");
-			if (this.settings.players > 2)
-				this.players["p2"] = new Player(this, this.gameScene, this.settings, 2, "Player2");
-			else
-				this.players["p2"] = new AI(this, 2, "AI2");
-			this.players["p1"] = new Player(this, this.gameScene, this.settings, 1, "Player1");
+		this.players = [];
+		const maxPlayers = this.settings.multiMode ? 4 : 2;
 
-			this.rotatePlayers();
+		for (let i = 0; i < maxPlayers; i++)
+		{
+			const playerId = "p" + (i + 1);
+
+			if (i < this.settings.players)
+				this.players[playerId] = new Player(this, this.gameScene, this.settings, i + 1, "Player" + (i + 1));
+			else
+				this.players[playerId] = new AI(this, i + 1, "AI" + (i + 1));
 		}
+		if (this.settings.multiMode)
+			this.rotatePlayers();
 	}
 
 	rotatePlayers()
@@ -187,7 +191,7 @@ export class Game
 				this.resetGame();
 			else
 				this.resetPositions();
-			this.powerupManager.restart();
+			this.powerupManager.reset();
 		}
 		this.composer.render();
 		this.renderer.autoClear = false;
@@ -209,6 +213,7 @@ export class Game
 				for (let p in this.players)
 					this.players[p].active = false;
 				this.players[player].active = true;
+				this.activePlayer = this.players[player].playerNum;
 				
 				this.players[player].lightEffect();
 				this.ball.adjustSpin(this.players[player]);
@@ -275,6 +280,7 @@ export class Game
 		}
 		else if (this.ball.mesh.position.x >= this.players["p2"].paddle.position.x + goalOffSet)
 		{
+			console.log("P2, lose life");
 			this.players["p2"].loseLife(1);
 			this.ui.playerCards[this.players["p2"].name].decreaseLife(1);
 			return (true);

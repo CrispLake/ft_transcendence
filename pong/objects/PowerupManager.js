@@ -1,17 +1,19 @@
 import * as THREE from 'three';
 import * as G from '../globals.js';
-import * as COLOR from '../colors.js';
 import * as PongMath from '../math.js';
+import { PowerPaddleLong, PowerPaddleShort, PowerLifePlus, PowerWavyWalls } from './Powerups.js';
 
 export class PowerupManager
 {
-    constructor(scene)
+    constructor(game)
     {
-        this.scene = scene;
+        this.game = game;
+        this.scene = game.gameScene;
         this.powerups = [
-            new PowerPaddleLong(),
-            new PowerPaddleShort(),
-            new PowerLifePlus()
+            // new PowerPaddleLong(this.game),
+            // new PowerPaddleShort(this.game),
+            // new PowerLifePlus(this.game),
+            new PowerWavyWalls(this.game)
         ]
         this.availablePowerups = [...this.powerups];
         this.powerup = null;
@@ -19,15 +21,23 @@ export class PowerupManager
         this.activeTimer = new THREE.Clock();
         this.arenaIsEmpty = true;
         this.spawnTimer.start();
+
+        this.wavyWalls = false;
+        this.wavyWallsTimer = new THREE.Clock();
     }
 
-    resetPowerups()
-    {
-        this.availablePowerups = [...this.powerups];
-    }
+
+    //--------------------------------------------------------------------------
+    //  MANAGER FUNCTIONS
+    //--------------------------------------------------------------------------
 
     update()
     {
+        if (this.wavyWalls)
+        {
+            this.handleWavyWalls();
+            return;
+        }
         if (this.spawnTimer.getElapsedTime() >= G.powerupIntervalSec && this.arenaIsEmpty)
         {
             this.spawnPowerup();
@@ -45,11 +55,23 @@ export class PowerupManager
         }
     }
 
-    restart()
+    reset()
     {
+        if (this.wavyWalls)
+            this.resetWavyWalls();
         this.resetPowerups();
         this.removePowerup();
         this.spawnTimer.start();
+    }
+
+
+    //--------------------------------------------------------------------------
+    //  POWERUP MANAGEMENT
+    //--------------------------------------------------------------------------
+
+    resetPowerups()
+    {
+        this.availablePowerups = [...this.powerups];
     }
 
     removePowerup()
@@ -89,99 +111,52 @@ export class PowerupManager
         this.powerup.box.setFromObject(this.powerup.mesh);
         this.scene.add(this.powerup.mesh);
     }
-}
 
 
-export class PowerPaddleLong
-{
-    constructor()
+    //--------------------------------------------------------------------------
+    //  WAVY WALLS
+    //--------------------------------------------------------------------------
+
+    handleWavyWalls()
     {
-        this.geometry = new THREE.BoxGeometry(G.powerupSize, G.powerupSize, G.powerupSize);
-        this.material = new THREE.MeshStandardMaterial({color: COLOR.POWER_PADDLE_LONG, emissive: COLOR.POWER_PADDLE_LONG});
-        this.mesh = new THREE.Mesh(this.geometry, this.material);
-        this.box = new THREE.Box3();
-        this.box.setFromObject(this.mesh);
-        this.power = G.POWER_PADDLE_LONG;
-        this.message = "Enlarge paddle";
-    }
+        const effectElapsedTime = this.wavyWallsTimer.getElapsedTime();
 
-    rotate()
-    {
-        this.mesh.rotation.y += G.powerupRotationSpeed;
-        this.box.setFromObject(this.mesh);
-    }
-
-    activate(player)
-    {
-        console.log(this.message);
-        if (player.paddleLength < G.maxPaddleLength)
+        if (effectElapsedTime <= G.wavyWallsDurationSec)
         {
-            let newPaddleLength = player.paddleLength + G.paddleSizeIncrement;
-            if (newPaddleLength > G.maxPaddleLength)
-                newPaddleLength = G.maxPaddleLength;
-            player.resize(newPaddleLength);
+            const width = this.getWavyWidth(effectElapsedTime);
+
+            this.game.arena.setWidth(width);
+            for (let player in this.game.players)
+            {
+                this.game.players[player].setMovingBoundaries();
+                this.game.players[player].stayWithinBoundaries();
+            }
+        }
+        else
+        {
+            this.resetWavyWalls();
+            for (let player in this.game.players)
+            {
+                this.game.players[player].setMovingBoundaries();
+                this.game.players[player].stayWithinBoundaries();
+            }
+
         }
     }
-}
 
-export class PowerPaddleShort
-{
-    constructor()
+    getWavyWidth(elapsedTime)
     {
-        this.geometry = new THREE.BoxGeometry(G.powerupSize, G.powerupSize, G.powerupSize);
-        this.material = new THREE.MeshStandardMaterial({color: COLOR.POWER_PADDLE_SHORT, emissive: COLOR.POWER_PADDLE_SHORT});
-        this.mesh = new THREE.Mesh(this.geometry, this.material);
-        this.box = new THREE.Box3();
-        this.box.setFromObject(this.mesh);
-        this.power = G.POWER_PADDLE_LONG;
-        this.message = "Shrink paddle";
+        const frequency = (2 * Math.PI) / G.wavyWallsDurationSec * G.wavyWallsCycles; // Set amount of sine wave cycles over the duration
+        const maxDivergence = G.arenaWidth * G.maxDivergencePercentage;
+        const sineWave = Math.sin(frequency * elapsedTime); // Sine wave oscillation
+        const newWidth = G.arenaWidth + (sineWave * maxDivergence); // Calculate new width
+        return newWidth;
     }
 
-    rotate()
+    resetWavyWalls()
     {
-        this.mesh.rotation.y += G.powerupRotationSpeed;
-        this.box.setFromObject(this.mesh);
-    }
-
-    activate(player)
-    {
-        console.log(this.message);
-        if (player.paddleLength > G.minPaddleLength)
-        {
-            let newPaddleLength = player.paddleLength - G.paddleSizeIncrement;
-            if (newPaddleLength < G.minPaddleLength)
-                newPaddleLength = G.minPaddleLength;
-            player.resize(newPaddleLength);
-        }
-    }
-}
-
-export class PowerLifePlus
-{
-    constructor()
-    {
-        this.geometry = new THREE.BoxGeometry(G.powerupSize, G.powerupSize, G.powerupSize);
-        this.material = new THREE.MeshStandardMaterial({color: COLOR.POWER_LIFE_PLUS, emissive: COLOR.POWER_LIFE_PLUS});
-        this.mesh = new THREE.Mesh(this.geometry, this.material);
-        this.box = new THREE.Box3();
-        this.box.setFromObject(this.mesh);
-        this.power = G.POWER_LIFE_PLUS;
-        this.message = "Life Plus";
-    }
-
-    rotate()
-    {
-        this.mesh.rotation.y += G.powerupRotationSpeed;
-        this.box.setFromObject(this.mesh);
-    }
-
-    activate(player)
-    {
-        console.log(this.message);
-        if (player.lives < G.lives)
-        {
-            player.lives++;
-            player.setLife(player.lives);
-        }
+        this.wavyWalls = false;
+        this.wavyWallsTimer.stop();
+        this.game.arena.setWidth(G.arenaWidth);
     }
 }

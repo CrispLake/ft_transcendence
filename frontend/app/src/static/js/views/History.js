@@ -107,20 +107,20 @@ export default class extends AbstractView {
     async CategoryHandler(event) {
         event.preventDefault();
 
-        const tabs = document.getElementsByClassName("tab");
-        const tabContents = document.getElementsByClassName("tab-content");
+        const tabs = document.getElementsByClassName('tab');
+        const tabContents = document.getElementsByClassName('tab-content');
 
         for (let i = 0; i < tabs.length; i++) {
-            tabs[i].classList.remove("active");
+            tabs[i].classList.remove('active');
         }
 
         for (let i = 0; i < tabContents.length; i++) {
-            tabContents[i].style.display = "none";
+            tabContents[i].style.display = 'none';
         }
 
         const categoryName = event.currentTarget.getAttribute('data-category');
-        document.getElementById(categoryName).style.display = "block";
-        event.currentTarget.classList.add("active");
+        document.getElementById(categoryName).style.display = 'block';
+        event.currentTarget.classList.add('active');
 
         if (categoryName === 'pong2p') {
             const games = await this.fetchGames(this.pong2pURL);

@@ -14,7 +14,9 @@ export default class extends AbstractView {
 
         this.CategoryHandler = this.CategoryHandler.bind(this);
         this.fetchGames = this.fetchGames.bind(this);
-        this.renderPong1v1 = this.renderPong1v1.bind(this);
+        this.render2pGames = this.render2pGames.bind(this);
+        this.render4pGames = this.render4pGames.bind(this);
+        this.renderEmpty = this.renderEmpty.bind(this);
     }
 
     async fetchGames(urlStart) {
@@ -37,10 +39,10 @@ export default class extends AbstractView {
         }
     }
 
-    renderPong1v1(games) {
-        const categoryContent = document.getElementById('pong1v1');
+    render2pGames(games, elementID, title) {
+        const categoryContent = document.getElementById(elementID);
         categoryContent.innerHTML = `
-            <h2>Pong 1v1 Games</h2>
+            <h2>${title} Games</h2>
             <ul>
                 ${games.map(game => `
                     <li>
@@ -63,10 +65,10 @@ export default class extends AbstractView {
         });
     }
 
-    renderPong2v2(games) {
-        const categoryContent = document.getElementById('pong2v2');
+    render4pGames(games, elementID, title) {
+        const categoryContent = document.getElementById(elementID);
         categoryContent.innerHTML = `
-            <h2>Pong 2v2 Games</h2>
+            <h2>${title} Games</h2>
             <ul>
                 ${games.map(game => `
                     <li>
@@ -94,6 +96,14 @@ export default class extends AbstractView {
         });
     }
 
+    renderEmpty(elementID, title) {
+        const categoryContent = document.getElementById(elementID);
+        categoryContent.innerHTML = `
+            <h2>${title} Games</h2>
+            <ul> No match history </ul>
+        `
+    }
+
     async CategoryHandler(event) {
         event.preventDefault();
 
@@ -112,26 +122,40 @@ export default class extends AbstractView {
         document.getElementById(categoryName).style.display = "block";
         event.currentTarget.classList.add("active");
 
-        if (categoryName === 'pong1v1') {
+        if (categoryName === 'pong2p') {
             const games = await this.fetchGames(this.pong2pURL);
-            this.renderPong1v1(games);
+
+            if (Object.keys(games).length === 0)
+                this.renderEmpty(categoryName, 'Pong 2p');
+            else
+                this.render2pGames(games, categoryName, 'Pong 2p');
         }
-        else if (categoryName === 'pong2v2') {
+
+        else if (categoryName === 'pong4p') {
             const games = await this.fetchGames(this.pong4pURL);
-            this.renderPong2v2(games);
+
+            if (Object.keys(games).length === 0)
+                this.renderEmpty(categoryName, 'Pong 4p');
+            else
+                this.render4pGames(games, categoryName, 'Pong 4p');
         }
-        else if (categoryName === 'gonp1v1') {
+
+        else if (categoryName === 'gonp2p') {
             const games = await this.fetchGames(this.gonp2pURL);
-            console.log(games);
+
             if (Object.keys(games).length === 0)
-                console.log('empty');
-            // this.renderPong1v1(games);
+                this.renderEmpty(categoryName, 'Gonp 2p');
+            else
+                this.render2pGames(games, categoryName, 'Gonp 2p');
         }
-        else if (categoryName === 'gonp2v2') {
+
+        else if (categoryName === 'gonp4p') {
             const games = await this.fetchGames(this.gonp4pURL);
+
             if (Object.keys(games).length === 0)
-                console.log('empty');
-            // this.renderPong1v1(games);
+                this.renderEmpty(categoryName, 'Gonp 4p');
+            else
+                this.render4pGames(games, categoryName, 'Gonp 4p');
         }
     }
 
@@ -164,26 +188,26 @@ export default class extends AbstractView {
     async getHtml() {
         return `
             <div id="tabs">
-                <div class="tab active" data-category="pong1v1">Pong 1v1</div>
-                <div class="tab" data-category="pong2v2">Pong 2v2</div>
-                <div class="tab" data-category="gonp1v1">Gonp 1v1</div>
-                <div class="tab" data-category="gonp2v2">Gonp 2v2</div>
+                <div class="tab active" data-category="pong2p">Pong 2p</div>
+                <div class="tab" data-category="pong4p">Pong 4p</div>
+                <div class="tab" data-category="gonp2p">Gonp 2p</div>
+                <div class="tab" data-category="gonp4p">Gonp 4p</div>
             </div>
 
-            <div id="pong1v1" class="tab-content" style="display: block;">
-                <h2>Pong 1v1 Games</h2>
+            <div id="pong2p" class="tab-content" style="display: block;">
+                <h2>Pong 2p Games</h2>
             </div>
 
-            <div id="pong2v2" class="tab-content">
-                <h2>Pong 2v2 games</h2>
+            <div id="pong4p" class="tab-content">
+                <h2>Pong 4p games</h2>
             </div>
 
-            <div id="gonp1v1" class="tab-content">
-                <h2>Gonp 1v1</h2>
+            <div id="gonp2p" class="tab-content">
+                <h2>Gonp 2p</h2>
             </div>
 
-            <div id="gonp2v2" class="tab-content">
-                <h2>Gonp 2v2 Games</h2>
+            <div id="gonp4p" class="tab-content">
+                <h2>Gonp 4p Games</h2>
             </div>
         `;
     }

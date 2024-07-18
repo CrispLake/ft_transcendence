@@ -7,7 +7,7 @@ import * as PongMath from './math.js';
 //--------------------------------------------------------------------------
 
 export const winningScore = 3;
-export const lives = 4;
+export const lives = 3;
 export const fps = 60;
 
 
@@ -195,6 +195,18 @@ export const shaftWidthOffset = shaftWidth / 2;
 
 export const arrowEnlargeLightIntensity = 1;
 export const arrowShrinkLightIntensity = 1;
+
+
+//--------------------------------------------------------------------------
+//  PLUS
+//--------------------------------------------------------------------------
+
+export const plusMultiplier = 0.3;
+export const plusThickness = 1.3;
+export const plusWidth = 1;
+export const plusLength = 3;
+export const plusRoundnessPercentage = 50;
+export const plusSegments = 10;
 
 
 //--------------------------------------------------------------------------

@@ -8,10 +8,13 @@ export default class extends AbstractView {
         this.params = params;
         this.listeners = true;
         this.pong2pURL = 'http://localhost:8000/pong-2p'
+        this.pong4pURL = 'http://localhost:8000/pong-4p'
+        this.gonp2pURL = 'http://localhost:8000/gonp-2p'
+        this.gonp4pURL = 'http://localhost:8000/gonp-4p'
 
         this.CategoryHandler = this.CategoryHandler.bind(this);
         this.fetchGames = this.fetchGames.bind(this);
-        this.renderGames = this.renderPong1v1.bind(this);
+        this.renderPong1v1 = this.renderPong1v1.bind(this);
     }
 
     async fetchGames(urlStart) {
@@ -60,6 +63,37 @@ export default class extends AbstractView {
         });
     }
 
+    renderPong2v2(games) {
+        const categoryContent = document.getElementById('pong2v2');
+        categoryContent.innerHTML = `
+            <h2>Pong 2v2 Games</h2>
+            <ul>
+                ${games.map(game => `
+                    <li>
+                        <span class="${game.player1Username !== 'Guest' ? 'username' : 'guest'}" data-id="${game.player1}">${game.player1Username}</span> 
+                        (${game.player1Score}) vs 
+                        <span class="${game.player2Username !== 'Guest' ? 'username' : 'guest'}" data-id="${game.player2}">${game.player2Username}</span> 
+                        (${game.player2Score}) vs
+                        <span class="${game.player3Username !== 'Guest' ? 'username' : 'guest'}" data-id="${game.player3}">${game.player3Username}</span> 
+                        (${game.player3Score}) vs
+                        <span class="${game.player4Username !== 'Guest' ? 'username' : 'guest'}" data-id="${game.player4}">${game.player4Username}</span> 
+                        (${game.player4Score})
+                        on ${new Date(game.date).toLocaleString()}
+                    </li>
+                `).join('')}
+            </ul>
+        `;
+    
+        // Add event listeners to usernames
+        const usernameElements = categoryContent.querySelectorAll('.username');
+        usernameElements.forEach(usernameElement => {
+            usernameElement.addEventListener('click', () => {
+                const playerId = usernameElement.getAttribute('data-id');
+                this.Redirect(`/profile/${playerId}`);
+            });
+        });
+    }
+
     async CategoryHandler(event) {
         event.preventDefault();
 
@@ -81,6 +115,23 @@ export default class extends AbstractView {
         if (categoryName === 'pong1v1') {
             const games = await this.fetchGames(this.pong2pURL);
             this.renderPong1v1(games);
+        }
+        else if (categoryName === 'pong2v2') {
+            const games = await this.fetchGames(this.pong4pURL);
+            this.renderPong2v2(games);
+        }
+        else if (categoryName === 'gonp1v1') {
+            const games = await this.fetchGames(this.gonp2pURL);
+            console.log(games);
+            if (Object.keys(games).length === 0)
+                console.log('empty');
+            // this.renderPong1v1(games);
+        }
+        else if (categoryName === 'gonp2v2') {
+            const games = await this.fetchGames(this.gonp4pURL);
+            if (Object.keys(games).length === 0)
+                console.log('empty');
+            // this.renderPong1v1(games);
         }
     }
 
@@ -114,43 +165,25 @@ export default class extends AbstractView {
         return `
             <div id="tabs">
                 <div class="tab active" data-category="pong1v1">Pong 1v1</div>
-                <div class="tab" data-category="category2">Category 2</div>
-                <div class="tab" data-category="category3">Category 3</div>
-                <div class="tab" data-category="category4">Category 4</div>
+                <div class="tab" data-category="pong2v2">Pong 2v2</div>
+                <div class="tab" data-category="gonp1v1">Gonp 1v1</div>
+                <div class="tab" data-category="gonp2v2">Gonp 2v2</div>
             </div>
 
             <div id="pong1v1" class="tab-content" style="display: block;">
                 <h2>Pong 1v1 Games</h2>
-                <ul id="game-list">
-                    <!-- Games will be dynamically inserted here -->
-                </ul>
             </div>
 
-            <div id="category2" class="tab-content">
-                <h2>Category 2 Games</h2>
-                <ul>
-                    <li>Game 2A</li>
-                    <li>Game 2B</li>
-                    <li>Game 2C</li>
-                </ul>
+            <div id="pong2v2" class="tab-content">
+                <h2>Pong 2v2 games</h2>
             </div>
 
-            <div id="category3" class="tab-content">
-                <h2>Category 3 Games</h2>
-                <ul>
-                    <li>Game 3A</li>
-                    <li>Game 3B</li>
-                    <li>Game 3C</li>
-                </ul>
+            <div id="gonp1v1" class="tab-content">
+                <h2>Gonp 1v1</h2>
             </div>
 
-            <div id="category4" class="tab-content">
-                <h2>Category 4 Games</h2>
-                <ul>
-                    <li>Game 4A</li>
-                    <li>Game 4B</li>
-                    <li>Game 4C</li>
-                </ul>
+            <div id="gonp2v2" class="tab-content">
+                <h2>Gonp 2v2 Games</h2>
             </div>
         `;
     }

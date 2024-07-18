@@ -14,10 +14,10 @@ export default class extends AbstractView {
         this.renderGames = this.renderPong1v1.bind(this);
     }
 
-    async fetchGames() {
+    async fetchGames(urlStart) {
         const token = this.GetKey();
 
-        let url = this.pong2pURL;
+        let url = urlStart;
         if (this.params && this.params.id) {
             url += `/${this.params.id}`;
         }
@@ -79,7 +79,7 @@ export default class extends AbstractView {
         event.currentTarget.classList.add("active");
 
         if (categoryName === 'pong1v1') {
-            const games = await this.fetchGames();
+            const games = await this.fetchGames(this.pong2pURL);
             this.renderPong1v1(games);
         }
     }

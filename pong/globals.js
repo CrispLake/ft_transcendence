@@ -167,6 +167,33 @@ export const maxDivergencePercentage = 0.2;
 
 
 //--------------------------------------------------------------------------
+//  ARROW
+//--------------------------------------------------------------------------
+
+export const sizeMultiplier = 0.3;
+export const arrowThickness = 2.5;
+const bevelPercentage = 50;
+const bevelThickness = arrowThickness * bevelPercentage / 100;
+
+export const extrudeSettings = {
+    steps: 2,
+    depth: (arrowThickness - bevelThickness * 2) * sizeMultiplier,
+    bevelEnabled: true,
+    bevelThickness: bevelThickness * sizeMultiplier,
+    bevelSize: 0.5 * sizeMultiplier,
+    bevelOffset: 0,
+    bevelSegments: 8
+}
+
+const headWidth = 2 * sizeMultiplier;
+const shaftWidth = 1 * sizeMultiplier;
+export const headLength = 1 * sizeMultiplier;
+export const shaftLength = 1 * sizeMultiplier;
+
+export const headWidthOffset = headWidth / 2;
+export const shaftWidthOffset = shaftWidth / 2;
+
+//--------------------------------------------------------------------------
 //  HELPER MACROS
 //--------------------------------------------------------------------------
 

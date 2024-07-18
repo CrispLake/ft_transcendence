@@ -1,7 +1,10 @@
 import * as THREE from 'three';
 import * as G from '../globals.js';
 import * as PongMath from '../math.js';
-import { PowerPaddleLong, PowerPaddleShort, PowerLifePlus, PowerWavyWalls } from './Powerups.js';
+import { PowerLifePlus } from './powerups/PowerLifePlus.js';
+import { PowerPaddleLong } from './powerups/PowerPaddleLong.js';
+import { PowerPaddleShort } from './powerups/PowerPaddleShort.js';
+import { PowerWavyWalls } from './powerups/PowerWavyWalls.js';
 
 export class PowerupManager
 {
@@ -10,10 +13,10 @@ export class PowerupManager
         this.game = game;
         this.scene = game.gameScene;
         this.powerups = [
-            // new PowerPaddleLong(this.game),
-            // new PowerPaddleShort(this.game),
-            new PowerLifePlus(this.game)
-            // new PowerWavyWalls(this.game)
+            new PowerPaddleLong(this.game),
+            new PowerPaddleShort(this.game),
+            new PowerLifePlus(this.game),
+            new PowerWavyWalls(this.game),
         ]
         this.availablePowerups = [...this.powerups];
         this.powerup = null;

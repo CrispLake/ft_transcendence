@@ -140,7 +140,7 @@ export class Game
 	{
 		if (this.cameraRotate)
 		{
-			this.rotateCamera();
+			// this.rotateCamera();
 		}
 	}
 
@@ -159,6 +159,11 @@ export class Game
 		setTimeout(() => { requestAnimationFrame(this.update); }, 1000 / G.fps);
 		this.powerupManager.update();
 		this.updateCamera();
+
+		// Debug
+		if (this.cameraRotate)
+			return;
+
 		for (let player in this.players)
 			this.players[player].update();
 		this.updateBallPosition();

@@ -10,6 +10,7 @@ urlpatterns  = [
     path('account/change-username', views.update_user, name='update-user'),
     path('account/change-password', views.change_password, name='change-password'),
     path('account/<int:id>', views.profile),
+    path('account/<str:username>', views.profile_from_username),
     path('account', views.profile),
 
     path('friend-request/send', views.send_friend_request, name='send-friend-request'),

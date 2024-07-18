@@ -11,7 +11,7 @@ export default class extends AbstractView {
 
         this.CategoryHandler = this.CategoryHandler.bind(this);
         this.fetchGames = this.fetchGames.bind(this);
-        this.renderGames = this.renderGames.bind(this);
+        this.renderGames = this.renderPong1v1.bind(this);
     }
 
     async fetchGames() {
@@ -34,17 +34,17 @@ export default class extends AbstractView {
         }
     }
 
-    renderGames(games) {
-        const categoryContent = document.getElementById('category1');
+    renderPong1v1(games) {
+        const categoryContent = document.getElementById('pong1v1');
         categoryContent.innerHTML = `
-            <h2>Category 1 Games</h2>
+            <h2>Pong 1v1 Games</h2>
             <ul>
                 ${games.map(game => `
                     <li>
                         <span class="${game.player1Username !== 'Guest' ? 'username' : 'guest'}" data-id="${game.player1}">${game.player1Username}</span> 
-                        (${game.player1Score}) vs 
+                        (${game.player1Score}) vs (${game.player2Score})
                         <span class="${game.player2Username !== 'Guest' ? 'username' : 'guest'}" data-id="${game.player2}">${game.player2Username}</span> 
-                        (${game.player2Score}) on ${new Date(game.date).toLocaleString()}
+                        on ${new Date(game.date).toLocaleString()}
                     </li>
                 `).join('')}
             </ul>
@@ -78,9 +78,9 @@ export default class extends AbstractView {
         document.getElementById(categoryName).style.display = "block";
         event.currentTarget.classList.add("active");
 
-        if (categoryName === 'category1') {
+        if (categoryName === 'pong1v1') {
             const games = await this.fetchGames();
-            this.renderGames(games);
+            this.renderPong1v1(games);
         }
     }
 
@@ -113,14 +113,14 @@ export default class extends AbstractView {
     async getHtml() {
         return `
             <div id="tabs">
-                <div class="tab active" data-category="category1">Category 1</div>
+                <div class="tab active" data-category="pong1v1">Pong 1v1</div>
                 <div class="tab" data-category="category2">Category 2</div>
                 <div class="tab" data-category="category3">Category 3</div>
                 <div class="tab" data-category="category4">Category 4</div>
             </div>
 
-            <div id="category1" class="tab-content" style="display: block;">
-                <h2>Category 1 Games</h2>
+            <div id="pong1v1" class="tab-content" style="display: block;">
+                <h2>Pong 1v1 Games</h2>
                 <ul id="game-list">
                     <!-- Games will be dynamically inserted here -->
                 </ul>

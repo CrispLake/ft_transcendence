@@ -16,7 +16,7 @@ export class PowerupManager
             new PowerPaddleLong(this.game),
             new PowerPaddleShort(this.game),
             new PowerLifePlus(this.game),
-            new PowerWavyWalls(this.game),
+            new PowerWavyWalls(this.game)
         ]
         this.availablePowerups = [...this.powerups];
         this.powerup = null;

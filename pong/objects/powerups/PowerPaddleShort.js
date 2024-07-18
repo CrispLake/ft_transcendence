@@ -9,8 +9,8 @@ export class PowerPaddleShort
     {
         this.game = game;
         
-        const arrow1 = new Arrow(COLOR.POWER_PADDLE_SHORT);
-        const arrow2 = new Arrow(COLOR.POWER_PADDLE_SHORT);
+        const arrow1 = new Arrow(COLOR.POWER_PADDLE_SHORT, G.arrowShrinkLightIntensity);
+        const arrow2 = new Arrow(COLOR.POWER_PADDLE_SHORT, G.arrowShrinkLightIntensity);
 
         arrow1.mesh.rotation.z = Math.PI;
         arrow1.mesh.position.z += G.headLength * 1.8;

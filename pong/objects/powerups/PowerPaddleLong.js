@@ -9,16 +9,16 @@ export class PowerPaddleLong
     {
         this.game = game;
         
-        const arrow1 = new Arrow(COLOR.POWER_PADDLE_LONG);
-        const arrow2 = new Arrow(COLOR.POWER_PADDLE_LONG);
+        this.arrow1 = new Arrow(COLOR.POWER_PADDLE_LONG, G.arrowEnlargeLightIntensity);
+        this.arrow2 = new Arrow(COLOR.POWER_PADDLE_LONG, G.arrowEnlargeLightIntensity);
 
-        arrow1.mesh.rotation.z = Math.PI;
-        arrow1.mesh.position.z -= G.shaftLength * 1.1;
-        arrow2.mesh.position.z += G.shaftLength * 1.1;
+        this.arrow1.mesh.rotation.z = Math.PI;
+        this.arrow1.mesh.position.z -= G.shaftLength * 1.1;
+        this.arrow2.mesh.position.z += G.shaftLength * 1.1;
 
         this.mesh = new THREE.Group();
-        this.mesh.add(arrow1.mesh);
-        this.mesh.add(arrow2.mesh);
+        this.mesh.add(this.arrow1.mesh);
+        this.mesh.add(this.arrow2.mesh);
         this.mesh.position.y += G.arrowThickness * G.sizeMultiplier;
 
         this.box = new THREE.Box3();

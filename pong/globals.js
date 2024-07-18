@@ -193,6 +193,10 @@ export const shaftLength = 1 * sizeMultiplier;
 export const headWidthOffset = headWidth / 2;
 export const shaftWidthOffset = shaftWidth / 2;
 
+export const arrowEnlargeLightIntensity = 1;
+export const arrowShrinkLightIntensity = 1;
+
+
 //--------------------------------------------------------------------------
 //  HELPER MACROS
 //--------------------------------------------------------------------------

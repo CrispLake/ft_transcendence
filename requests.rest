@@ -1,5 +1,12 @@
 # Profile
 
+###
+
+GET http://localhost:8000/account/testUser1
+Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
+
+###
+
 GET http://localhost:8000/account
 Authorization: Token e3770a085d86b87b6c2cb1d78d684eec69009a18
 

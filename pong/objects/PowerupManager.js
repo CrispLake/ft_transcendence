@@ -13,10 +13,10 @@ export class PowerupManager
         this.game = game;
         this.scene = game.gameScene;
         this.powerups = [
-            // new PowerPaddleLong(this.game),
-            // new PowerPaddleShort(this.game),
+            new PowerPaddleLong(this.game),
+            new PowerPaddleShort(this.game),
             new PowerLifePlus(this.game),
-            // new PowerWavyWalls(this.game)
+            new PowerWavyWalls(this.game)
         ]
         this.availablePowerups = [...this.powerups];
         this.powerup = null;
@@ -50,7 +50,7 @@ export class PowerupManager
         }
         if (this.arenaIsEmpty == false && this.powerup != null)
         {
-            this.powerup.mesh.rotation.y += G.powerupRotationSpeed;
+            this.powerup.rotate();
         }
         if (this.activeTimer.getElapsedTime() >= G.powerupMaxTimeSec)
         {
@@ -110,6 +110,7 @@ export class PowerupManager
         this.powerup = this.availablePowerups.splice(randomIndex, 1)[0];
 
         const randomPosition = this.getRandomPosition();
+        // this.powerup.setPos(randomPosition);
         this.powerup.mesh.position.set(randomPosition.x, randomPosition.y, randomPosition.z);
         this.powerup.box.setFromObject(this.powerup.mesh);
         this.scene.add(this.powerup.mesh);

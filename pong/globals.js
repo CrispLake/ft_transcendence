@@ -150,7 +150,7 @@ export const POWER_LIFE_MINUS = 3;
 export const POWER_SPEED_PLUS = 4;
 export const POWER_SPEED_MINUS = 5;
 
-export const powerupIntervalSec = 5;
+export const powerupIntervalSec = 1;
 export const powerupMaxTimeSec = 8;
 export const powerupRotationSpeed = 0.01;
 
@@ -201,7 +201,7 @@ export const arrowShrinkLightIntensity = 1;
 //  PLUS
 //--------------------------------------------------------------------------
 
-export const plusMultiplier = 0.3;
+export const plusMultiplier = 0.4;
 export const plusThickness = 1.3;
 export const plusWidth = 1;
 export const plusLength = 3;

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Pong</title>
+		<style>
+			body {margin: 0;}
+		</style>
+		<script type="importmap">
+			{
+				"imports":
+				{
+					"three": "https://cdn.jsdelivr.net/npm/three@v0.165.0/build/three.module.js",
+					"three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.165.0/examples/jsm/"
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"></script>
+		<script type="module" src="/test/visualizer.js"></script>
+	</body>
+</html>
+
+
+<!-- 
+	1. IMPORTING FROM CDN (Content Delivery Network)
+	
+	- How it works:
+		- The importmap is used to map module specifiers to URLs so that the browser knows where to load the modules from.
+	
+	- Tradeoffs:
+		- If the CDN goes down, the application will not work.
+		- The CDN can be slow.
+		- The import map needs to be updated with dependencies and their dependencies.
+ -->
+
+
+<!-- 
+	2. INSTALL WITH NPM (Node Package Manager)
+   
+	- How it works:
+		- The dependencies are installed locally in the project.
+		- The dependencies are bundled with the application.
+	
+	- Tradeoffs:
+		- The bundle size is larger.
+		- The dependencies need to be updated manually.
+		- The dependencies need to be bundled with the application.
+ -->

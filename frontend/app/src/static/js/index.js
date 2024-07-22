@@ -19,6 +19,7 @@ import Login from './views/Login.js';
 import About from './views/About.js';
 import Home from './views/Home.js';
 import Settings from './views/Settings.js';
+import History from './views/History.js';
 
 // List of current event listeners
 let views_memory = new Array();
@@ -32,7 +33,7 @@ const getParams = (match) => {
     if (values.length < 1) {
       return;
     }
-    const keys = Array.from(match.route.path.matchAll(/:(\w+)/g).map(result => result[1]));
+    const keys = [...match.route.path.matchAll(/:(\w+)/g)].map(result => result[1]);
   
     return Object.fromEntries(keys.map((key, index) => {
       return [key, values[index]];
@@ -67,7 +68,8 @@ const router = async () => {
     { path: '/login', view: Login },
     { path: '/register', view: Register },
     { path: '/500', view: InternalError },
-    // { path: '/history', view: () => console.log('viewing history') },
+    { path: '/history', view: History },
+    { path: '/history/:id', view: History },
     { path: '/settings', view: Settings },
     { path: '/profile', view: Profile },
     { path: '/profile/:id', view: Profile },

@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 08:17:31 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/18 06:38:16 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/22 13:02:37 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,29 +14,73 @@ import AbstractView from "./AbstractView.js";
 
 export default class extends AbstractView {
   constructor(params) {
-      super(params);
-      this.setTitle('Search For Friends');
-      this.auth = false;
-      this.listeners = true;
+    super(params);
+    this.setTitle('Search For Friends');
+    this.auth = false;
+    this.listeners = true;
+    this.addFriendListener = false; // Indicates if addFriendHandler has been attached to document
+    this.resultMemory = null;
+
+    this.searchHandler = this.searchHandler.bind(this);
+    this.addFriendHandler = this.addFriendHandler.bind(this);
+  }
+
+  // Function will assume search has been executed and sends
+  // invitation to the user searched by the user who is
+  // currently logged in
+  async addFriendHandler(event) {
+    event.preventDefault();
+    const resultDiv = document.getElementById('searchResult');
+    
+    try {
+      const payload = { "to_user": this.resultMemory }
+      const response = await axios.post(
+        'http://localhost:8000/friend-request/send',
+        payload,
+        { headers: {'Authorization': `Token ${this.GetKey()}` } }
+      );
+      
+      resultDiv.innerHTML = `
+        <h3 class="font-text response-success-text">Friend request sent succesfully!</h3>
+      `;
+    }
+    catch(error) {
+      if (error.response.status === 400)
+        resultDiv.innerHTML = `
+          <h3 class="font-text response-fail-text">Sending friend request failed succesfully: Already sent</h3>
+        `;
+      else {
+        this.Redirect('/500');
+      }
+    }
   }
 
   async searchHandler(event) {
     event.preventDefault();
 
+    // Fetching all the elements needed to manipulate
     const searchIcon = await document.getElementById('searcher');
     if (!searchIcon) { return ;}
+
     searchIcon.classList.toggle('show-loader');
     searchIcon.classList.toggle('hide-loader');
-    
+
     const loadingIcon = await document.getElementById('loader');
     if (!loadingIcon) { return ;}
+
     loadingIcon.classList.toggle('show-loader');
     loadingIcon.classList.toggle('hide-loader');
-
 
     const form = await document.getElementById('query');
     if (!form) { return; }
     
+    const resultDiv = await document.getElementById('searchResult');
+    if (!resultDiv) { return; }
+    resultDiv.innerHTML = '';
+
+    // TODO: check that user is not already my friend
+    
+    // Search friend from database
     try {
       const url = `http://localhost:8000/account/${form.value}`
       const response = await axios.get(url, {
@@ -44,31 +88,55 @@ export default class extends AbstractView {
       });
       const data = response.data;
 
+      if (data) {
+        this.resultMemory = data.user.id;
+
+        const searchResult = document.createElement('div');
+        searchResult.classList.add('search-result');
+        searchResult.id = 'searchResult';
+
+        const profileLink = document.createElement('a');
+        profileLink.classList.add('font-text');
+        profileLink.classList.add('result-text');
+        profileLink.href = `/profile/${data.user.id}`;
+        profileLink.textContent = data.user.username;
+        
+        const addButton = document.createElement('button');
+        addButton.addEventListener('click', this.addFriendHandler);
+        this.addFriendHandler = true;
+        addButton.classList.add('add-friend-button');
+        addButton.innerHTML = `
+          <div class="result-svg">
+            <svg class="plus-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M6 12H18M12 6V18" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+          </div>
+        `;
+        
+        searchResult.appendChild(profileLink);
+        searchResult.appendChild(addButton);
+        resultDiv.appendChild(searchResult);
+      }
+      else {
+        this.Redirect('/500');
+      }   
+    }
+    catch(error) {
+      console.log('Error in search handler: ', error);
+      if (!error.response.status) {
+        this.Redirect('/500');
+        return;
+      }
+      if (error.response.status === 404) {
+        resultDiv.innerHTML = `
+          <span class="font-text response-fail-text">user not found...</span>
+        `;
+      }
+    }
+    finally {
       form.value = '';
       loadingIcon.classList.toggle('show-loader');
       loadingIcon.classList.toggle('hide-loader');
       searchIcon.classList.toggle('show-loader');
       searchIcon.classList.toggle('hide-loader');
-
-      const resultDiv = await document.getElementById('searchResult');
-      if (!resultDiv) { return; }
-
-      if (data) {
-        resultDiv.innerHTML = `
-          <div class="search-result">
-            <a class="font-text result-text" href="/profile/${data.id}">${data.username}</a>
-          </div>
-        `;
-      }
-      else {
-        resultDiv.innerHTML = `
-          <span class="font-text">user not found...</span>
-        `;
-      }
-    }
-    catch(error) {
-      this.Redirect('/500');
-      return;
     }
   }
 
@@ -85,6 +153,10 @@ export default class extends AbstractView {
     const form = document.getElementById('search-form-button');
     if (!form) { return; }
     form.removeEventListener('click', this.searchHandler);
+
+    const button = document.getElementById('addFriendButton');
+    if (!button || !this.addFriendListener) { return; }
+    button.removeEventListener('click', this.addFriendHandler);
   }
 
   async getHtml() {

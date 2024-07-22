@@ -1,0 +1,56 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    margin: 0;
+}
+
+#sidebar {
+    width: 200px;
+    background-color: #f1f1f1;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.tab {
+    display: block;
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.tab.active {
+    background-color: #ddd;
+}
+
+#content {
+    flex-grow: 1;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.username {
+    color: blue; /* Link color */
+    text-decoration: underline; /* Underline to mimic a link */
+    cursor: pointer; /* Change cursor to pointer */
+}
+
+.username:hover {
+    color: darkblue; /* Darker color on hover */
+}
+
+.guest {
+    color: black; /* Guest color */
+    text-decoration: none; /* No underline */
+    cursor: default; /* Default cursor */
+}

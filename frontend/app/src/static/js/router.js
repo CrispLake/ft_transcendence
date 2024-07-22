@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 13:31:25 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/18 06:41:12 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/22 08:18:32 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ import Login from './views/Login.js';
 import About from './views/About.js';
 import Home from './views/Home.js';
 import Pong from './views/Pong.js';
+import Settings from './views/Settings.js';
+import History from './views/History.js';
 
 // List of current event listeners
 let views_memory = new Array();
@@ -34,7 +36,7 @@ const getParams = (match) => {
     if (values.length < 1) {
       return;
     }
-    const keys = Array.from(match.route.path.matchAll(/:(\w+)/g).map(result => result[1]));
+    const keys = [...match.route.path.matchAll(/:(\w+)/g)].map(result => result[1]);
   
     return Object.fromEntries(keys.map((key, index) => {
       return [key, values[index]];
@@ -71,8 +73,9 @@ const router = async () => {
     { path: '/login', view: Login },
     { path: '/register', view: Register },
     { path: '/500', view: InternalError },
-    // { path: '/history', view: () => console.log('viewing history') },
-    // { path: '/settings', view: () => console.log('viewing settings') },
+    { path: '/history', view: History },
+    { path: '/history/:id', view: History },
+    { path: '/settings', view: Settings },
     { path: '/profile', view: Profile },
     { path: '/profile/:id', view: Profile },
     { path: '/about', view: About },

@@ -29,14 +29,15 @@ export default class extends AbstractView {
         }
 
         let url = this.profileURL;
-        if (this.params && this.params.id){
+        if (this.params && this.params.id) {
             url += `/${this.params.id}`;
         }
 
         try {
-            const response = await axios.get(url, {
-                headers: {'Authorization': `Token ${token}`}
-            });
+            const response = await axios.get(
+                url,
+                { headers: {'Authorization': `Token ${token}`} }
+            );
             this.profileData = response.data;
         } catch (error) {
             console.error('Error fetching profile data', error);

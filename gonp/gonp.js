@@ -34,7 +34,7 @@ camera.lookAt(0, 0, 0);
 camera.position.set(0, 25, 20);
 
 // ----Renderer Setup----
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer( {antialias:true} );
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
@@ -69,14 +69,10 @@ const controls = new OrbitControls(camera, renderer.domElement);
 //     scene.add(textMesh);
 
 let composer = new EffectComposer(renderer);
-    // composer.addPass(new RenderPass(scene, camera));
-
-    // // Create the OutlinePass
-
-    // // Add FXAA for better smoothing of edges
-    // const effectFXAA = new ShaderPass(FXAAShader);
-    // effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
-    // composer.addPass(effectFXAA);
+composer.addPass(new RenderPass(scene, camera));
+const effectFXAA = new ShaderPass(FXAAShader);
+effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
+composer.addPass(effectFXAA);
 // });
 
 class TextManager {
@@ -91,7 +87,11 @@ class TextManager {
         this.color2 = color2;
         this.textMesh = null;
         this.outlinePass = null;
-        
+        this.textMesh = 0;
+        this.textMaterial = 0;
+        this.boundingBox = 0;
+        this.textGeometry = 0;
+    
         this.fontLoader = new FontLoader();
         this.loadFontAndSetup();
     }
@@ -99,29 +99,29 @@ class TextManager {
     loadFontAndSetup() {
         this.fontLoader.load(this.fontUrl, (font) => {
             this.font = font;
-            this.createTextMesh(this.text);
-
+            
             // Setup composer and outline pass
             this.composer.addPass(new RenderPass(this.scene, this.camera));
-
+            
             this.outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), this.scene, this.camera, [this.textMesh]);
             this.outlinePass.edgeStrength = 10;
             this.outlinePass.edgeGlow = 1;
-            this.outlinePass.visibleEdgeColor.set(this.color2);
-            this.outlinePass.hiddenEdgeColor.set(this.color2);
+            this.outlinePass.visibleEdgeColor.set(0x000000);
+            this.outlinePass.hiddenEdgeColor.set(0xffffff);
             this.composer.addPass(this.outlinePass);
-
             const effectFXAA = new ShaderPass(FXAAShader);
             effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
             this.composer.addPass(effectFXAA);
+            this.textMaterial = new THREE.MeshBasicMaterial({ color: 0XD269FA });
+            this.createTextMesh(this.text);
         });
     }
 
     createTextMesh(text) {
-        const textGeometry = new TextGeometry(text, {
+        this.textGeometry = new TextGeometry(text, {
             font: this.font,
             size: 6,
-            height: 1,
+            depth: 0.1,
             curveSegments: 12,
             bevelEnabled: true,
             bevelThickness: 0.5,
@@ -130,12 +130,11 @@ class TextManager {
             bevelSegments: 3
         });
 
-        const textMaterial = new THREE.MeshBasicMaterial({ color: this.color1 });
-        this.textMesh = new THREE.Mesh(textGeometry, textMaterial);
+        this.textMesh = new THREE.Mesh(this.textGeometry, this.textMaterial);
 
-        textGeometry.computeBoundingBox();
-        const boundingBox = textGeometry.boundingBox;
-        const textWidth = boundingBox.max.x - boundingBox.min.x;
+        this.textGeometry.computeBoundingBox();
+        this.boundingBox = this.textGeometry.boundingBox;
+        const textWidth = this.boundingBox.max.x - this.boundingBox.min.x;
         this.textMesh.position.set(-textWidth / 2, 0, -10);
 
         this.scene.add(this.textMesh);
@@ -148,27 +147,22 @@ class TextManager {
 
             // Dispose of old geometry and material
             this.textMesh.geometry.dispose();
-            this.textMesh.material.dispose();
+            // this.textMesh.material.dispose();
+            console.log("disposed")
         }
 
         // Create new text mesh
         this.createTextMesh(newText);
 
         // Update the OutlinePass
-        this.outlinePass.selectedObjects = [this.textMesh];
+        // this.outlinePass.selectedObjects = [this.textMesh];
     }
 }
 
 
 
 let text = new TextManager(scene, composer, renderer, camera, "./resources/font.json", "GONP", 0XFFFFFF, 0X000000)
-	const scene2D = new THREE.Scene();
 
-const camera2D = new THREE.OrthographicCamera(
-    window.innerWidth / -2, window.innerWidth / 2,
-    window.innerHeight / 2, window.innerHeight / -2,
-    0.1, 1000
-);
 
 class Timer {
     constructor() {
@@ -205,8 +199,6 @@ class Timer {
 
 let timer = new Timer();
 
-camera2D.position.z = 4;
-
 /*---- LOOP ------------------------------------------------------------------*/
 
 function setPushersColliding(colliding)
@@ -221,6 +213,7 @@ function setPushersColliding(colliding)
 
 function pushersLogic()
 {
+    pusherOutlinePass.selectedObjects = [...player1.pushers]
     setPushersColliding(false);
     for (let i = 0; i < player1.pushers.length; i++) {
         const obj1 = player1.pushers[i];
@@ -276,13 +269,20 @@ function playersLogic()
 	player2.logicLoop();
 }
 
+const pusherOutlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
+pusherOutlinePass.edgeStrength = 3.0;
+pusherOutlinePass.edgeGlow = 0.0;
+pusherOutlinePass.edgeThickness = 1.0;
+pusherOutlinePass.pulsePeriod = 0;
+pusherOutlinePass.visibleEdgeColor.set('#000000'); // Black outline
+pusherOutlinePass.hiddenEdgeColor.set('#000000'); // Black outline
+
 timer.start(42);
 function update()
 {
     setTimeout(() => { requestAnimationFrame(update); }, 1000 / G.fps);
     // updateBoost();
     // updatePlayerPosition();
-	// text.updateText(toString(timer.getRemainingTime()));
 	console.log((timer.getRemainingTime()));
 	playersLogic();
     pushersLogic();
@@ -294,10 +294,11 @@ function update()
     {
         renderer.render(scene, camera);
     }
+    // console.log(timer.getRemainingTime());
+	text.updateText(Math.floor(timer.getRemainingTime()).toString());
 
     renderer.autoClear = false;
     renderer.clearDepth();
-    renderer.render(scene2D, camera2D);
 }
 update();
 

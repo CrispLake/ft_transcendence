@@ -3,12 +3,6 @@ from login.models import Account, FriendRequest
 from pong.serializers import MatchSerializer
 from django.contrib.auth.models import User
 
-class FriendRequestSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = FriendRequest
-        fields = ['id', 'from_user', 'to_user', 'timestamp', 'status']
-        read_only_fields = ['from_user', 'timestamp', 'status']
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -43,3 +37,12 @@ class AccountSerializer(serializers.ModelSerializer):
 
         else:
             raise serializers.ValidationError(user_serializer.errors)
+
+class FriendRequestSerializer(serializers.ModelSerializer):
+    from_user = UserSerializer(read_only=True)
+    to_user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = FriendRequest
+        fields = ['id', 'from_user', 'to_user', 'timestamp', 'status']
+        read_only_fields = ['from_user', 'timestamp', 'status']

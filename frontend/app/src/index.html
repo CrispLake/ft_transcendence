@@ -3,6 +3,8 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="/static/css/index.css">
+
 	<link href="https://db.onlinewebfonts.com/c/0e39a4b06a027c967cdf68c149ed586f?family=Coluna-CondensedBold" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Lekton" />
@@ -12,7 +14,6 @@
 	<link rel="stylesheet" href="/static/css/search.css">
 	<link rel="stylesheet" href="/static/css/about.css">
 	<link rel="stylesheet" href="/static/css/login.css">
-	<link rel="stylesheet" href="/static/css/index.css">
 	<link rel="stylesheet" href="/static/css/home.css">
 	<link rel="stylesheet" href="/static/css/nav.css">
 
@@ -21,12 +22,18 @@
 	<title>ft_trancendence</title>
 </head>
 <body>
+	<!-- LOADING PAGE -->
+	<div class="welcome">
+		<span id="splash-overlay" class="splash"></span>
+		<span id="welcome" class="z-depth-4"></span>
+	</div>
+
 	<!-- NAV BAR -->
 	<nav class="nav font-heading">
 
 		<!-- LEFT SIDE LOGO -->
 		<div class="nav-logo">
-			<h1 class="font-sub">ft_trancendence</h1>
+			<h1 class="font-sub">ft_transcendence</h1>
 		</div>
 		
 		<!-- NAVBAR MIDDLE LINKS -->
@@ -64,7 +71,7 @@
 
 	
 	<div id="dropDownDiv" class="friends-div">
-		<div class="friends-parent">		
+		<div class="friends-parent">
 			<div class="friends-drop hide">
 				<ul id="friendList" class="friend-list font-sub">
 					<!-- EMPTY BEFORE LOGGIN IN, WILL BE FILLED AFTER LOGIN EVENT -->

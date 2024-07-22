@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 09:22:19 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/12 06:01:20 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/18 11:48:12 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,8 @@ export default class extends AbstractView {
                 </div>
             `;
         }
-
+        
+        // Profile data parsing
         const profileName = this.profileData.user.username;
         const wins = this.profileData.wins;
         const losses = this.profileData.losses;

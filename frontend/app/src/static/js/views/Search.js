@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 08:17:31 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/17 08:13:59 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/18 06:38:16 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ export default class extends AbstractView {
   constructor(params) {
       super(params);
       this.setTitle('Search For Friends');
-      this.auth = false; //TODO: switch to true
+      this.auth = false;
       this.listeners = true;
   }
 
@@ -36,49 +36,41 @@ export default class extends AbstractView {
 
     const form = await document.getElementById('query');
     if (!form) { return; }
-    form.value = '';
     
-    // TODO: remove
-    function wait(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-    const data = { 
-      username: 'Hiver123',
-      id: 2
-    }
-
     try {
-      // TODO: create request to backend when endpoint is added
-      // const response = axios.get('http://localhost:8000/')
-      
-      await wait(1500);
-        
+      const url = `http://localhost:8000/account/${form.value}`
+      const response = await axios.get(url, {
+        headers: {'Authorization': `Token ${this.GetKey()}`}
+      });
+      const data = response.data;
+
+      form.value = '';
+      loadingIcon.classList.toggle('show-loader');
+      loadingIcon.classList.toggle('hide-loader');
+      searchIcon.classList.toggle('show-loader');
+      searchIcon.classList.toggle('hide-loader');
+
+      const resultDiv = await document.getElementById('searchResult');
+      if (!resultDiv) { return; }
+
+      if (data) {
+        resultDiv.innerHTML = `
+          <div class="search-result">
+            <a class="font-text result-text" href="/profile/${data.id}">${data.username}</a>
+          </div>
+        `;
+      }
+      else {
+        resultDiv.innerHTML = `
+          <span class="font-text">user not found...</span>
+        `;
+      }
     }
     catch(error) {
-      console.log('axios error in search');
+      this.Redirect('/500');
+      return;
     }
-
-    loadingIcon.classList.toggle('show-loader');
-    loadingIcon.classList.toggle('hide-loader');
-    searchIcon.classList.toggle('show-loader');
-    searchIcon.classList.toggle('hide-loader');
-
-    const resultDiv = await document.getElementById('searchResult');
-
-    const yes = 1;
-    if (yes === 1) {
-      resultDiv.innerHTML = `
-        <div class="search-result">
-          <a class="font-text result-text" href="/profile/${data.id}">${data.username}</a>
-        </div>
-      `;
-    }
-    else {
-      resultDiv.innerHTML = `
-        <span class="font-text">user not found...</span>
-      `;
-    }
-  }  
+  }
 
   AddListeners() {
     const form = document.getElementById('search-form-button');

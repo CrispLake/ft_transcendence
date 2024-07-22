@@ -39,7 +39,7 @@ def profile(request, id=None):
 @permission_classes([IsAuthenticated])
 def profile_from_username(request, username=None):
     if username is None:
-        return Respone({'detail': 'Impossible request'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'detail': 'Impossible request'}, status=status.HTTP_404_NOT_FOUND)
 
     try:
         account = Account.objects.get(user__username=username)

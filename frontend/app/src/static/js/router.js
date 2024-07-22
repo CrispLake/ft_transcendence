@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 13:31:25 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/14 08:23:54 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/18 06:41:12 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ const navigateTo = (url) => {
   router();
 };
 
+
 // All links or buttons that change content HAS to have 'data-link' attribute
 const navigationEventHandler = (event) => {
   if (event.type === 'navigate') {
@@ -60,6 +61,7 @@ const navigationEventHandler = (event) => {
     navigateTo(event.target.href);
   }
 };
+
 
 const router = async () => {
   // Define all possible routes for the frontend
@@ -90,7 +92,6 @@ const router = async () => {
   }
 
   // Check route list against browser address path
-  // TODO: change directly to find if possible
   const routeList = routes.map(route => {
     return { 
       route: route,
@@ -101,7 +102,7 @@ const router = async () => {
   // Use found path and it's associated view to render content
   let match = routeList.find(potentialMatch => potentialMatch.result !== null);
 
-  // If no view was found --> default to root ('/')
+  // If no view was found --> default to 404
   if (!match) {
     match = { route: routes[0], result: [location.pathname] };
   };
@@ -111,7 +112,6 @@ const router = async () => {
 
   // Handle authentication if needed
   // redirects to login if not authenticated
-  // view.DeleteKey();
   if (view.auth) {
     if (!view.Authenticate()) {
       console.log('not authenticated');
@@ -124,17 +124,21 @@ const router = async () => {
   const app = document.querySelector('#app');
   if (view.childs) {
     app.innerHTML = '';
-    app.appendChild(await view.getHtml());
+    app.appendChild(await view.getHtml());  // Some content needs to pe appended
   } else {
-    app.innerHTML = await view.getHtml();
+    app.innerHTML = await view.getHtml();   // Some content needs can be just set
   }
 
-  // Adding eventlisteners from view
+  // Adding eventlisteners from view and saving it to heap
   if (view.listeners !== false) {
     view.AddListeners();
     views_memory.push(view);
   }
 }
+
+
+
+
 
 // Makes "back" button go trough router
 window.addEventListener('popstate', router);

@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:08:11 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/17 12:21:10 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/23 13:04:08 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,36 @@ export default class {
   // Helper function to set title of the page
   setTitle(title) {
     document.title = title;
+  }
+
+  async fetchMyID() {
+    try {
+      const response = await axios.get(
+        'http://localhost:8000/account', {
+          headers: { 'Authorization': `Token ${this.GetKey()}` }
+        });
+      const id = response.data.id;
+      return id;
+    }
+    catch(error) {
+      console.log(error);
+      return -1;
+    }
+  }
+
+  async fetchMyName() {
+    try {
+      const response = await axios.get(
+        'http://localhost:8000/account', {
+          headers: { 'Authorization': `Token ${this.GetKey()}` }
+        });
+      const name = response.data.user.username;
+      return name;
+    }
+    catch(error) {
+      console.log(error);
+      return -1;
+    }
   }
 
   Authenticate() {

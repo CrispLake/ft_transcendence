@@ -8,6 +8,7 @@ from .authentication import MultiTokenAuthentication
 from pong.models import Match, Pong_4p
 from login.models import Account
 from pong.serializers import MatchSerializer, Pong4PSerializer
+from login.decorators import update_last_activity
 
 def update_2p_score(player_id, my_score, other_score):
     if player_id is not None:
@@ -21,6 +22,7 @@ def update_2p_score(player_id, my_score, other_score):
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 @authentication_classes([MultiTokenAuthentication])
+@update_last_activity
 def pong_2p(request, player_id=None):
     if request.method == 'GET':
         if player_id is not None:
@@ -82,6 +84,7 @@ def update_4p_score(player_id, my_score):
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 @authentication_classes([MultiTokenAuthentication])
+@update_last_activity
 def pong_4p(request, player_id=None):
     if request.method == 'GET':
         if player_id is not None:

@@ -8,6 +8,7 @@ from pong.authentication import MultiTokenAuthentication
 from .models import Gonp_4p, Gonp_2p
 from login.models import Account
 from .serializers import Gonp2PSerializer, Gonp4PSerializer
+from login.decorators import update_last_activity
 
 def update_score(player_id, my_score):
     if player_id is not None:
@@ -21,6 +22,7 @@ def update_score(player_id, my_score):
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 @authentication_classes([MultiTokenAuthentication])
+@update_last_activity
 def gonp_2p(request, player_id=None):
     if request.method == 'GET':
         if player_id is not None:
@@ -72,6 +74,7 @@ def check_unique_ids(a, b, c, d):
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 @authentication_classes([MultiTokenAuthentication])
+@update_last_activity
 def gonp_4p(request, player_id=None):
     if request.method == 'GET':
         if player_id is not None:

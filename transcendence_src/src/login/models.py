@@ -4,6 +4,7 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
+from django.utils import timezone
 
 class FriendRequest(models.Model):
     from_user = models.ForeignKey(User, related_name='sent_requests', on_delete=models.CASCADE)
@@ -20,8 +21,7 @@ class Account(models.Model):
     wins = models.IntegerField(default=0)
     losses = models.IntegerField(default=0)
     friends = models.ManyToManyField("self", blank=True)
-    # online_status?
-    # status = models.BooleanField()
+    last_activity = models.DateTimeField(default=timezone.now)
 
     class Meta:
         ordering = ['user']

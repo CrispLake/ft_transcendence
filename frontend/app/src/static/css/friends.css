@@ -1,25 +1,226 @@
 .friends-div {
   position: absolute;
   width: 12rem;
-  height: 4rem;  
+  height: 4rem;
+
+  z-index: 1;
   bottom: 0;
   right: 0;
 
-  display: flex;
-  justify-content: start;
-  align-items: center;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+}
 
-  background-color: var(--orange);
+.friends-parent {
+  position: relative;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.friends-button {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  height: 100%;
+  width: 100%;
+
+  border-top: 0;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: solid 1px;
+
+  transition: 0.3s;
+  background-color: var(--yellow);
+}
+
+.arrow-up-icon {
+  background: none;
+  height: 65px;
+  width: 65px;
+  pointer-events: none;
 }
 
 .friends-button:hover {
   cursor: pointer;
+  background-color: var(--black);
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  z-index: 10;
+}
+
+.friends-button:hover p,
+.friends-button:hover path {
+  color: var(--white);
+  fill: var(--white);
 }
 
 .friends-text {
   font-size: 2rem !important;
-  padding-top: 0.5rem;
+  margin-top: 2.5rem;
   margin-left: 1rem;
+  margin-right: 0;
+  pointer-events: none;
+}
+
+.friends-drop {
+  background-color: var(--black);
+  color: var(--white);
+  position: relative;
+
+  width: 12rem;
+  height: 550px;
+  top: 4rem;
+
+  z-index: 1;
+  display: block;
+  position: absolute;
+}
+
+.show {
+  transition: transform 0.2s ease-in-out !important;
+  transform: translate(0px, -500px);
+}
+
+.hide {
+  transition: transform 0.175s ease-out;
+}
+
+.button-up {
+  background-color: var(--black);
+  color: var(--white);
+}
+
+path {
+  transition: transform 0.7s ease-in-out;
+  transform-origin: center;
+}
+
+.button-up path {
+  fill: var(--white);
+  transform: scaleY(-1);
+}
+
+.friend-list {
+  position: relative;
+  padding: 0 !important;
+  margin: 0 !important;
+  list-style: none;
+  overflow: hidden;
+  gap: 0;
+  line-height: 24px !important;
+}
+
+.friend-list li {
+  margin-bottom: 0.5rem;
+  padding-left: 1rem;
+}
+
+.friend a {
+  transition: ease-in 0.1s;
+  text-decoration: none;
+  font-size: 22px;
+  color: var(--white);
+  padding: 0 !important;
+  margin-top: 0 !important;
+}
+
+.friend-list p {
+  transition: ease-in 0.1s;
+  text-decoration: none;
+  font-size: 18px;
+  color: var(--white);
+  padding: 0;
+  margin: 0;
+}
+
+.friend:hover a {
+  text-decoration: underline;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.search-bar {
+  position: absolute;
+  height: 4rem;
+  width: 100%;
+  bottom: 50px;
+  font-size: 32px !important;
+  justify-content:space-between;
+  align-items: center;
+  display: flex;
+
+  color: var(--white);
+  background-color: var(--black);
+  border-top: solid 1px;
+  transition: ease 0.3s;
+}
+
+.search-bar:hover {
+  background-color: var(--black);
+  cursor: pointer;
+}
+
+.search-text {
+  margin-top: 0.5rem;
+  margin-left: 1rem;
+  margin-bottom: 0;
+  transition: ease 0.15s;
+  text-decoration: none;
+  color: var(--white);
+}
+
+.search-bar:hover a {
+  color: var(--yellow);
+}
+
+.search-icon {
+  margin-right: 1rem;
+  height: 50px;
+  width: 50px;
+}
+
+.search-icon path {
+  stroke: var(--white);
+}
+
+.search-bar:hover path {
+  stroke: var(--yellow);
+}
+
+
+
+.friend-request {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.request-div {
+  margin-bottom: 0.5rem;
+}
+
+.request-div p {
+  padding-left: 0.5rem;
+}
+
+.request-button {
+  margin-left: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: ease 0.1s;
+  background-color: grey;
+}
+
+.accept:hover {
+  background-color: var(--green);
+}
+
+.decline:hover {
+  background-color: var(--pink);
+}
+
+.request-title {
+  padding-left: 0.5rem;
+  font-size: 18px;
+  border-bottom: solid 1px;
 }

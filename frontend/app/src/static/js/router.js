@@ -1,23 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   index.js                                           :+:      :+:    :+:   */
+/*   router.js                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 13:31:25 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/09 15:38:31 by emajuri          ###   ########.fr       */
+/*   Updated: 2024/07/22 08:18:32 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 // Error pages
 import InternalError from './views/500.js';
+import NotFoundError from './views/404.js';
 
 import Register from './views/Register.js';
 import Profile from './views/Profile.js';
+import Search from './views/Search.js';
 import Login from './views/Login.js';
 import About from './views/About.js';
 import Home from './views/Home.js';
+import Pong from './views/Pong.js';
 import Settings from './views/Settings.js';
 import History from './views/History.js';
 
@@ -48,6 +51,7 @@ const navigateTo = (url) => {
   router();
 };
 
+
 // All links or buttons that change content HAS to have 'data-link' attribute
 const navigationEventHandler = (event) => {
   if (event.type === 'navigate') {
@@ -60,10 +64,11 @@ const navigationEventHandler = (event) => {
   }
 };
 
+
 const router = async () => {
   // Define all possible routes for the frontend
   const routes = [
-    // { path: '/404', view: () => console.log('not found') },
+    { path: '/404', view: NotFoundError },
     { path: '/', view: Home },
     { path: '/login', view: Login },
     { path: '/register', view: Register },
@@ -74,7 +79,8 @@ const router = async () => {
     { path: '/profile', view: Profile },
     { path: '/profile/:id', view: Profile },
     { path: '/about', view: About },
-    // { path: '/register', view: Register },
+    { path: '/play', view: Pong },
+    { path: '/search', view: Search },
   ];
 
   // If there are listeners, remove them
@@ -89,7 +95,6 @@ const router = async () => {
   }
 
   // Check route list against browser address path
-  // TODO: change directly to find if possible
   const routeList = routes.map(route => {
     return { 
       route: route,
@@ -100,7 +105,7 @@ const router = async () => {
   // Use found path and it's associated view to render content
   let match = routeList.find(potentialMatch => potentialMatch.result !== null);
 
-  // If no view was found --> default to root ('/')
+  // If no view was found --> default to 404
   if (!match) {
     match = { route: routes[0], result: [location.pathname] };
   };
@@ -120,14 +125,23 @@ const router = async () => {
 
   // Injecting views HTML to the app
   const app = document.querySelector('#app');
-  app.innerHTML = await view.getHtml();
+  if (view.childs) {
+    app.innerHTML = '';
+    app.appendChild(await view.getHtml());  // Some content needs to pe appended
+  } else {
+    app.innerHTML = await view.getHtml();   // Some content needs can be just set
+  }
 
-  // Adding eventlisteners from view
+  // Adding eventlisteners from view and saving it to heap
   if (view.listeners !== false) {
     view.AddListeners();
     views_memory.push(view);
   }
 }
+
+
+
+
 
 // Makes "back" button go trough router
 window.addEventListener('popstate', router);

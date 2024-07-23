@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'password']
+        fields = ['id', 'username', 'password']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -14,8 +14,18 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
+    
+
+class FriendSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Account
+        fields = ['user']
+
 
 class AccountSerializer(serializers.ModelSerializer):
+    friends = FriendSerializer(many=True, read_only=True)
     user = UserSerializer()
 
     class Meta:

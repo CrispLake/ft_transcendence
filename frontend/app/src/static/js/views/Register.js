@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/22 13:36:52 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/03 09:23:47 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/12 06:02:08 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,4 +101,4 @@ export default class extends AbstractView {
         </div>
     `
     }
-    }
+  }

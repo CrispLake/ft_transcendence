@@ -3,20 +3,23 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="https://db.onlinewebfonts.com/c/0e39a4b06a027c967cdf68c149ed586f?family=Coluna-CondensedBold" rel="stylesheet">
+	<link rel="stylesheet" href="/static/css/index.css">
+
+	<!-- <link href="https://db.onlinewebfonts.com/c/0e39a4b06a027c967cdf68c149ed586f?family=Coluna-CondensedBold" rel="stylesheet"> -->
 	<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Lekton" />
 	<link rel="stylesheet" href="/static/css/settings.css">
 	<link rel="stylesheet" href="/static/css/profile.css">
 	<link rel="stylesheet" href="/static/css/friends.css">
+	<link rel="stylesheet" href="/static/css/search.css">
 	<link rel="stylesheet" href="/static/css/about.css">
 	<link rel="stylesheet" href="/static/css/login.css">
-	<link rel="stylesheet" href="/static/css/index.css">
 	<link rel="stylesheet" href="/static/css/home.css">
 	<link rel="stylesheet" href="/static/css/nav.css">
 	<link rel="stylesheet" href="/static/css/history.css">
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js" integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 	<title>ft_trancendence</title>
 </head>
 <body>
@@ -25,7 +28,7 @@
 
 		<!-- LEFT SIDE LOGO -->
 		<div class="nav-logo">
-			<h1 class="font-sub">ft_trancendence</h1>
+			<h1 class="font-sub">ft_transcendence</h1>
 		</div>
 		
 		<!-- NAVBAR MIDDLE LINKS -->
@@ -61,13 +64,53 @@
 		</div>
 	</nav>
 
-	<div class="friends-div">
-		<p class="font-heading friends-text">FRIENDS</p>
+	<!-- FRIEND LIST -->
+	<div id="dropDownDiv" class="friends-div">
+		<div class="friends-parent">
+			<div class="friends-drop hide">
+				<ul id="friendList" class="friend-list font-sub">
+					<!-- EMPTY BEFORE LOGGIN IN, WILL BE FILLED AFTER LOGIN EVENT -->
+				</ul>
+				<div class="search-bar font-heading">
+					<a href="/search" class="search-text" data-link>SEARCH</a>
+					<svg class="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M11 6C13.7614 6 16 8.23858 16 11M16.6588 16.6549L21 21M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+				</div>
+			</div>
+			<button id ="dropDownButton" class="friends-button">
+				<p class="font-heading friends-text">FRIENDS</p>
+				<svg class="arrow-up-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+					<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+					<g id="SVGRepo_iconCarrier">
+					<path d="M12 9.29289L16.2929 13.5858C16.6834 13.9763 16.6834 14.6095 16.2929 15C15.9024 15.3905 15.2692 15.3905 14.8787 15L12 12.1213L9.12132 15C8.7308 15.3905 8.09763 15.3905 7.70711 15C7.31658 14.6095 7.31658 13.9763 7.70711 13.5858L12 9.29289Z" fill="#0F0F0F"></path>
+					</g>
+				</svg>
+			</button>
+		</div>
 	</div>
 
 	<!-- DYNAMIC CONTENT WILL LOAD INSIDE THIS DIV -->
 	<div id="app"></div>
 
-	<script type="module" src="/static/js/index.js"></script>
+	<script type="importmap">
+		{
+			"imports":
+			{
+				"three": "https://cdn.jsdelivr.net/npm/three@v0.165.0/build/three.module.js",
+				"three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.165.0/examples/jsm/"
+			}
+		}
+	</script>
+	<script type="module" src="/static/js/router.js"></script>
+	<script type="module" src="/static/js/friends.js" defer></script>
+	<script type="module">
+		import { toggleView } from '/static/js/friends.js';
+		
+		document.addEventListener("DOMContentLoaded", function() {
+      		document.getElementById("dropDownButton").onclick = function() {
+        		toggleView();
+      		};
+    	});
+	</script>
 </body>
 </html>

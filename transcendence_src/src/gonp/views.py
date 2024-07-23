@@ -23,10 +23,9 @@ def update_score(player_id, my_score):
 @authentication_classes([MultiTokenAuthentication])
 def gonp_2p(request, player_id=None):
     if request.method == 'GET':
-        if player_id is not None:
-            matches = Gonp_2p.objects.filter(player1_id=player_id) | Gonp_2p.objects.filter(player2_id=player_id)
-        else:
-            matches = Gonp_2p.objects.all()
+        if player_id is None:
+            player_id = request.user.id
+        matches = Gonp_2p.objects.filter(player1_id=player_id) | Gonp_2p.objects.filter(player2_id=player_id)
 
         serializer = Gonp2PSerializer(matches, many=True)
         return Response(serializer.data)
@@ -74,10 +73,9 @@ def check_unique_ids(a, b, c, d):
 @authentication_classes([MultiTokenAuthentication])
 def gonp_4p(request, player_id=None):
     if request.method == 'GET':
-        if player_id is not None:
-            matches = Gonp_4p.objects.filter(player1_id=player_id) | Gonp_4p.objects.filter(player2_id=player_id) | Gonp_4p.objects.filter(player3_id=player_id) | Gonp_4p.objects.filter(player4_id=player_id)
-        else:
-            matches = Gonp_4p.objects.all()
+        if player_id is None:
+            player_id = request.user.id
+        matches = Gonp_4p.objects.filter(player1_id=player_id) | Gonp_4p.objects.filter(player2_id=player_id) | Gonp_4p.objects.filter(player3_id=player_id) | Gonp_4p.objects.filter(player4_id=player_id)
 
         serializer = Gonp4PSerializer(matches, many=True)
         return Response(serializer.data)

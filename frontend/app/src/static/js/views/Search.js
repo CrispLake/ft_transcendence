@@ -6,10 +6,11 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 08:17:31 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/22 13:02:37 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/22 16:15:29 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+import { CustomError } from "../CustomError.js";
 import AbstractView from "./AbstractView.js";
 
 export default class extends AbstractView {
@@ -50,11 +51,34 @@ export default class extends AbstractView {
           <h3 class="font-text response-fail-text">Sending friend request failed succesfully: Already sent</h3>
         `;
       else {
+        console.log(error);
         this.Redirect('/500');
       }
     }
   }
 
+  // After searching, will check if there already is friend request
+  // to this user or if it is already your friend
+  async checkFriendAlreadyAdded(search) {
+    try {
+      const url = 'http://localhost:8000/friend-request/list'
+      const response = await axios.get(
+        url,
+        { headers: {'Authorization': `Token ${this.GetKey()}` }
+      });
+      
+      const foundUser = response.data.find((entry) => {
+        return entry.to_user.username === search;
+      });
+      return !!foundUser;
+    }
+    catch(error) {
+      console.log(error);
+      this.Redirect('/500');
+    }
+  }
+
+  // Will check with backend for username
   async searchHandler(event) {
     event.preventDefault();
 
@@ -77,11 +101,15 @@ export default class extends AbstractView {
     const resultDiv = await document.getElementById('searchResult');
     if (!resultDiv) { return; }
     resultDiv.innerHTML = '';
-
-    // TODO: check that user is not already my friend
     
     // Search friend from database
     try {
+      const alreadyAdded = await this.checkFriendAlreadyAdded(form.value);
+      if (alreadyAdded) {
+        console.log('already added');
+        throw new CustomError('Friend already added', 400);
+      }
+      
       const url = `http://localhost:8000/account/${form.value}`
       const response = await axios.get(url, {
         headers: {'Authorization': `Token ${this.GetKey()}`}
@@ -116,19 +144,25 @@ export default class extends AbstractView {
         resultDiv.appendChild(searchResult);
       }
       else {
+        console.log(error);
         this.Redirect('/500');
       }   
     }
     catch(error) {
-      console.log('Error in search handler: ', error);
-      if (!error.response.status) {
-        this.Redirect('/500');
-        return;
+      if (error.status === 400) {
+        console.log('error detected');
+        resultDiv.innerHTML = `
+          <span class="font-text response-fail-text">Friend request already sent, wait for them to accept.</span>
+        `;
       }
-      if (error.response.status === 404) {
+      else if (error.response && error.response.status === 404) {
         resultDiv.innerHTML = `
           <span class="font-text response-fail-text">user not found...</span>
         `;
+      }
+      else {
+        console.log(error);
+        this.Redirect('/500');
       }
     }
     finally {
@@ -140,6 +174,9 @@ export default class extends AbstractView {
     }
   }
 
+
+
+  
   AddListeners() {
     const form = document.getElementById('search-form-button');
     if (!form) {

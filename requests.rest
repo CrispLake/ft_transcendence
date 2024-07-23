@@ -20,17 +20,17 @@ Authorization: Token 91975a4745dcf9a9a858a04cea79674c8444fb85
 ###
 
 POST http://localhost:8000/friend-request/send
-Authorization: Token ab8c2ca26dc7c9f051815101a01a0bee91f2dbea
+Authorization: Token 499aa9783396c4dda07c63dbaf003f0cfebfee4b
 Content-Type: application/json
 
 {
-    "to_user": 2
+    "to_user": 1
 }
 
 ###
 
 GET http://localhost:8000/friend-request/list
-Authorization: Token a6327541d3e155f80323446b2545a44040966a0f
+Authorization: Token 499aa9783396c4dda07c63dbaf003f0cfebfee4b
 
 ###
 
@@ -295,7 +295,7 @@ Content-Type: application/json
 
 {
     "user": {
-        "username": "testUser111",
+        "username": "testUser1111",
         "password": "test"
     }
 }
@@ -334,8 +334,8 @@ POST http://localhost:8000/login HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "FakeUser",
-    "password": "testPassword"
+    "username": "testUser9",
+    "password": "test"
 }
 
 ###
@@ -355,7 +355,7 @@ Content-Type: application/json
 
 {
     "username": "testUser2",
-    "password": "test"
+    "password": "testPassword"
 }
 
 ###

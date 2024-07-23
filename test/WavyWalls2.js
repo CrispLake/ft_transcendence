@@ -4,8 +4,19 @@ import { Arrow } from './Arrow.js';
 
 export class WavyWall
 {
-    constructor(size, width, length, floorThickness, wallHeight, wallThickness, widthSegments, heightSegments, dotSize, hitBoxVisible, dotsVisible)
+    constructor(sphereRadius, size, width, length, floorThickness, wallHeight, wallThickness, widthSegments, heightSegments, dotSize, hitBoxVisible)
     {
+        // ----Sphere----
+        const sphereGeometry = new THREE.SphereGeometry(sphereRadius, widthSegments, heightSegments);
+        const pointsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: dotSize * size });
+        const spherePoints = new THREE.Points(sphereGeometry, pointsMaterial);
+        
+        // ----HitSphere----
+        const boundingSphere = new THREE.Sphere(spherePoints.position, radius);
+
+        // ----Set sizes----
+        const totalHeight = adjustedFloorThickness + adjustedWallHeight;
+        
         const adjustedFloorThickness = floorThickness * size;
         const adjustedWidth = width * size;
         const adjustedLength = length * size;
@@ -13,7 +24,6 @@ export class WavyWall
         let adjustedWallThickness = wallThickness * size;
         if (adjustedWallThickness > adjustedWidth / 2)
             adjustedWallThickness = adjustedWidth / 2;
-        const totalHeight = adjustedFloorThickness + adjustedWallHeight;
 
         // ----Floor----
         const floorGeometry = new THREE.BoxGeometry(adjustedLength, adjustedFloorThickness, adjustedWidth);
@@ -42,36 +52,14 @@ export class WavyWall
         this.arrow2.mesh.rotation.z = Math.PI;
         this.arrow1.mesh.position.x += adjustedLength * 0.2;
         this.arrow2.mesh.position.x -= adjustedLength * 0.2;
-        console.log("totalHeight = " + totalHeight);
-        console.log("arrow1.y = " + this.arrow1.mesh.position.y);
-        console.log("arrow2.y = " + this.arrow2.mesh.position.y);
         this.arrow1.mesh.position.y -= totalHeight / 2;
         this.arrow2.mesh.position.y -= totalHeight / 2;
-        console.log("-----------------------------------------");
-        console.log("[-totalHeight / 2]");
-        console.log("arrow1.y = " + this.arrow1.mesh.position.y);
-        console.log("arrow2.y = " + this.arrow2.mesh.position.y);
         this.arrow1.mesh.position.y += adjustedFloorThickness / 2;
         this.arrow2.mesh.position.y += adjustedFloorThickness / 2;
-        console.log("-----------------------------------------");
-        console.log("[+floorThickness / 2]");
-        console.log("floorThickness = " + floorThickness);
-        console.log("arrow1.y = " + this.arrow1.mesh.position.y);
-        console.log("arrow2.y = " + this.arrow2.mesh.position.y);
         this.arrow1.mesh.position.y += thickness * sizeMultiplier / 2;
         this.arrow2.mesh.position.y += thickness * sizeMultiplier / 2;
-        console.log("-----------------------------------------");
-        console.log("[+thickness / 2]");
-        console.log("thickness = " + thickness);
-        console.log("arrow1.y = " + this.arrow1.mesh.position.y);
-        console.log("arrow2.y = " + this.arrow2.mesh.position.y);
         this.arrow1.mesh.position.y += bevelThickness * sizeMultiplier;
         this.arrow2.mesh.position.y += bevelThickness * sizeMultiplier;
-        console.log("-----------------------------------------");
-        console.log("[+bevelThickness / 2]");
-        console.log("bevelThickness = " + bevelThickness / 2);
-        console.log("arrow1.y = " + this.arrow1.mesh.position.y);
-        console.log("arrow2.y = " + this.arrow2.mesh.position.y);
 
 
         // ----Positions----
@@ -94,19 +82,9 @@ export class WavyWall
         this.mesh.add(wallRight);
         this.mesh.add(this.arrow1.mesh);
         this.mesh.add(this.arrow2.mesh);
+        this.mesh.add(spherePoints);
 
-        if (dotsVisible)
-        {
-            // ----Sphere----
-            const radius = center.distanceTo(boxSize) / 2;
-            const sphereGeometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments);
-            const pointsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: dotSize * size });
-            const spherePoints = new THREE.Points(sphereGeometry, pointsMaterial);
-            this.mesh.add(spherePoints);
-            
-            // ----HitSphere----
-            const boundingSphere = new THREE.Sphere(spherePoints.position, radius);
-        }
+
 
         if (hitBoxVisible)
         {

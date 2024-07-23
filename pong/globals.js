@@ -213,7 +213,20 @@ export const plusSegments = 10;
 //  WAVYWALL
 //--------------------------------------------------------------------------
 
+export const wavyMultiplier = 0.5;
+export const wavyWidth = 2;
+export const wavyLength = 3;
+export const wavyFloorThickness = 0.1;
+export const wavyWallHeight = 0.3;
+export const wavyWallThickness = 0.2;
+export const wavyHeightSegments = 16;
+export const wavyWidthSegments = 16;
+export const wavyDotSize = 0.1;
+export const wavyHitBoxVisible = false;
+export const wavyDotsVisible = false;
 
+export const dotsVisible = true;
+export const hitBoxVisible = false;
 
 
 //--------------------------------------------------------------------------

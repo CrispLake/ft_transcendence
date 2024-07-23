@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import * as G from '../../globals.js';
 import * as COLOR from '../../colors.js';
-import { Arrow } from '../Arrow.js';
+import { Arrow } from '../shapes/Arrow.js';
 
 export class PowerPaddleShort
 {
@@ -9,8 +9,9 @@ export class PowerPaddleShort
     {
         this.game = game;
         
-        const arrow1 = new Arrow(COLOR.POWER_PADDLE_SHORT, G.arrowShrinkLightIntensity);
-        const arrow2 = new Arrow(COLOR.POWER_PADDLE_SHORT, G.arrowShrinkLightIntensity);
+        const sizeMultiplier = 1;
+        const arrow1 = new Arrow(sizeMultiplier, COLOR.POWER_PADDLE_SHORT, G.arrowShrinkLightIntensity);
+        const arrow2 = new Arrow(sizeMultiplier, COLOR.POWER_PADDLE_SHORT, G.arrowShrinkLightIntensity);
 
         arrow1.mesh.rotation.z = Math.PI;
         arrow1.mesh.position.z += G.headLength * 1.8;

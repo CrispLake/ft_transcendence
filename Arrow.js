@@ -1,10 +1,10 @@
 import * as THREE from 'three';
-import * as G from '../globals.js';
-import * as COLOR from '../colors.js';
+import * as G from '../../globals.js';
+import * as COLOR from '../../colors.js';
 
 export class Arrow
 {
-    constructor(color, intensity)
+    constructor(sizeMultiplier, color, intensity)
     {
         // ----Light----
 
@@ -17,10 +17,10 @@ export class Arrow
         const head = new THREE.Shape();
         const material = new THREE.MeshBasicMaterial({color: color});
 
-        head.moveTo( 0, G.headLength );
-        head.lineTo( -G.headWidthOffset, 0 );
-        head.lineTo( G.headWidthOffset, 0 );
-        head.lineTo( 0, G.headLength );
+        head.moveTo( 0, G.headLength * sizeMultiplier );
+        head.lineTo( -G.headWidthOffset * sizeMultiplier, 0 );
+        head.lineTo( G.headWidthOffset * sizeMultiplier, 0 );
+        head.lineTo( 0, G.headLength * sizeMultiplier );
 
         const headGeometry = new THREE.ExtrudeGeometry(head, G.extrudeSettings);
         const headMesh = new THREE.Mesh(headGeometry, material);
@@ -30,11 +30,11 @@ export class Arrow
 
         const shaft = new THREE.Shape();
 
-        shaft.moveTo( -G.shaftWidthOffset, 0 );
-        shaft.lineTo( G.shaftWidthOffset, 0 );
-        shaft.lineTo( G.shaftWidthOffset, -G.shaftLength );
-        shaft.lineTo( -G.shaftWidthOffset, -G.shaftLength );
-        shaft.lineTo( -G.shaftWidthOffset, 0 );
+        shaft.moveTo( -G.shaftWidthOffset * sizeMultiplier, 0 );
+        shaft.lineTo( G.shaftWidthOffset * sizeMultiplier, 0 );
+        shaft.lineTo( G.shaftWidthOffset * sizeMultiplier, -G.shaftLength * sizeMultiplier );
+        shaft.lineTo( -G.shaftWidthOffset * sizeMultiplier, -G.shaftLength * sizeMultiplier );
+        shaft.lineTo( -G.shaftWidthOffset * sizeMultiplier, 0 );
 
         const shaftGeometry = new THREE.ExtrudeGeometry(shaft, G.extrudeSettings);
         const shaftMesh = new THREE.Mesh(shaftGeometry, material);

@@ -1,6 +1,82 @@
 import * as THREE from 'three';
+import { Arrow } from './Arrow.js';
 import { Plus } from './Plus.js';
 import { WavyWall } from './WavyWall.js';
+
+export class ArrowVisualizer
+{
+    constructor()
+    {
+        this.gui = new dat.GUI();
+        this.params = {
+            size: 1,
+            thickness: 0.8,
+            headWidth: 3,
+            headLength: 1.5,
+            shaftWidth: 1,
+            shaftLength: 1.5,
+            radius: 0.1,
+            bevelThickness: 0.2,
+            bevelSegments: 8
+        };
+
+        // this.paramsNormal = {
+        //     size: 1,
+        //     thickness: 1,
+        //     headWidth: 3,
+        //     headLength: 1.5,
+        //     shaftWidth: 1,
+        //     shaftLength: 1.5,
+        //     radius: 0.1,
+        //     bevelThickness: 0.25,
+        //     bevelSegments: 8
+        // };
+
+        this.model = new Arrow(
+            this.params.size,
+            this.params.thickness,
+            this.params.headWidth,
+            this.params.headLength,
+            this.params.shaftWidth,
+            this.params.shaftLength,
+            this.params.radius,
+            this.params.bevelThickness,
+            this.params.bevelSegments,
+        );
+
+        this.group = new THREE.Group();
+        this.group.add(this.model.mesh);
+
+        this.gui.add(this.params, 'size', 1, 5).step(1).onChange(() => this.updateShape());
+        this.gui.add(this.params, 'thickness', 0.5, 5).step(0.1).onChange(() => this.updateShape());
+        this.gui.add(this.params, 'headWidth', 0.5, 5).step(0.1).onChange(() => this.updateShape());
+        this.gui.add(this.params, 'headLength', 0.5, 5).step(0.1).onChange(() => this.updateShape());
+        this.gui.add(this.params, 'shaftWidth', 0.1, 5).step(0.1).onChange(() => this.updateShape());
+        this.gui.add(this.params, 'shaftLength', 0.1, 5).step(0.1).onChange(() => this.updateShape());
+        this.gui.add(this.params, 'radius', 0, 1).step(0.01).onChange(() => this.updateShape());
+        this.gui.add(this.params, 'bevelThickness', 0, 2).step(0.02).onChange(() => this.updateShape());
+        this.gui.add(this.params, 'bevelSegments', 0, 32).step(1).onChange(() => this.updateShape());
+    }
+
+    updateShape()
+    {
+        // console.log('updateShape called');
+        // console.log('Current Params:', this.params);
+        this.group.remove(this.model.mesh);
+        this.model = new Arrow(
+            this.params.size,
+            this.params.thickness,
+            this.params.headWidth,
+            this.params.headLength,
+            this.params.shaftWidth,
+            this.params.shaftLength,
+            this.params.radius,
+            this.params.bevelThickness,
+            this.params.bevelSegments,
+        );
+        this.group.add(this.model.mesh);
+    }
+}
 
 export class PlusVisualizer
 {
@@ -39,10 +115,11 @@ export class PlusVisualizer
         this.gui.add(this.params, 'hitBoxVisible').onChange(() => this.updateShape());
     }
 
-    updateShape() {
+    updateShape()
+    {
         console.log('updateShape called');
         console.log('Current Params:', this.params);
-        
+
         this.group.remove(this.model.mesh);
         this.model = new Plus(
             this.params.size,
@@ -71,9 +148,9 @@ export class WavyWallVisualizer
             wallThickness: 0.2,
             widthSegments: 16,
             heightSegments: 16,
-            dotSize: 0.1,
+            dotSize: 0.04,
             hitBoxVisible: false,
-            dotsVisible: false
+            dotsVisible: true
         };
 
         this.model = new WavyWall(
@@ -108,6 +185,8 @@ export class WavyWallVisualizer
 
     updateShape()
     {
+        // console.log('updateShape called');
+        // console.log('Current Params:', this.params);
         this.group.remove(this.model.mesh);
         this.model = new WavyWall(
             this.params.size,

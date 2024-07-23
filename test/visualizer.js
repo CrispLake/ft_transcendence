@@ -43,6 +43,7 @@ scene.add(light2);
 //	VISUALIZE
 //------------------------------------------------------------------------------
 
+// const visualizer = new V.WavyWallVisualizer();
 const visualizer = new V.WavyWallVisualizer();
 
 scene.add(visualizer.group);

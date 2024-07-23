@@ -23,10 +23,9 @@ def update_2p_score(player_id, my_score, other_score):
 @authentication_classes([MultiTokenAuthentication])
 def pong_2p(request, player_id=None):
     if request.method == 'GET':
-        if player_id is not None:
-            matches = Match.objects.filter(player1_id=player_id) | Match.objects.filter(player2_id=player_id)
-        else:
-            matches = Match.objects.all()
+        if player_id is None:
+            player_id = request.player.id
+        matches = Match.objects.filter(player1_id=player_id) | Match.objects.filter(player2_id=player_id)
 
         serializer = MatchSerializer(matches, many=True)
         return Response(serializer.data)
@@ -84,10 +83,9 @@ def update_4p_score(player_id, my_score):
 @authentication_classes([MultiTokenAuthentication])
 def pong_4p(request, player_id=None):
     if request.method == 'GET':
-        if player_id is not None:
-            matches = Pong_4p.objects.filter(player1_id=player_id) | Pong_4p.objects.filter(player2_id=player_id) | Pong_4p.objects.filter(player3_id=player_id) | Pong_4p.objects.filter(player4_id=player_id)
-        else:
-            matches = Pong_4p.objects.all()
+        if player_id is None:
+            player_id = request.player.id
+        matches = Pong_4p.objects.filter(player1_id=player_id) | Pong_4p.objects.filter(player2_id=player_id) | Pong_4p.objects.filter(player3_id=player_id) | Pong_4p.objects.filter(player4_id=player_id)
 
         serializer = Pong4PSerializer(matches, many=True)
         return Response(serializer.data)

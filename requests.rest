@@ -2,7 +2,7 @@
 
 ###
 
-GET http://localhost:8000/pong-2p/2
+GET http://localhost:8000/pong-2p/
 Authorization: Token 91975a4745dcf9a9a858a04cea79674c8444fb85
 
 ###

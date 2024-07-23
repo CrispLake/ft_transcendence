@@ -23,8 +23,9 @@ def update_2p_score(player_id, my_score, other_score):
 @authentication_classes([MultiTokenAuthentication])
 def pong_2p(request, player_id=None):
     if request.method == 'GET':
-        if player_id is None:
-            player_id = request.player.id
+        if player_id == None:
+            print(request)
+            player_id = request.user.id
         matches = Match.objects.filter(player1_id=player_id) | Match.objects.filter(player2_id=player_id)
 
         serializer = MatchSerializer(matches, many=True)

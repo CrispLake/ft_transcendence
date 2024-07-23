@@ -7,22 +7,19 @@ export default class extends AbstractView {
         this.auth = true;
         this.params = params;
         this.listeners = true;
-        this.init();
+        this.pong2pURL = 'http://localhost:8000/pong-2p';
+        this.gonp2pURL = 'http://localhost:8000/gonp-2p';
 
+
+        this.init();
         this.CategoryHandler = this.CategoryHandler.bind(this);
         this.fetchGames = this.fetchGames.bind(this);
         this.render2pGames = this.render2pGames.bind(this);
-        // this.render4pGames = this.render4pGames.bind(this);
         this.renderEmpty = this.renderEmpty.bind(this);
     }
 
     async init() {
       this.myID = await this.fetchMyID();
-      this.pong2pURL = 'http://localhost:8000/pong-2p/' + this.myID;
-      // this.pong4pURL = 'http://localhost:8000/pong-4p/' + this.myID;
-      this.gonp2pURL = 'http://localhost:8000/gonp-2p/' + this.myID;
-      // this.gonp4pURL = 'http://localhost:8000/gonp-4p/' + this.myID;
-      console.log('my id: ', this.myID)
     }
     
 
@@ -68,7 +65,7 @@ export default class extends AbstractView {
                 ${games.map(game => `
                     <li class="game-card ${this.getWinner(game)}">
                       <div class="font-text gamecard-left">
-                        <span class="player-name" data-id="${game.player1}">${game.player1Username}</span> 
+                        <a class="player-name" data-id="${game.player1}">${game.player1Username}</a> 
                       </div>
                       
                       <div class="gamecard-middle font-sub">
@@ -77,7 +74,7 @@ export default class extends AbstractView {
                       </div>
                       
                       <div class="font-text gamecard-right">
-                        <span class="player-name" data-id="${game.player2}">${game.player2Username}</span> 
+                        <a class="player-name" data-id="${game.player2}">${game.player2Username}</a> 
                       </div>
                     </li>
                 `).join('')}

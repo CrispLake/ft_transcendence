@@ -21,6 +21,7 @@ export default class {
     this.listeners = false; // event listener functions to be added
     this.auth = false; // if true, user needs to be authenticated
     this.childs = false; // if true, router will use appendChild instead of innerHtml
+    this.urlParams = new URLSearchParams(window.location.search);
   }
 
   // Helper function to set title of the page
@@ -54,9 +55,11 @@ export default class {
   // AddListeners()
   // RemoveListeners()
 
-  Redirect(newRoute) {
+  Redirect(newRoute, params = {}) {
+    const queryString = new URLSearchParams(params).toString();
+    const url = queryString ? `${newRoute}?${queryString}` : newRoute;
     const newEvent = new CustomEvent('navigate', {
-      detail: { href: newRoute },
+      detail: { href: url },
     });
     document.dispatchEvent(newEvent);
   }

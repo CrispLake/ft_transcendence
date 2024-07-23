@@ -23,6 +23,7 @@ import Home from './views/Home.js';
 import Pong from './views/Pong.js';
 import Settings from './views/Settings.js';
 import History from './views/History.js';
+import GameSetup from './views/gameSetup.js';
 
 // List of current event listeners
 let views_memory = new Array();
@@ -81,6 +82,7 @@ const router = async () => {
     { path: '/about', view: About },
     { path: '/play', view: Pong },
     { path: '/search', view: Search },
+    { path: '/gameSetup', view: GameSetup },
   ];
 
   // If there are listeners, remove them

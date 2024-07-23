@@ -14,18 +14,24 @@ import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUnifo
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Game } from '../pong/objects/Game.js';
 import * as KEY from '../pong/keys.js';
+import { Settings } from '../pong/objects/Settings.js';
 
 import AbstractView from "./AbstractView.js";
 
 export default class extends AbstractView {
   constructor(params) {
     super(params);
+    const playerCount = this.urlParams.get('players') || 1;
+    const multimode = this.urlParams.get('multimode') || false;
+    console.log("Multimode: " + multimode)
+    console.log("Playercount: " + playerCount)
     this.setTitle('Pong');
     this.listeners = true;
     this.childs = true;
     
     // Game variables
-    this.game = new Game();
+    this.settings = new Settings(playerCount, multimode == "false" ? false : true);
+    this.game = new Game(this.settings);
     this.controls = null;
 
     // Binding 'this' for external use
@@ -135,7 +141,7 @@ export default class extends AbstractView {
     }
   }
 
-  onWindowResize( event ) {
+  onWindowResize( ) {
     var width = window.innerWidth;
     var height = window.innerHeight;
     this.game.renderer.setSize(width, height);

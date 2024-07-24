@@ -2,6 +2,8 @@ from rest_framework import serializers
 from login.models import Account, FriendRequest
 from pong.serializers import MatchSerializer
 from django.contrib.auth.models import User
+from django.utils import timezone
+from datetime import timedelta
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,11 +20,16 @@ class UserSerializer(serializers.ModelSerializer):
 
 class FriendSerializer(serializers.ModelSerializer):
     user = UserSerializer()
+    online_status = serializers.SerializerMethodField()
 
     class Meta:
         model = Account
-        fields = ['user']
+        fields = ['user', 'online_status']
 
+    def get_online_status(self, obj):
+        if timezone.now() - obj.last_activity <= timedelta(minutes=15):
+            return "online"
+        return "offline"
 
 class AccountSerializer(serializers.ModelSerializer):
     friends = FriendSerializer(many=True, read_only=True)
@@ -30,7 +37,7 @@ class AccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ['id', 'user', 'pfp', 'wins', 'losses', 'friends']
+        fields = ['id', 'user', 'pfp', 'wins', 'losses', 'friends', 'last_activity']
         extra_kwargs = {
             'friends': {'required': False},
             'pfp': {'required': False},

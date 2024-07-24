@@ -8,6 +8,7 @@ from login.models import Account, FriendRequest
 from login.serializers import AccountSerializer, UserSerializer, FriendRequestSerializer
 from django.contrib.auth.models import User
 from django.middleware.csrf import get_token
+from .decorators import update_last_activity
 
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
@@ -23,6 +24,7 @@ class CustomAuthToken(ObtainAuthToken):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+@update_last_activity
 def profile(request, id=None):
     if id is None:
         id = request.user.id
@@ -37,6 +39,7 @@ def profile(request, id=None):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+@update_last_activity
 def profile_from_username(request, username=None):
     if username is None:
         return Response({'detail': 'Impossible request'}, status=status.HTTP_404_NOT_FOUND)
@@ -76,6 +79,7 @@ def get_csrf_token(request):
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
+@update_last_activity
 def update_account(request):
     account = request.user.account
     serializer = AccountSerializer(account, data=request.data, partial=True)
@@ -86,6 +90,7 @@ def update_account(request):
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
+@update_last_activity
 def update_user(request):
     user = request.user
 
@@ -100,6 +105,7 @@ def update_user(request):
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
+@update_last_activity
 def change_password(request):
     user = request.user
     serializer = UserSerializer(user, data=request.data, partial=True)
@@ -117,6 +123,7 @@ def change_password(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+@update_last_activity
 def request_list(request):
     user_id = request.user.id
     requests = FriendRequest.objects.filter(from_user=user_id) | FriendRequest.objects.filter(to_user=user_id)
@@ -125,6 +132,7 @@ def request_list(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+@update_last_activity
 def send_friend_request(request):
     to_user_id = request.data.get('to_user')
 
@@ -148,6 +156,7 @@ def send_friend_request(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+@update_last_activity
 def respond_to_friend_request(request, request_id):
     try:
         friend_request = FriendRequest.objects.get(id=request_id)
@@ -168,6 +177,7 @@ def respond_to_friend_request(request, request_id):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+@update_last_activity
 def remove_friend(request, remove_id):
     try:
         to_remove = User.objects.get(id=remove_id)

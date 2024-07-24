@@ -1,34 +1,75 @@
-body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    margin: 0;
+.history-div {
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-#sidebar {
-    width: 200px;
-    background-color: #f1f1f1;
-    padding: 10px;
-    box-sizing: border-box;
+.history-category {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.tab-content {
+  min-width: 800px !important;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.history-content {
+  width: 100%;
+  height: 100%;
+  min-width: 800px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  flex-direction: column;
+}
+
+.history-content h2 {
+  font-family: 'Chakra Petch', sans-serif;
+}
+
+.history-card {
+  width: 70%;
+  height: 80%;
 }
 
 .tab {
-    display: block;
-    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 48px;
     cursor: pointer;
-    background-color: #f1f1f1;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-bottom: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
+
+.tab:hover p {
+  transform: scale(0.8);
+}
+
+.tab p {
+  padding: 10px 15px 0px 20px;
+  transition: ease 0.1s;
+  margin: 0;
+}
+
+/* .tab a {
+  padding: 0;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  font-size: 2.5rem;
+} */
 
 .tab.active {
-    background-color: #ddd;
-}
-
-#content {
-    flex-grow: 1;
-    padding: 20px;
-    box-sizing: border-box;
+  background-color:var(--purple);
 }
 
 .tab-content {
@@ -36,21 +77,96 @@ body {
 }
 
 .tab-content.active {
-    display: block;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
-.username {
-    color: blue; /* Link color */
-    text-decoration: underline; /* Underline to mimic a link */
-    cursor: pointer; /* Change cursor to pointer */
+.tab-content ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
-.username:hover {
-    color: darkblue; /* Darker color on hover */
+.tab-content {
+  width: 70%;
 }
 
-.guest {
-    color: black; /* Guest color */
-    text-decoration: none; /* No underline */
-    cursor: default; /* Default cursor */
+.history-title {
+  font-size: 48px;
+}
+
+
+.game-card {
+  width: 100%;
+  height: 95px;
+  margin-top: 1rem;
+  padding-bottom: 0.25rem;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  transition: ease-out 0.1s;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.game-card:hover {
+  transform: scale(1.05);
+}
+
+.win {
+  background-color: var(--green);
+}
+
+.lose {
+  background-color: var(--pink);
+}
+
+.stale {
+  background-color: grey;
+}
+
+.score {
+  position: relative;
+  font-size: 54px;
+
+  margin: 0;
+  padding: 0;
+}
+
+.timestamp {
+  position: relative;
+  font-size: 20px;
+  margin: 0;
+  padding: 0;
+}
+
+.gamecard-middle {
+  width: 33%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.gamecard-left {
+  width: 33%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.gamecard-right {
+  width: 33%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.player-name {
+  font-size: 48px !important;
 }

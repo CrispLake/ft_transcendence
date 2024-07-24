@@ -8,7 +8,10 @@ from login.models import Account, FriendRequest
 from login.serializers import AccountSerializer, UserSerializer, FriendRequestSerializer
 from django.contrib.auth.models import User
 from django.middleware.csrf import get_token
+from django.conf import settings
 from .decorators import update_last_activity
+from django.http import FileResponse
+import os
 
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
@@ -21,6 +24,27 @@ class CustomAuthToken(ObtainAuthToken):
             'user_id': user.pk,
             'username': user.username
         })
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+@update_last_activity
+def serve_profile_image(request, id=None):
+    if id is None:
+        id = request.user.id
+
+    try:
+        account = Account.objects.get(id=id)
+        if account.pfp is None or account.pfp.name == '':
+            return Response({'error': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        file_path = os.path.join(settings.MEDIA_ROOT, account.pfp.name)
+
+        if os.path.exists(file_path):
+            return FileResponse(open(file_path, 'rb'))
+        else:
+            return Response({'error': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
+    except Account.DoesNotExist:
+        return Response({'detail': 'User doesn\'t exist.'}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -69,7 +93,7 @@ def register(request):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
@@ -138,7 +162,7 @@ def send_friend_request(request):
 
     if to_user_id is request.user.id:
         return Response({'detail': 'Can not send friend request to itself'}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     if request.user.account.friends.filter(id=to_user_id).exists():
         return Response({'detail': 'Already friend'}, status=status.HTTP_400_BAD_REQUEST)
 

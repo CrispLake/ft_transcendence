@@ -17,7 +17,7 @@ class FriendRequest(models.Model):
 
 class Account(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    pfp = models.ImageField(upload_to='login/profile_pics/')
+    pfp = models.ImageField(upload_to='login/profile_pics/', default='/login/profile_pics/pfp.png')
     wins = models.IntegerField(default=0)
     losses = models.IntegerField(default=0)
     friends = models.ManyToManyField("self", blank=True)

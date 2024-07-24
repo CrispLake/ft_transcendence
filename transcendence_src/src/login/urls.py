@@ -12,6 +12,7 @@ urlpatterns  = [
     path('account/<int:id>', views.profile),
     path('account/<str:username>', views.profile_from_username),
     path('account', views.profile),
+    path('account/<int:id>/image', views.serve_profile_image, name='serve_profile_image'),
 
     path('friend-request/send', views.send_friend_request, name='send-friend-request'),
     path('friend-request/respond/<int:request_id>', views.respond_to_friend_request, name='respond-to-friend-request'),

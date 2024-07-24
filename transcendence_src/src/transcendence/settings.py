@@ -31,6 +31,9 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+MEDIA_URL = '/login/profile_pics/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',

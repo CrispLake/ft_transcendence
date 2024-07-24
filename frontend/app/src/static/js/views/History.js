@@ -7,17 +7,21 @@ export default class extends AbstractView {
         this.auth = true;
         this.params = params;
         this.listeners = true;
-        this.pong2pURL = 'http://localhost:8000/pong-2p'
-        this.pong4pURL = 'http://localhost:8000/pong-4p'
-        this.gonp2pURL = 'http://localhost:8000/gonp-2p'
-        this.gonp4pURL = 'http://localhost:8000/gonp-4p'
+        this.pong2pURL = 'http://localhost:8000/pong-2p';
+        this.gonp2pURL = 'http://localhost:8000/gonp-2p';
 
+
+        this.init();
         this.CategoryHandler = this.CategoryHandler.bind(this);
         this.fetchGames = this.fetchGames.bind(this);
         this.render2pGames = this.render2pGames.bind(this);
-        this.render4pGames = this.render4pGames.bind(this);
         this.renderEmpty = this.renderEmpty.bind(this);
     }
+
+    async init() {
+      this.myID = await this.fetchMyID();
+    }
+    
 
     async fetchGames(urlStart) {
         const token = this.GetKey();
@@ -39,17 +43,39 @@ export default class extends AbstractView {
         }
     }
 
+    // returns class .win or .lose based on if logged in player won
+    getWinner(game) {
+      if (game.player1Score === game.player2Score) {
+        return 'stale';
+      }
+      const result = game.player1Score > game.player2Score ? 1 : 2;
+      if (this.myID === game.player1) {
+        return result === 1 ? 'win' : 'lose';
+      }
+      else {
+        return result === 2 ? 'win' : 'lose';
+      }
+    }
+
     render2pGames(games, elementID, title) {
         const categoryContent = document.getElementById(elementID);
+        console.log(games);
         categoryContent.innerHTML = `
-            <h2>${title} Games</h2>
             <ul>
                 ${games.map(game => `
-                    <li>
-                        <span class="${game.player1Username !== 'Guest' ? 'username' : 'guest'}" data-id="${game.player1}">${game.player1Username}</span> 
-                        (${game.player1Score}) vs (${game.player2Score})
-                        <span class="${game.player2Username !== 'Guest' ? 'username' : 'guest'}" data-id="${game.player2}">${game.player2Username}</span> 
-                        on ${new Date(game.date).toLocaleString()}
+                    <li class="game-card ${this.getWinner(game)}">
+                      <div class="font-text gamecard-left">
+                        <a class="player-name" data-id="${game.player1}">${game.player1Username}</a> 
+                      </div>
+                      
+                      <div class="gamecard-middle font-sub">
+                        <p class="score">${game.player1Score} vs ${game.player2Score}</p>
+                        <p class="timestamp">${new Date(game.date).toLocaleString()}</p>
+                      </div>
+                      
+                      <div class="font-text gamecard-right">
+                        <a class="player-name" data-id="${game.player2}">${game.player2Username}</a> 
+                      </div>
                     </li>
                 `).join('')}
             </ul>
@@ -65,42 +91,44 @@ export default class extends AbstractView {
         });
     }
 
-    render4pGames(games, elementID, title) {
-        const categoryContent = document.getElementById(elementID);
-        categoryContent.innerHTML = `
-            <h2>${title} Games</h2>
-            <ul>
-                ${games.map(game => `
-                    <li>
-                        <span class="${game.player1Username !== 'Guest' ? 'username' : 'guest'}" data-id="${game.player1}">${game.player1Username}</span> 
-                        (${game.player1Score}) vs 
-                        <span class="${game.player2Username !== 'Guest' ? 'username' : 'guest'}" data-id="${game.player2}">${game.player2Username}</span> 
-                        (${game.player2Score}) vs
-                        <span class="${game.player3Username !== 'Guest' ? 'username' : 'guest'}" data-id="${game.player3}">${game.player3Username}</span> 
-                        (${game.player3Score}) vs
-                        <span class="${game.player4Username !== 'Guest' ? 'username' : 'guest'}" data-id="${game.player4}">${game.player4Username}</span> 
-                        (${game.player4Score})
-                        on ${new Date(game.date).toLocaleString()}
-                    </li>
-                `).join('')}
-            </ul>
-        `;
+    // render4pGames(games, elementID, title) {
+    //     const categoryContent = document.getElementById(elementID);
+    //     categoryContent.innerHTML = `
+    //         <ul>
+    //             ${games.map(game => `
+    //                 <li>
+    //                     <span class="${game.player1Username !== 'Guest' ? 'username' : 'guest'}" data-id="${game.player1}">${game.player1Username}</span> 
+    //                     (${game.player1Score}) vs 
+    //                     <span class="${game.player2Username !== 'Guest' ? 'username' : 'guest'}" data-id="${game.player2}">${game.player2Username}</span> 
+    //                     (${game.player2Score}) vs
+    //                     <span class="${game.player3Username !== 'Guest' ? 'username' : 'guest'}" data-id="${game.player3}">${game.player3Username}</span> 
+    //                     (${game.player3Score}) vs
+    //                     <span class="${game.player4Username !== 'Guest' ? 'username' : 'guest'}" data-id="${game.player4}">${game.player4Username}</span> 
+    //                     (${game.player4Score})
+    //                     on ${new Date(game.date).toLocaleString()}
+    //                 </li>
+    //             `).join('')}
+    //         </ul>
+    //     `;
     
-        // Add event listeners to usernames
-        const usernameElements = categoryContent.querySelectorAll('.username');
-        usernameElements.forEach(usernameElement => {
-            usernameElement.addEventListener('click', () => {
-                const playerId = usernameElement.getAttribute('data-id');
-                this.Redirect(`/profile/${playerId}`);
-            });
-        });
-    }
+    //     // Add event listeners to usernames
+    //     const usernameElements = categoryContent.querySelectorAll('.username');
+    //     usernameElements.forEach(usernameElement => {
+    //         usernameElement.addEventListener('click', () => {
+    //             const playerId = usernameElement.getAttribute('data-id');
+    //             this.Redirect(`/profile/${playerId}`);
+    //         });
+    //     });
+    // }
 
     renderEmpty(elementID, title) {
         const categoryContent = document.getElementById(elementID);
         categoryContent.innerHTML = `
-            <h2>${title} Games</h2>
-            <ul> No match history </ul>
+            <ul>
+              <li class="game-card">
+                <p class="history-title font-text">No match history</p>
+              </li>
+            </ul>
         `
     }
 
@@ -119,7 +147,7 @@ export default class extends AbstractView {
         }
 
         const categoryName = event.currentTarget.getAttribute('data-category');
-        document.getElementById(categoryName).style.display = 'block';
+        document.getElementById(categoryName).style.display = 'inline';
         event.currentTarget.classList.add('active');
 
         if (categoryName === 'pong2p') {
@@ -131,14 +159,14 @@ export default class extends AbstractView {
                 this.render2pGames(games, categoryName, 'Pong 2p');
         }
 
-        else if (categoryName === 'pong4p') {
-            const games = await this.fetchGames(this.pong4pURL);
+        // else if (categoryName === 'pong4p') {
+        //     const games = await this.fetchGames(this.pong4pURL);
 
-            if (Object.keys(games).length === 0)
-                this.renderEmpty(categoryName, 'Pong 4p');
-            else
-                this.render4pGames(games, categoryName, 'Pong 4p');
-        }
+        //     if (Object.keys(games).length === 0)
+        //         this.renderEmpty(categoryName, 'Pong 4p');
+        //     else
+        //         this.render4pGames(games, categoryName, 'Pong 4p');
+        // }
 
         else if (categoryName === 'gonp2p') {
             const games = await this.fetchGames(this.gonp2pURL);
@@ -149,14 +177,14 @@ export default class extends AbstractView {
                 this.render2pGames(games, categoryName, 'Gonp 2p');
         }
 
-        else if (categoryName === 'gonp4p') {
-            const games = await this.fetchGames(this.gonp4pURL);
+        // else if (categoryName === 'gonp4p') {
+        //     const games = await this.fetchGames(this.gonp4pURL);
 
-            if (Object.keys(games).length === 0)
-                this.renderEmpty(categoryName, 'Gonp 4p');
-            else
-                this.render4pGames(games, categoryName, 'Gonp 4p');
-        }
+        //     if (Object.keys(games).length === 0)
+        //         this.renderEmpty(categoryName, 'Gonp 4p');
+        //     else
+        //         this.render4pGames(games, categoryName, 'Gonp 4p');
+        // }
     }
 
     AddListeners() {
@@ -187,28 +215,26 @@ export default class extends AbstractView {
 
     async getHtml() {
         return `
-            <div id="tabs">
-                <div class="tab active" data-category="pong2p">Pong 2p</div>
-                <div class="tab" data-category="pong4p">Pong 4p</div>
-                <div class="tab" data-category="gonp2p">Gonp 2p</div>
-                <div class="tab" data-category="gonp4p">Gonp 4p</div>
+        <div class="history-div">
+          <div class="history-card">
+            
+            <div id="tabs" class="history-category font-heading">
+              <div class="tab" data-category="pong2p"><p>Pong</p></div>
+              <div class="tab" data-category="gonp2p"><p>Gonp</p></div>
             </div>
 
-            <div id="pong2p" class="tab-content" style="display: block;">
-                <h2>Pong 2p Games</h2>
+            <div class="history-content">
+    
+              <div id="pong2p" class="tab-content">
+              </div>
+
+              <div id="gonp2p" class="tab-content">
+              </div>
+
             </div>
 
-            <div id="pong4p" class="tab-content">
-                <h2>Pong 4p games</h2>
-            </div>
-
-            <div id="gonp2p" class="tab-content">
-                <h2>Gonp 2p</h2>
-            </div>
-
-            <div id="gonp4p" class="tab-content">
-                <h2>Gonp 4p Games</h2>
-            </div>
+          </div>
+        </div>
         `;
     }
 }

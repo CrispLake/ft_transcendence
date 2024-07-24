@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:08:11 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/17 12:21:10 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/23 13:04:08 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,42 @@ export default class {
     this.listeners = false; // event listener functions to be added
     this.auth = false; // if true, user needs to be authenticated
     this.childs = false; // if true, router will use appendChild instead of innerHtml
+    this.urlParams = new URLSearchParams(window.location.search);
   }
 
   // Helper function to set title of the page
   setTitle(title) {
     document.title = title;
+  }
+
+  async fetchMyID() {
+    try {
+      const response = await axios.get(
+        'http://localhost:8000/account', {
+          headers: { 'Authorization': `Token ${this.GetKey()}` }
+        });
+      const id = response.data.id;
+      return id;
+    }
+    catch(error) {
+      console.log(error);
+      return -1;
+    }
+  }
+
+  async fetchMyName() {
+    try {
+      const response = await axios.get(
+        'http://localhost:8000/account', {
+          headers: { 'Authorization': `Token ${this.GetKey()}` }
+        });
+      const name = response.data.user.username;
+      return name;
+    }
+    catch(error) {
+      console.log(error);
+      return -1;
+    }
   }
 
   Authenticate() {
@@ -54,9 +85,11 @@ export default class {
   // AddListeners()
   // RemoveListeners()
 
-  Redirect(newRoute) {
+  Redirect(newRoute, params = {}) {
+    const queryString = new URLSearchParams(params).toString();
+    const url = queryString ? `${newRoute}?${queryString}` : newRoute;
     const newEvent = new CustomEvent('navigate', {
-      detail: { href: newRoute },
+      detail: { href: url },
     });
     document.dispatchEvent(newEvent);
   }

@@ -13,10 +13,11 @@ import { Ball } from './Ball.js';
 
 export class Game
 {
-	constructor()
+	constructor(settings)
 	{
 		console.log("Creating Game Object...");
-		this.settings = new Settings();
+		console.log(settings);
+		this.settings = settings;
 		this.scene = new THREE.Scene();
 		this.players = [];
 		this.createPlayers();

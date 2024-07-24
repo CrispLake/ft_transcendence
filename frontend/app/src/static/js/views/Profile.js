@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 09:22:19 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/18 11:48:12 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/23 12:45:54 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,12 @@ export default class extends AbstractView {
         super(params);
         this.setTitle('Profile');
         this.auth = true;
+        this.listeners = true;
         this.params = params;
         this.profileData = null; // Initialize profile data
         this.profileURL = 'http://localhost:8000/account';
+
+        this.logoutHandler = this.logoutHandler.bind(this);
     }
 
     async fetchProfileData() {
@@ -44,6 +47,24 @@ export default class extends AbstractView {
             // Handle error, e.g., by setting an error message
             this.profileData = { error: 'Failed to load profile data' };
         }
+    }
+
+    logoutHandler(event) {
+      event.preventDefault();
+      this.DeleteKey();
+      this.Redirect('/');
+    }
+
+    AddListeners() {
+      const logoutButton = document.getElementById('logoutButton');
+      if (!logoutButton) return;
+      logoutButton.addEventListener('click', this.logoutHandler);
+    }
+
+    RemoveListeners() {
+      const logoutButton = document.getElementById('logoutButton');
+      if (!logoutButton) return;
+      logoutButton.removeEventListener('click', this.logoutHandler);
     }
 
     async getHtml() {
@@ -84,6 +105,7 @@ export default class extends AbstractView {
                     <h2>winrate: ${winrateF}%</h2>
                     <a href="/settings" data-link>Settings</a>
                     <button href="${matchHistory}">History</button>
+                    <button id="logoutButton">Logout</button>
                 </div>
             </div>
         `;

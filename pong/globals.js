@@ -154,6 +154,10 @@ export const powerupIntervalSec = 1;
 export const powerupMaxTimeSec = 8;
 export const powerupRotationSpeed = 0.01;
 
+export const powerupSphereRadius = 1;
+export const powerupSphereSegments = 32;
+export const powerupSphereOpacity = 0.1;
+
 export const powerupSize = 1;
 export const powerupWidthMargin = arenaWidth * 0.1;
 export const powerupLengthMargin = arenaLength * 0.1;
@@ -162,8 +166,9 @@ export const paddleSizeIncrement = 1;
 export const minPaddleLength = arenaWidth * 0.05;
 export const maxPaddleLength = arenaWidth * 0.5;
 export const wavyWallsDurationSec = 6;
-export const wavyWallsCycles = 4;
+export const wavyWallsCycles = 3;
 export const maxDivergencePercentage = 0.2;
+
 
 
 //--------------------------------------------------------------------------
@@ -172,29 +177,13 @@ export const maxDivergencePercentage = 0.2;
 
 export const sizeMultiplier = 0.3;
 export const arrowThickness = 2.5;
-const bevelPercentage = 50;
-const bevelThickness = arrowThickness * bevelPercentage / 100;
-
-export const extrudeSettings = {
-    steps: 2,
-    depth: (arrowThickness - bevelThickness * 2) * sizeMultiplier,
-    bevelEnabled: true,
-    bevelThickness: bevelThickness * sizeMultiplier,
-    bevelSize: 0.5 * sizeMultiplier,
-    bevelOffset: 0,
-    bevelSegments: 8
-}
-
-const headWidth = 2 * sizeMultiplier;
-const shaftWidth = 1 * sizeMultiplier;
-export const headLength = 1 * sizeMultiplier;
-export const shaftLength = 1 * sizeMultiplier;
-
-export const headWidthOffset = headWidth / 2;
-export const shaftWidthOffset = shaftWidth / 2;
-
-export const arrowEnlargeLightIntensity = 1;
-export const arrowShrinkLightIntensity = 1;
+export const arrowBevelSegments = 8;
+export const arrowHeadWidth = 3;
+export const arrowHeadLength = 1.5;
+export const arrowShaftWidth = 1;
+export const arrowShaftLength = 1.5;
+export const arrowRadius = 0.1;
+export const arrowBevelThickness = 0.2;
 
 
 //--------------------------------------------------------------------------
@@ -202,6 +191,7 @@ export const arrowShrinkLightIntensity = 1;
 //--------------------------------------------------------------------------
 
 export const plusMultiplier = 0.4;
+export const plusBevelSegments = 8;
 export const plusThickness = 1.3;
 export const plusWidth = 1;
 export const plusLength = 3;

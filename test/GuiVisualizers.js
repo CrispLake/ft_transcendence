@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { Arrow } from './Arrow.js';
 import { Plus } from './Plus.js';
 import { WavyWall } from './WavyWall.js';
+import { WavyWall2 } from './WavyWall2.js';
 
 export class ArrowVisualizer
 {
@@ -199,7 +200,69 @@ export class WavyWallVisualizer
             this.params.heightSegments,
             this.params.dotSize,
             this.params.hitBoxVisible,
-            this.params.dotsVisible
+        );
+        this.group.add(this.model.mesh);
+    }
+}
+
+export class WavyWall2Visualizer
+{
+    constructor()
+    {
+        this.gui = new dat.GUI();
+        this.params = {
+            sphereRadius: 1,
+            width: 2,
+            length: 3,
+            floorThickness: 0.1,
+            wallHeight: 0.3,
+            wallThickness: 0.2,
+            widthSegments: 32,
+            heightSegments: 32,
+            opacity: 0.2
+        };
+
+        this.model = new WavyWall2(
+            this.params.sphereRadius,
+            this.params.width,
+            this.params.length,
+            this.params.floorThickness,
+            this.params.wallHeight,
+            this.params.wallThickness,
+            this.params.widthSegments,
+            this.params.heightSegments,
+            this.params.opacity
+        );
+
+        this.group = new THREE.Group();
+        this.group.add(this.model.mesh);
+
+        this.gui.add(this.params, 'sphereRadius', 1, 5).step(1).onChange(() => this.updateShape());
+        this.gui.add(this.params, 'width', 0.5, 5).onChange(() => this.updateShape());
+        this.gui.add(this.params, 'length', 0.5, 5).onChange(() => this.updateShape());
+        this.gui.add(this.params, 'floorThickness', 0.05, 1).step(0.05).onChange(() => this.updateShape());
+        this.gui.add(this.params, 'wallHeight', 0.1, 1).step(0.05).onChange(() => this.updateShape());
+        this.gui.add(this.params, 'wallThickness', 0.1, 1).step(0.05).onChange(() => this.updateShape());
+        this.gui.add(this.params, 'widthSegments', 1, 32).step(1).onChange(() => this.updateShape());
+        this.gui.add(this.params, 'heightSegments', 1, 32).step(1).onChange(() => this.updateShape());
+        this.gui.add(this.params, 'opacity', 0, 1).step(0.05).onChange(() => this.updateShape());
+    }
+
+    updateShape()
+    {
+        // console.log('updateShape called');
+        // console.log('Current Params:', this.params);
+        this.group.remove(this.model.mesh);
+        this.model = new WavyWall2(
+            this.params.sphereRadius,
+            this.params.width,
+            this.params.length,
+            this.params.floorThickness,
+            this.params.wallHeight,
+            this.params.wallThickness,
+            this.params.widthSegments,
+            this.params.heightSegments,
+            this.params.opacity
         );
         this.group.add(this.model.mesh);
     }

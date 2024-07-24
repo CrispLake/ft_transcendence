@@ -8,30 +8,48 @@ export class PowerPaddleShort
     constructor(game)
     {
         this.game = game;
-        
-        const sizeMultiplier = 1;
-        const arrow1 = new Arrow(sizeMultiplier, COLOR.POWER_PADDLE_SHORT, G.arrowShrinkLightIntensity);
-        const arrow2 = new Arrow(sizeMultiplier, COLOR.POWER_PADDLE_SHORT, G.arrowShrinkLightIntensity);
-
-        arrow1.mesh.rotation.z = Math.PI;
-        arrow1.mesh.position.z += G.headLength * 1.8;
-        arrow2.mesh.position.z -= G.headLength * 1.8;
-
-        this.mesh = new THREE.Group();
-        this.mesh.add(arrow1.mesh);
-        this.mesh.add(arrow2.mesh);
-        this.mesh.position.y += G.arrowThickness * G.sizeMultiplier;
-
-        this.box = new THREE.Box3();
-        this.box.setFromObject(this.mesh);
         this.power = G.POWER_PADDLE_LONG;
         this.message = "Shrink paddle";
+        
+        // ----Arrows----
+        const sizeMultiplier = 1;
+        this.arrow1 = new Arrow(sizeMultiplier, G.arrowThickness, COLOR.POWER_PADDLE_SHORT);
+        this.arrow2 = new Arrow(sizeMultiplier, G.arrowThickness, COLOR.POWER_PADDLE_SHORT);
+
+        this.arrow1.mesh.rotation.z = Math.PI;
+        this.arrow1.mesh.position.z -= G.arrowHeadLength * 1.3;
+        this.arrow2.mesh.position.z += G.arrowHeadLength * 1.3;
+
+        // ----Group arrows together----
+        this.model = new THREE.Group();
+        this.model.add(this.arrow1.mesh);
+        this.model.add(this.arrow2.mesh);
+
+        // ----Scale arrows to fit sphere----
+        const boundingBox = new THREE.Box3().setFromObject(this.model);
+        const modelSize = new THREE.Vector3();
+        boundingBox.getSize(modelSize);
+        const boundingBoxDiagonal = modelSize.length();
+        const ratio = G.powerupSphereRadius * 2 / boundingBoxDiagonal;
+        this.model.scale.set(ratio, ratio, ratio);
+
+        // ----Sphere----
+        const sphereGeometry = new THREE.SphereGeometry(G.powerupSphereRadius, G.powerupSphereSegments, G.powerupSphereSegments);
+        const pointsMaterial = new THREE.MeshBasicMaterial({ color: COLOR.POWERUP_SPHERE, opacity: G.powerupSphereOpacity, transparent: true, wireframe: false });
+        const auraSphere = new THREE.Mesh(sphereGeometry, pointsMaterial);
+        
+        // ----Group sphere with model----
+        this.mesh = new THREE.Group();
+        this.mesh.add(this.model);
+        this.mesh.add(auraSphere);
+
+        // ----Create hitbox----
+        this.hitbox = new THREE.Sphere(this.mesh.position, G.powerupSphereRadius);
     }
 
     rotate()
     {
         this.mesh.rotation.y += G.powerupRotationSpeed;
-        this.box.setFromObject(this.mesh);
     }
 
     activate(player)

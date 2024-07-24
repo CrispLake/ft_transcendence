@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import * as G from '../../globals.js';
 import * as COLOR from '../../colors.js';
 import { WavyWall } from '../shapes/WavyWall.js';
+import { WavyWall2 } from '../shapes/WavyWall2.js';
 import { Arrow } from '../shapes/Arrow.js';
 
 export class PowerWavyWalls
@@ -12,7 +13,7 @@ export class PowerWavyWalls
         this.power = G.POWER_WAVY_WALLS;
         this.message = "Wavy Walls";
 
-        this.arenaModel = new WavyWall();
+        this.arenaModel = new WavyWall2();
         
         this.light = new THREE.PointLight(COLOR.POWER_WAVY_WALLS, 1, 5, 0.5);
 
@@ -20,14 +21,12 @@ export class PowerWavyWalls
         this.mesh.add(this.arenaModel.mesh);
         this.mesh.add(this.light);
         
-        this.box = new THREE.Box3();
-        this.box.setFromObject(this.mesh);
+        this.hitbox = new THREE.Sphere(this.mesh.position, G.powerupSphereRadius);
     }
 
     rotate()
     {
         this.mesh.rotation.y += G.powerupRotationSpeed;
-        this.box.setFromObject(this.mesh);
     }
 
     activate(player)

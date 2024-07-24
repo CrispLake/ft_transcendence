@@ -1,23 +1,19 @@
 import * as THREE from 'three';
-import * as C from '../pong/colors.js';
+import * as COLOR from '../../colors.js';
+import * as G from '../../globals.js';
 
 export class Plus
 {
-    constructor(size, width, length, thickness, roundPercentage, segments, hitBoxVisible)
+    constructor()
     {
-        const multiplier = size;
-        const adjustedThickness = thickness * multiplier;
-        const adjustedWidth = width * multiplier;
-        const adjustedLength = length * multiplier;
+        const w = G.plusWidth / 2;
+        const l = G.plusLength / 2;
+        const r = G.plusWidth / 2 * (G.plusRoundnessPercentage / 100);
 
-        const w = adjustedWidth / 2;
-        const l = adjustedLength / 2;
-        const r = adjustedWidth / 2 * (roundPercentage / 100);
-
-        const maxBevelThickness = adjustedThickness / 2;
+        const maxBevelThickness = G.plusThickness / 2;
         const bevelThickness = Math.min(r, maxBevelThickness);
-        const bevelSize = 0.3 * multiplier;
-        const depth = adjustedThickness - r * 2;
+        const bevelSize = 0.3;
+        const depth = G.plusThickness - r * 2;
     
         const extrudeSettings = {
             steps: 1,
@@ -26,8 +22,8 @@ export class Plus
             bevelThickness: bevelThickness,
             bevelSize: bevelSize,
             bevelOffset: 0,
-            bevelSegments: segments,
-            curveSegments: segments
+            bevelSegments: G.plusBevelSegments,
+            curveSegments: G.plusBevelSegments
         };
     
         const shape = new THREE.Shape();
@@ -54,36 +50,15 @@ export class Plus
         shape.quadraticCurveTo(-w, l, -w + r, l);
     
         const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-        const material = new THREE.MeshStandardMaterial({color: C.GREEN});
+        const material = new THREE.MeshBasicMaterial({color: COLOR.POWER_LIFE_PLUS});
         this.plus = new THREE.Mesh(geometry, material);
-        this.plus.position.z -= adjustedThickness / 2 - bevelThickness;
+        this.plus.position.z -= G.plusThickness / 2 - bevelThickness;
 
-        // Create the hitbox as a Box3
-        const boxSize = new THREE.Vector3(adjustedLength + bevelThickness * 2, adjustedLength + bevelThickness * 2, adjustedThickness);
-        this.box = new THREE.Box3();
-        this.box.setFromCenterAndSize(new THREE.Vector3(0, 0, 0), boxSize);
-        
+        this.light = new THREE.PointLight(COLOR.POWER_LIFE_PLUS, 1, 5, 0.5);
+        this.light.position.set(0, 0, 0);
+
         this.mesh = new THREE.Group();
         this.mesh.add(this.plus);
-
-        if (hitBoxVisible)
-        {
-            const helper = new THREE.Box3Helper(this.box, C.PURPLE);
-            this.mesh.add(helper);
-        }
-
-        console.log("---------------------------------");
-        console.log("roundPerc = " + roundPercentage);
-        console.log("---------------------------------");
-        console.log("width     = " + adjustedWidth);
-        console.log("length    = " + adjustedLength);
-        console.log("thickness = " + adjustedThickness);
-        console.log("---------------------------------");
-        console.log("radius            = " + r);
-        console.log("maxBevelThickness = " + maxBevelThickness);
-        console.log("bevelThickness    = " + bevelThickness);
-        console.log("depth             = " + depth);
-        console.log("---------------------------------");
-        console.log("");
+        this.mesh.add(this.light);
     }
 }

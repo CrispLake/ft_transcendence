@@ -39,9 +39,12 @@ export const UI_PLAYERCARD_BG = DARK_GRAY;
 export const UI_PLAYERCARD_BORDER = PURPLE;
 export const UI_LIFE = WHITE;
 
+export const POWERUP_SPHERE = WHITE;
 export const POWER_PADDLE_LONG = GREEN;
 export const POWER_PADDLE_SHORT = RED;
 export const POWER_LIFE_PLUS = GREEN;
 export const POWER_LIFE_PLUS_INNER = GREEN;
 export const POWER_LIFE_PLUS_FRAME = WHITE;
+export const POWER_WAVY_FLOOR = GRAY;
 export const POWER_WAVY_WALLS = PURPLE;
+export const POWER_WAVY_ARROWS = WHITE;

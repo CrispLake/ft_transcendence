@@ -226,7 +226,7 @@ export class Game
 		}
 		if (this.powerupManager.powerup != null)
 		{
-			if (this.ball.box.intersectsBox(this.powerupManager.powerup.box))
+			if (this.ball.box.intersectsSphere(this.powerupManager.powerup.hitbox))
 			{
 				for (let player in this.players)
 				{

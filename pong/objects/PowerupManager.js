@@ -13,9 +13,9 @@ export class PowerupManager
         this.game = game;
         this.scene = game.gameScene;
         this.powerups = [
-            // new PowerPaddleLong(this.game),
-            // new PowerPaddleShort(this.game),
-            // new PowerLifePlus(this.game),
+            new PowerPaddleLong(this.game),
+            new PowerPaddleShort(this.game),
+            new PowerLifePlus(this.game),
             new PowerWavyWalls(this.game)
         ]
         this.availablePowerups = [...this.powerups];
@@ -94,7 +94,7 @@ export class PowerupManager
         // Set random x and z position so that there will be a margin between powerup and arena end.
         let x = PongMath.lerp(Math.random(), 0, 1, -(G.arenaLength / 2 - G.wallThickness - G.powerupSize / 2 - G.powerupWidthMargin), (G.arenaLength / 2 - G.wallThickness - G.powerupSize / 2 - G.powerupWidthMargin));
         let z = PongMath.lerp(Math.random(), 0, 1, -(G.arenaWidth / 2 - G.powerupSize / 2 - G.powerupLengthMargin), (G.arenaWidth / 2 - G.powerupSize / 2 - G.powerupLengthMargin));
-        return (new THREE.Vector3(x, 0, z));
+        return (new THREE.Vector3(x, G.powerupSphereRadius * 0.8 - G.wallHeight / 2, z));
     }
 
     spawnPowerup()
@@ -110,9 +110,7 @@ export class PowerupManager
         this.powerup = this.availablePowerups.splice(randomIndex, 1)[0];
 
         const randomPosition = this.getRandomPosition();
-        // this.powerup.setPos(randomPosition);
         this.powerup.mesh.position.set(randomPosition.x, randomPosition.y, randomPosition.z);
-        this.powerup.box.setFromObject(this.powerup.mesh);
         this.scene.add(this.powerup.mesh);
     }
 

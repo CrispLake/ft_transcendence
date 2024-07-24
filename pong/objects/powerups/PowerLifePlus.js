@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import * as G from '../../globals.js';
 import * as COLOR from '../../colors.js';
+import { Plus } from '../shapes/Plus.js';
 
 export class PowerLifePlus
 {
@@ -10,112 +11,35 @@ export class PowerLifePlus
         this.power = G.POWER_LIFE_PLUS;
         this.message = "Life Plus";
 
-        this.createPlus();
-        this.createLight();
-        this.createHitbox();
-        this.adjustPositions();
-        this.createMesh();
-    }
+        this.model = new Plus();
 
-    //--------------------------------------------------------------------------
-    //  INITIALIZE
-    //--------------------------------------------------------------------------
+        // ----Scale model to fit sphere----
+        const boundingBox = new THREE.Box3().setFromObject(this.model.mesh);
+        const modelSize = new THREE.Vector3();
+        boundingBox.getSize(modelSize);
+        const boundingBoxDiagonal = modelSize.length();
+        const ratio = G.powerupSphereRadius * 2 / boundingBoxDiagonal;
+        this.model.mesh.scale.set(ratio, ratio, ratio);
 
-    createPlus()
-    {
-        this.thickness = G.plusThickness * G.plusMultiplier;
-        this.width = G.plusWidth * G.plusMultiplier;
-        this.length = G.plusLength * G.plusMultiplier;
-
-        const w = this.width / 2;
-        const l = this.length / 2;
-        const r = this.width / 2 * (G.plusRoundnessPercentage / 100);
-
-        const maxBevelThickness = this.thickness / 2;
-        this.bevelThickness = Math.min(r, maxBevelThickness);
-        const bevelSize = 0.3 * G.plusMultiplier;
-        const depth = this.thickness - r * 2;
-
-        const extrudeSettings = {
-            steps: 1,
-            depth: depth,
-            bevelEnabled: true,
-            bevelThickness: this.bevelThickness,
-            bevelSize: bevelSize,
-            bevelOffset: 0,
-            bevelSegments: G.plusSegments,
-            curveSegments: G.plusSegments
-        };
-
-        const shape = new THREE.Shape();
-        shape.moveTo(-w + r, l);
-        shape.lineTo(w - r, l);
-        shape.quadraticCurveTo(w, l, w, l - r);
-        shape.lineTo(w, w);
-        shape.lineTo(l - r, w);
-        shape.quadraticCurveTo(l, w, l, w - r);
-        shape.lineTo(l, -w + r);
-        shape.quadraticCurveTo(l, -w, l - r, -w);
-        shape.lineTo(w, -w);
-        shape.lineTo(w, -l + r);
-        shape.quadraticCurveTo(w, -l, w - r, -l);
-        shape.lineTo(-w + r, -l);
-        shape.quadraticCurveTo(-w, -l, -w, -l + r);
-        shape.lineTo(-w, -w);
-        shape.lineTo(-l + r, -w);
-        shape.quadraticCurveTo(-l, -w, -l, -w + r);
-        shape.lineTo(-l, w - r);
-        shape.quadraticCurveTo(-l, w, -l + r, w);
-        shape.lineTo(-w, w);
-        shape.lineTo(-w, l - r);
-        shape.quadraticCurveTo(-w, l, -w + r, l);
-
-        const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-        const material = new THREE.MeshBasicMaterial({color: COLOR.POWER_LIFE_PLUS});
+        // ----Sphere----
+        const sphereGeometry = new THREE.SphereGeometry(G.powerupSphereRadius, G.powerupSphereSegments, G.powerupSphereSegments);
+        const pointsMaterial = new THREE.MeshBasicMaterial({ color: COLOR.POWERUP_SPHERE, opacity: G.powerupSphereOpacity, transparent: true, wireframe: false });
+        const auraSphere = new THREE.Mesh(sphereGeometry, pointsMaterial);
         
-        this.plus = new THREE.Mesh(geometry, material);
-    }
-
-    createLight()
-    {
-        this.light = new THREE.PointLight(COLOR.POWER_LIFE_PLUS, 1, 5, 0.5);
-        this.light.position.set(0, 0, 0);
-    }
-
-    createHitbox()
-    {
-        const boxGeometry = new THREE.BoxGeometry(this.length + this.bevelThickness * 2, this.length + this.bevelThickness * 2, this.thickness);
-        const boxMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true, visible: false }); // Set visible to true to visualize
-        this.boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
-        
-        this.box = new THREE.Box3();
-        this.box.setFromObject(this.boxMesh);
-    }
-
-    adjustPositions()
-    {
-        this.plus.position.z -= this.thickness / 2 - this.bevelThickness;
-        this.plus.position.y += this.length / 2;
-        this.light.position.y += this.length / 2;
-        this.boxMesh.position.y += this.length / 2;
-    }
-
-    createMesh()
-    {
+        // ----Group sphere with model----
         this.mesh = new THREE.Group();
-        this.mesh.add(this.plus);
-        this.mesh.add(this.light);
-        this.mesh.add(this.boxMesh);
-    }
+        this.mesh.add(this.model.mesh);
+        this.mesh.add(auraSphere);
 
-    //--------------------------------------------------------------------------
-    //  PUBLIC FUNCTIONS
-    //--------------------------------------------------------------------------
+        this.mesh.position.set(0, G.powerupSphereRadius * 2, 0);
+
+        // ----Create hitbox----
+        this.hitbox = new THREE.Sphere(this.mesh.position, G.powerupSphereRadius);
+    }
 
     rotate()
     {
         this.mesh.rotation.y += G.powerupRotationSpeed;
-        this.box.setFromObject(this.boxMesh);
     }
 
     activate(player)

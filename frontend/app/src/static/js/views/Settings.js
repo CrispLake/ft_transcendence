@@ -95,8 +95,8 @@ export default class extends AbstractView {
 
     async getHtml() {
         return `
-            <div class="settings-div">
-                <div class="settings-card">
+            <div class="profile-div">
+                <div class="profile-card">
 
                         <div class="change-form">
                             <h2>Change Username</h2>

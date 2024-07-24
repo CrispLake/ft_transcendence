@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/22 13:36:52 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/13 13:53:40 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/24 06:57:48 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ export default class extends AbstractView {
       this.Redirect(`/${event.target.href}`);
     } catch(error) {
         console.log('Invalid credentials!!');
-        Notification('error-message', '<h3>Invalid credentials!</h3>', 1);
+        Notification('notification-div', '<p class="font-text message">Invalid credentials!</p>', 1);
     }
   }
 
@@ -132,6 +132,7 @@ export default class extends AbstractView {
 
   async getHtml() {
     return `
+      <div id="notification-div" class="notification-div"><p class="message"></p></div>
       <div class="login-page">
         
         <div class="login-form">
@@ -150,8 +151,6 @@ export default class extends AbstractView {
                 <span id="login-button-text">Authenticate</span>
                 </div>
               </button>
-              
-              <div id="notification-div"></div>
 
             </form>
         </div>

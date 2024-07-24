@@ -149,7 +149,11 @@ def send_friend_request(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def respond_to_friend_request(request, request_id):
-    friend_request = FriendRequest.objects.get(id=request_id)
+    try:
+        friend_request = FriendRequest.objects.get(id=request_id)
+    except FriendRequest.DoesNotExist:
+        return Response({'error': 'friend request doesn\'t exist'}, status=status.HTTP_404_NOT_FOUND)
+
     if friend_request.to_user != request.user:
         return Response({'status': 'not authorized'}, status=status.HTTP_403_FORBIDDEN)
 

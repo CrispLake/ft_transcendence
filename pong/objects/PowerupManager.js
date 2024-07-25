@@ -12,12 +12,24 @@ export class PowerupManager
     {
         this.game = game;
         this.scene = game.gameScene;
-        this.powerups = [
-            new PowerPaddleLong(this.game),
-            new PowerPaddleShort(this.game),
-            new PowerLifePlus(this.game),
-            new PowerWavyWalls(this.game)
-        ]
+        if (this.game.settings.multiMode)
+        {
+            this.powerups = [
+                new PowerPaddleLong(this.game),
+                new PowerPaddleShort(this.game),
+                new PowerLifePlus(this.game),
+            ]
+        }
+        else
+        {
+            this.powerups = [
+                new PowerPaddleLong(this.game),
+                new PowerPaddleShort(this.game),
+                new PowerLifePlus(this.game),
+                new PowerWavyWalls(this.game)
+            ]
+        }
+        
         this.availablePowerups = [...this.powerups];
         this.powerup = null;
         this.spawnTimer = new THREE.Clock();

@@ -2,8 +2,6 @@ import * as THREE from 'three';
 import * as G from '../../globals.js';
 import * as COLOR from '../../colors.js';
 import { WavyWall } from '../shapes/WavyWall.js';
-import { WavyWall2 } from '../shapes/WavyWall2.js';
-import { Arrow } from '../shapes/Arrow.js';
 
 export class PowerWavyWalls
 {
@@ -13,7 +11,7 @@ export class PowerWavyWalls
         this.power = G.POWER_WAVY_WALLS;
         this.message = "Wavy Walls";
 
-        this.arenaModel = new WavyWall2();
+        this.arenaModel = new WavyWall();
         
         this.light = new THREE.PointLight(COLOR.POWER_WAVY_WALLS, 1, 5, 0.5);
 

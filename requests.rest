@@ -7,25 +7,25 @@ Authorization: Token 91975a4745dcf9a9a858a04cea79674c8444fb85
 
 ###
 
-GET http://localhost:8000/account/testUser1
-Authorization: Token 91975a4745dcf9a9a858a04cea79674c8444fb85
+GET http://localhost:8000/account/testUser33
+Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
 
 ###
 
 GET http://localhost:8000/account
-Authorization: Token 91975a4745dcf9a9a858a04cea79674c8444fb85
+Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
 
 # Friends
 
 ###
 
 GET http://localhost:8000/account/1
-Authorization: Token 91975a4745dcf9a9a858a04cea79674c8444fb85
+Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
 
 ###
 
 POST http://localhost:8000/friend-request/send
-Authorization: Token 499aa9783396c4dda07c63dbaf003f0cfebfee4b
+Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
 Content-Type: application/json
 
 {
@@ -35,7 +35,7 @@ Content-Type: application/json
 ###
 
 GET http://localhost:8000/friend-request/list
-Authorization: Token 499aa9783396c4dda07c63dbaf003f0cfebfee4b
+Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
 
 ###
 
@@ -46,7 +46,7 @@ Authorization: Token 1a3d6fe4659ff8d6c8c40c244f4404f0d7079990
 ###
 
 POST http://localhost:8000/friend-request/respond/1
-Authorization: Token 91975a4745dcf9a9a858a04cea79674c8444fb85
+Authorization: Token d7666b33106ca023ac17cd750f2074b86605bab2
 Content-Type: application/json
 
 {
@@ -69,14 +69,26 @@ Authorization: Token 14c4426c3fe27289d66ef70adc15766a6914be8d
 
 ###
 
-PUT http://localhost:8000/account/update HTTP/1.1
-Authorization: Token 026f7008cd7cd287a4c934e0896316ae6bca3efa
-Content-Type: application/json
+PUT http://localhost:8000/account/update
+Authorization: Token d7666b33106ca023ac17cd750f2074b86605bab2
+Content-Type: multipart/form-data; boundary=boundary
 
-{
-    "wins": 14,
-    "losses": 5
-}
+--boundary
+Content-Disposition: form-data; name="pfp"; filename="1.jpg"
+Content-Type: image/jpeg
+
+< ./kitten.jpg
+--boundary--
+
+###
+
+GET http://localhost:8000/account/2/image
+Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
+
+###
+
+GET http://localhost:8000/account/5/image
+Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
 
 ###
 
@@ -104,7 +116,7 @@ POST http://localhost:8000/login HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "testUser99",
+    "username": "testUser2",
     "password": "test"
 }
 
@@ -125,7 +137,7 @@ Content-Type: application/json
 ###
 
 GET http://localhost:8000/pong-2p HTTP/1.1
-Authorization: Token 91975a4745dcf9a9a858a04cea79674c8444fb85
+Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
 
 
 ###
@@ -324,7 +336,7 @@ Content-Type: application/json
 
 {
     "user": {
-        "username": "testUser3",
+        "username": "testUser33",
         "password": "test"
     }
 }
@@ -340,7 +352,7 @@ Content-Type: application/json
 
 {
     "username": "testUser2",
-    "password": "testPassword"
+    "password": "test"
 }
 
 ###
@@ -359,7 +371,7 @@ POST http://localhost:8000/login HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "testUser2",
+    "username": "testUser20",
     "password": "testPassword"
 }
 

@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:08:11 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/24 07:05:45 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/25 12:28:50 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ export default class {
 
   async init() {
     this.myID = await this.fetchMyID();
+    this.urlParams = new URLSearchParams(window.location.search);
   }
 
   // Helper function to set title of the page
@@ -89,10 +90,11 @@ export default class {
   // AddListeners()
   // RemoveListeners()
 
-  Redirect(newRoute) {
-    console.log('new: ', newRoute);
+  Redirect(newRoute, params = {}) {
+    const queryString = new URLSearchParams(params).toString();
+    const url = queryString ? `${newRoute}?${queryString}` : newRoute;
     const newEvent = new CustomEvent('navigate', {
-      detail: { href: newRoute },
+      detail: { href: url },
     });
     document.dispatchEvent(newEvent);
   }

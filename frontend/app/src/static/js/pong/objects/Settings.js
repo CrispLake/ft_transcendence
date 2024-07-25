@@ -1,11 +1,10 @@
 export class Settings
 {
-	constructor()
+	constructor(playerCount, multiMode)
 	{
-		// this.multiMode = false;
-		// this.players = 2;
-		this.multiMode = true;
-		this.players = 1;
+		console.log("players: " + playerCount + " multimode: " + multiMode);
+		this.multiMode = multiMode;
+		this.players = playerCount;
 		this.spin = true;
 	}
 }

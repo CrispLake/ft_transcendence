@@ -249,6 +249,7 @@ export class Game
 		{
 			if (this.ball.box.intersectsBox(this.arena.walls[wall].box))
 			{
+				console.log("WALL HIT: ball.x = " + this.ball.mesh.position.x);
 				if (this.arena.walls[wall].bounce == true)
 				{
 					continue ;
@@ -282,6 +283,11 @@ export class Game
 		}
 		this.ball.affectBySpin();
 		this.ball.move();
+		if (this.ball.mesh.position.x > this.arena.length / 2 || this.ball.mesh.position.x < -this.arena.length / 2)
+		{
+			// console.log("GOAL: ball.x = " + this.ball.mesh.position.x);
+			console.log("GOAL: ball.z = " + this.ball.mesh.position.z);
+		}
 	}
 
 

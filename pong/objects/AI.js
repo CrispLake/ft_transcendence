@@ -44,7 +44,7 @@ export class AI
         this.effect = false;
         this.boostMeterAnimation = false;
         this.bounce = false;
-        
+        this.initializeBrain();        
     }
     
     // ----Initialization Functions----
@@ -116,18 +116,6 @@ export class AI
         }
     }
 
-    setMovingBoundaries()
-    {
-        if (this.settings.multiMode)
-        {
-            this.movementBoundary = G.arenaWidth4Player / 2 - G.wallLength4Player - this.paddleLength / 2;
-        }
-        else
-        {
-            this.movementBoundary = G.arenaWidth / 2 - G.paddleLength / 2;
-        }
-    }
-
 
     // ----Boost Meter----
 
@@ -154,7 +142,6 @@ export class AI
 
     resetBoostAnimation()
     {
-        console.log("Resetting boost animation");
         this.boostMeter.position.set(this.paddle.position.x + this.boostOffset, this.paddle.position.y, this.paddle.position.z);
         this.boostMeter.material.emissive.set(COLOR.BOOSTMETER);
         this.boostMeterAnimation = false;
@@ -164,7 +151,6 @@ export class AI
 
     startBoostMeterAnimation()
     {
-        console.log("Starting boost animation");
         this.boostMeterAnimation = true;
         this.clockBoostMeter.start();
     }
@@ -285,6 +271,169 @@ export class AI
     }
 
 
+    //--------------------------------------------------------------------------
+    //  BOUNDARIES
+    //--------------------------------------------------------------------------
+
+    setMovingBoundaries()
+    {
+        if (this.settings.multiMode)
+            this.movementBoundary = this.game.arena.width / 2 - G.wallLength4Player - this.paddleLength / 2;
+        else
+            this.movementBoundary = this.game.arena.width / 2 - G.wallThickness - this.paddleLength / 2;
+    }
+
+    stayWithinBoundaries()
+    {
+        if (this.alignment == G.vertical)
+        {
+            if (this.paddle.position.z < -this.movementBoundary)
+                this.paddle.position.z = -this.movementBoundary;
+            if (this.paddle.position.z > this.movementBoundary)
+                this.paddle.position.z = this.movementBoundary;
+            this.boostMeter.position.z = this.paddle.position.z;
+        }
+        else
+        {
+            if (this.paddle.position.x < -this.movementBoundary)
+                this.paddle.position.x = -this.movementBoundary;
+            if (this.paddle.position.x > this.movementBoundary)
+                this.paddle.position.x = this.movementBoundary;
+
+            this.boostMeter.position.x = this.paddle.position.x;
+        }
+        this.light.position.copy(this.paddle.position);
+        this.box.setFromObject(this.paddle);
+    }
+
+
+    //--------------------------------------------------------------------------
+    //  BRAIN
+    //--------------------------------------------------------------------------
+
+    initializeBrain()
+    {
+        this.difficulty = this.game.settings.difficulty;
+        this.gameReadTimer = new THREE.Clock();
+        this.gameReadTimer.start();
+        this.readInterval = G.AIreadInterval / Math.pow(2, this.difficulty - 1);  // diffculty: 1 -> 1/1s, 2 -> 1/2s, 3 -> 1/4s, etc...
+        this.goToTarget = false;
+        this.targetPos = 0;
+        this.considerSpin = false;
+        this.canSpin = false;
+        if (this.difficulty >= 2)
+            this.considerSpin = true;
+        if (this.difficulty >= 3)
+            this.canSpin = true;
+        console.log("slope(0) = " + Math.tan(PongMath.degToRad(0)));
+        console.log("slope(45) = " + Math.tan(PongMath.degToRad(45)));
+        console.log("slope(90) = " + Math.tan(PongMath.degToRad(90)));
+        console.log("slope(90.5) = " + Math.tan(PongMath.degToRad(90.5)));
+        console.log("slope(91) = " + Math.tan(PongMath.degToRad(91)));
+        console.log("slope(135) = " + Math.tan(PongMath.degToRad(135)));
+        console.log("slope(180) = " + Math.tan(PongMath.degToRad(180)));
+        console.log("slope(225) = " + Math.tan(PongMath.degToRad(225)));
+        console.log("slope(270) = " + Math.tan(PongMath.degToRad(270)));
+        console.log("slope(315) = " + Math.tan(PongMath.degToRad(315)));
+        console.log("slope(359) = " + Math.tan(PongMath.degToRad(359)));
+        console.log("slope(359.5) = " + Math.tan(PongMath.degToRad(359.5)));
+        console.log("slope(360) = " + Math.tan(PongMath.degToRad(360)));
+        console.log("ArenaWidth = " + this.game.arena.width);
+        console.log("ArenaLength = " + this.game.arena.length);
+    }
+
+    ballMovesTowards()
+    {
+        if (this.playerNum == 1)
+            return (this.game.ball.speedX < 0);
+        if (this.playerNum == 2)
+            return (this.game.ball.speedX >= 0);
+        if (this.playerNum == 3)
+            return (this.game.ball.speedZ < 0);
+        if (this.playerNum == 4)
+            return (this.game.ball.speedZ >= 0);
+    }
+
+    getIntersectionX(startPos, endZ, angle)
+    {
+        let slope = Math.tan(angle - Math.PI / 2) * -1;  // We add 90 degrees to get 0 slope in x-axis and infinity in y-axis. We multiply by -1 to because z-axis is inverted.
+        // console.log("angle = " + PongMath.radToDeg(angle));
+        // console.log("slope = " + slope);
+        // console.log("endX = " + endX);
+        // console.log("ball.x = " + startPos.x);
+        // console.log("ball.z = " + startPos.y);
+        return ((endZ - startPos.y + slope * startPos.x) / slope);
+    }
+
+    getIntersectionZ(startPos, endX, angle)
+    {
+        let slope = Math.tan(angle - Math.PI / 2) * -1;  // We add 90 degrees to get 0 slope in x-axis and infinity in y-axis. We multiply by -1 to because z-axis is inverted.
+        // console.log("angle = " + PongMath.radToDeg(angle));
+        // console.log("slope = " + slope);
+        // console.log("endX = " + endX);
+        // console.log("ball.x = " + startPos.x);
+        // console.log("ball.z = " + startPos.y);
+        return (slope * (endX - startPos.x) + startPos.y);
+    }
+
+    getTargetPosition()
+    {
+        let startPos = new THREE.Vector2(this.game.ball.mesh.position.x, this.game.ball.mesh.position.z);
+        let angle = this.game.ball.angle;
+        // let endZ = this.game.arena.width / 2 - G.wallThickness - G.initialBallRadius;
+        let endX = this.game.arena.width / 2;
+        let endZ = this.game.arena.length / 2;
+        console.log("EndZ = " + endZ);
+        let z = this.getIntersectionZ(startPos, endX, angle);
+        console.log("hitZ = " + z);
+        while (Math.abs(z) > this.movementBoundary + this.paddleLength / 2)
+        {
+            if (z < 0)
+            {
+                let x = this.getIntersectionX(startPos, -endZ, angle);
+                console.log("hitX = " + x);
+                startPos.set(x, -endZ);
+                let angleFromHorizontalWall = PongMath.degToRad(90) - angle;
+                angle = angle - 2 * angleFromHorizontalWall;
+            }
+            else
+            {
+                let x = this.getIntersectionX(startPos, endZ, angle);
+                console.log("hitX = " + x);
+                startPos.set(x, endZ);
+                let angleFromHorizontalWall = PongMath.degToRad(90) - angle;
+                angle = angle - 2 * angleFromHorizontalWall;
+            }
+            z = this.getIntersectionZ(startPos, endX, angle);
+            console.log("hitZ = " + z);
+        }
+        console.log("FINAL HIT Z = " + z);
+        this.targetPos = z;
+    }
+
+    readGame()
+    {
+        console.log("Reading game...");
+        if (this.ballMovesTowards())
+        {
+            this.getTargetPosition();
+        }
+        else
+        {
+            this.targetPos = 0;
+        }
+    }
+
+    input()
+    {
+        const distanceToTarget = this.paddle.position.z - this.targetPos;
+        if (distanceToTarget > this.speed)
+            this.move(-this.speed);
+        else if (distanceToTarget < -this.speed)
+            this.move(this.speed);
+    }
+
+
     // ----Player----
 
     move(movement)
@@ -325,23 +474,30 @@ export class AI
     {
         if (this.effect)
             this.updateLightEffect();
-        if (this.alignment == G.vertical)
+        if (this.gameReadTimer.getElapsedTime() >= this.readInterval)
         {
-            this.paddle.position.z = this.game.ball.mesh.position.z;
-            if (this.paddle.position.z < -this.movementBoundary)
-                this.paddle.position.z = -this.movementBoundary;
-            else if (this.paddle.position.z > this.movementBoundary)
-                this.paddle.position.z = this.movementBoundary;
+            this.readGame();
+            this.gameReadTimer.start();
         }
-        else
-        {
-            this.paddle.position.x = this.game.ball.mesh.position.x;
-            if (this.paddle.position.x < -this.movementBoundary)
-                this.paddle.position.x = -this.movementBoundary;
-            else if (this.paddle.position.x > this.movementBoundary)
-                this.paddle.position.x = this.movementBoundary;
-        }
-        this.light.position.copy(this.paddle.position);
-        this.box.setFromObject(this.paddle);
+        this.input();
+        
+        this.stayWithinBoundaries();
     }
 };
+
+
+
+/*
+
+Consider two straight lines:
+
+    a1x+b1y+c1=0
+    a2x+b2y+c2=0
+
+
+The formula for the point of intersection of the two lines will be as follows:
+
+    x = (b1c2-b2c1)/(a1b2-a2b1)
+    y = (c1a2-c2a1)/(a1b2-a2b1)
+
+*/

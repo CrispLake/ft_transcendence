@@ -3,7 +3,8 @@ export class Settings
 	constructor()
 	{
 		this.multiMode = false;
-		this.players = 2;
+		this.players = 1;
 		this.spin = true;
+		this.difficulty = 1;
 	}
 }

@@ -14,7 +14,8 @@ export class Arena
         this.composer = composer;
         this.camera = camera;
 
-        this.width = G.floorWidth;
+        this.width = G.floorWidth - G.wallThickness * 2;
+        this.length = G.arenaLength;
         // this.wavyWalls = false;
         // this.wavyWallTimer = new THREE.Clock();
 
@@ -37,15 +38,15 @@ export class Arena
         this.backWall.position.set(0, 0, -10.5);
         
         // ----Floor----
-        this.floorGeometry = new THREE.BoxGeometry(G.arenaLength, G.floorThickness, this.width);
+        this.floorGeometry = new THREE.BoxGeometry(this.length, G.floorThickness, this.width);
         this.floorMeshMaterial = new THREE.MeshStandardMaterial({color: 0xffffff, emissive: COLOR.FLOOR, wireframe: false});
         this.floor = new THREE.Mesh(this.floorGeometry, this.floorMeshMaterial);
         this.floor.position.set(0, -(G.wallHeight / 2 + G.floorThickness / 2), 0);
 
         // ----Side Walls----
         this.walls = [];
-        this.walls["leftWall"] = new Wall(G.horizontal, G.arenaLength, G.wallHeight, G.wallThickness, 0, 0, -(G.arenaWidth / 2 + G.wallThickness / 2));
-        this.walls["rightWall"] = new Wall(G.horizontal, G.arenaLength, G.wallHeight, G.wallThickness, 0, 0, (G.arenaWidth / 2 + G.wallThickness / 2));
+        this.walls["leftWall"] = new Wall(G.horizontal, this.length, G.wallHeight, G.wallThickness, 0, 0, -(G.arenaWidth / 2 + G.wallThickness / 2));
+        this.walls["rightWall"] = new Wall(G.horizontal, this.length, G.wallHeight, G.wallThickness, 0, 0, (G.arenaWidth / 2 + G.wallThickness / 2));
         
         // ----General Light----
         this.ambientLight = new THREE.AmbientLight(COLOR.WHITE, 0.05);
@@ -77,7 +78,7 @@ export class Arena
 
     setWidth(width)
     {
-        const newFloorGeometry = new THREE.BoxGeometry(G.arenaLength, G.floorThickness, width);
+        const newFloorGeometry = new THREE.BoxGeometry(this.length, G.floorThickness, width);
         this.floor.geometry.dispose();
         this.floor.geometry = newFloorGeometry;
         this.width = width;

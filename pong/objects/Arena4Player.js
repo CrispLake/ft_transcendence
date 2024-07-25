@@ -15,6 +15,7 @@ export class Arena4Player
         this.composer = composer;
         this.camera = camera;
         this.width = G.arenaWidth4Player;
+        this.length = G.arenaWidth4Player;
 
         // ----PONG Text----
         this.pongText = new Text3D(

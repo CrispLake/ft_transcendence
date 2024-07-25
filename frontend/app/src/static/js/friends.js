@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 06:52:04 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/25 12:24:22 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/25 12:55:23 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,8 +95,7 @@ const fetchFriendData = async () => {
 const parseFriendData = (data) => {
   let res = '';
   data.friends.forEach(friend => {
-    console.log(friend);
-    res += `<li class="friend"><a href="/profile/${friend.user.id}">${friend.user.username}</a></li>`;
+    res += `<li class="friend"><div class="status-div ${friend.online_status}"></div><a href="/profile/${friend.user.id}">${friend.user.username}</a></li>`;
   });
   return res;
 }
@@ -171,6 +170,7 @@ const loginDataFetch = async (event) => {
   }
   
   const myID = await fetchMyID();
+  console.log('BEFORE: ', responseRequest);
   const requests = responseRequest.filter(entry => entry.to_user.id === myID);
   const requestContent = await parseRequestData(requests);
 

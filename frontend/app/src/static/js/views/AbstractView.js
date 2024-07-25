@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:08:11 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/24 05:52:14 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/24 07:05:45 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ export default class {
   // RemoveListeners()
 
   Redirect(newRoute) {
+    console.log('new: ', newRoute);
     const newEvent = new CustomEvent('navigate', {
       detail: { href: newRoute },
     });

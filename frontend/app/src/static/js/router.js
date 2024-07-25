@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 13:31:25 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/22 08:18:32 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/24 07:04:38 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,6 @@ const router = async () => {
     console.log('removing listeners');
     for (let i = views_memory.length - 1; i >= 0; i--) {
       const view = views_memory[i];
-      console.log('view ', view);
       view.RemoveListeners();
       views_memory.splice(i, 1);
     }

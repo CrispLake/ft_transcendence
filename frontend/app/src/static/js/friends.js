@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 06:52:04 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/23 09:27:28 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/25 12:24:22 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ const fetchFriendData = async () => {
     const response = await axios.get('http://localhost:8000/account', {
       headers: { 'Authorization': `Token ${view.GetKey()}` }
     });
+    console.log('DATA: ', response.data);
     return response.data;
   }
   catch(error) {

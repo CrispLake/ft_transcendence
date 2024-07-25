@@ -59,7 +59,7 @@ export default class extends AbstractView {
                 payload, {
                 headers: {'Authorization': `Token ${token}`}
                 });
-            //Remove old key and add the new key received in the response
+            // Remove old key and add the new key received in the response
             this.DeleteKey();
             this.CreateKey(response.data.token);
         } catch (error) {
@@ -99,7 +99,7 @@ export default class extends AbstractView {
                 <div class="profile-card">
 
                         <div class="change-form">
-                            <h2>Change Username</h2>
+                            <h2 class="font-text">Change Username</h2>
                             <form id="change-username-form" action="" method="">
 
                             <label class="font-text" for="username">username:</label>

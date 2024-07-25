@@ -87,7 +87,7 @@ Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
 
 ###
 
-GET http://localhost:8000/account/5/image
+GET http://localhost:8000/account/1/image
 Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
 
 ###

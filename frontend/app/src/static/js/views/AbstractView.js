@@ -59,16 +59,26 @@ export default class {
     }
   }
 
-  Authenticate() {
-    const key = localStorage.getItem('auth_token');
-    if (key) {
-      console.log('key WAS found');
-      return true;
-    } else {
-      console.log('key WAS NOT found');
-      return false;
+    async Authenticate() {
+        const key = localStorage.getItem('auth_token');
+
+        try {
+            const response = await axios.get(
+                'http://localhost:8000/account',
+                { headers: {'Authorization': `Token ${key}`} }
+            );
+            if (response.status === 401) {
+                localStorage.removeItem('auth_token');
+                console.error('Incorrect token');
+                return false;
+            }
+            console.log('Correct token');
+            return true;
+        } catch (error) {
+            console.error('Incorrect token');
+            return false;
+        }
     }
-  }
 
   CreateKey(token) {
     localStorage.setItem('auth_token', token);

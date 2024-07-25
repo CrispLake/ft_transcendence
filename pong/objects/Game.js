@@ -11,6 +11,7 @@ import { Player } from './Player.js';
 import { AI } from './AI.js';
 import { Ball } from './Ball.js';
 import * as PongMath from '../math.js';
+import { PowerupManager } from './PowerupManager.js';
 
 export class Game
 {
@@ -18,16 +19,16 @@ export class Game
 	{
 		console.log("Creating Game Object...");
 		this.settings = new Settings();
-		this.scene = new THREE.Scene();
-		this.players = [];
-		this.createPlayers();
-		this.ball = new Ball(this.scene, G.ballStartPos, this.settings.spin);
+		this.gameScene = new THREE.Scene();
 		this.fontLoader = new FontLoader();
-		this.initializeUI();
 		this.gameCamera = this.createCamera();
 		this.renderer = this.createRenderer();
 		this.composer = new EffectComposer(this.renderer);
 		this.createArena();
+		this.createPlayers();
+		this.ball = new Ball(this.gameScene, G.ballStartPos, this.settings.spin);
+		this.initializeUI();
+		this.powerupManager = new PowerupManager(this);
 		this.update = this.update.bind(this);
 		this.cameraRotate = false;
 		console.log("Game Object Created!");
@@ -75,14 +76,14 @@ export class Game
 	{
 		if (this.settings.multiMode == false)
 			this.arena = new Arena(
-				this.scene,
+				this.gameScene,
 				this.fontLoader,
 				this.renderer,
 				this.composer,
 				this.gameCamera);
 		else
 			this.arena = new Arena4Player(
-				this.scene,
+				this.gameScene,
 				this.fontLoader,
 				this.renderer,
 				this.composer,
@@ -91,32 +92,20 @@ export class Game
 
 	createPlayers()
 	{
-		if (this.settings.multiMode == false)
-		{
-			this.players["p1"] = new Player(this.scene, this.settings, 1, "Player1");
-			if (this.settings.players == 2)
-				this.players["p2"] = new Player(this.scene, this.settings, 2, "Player2");
-			else
-				this.players["p2"] = new AI(this, 2, "AI");
-		}
-		else
-		{
-			if (this.settings.players > 3)
-				this.players["p4"] = new Player(this.scene, this.settings, 4, "Player4");
-			else
-				this.players["p4"] = new AI(this, 4, "AI4");
-			if (this.settings.players > 2)
-				this.players["p3"] = new Player(this.scene, this.settings, 3, "Player3");
-			else
-				this.players["p3"] = new AI(this, 3, "AI3");
-			if (this.settings.players > 2)
-				this.players["p2"] = new Player(this.scene, this.settings, 2, "Player2");
-			else
-				this.players["p2"] = new AI(this, 2, "AI2");
-			this.players["p1"] = new Player(this.scene, this.settings, 1, "Player1");
+		this.players = [];
+		const maxPlayers = this.settings.multiMode ? 4 : 2;
 
-			this.rotatePlayers();
+		for (let i = 0; i < maxPlayers; i++)
+		{
+			const playerId = "p" + (i + 1);
+
+			if (i < this.settings.players)
+				this.players[playerId] = new Player(this, this.gameScene, this.settings, i + 1, "Player" + (i + 1));
+			else
+				this.players[playerId] = new AI(this, i + 1, "AI" + (i + 1));
 		}
+		if (this.settings.multiMode)
+			this.rotatePlayers();
 	}
 
 	rotatePlayers()
@@ -151,7 +140,7 @@ export class Game
 	{
 		if (this.cameraRotate)
 		{
-			this.rotateCamera();
+			// this.rotateCamera();
 		}
 	}
 
@@ -168,14 +157,15 @@ export class Game
 	update()
 	{
 		setTimeout(() => { requestAnimationFrame(this.update); }, 1000 / G.fps);
+		this.powerupManager.update();
 		this.updateCamera();
-		this.players["p1"].update();
-		this.players["p2"].update();
-		if (this.settings.multiMode == true)
-		{
-			this.players["p3"].update();
-			this.players["p4"].update();
-		}
+
+		// Debug
+		if (this.cameraRotate)
+			return;
+
+		for (let player in this.players)
+			this.players[player].update();
 		this.updateBallPosition();
 		this.arena.update();
 		if (this.goal())
@@ -184,23 +174,28 @@ export class Game
 				this.resetGame();
 			else
 				this.resetPositions();
+			this.powerupManager.reset();
 		}
 		this.composer.render();
 		this.renderer.autoClear = false;
     	this.renderer.clearDepth();
 		this.renderer.render(this.uiScene, this.uiCamera);
 	}
+
 	updateBallPosition()
 	{
-
 		for (let player in this.players)
 		{
 			if (this.ball.box.intersectsBox(this.players[player].box))
 			{
 				if (this.players[player].bounce == true)
-				{
 					continue ;
-				}
+
+				// Set player who touched the ball to active, rest to inactive.
+				for (let p in this.players)
+					this.players[p].active = false;
+				this.players[player].active = true;
+				
 				this.players[player].lightEffect();
 				this.ball.adjustSpin(this.players[player]);
 				this.players[player].resetBoost();
@@ -218,9 +213,7 @@ export class Game
 			if (this.ball.box.intersectsBox(this.arena.walls[wall].box))
 			{
 				if (this.arena.walls[wall].bounce == true)
-				{
 					continue ;
-				}
 				this.arena.walls[wall].lightEffect();
 				this.ball.reduceSpin();
 				this.ball.bounceFromWall(this.arena.walls[wall]);
@@ -229,6 +222,21 @@ export class Game
 				this.ball.affectBySpin();
 				this.ball.move();
 				return ;
+			}
+		}
+		if (this.powerupManager.powerup != null)
+		{
+			if (this.ball.box.intersectsSphere(this.powerupManager.powerup.hitbox))
+			{
+				for (let player in this.players)
+				{
+					if (this.players[player].active)
+					{
+						this.powerupManager.powerup.activate(this.players[player]);
+						break;
+					}
+				}
+				this.powerupManager.removePowerup();
 			}
 		}
 		this.resetBounces();
@@ -252,6 +260,7 @@ export class Game
 		}
 		else if (this.ball.mesh.position.x >= this.players["p2"].paddle.position.x + goalOffSet)
 		{
+			console.log("P2, lose life");
 			this.players["p2"].loseLife(1);
 			this.ui.playerCards[this.players["p2"].name].decreaseLife(1);
 			return (true);

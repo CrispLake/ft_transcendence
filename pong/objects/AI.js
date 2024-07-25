@@ -9,7 +9,7 @@ export class AI
     constructor(game, playerNum, name)
     {
         this.game = game;
-        this.scene = game.scene;
+        this.scene = game.gameScene;
         this.settings = game.settings;
         this.spin = this.settings.spin;
         this.playerNum = playerNum;
@@ -250,6 +250,40 @@ export class AI
             this.resetLightEffect();
     }
 
+    // ----Life----
+
+    loseLife(lifeAmount)
+    {
+        this.lives -= lifeAmount;
+        if (this.lives < 0)
+            this.lives == 0;
+    }
+
+    setLife(lives)
+    {
+        this.lives = lives;
+        this.game.ui.playerCards[this.name].setLife(this.lives);
+    }
+
+    resetLife()
+    {
+        this.lives = G.lives;
+    }
+
+
+    // ----Paddle----
+
+    resize(length)
+    {
+        this.paddleLength = length;
+        const newGeometry = new THREE.BoxGeometry(G.paddleThickness, G.wallHeight, length);
+        this.paddle.geometry.dispose();
+        this.paddle.geometry = newGeometry;
+        this.light.width = length;
+        this.setMovingBoundaries();
+        this.move(0);   // We use this function to correct possible resizing ouutside boundaries. Here we also set boostMeter, light and box position.
+    }
+
 
     // ----Player----
 
@@ -274,13 +308,17 @@ export class AI
             this.boostMeter.position.x = this.paddle.position.x;
         }
         this.light.position.copy(this.paddle.position);
+        this.box.setFromObject(this.paddle);
     }
 
     reset()
     {
+        if (this.paddleLength != G.paddleLength)
+            this.resize(G.paddleLength);
         this.setPos(this.startPos.x, this.startPos.y, this.startPos.z);
         this.boostAmount = 0;
         this.updateBoostMeter();
+        this.box.setFromObject(this.paddle);
     }
 
     update()
@@ -304,5 +342,6 @@ export class AI
                 this.paddle.position.x = this.movementBoundary;
         }
         this.light.position.copy(this.paddle.position);
+        this.box.setFromObject(this.paddle);
     }
 };

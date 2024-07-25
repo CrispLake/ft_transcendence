@@ -6,8 +6,9 @@ import * as PongMath from '../math.js';
 
 export class Player
 {
-    constructor(scene, settings, playerNum, name)
+    constructor(game, scene, settings, playerNum, name)
     {
+        this.game = game;
         this.scene = scene;
         this.settings = settings;
         this.spin = this.settings.spin;
@@ -42,11 +43,15 @@ export class Player
         this.clockBoostMeter = new THREE.Clock();
         this.effect = false;
         this.boostMeterAnimation = false;
+        this.active = false;
         this.bounce = false;
         this.box.setFromObject(this.paddle);
     }
     
-    // ----Initialization Functions----
+
+    //--------------------------------------------------------------------------
+    //  INITIALIZE
+    //--------------------------------------------------------------------------
     
     addToScene()
     {
@@ -115,20 +120,45 @@ export class Player
         }
     }
 
+
+    //--------------------------------------------------------------------------
+    //  BOUNDARIES
+    //--------------------------------------------------------------------------
+
     setMovingBoundaries()
     {
         if (this.settings.multiMode)
+            this.movementBoundary = this.game.arena.width / 2 - G.wallLength4Player - this.paddleLength / 2;
+        else
+            this.movementBoundary = this.game.arena.width / 2 - G.wallThickness - this.paddleLength / 2;
+    }
+
+    stayWithinBoundaries()
+    {
+        if (this.alignment == G.vertical)
         {
-            this.movementBoundary = G.arenaWidth4Player / 2 - G.wallLength4Player - this.paddleLength / 2;
+            if (this.paddle.position.z < -this.movementBoundary)
+                this.paddle.position.z = -this.movementBoundary;
+            if (this.paddle.position.z > this.movementBoundary)
+                this.paddle.position.z = this.movementBoundary;
+            this.boostMeter.position.z = this.paddle.position.z;
         }
         else
         {
-            this.movementBoundary = G.arenaWidth / 2 - G.paddleLength / 2;
+            if (this.paddle.position.x < -this.movementBoundary)
+                this.paddle.position.x = -this.movementBoundary;
+            if (this.paddle.position.x > this.movementBoundary)
+                this.paddle.position.x = this.movementBoundary;
+            this.boostMeter.position.x = this.paddle.position.x;
         }
+        this.light.position.copy(this.paddle.position);
+        this.box.setFromObject(this.paddle);
     }
 
 
-    // ----Boost Meter----
+    //--------------------------------------------------------------------------
+    //  BOOST METER
+    //--------------------------------------------------------------------------
 
     removeBoostMeter()
     {
@@ -182,7 +212,9 @@ export class Player
     }
 
 
-    // ----Boost----
+    //--------------------------------------------------------------------------
+    //  BOOST
+    //--------------------------------------------------------------------------
 
     increaseBoost()
     {
@@ -219,7 +251,9 @@ export class Player
     }
 
 
-    // ----Light----
+    //--------------------------------------------------------------------------
+    //  LIGHT
+    //--------------------------------------------------------------------------
 
     resetLightEffect()
     {
@@ -248,7 +282,9 @@ export class Player
     }
 
 
-    // ----Life----
+    //--------------------------------------------------------------------------
+    //  LIFE
+    //--------------------------------------------------------------------------
 
     loseLife(lifeAmount)
     {
@@ -260,6 +296,7 @@ export class Player
     setLife(lives)
     {
         this.lives = lives;
+        this.game.ui.playerCards[this.name].setLife(this.lives);
     }
 
     resetLife()
@@ -268,7 +305,25 @@ export class Player
     }
 
 
-    // ----Player----
+    //--------------------------------------------------------------------------
+    //  PADDLE
+    //--------------------------------------------------------------------------
+
+    resize(length)
+    {
+        this.paddleLength = length;
+        const newGeometry = new THREE.BoxGeometry(G.paddleThickness, G.wallHeight, length);
+        this.paddle.geometry.dispose();
+        this.paddle.geometry = newGeometry;
+        this.light.width = length;
+        this.setMovingBoundaries();
+        this.move(0);   // We use this function to correct possible resizing ouutside boundaries. Here we also set boostMeter, light and box position.
+    }
+
+
+    //--------------------------------------------------------------------------
+    //  PLAYER FUNCTIONS
+    //--------------------------------------------------------------------------
 
     move(movement)
     {
@@ -296,6 +351,8 @@ export class Player
 
     reset()
     {
+        if (this.paddleLength != G.paddleLength)
+            this.resize(G.paddleLength);
         this.setPos(this.startPos.x, this.startPos.y, this.startPos.z);
         this.boostAmount = 0;
         this.updateBoostMeter();

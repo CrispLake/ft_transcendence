@@ -67,6 +67,9 @@ function handleKeyDown(event)
         case "p":
             game.toggleCameraRotation();
             break;
+        case ".":
+            game.togglePause();
+            break;
     }
 }
 

@@ -12,7 +12,7 @@ export class Ball
 
         // this.material = new THREE.MeshBasicMaterial({color: COLOR.BALL});
 
-        // This shader segments the ball into 4 vertical slices, edit any of the colors below to visally represnt spin.
+        // This shader segments the ball into 4 vertical slices, edit any of the colors below to visally represent spin.
         this.material = new THREE.ShaderMaterial({
             uniforms: {
                 color1: { value: new THREE.Color(COLOR.WHITE) },
@@ -223,6 +223,7 @@ export class Ball
                 this.angle = 90 + G.minAngleFromWall;
         }
         this.angle = PongMath.degToRad(this.angle);
+
     }
 
     addSpin(power)

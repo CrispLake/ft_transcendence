@@ -17,7 +17,6 @@ export class Game
 {
 	constructor()
 	{
-		console.log("Creating Game Object...");
 		this.settings = new Settings();
 		this.gameScene = new THREE.Scene();
 		this.fontLoader = new FontLoader();
@@ -29,9 +28,10 @@ export class Game
 		this.ball = new Ball(this.gameScene, G.ballStartPos, this.settings.spin);
 		this.initializeUI();
 		this.powerupManager = new PowerupManager(this);
-		this.update = this.update.bind(this);
+		this.initializeGameClock();
 		this.cameraRotate = false;
-		console.log("Game Object Created!");
+		this.pause = false;
+		this.update = this.update.bind(this);
 		this.update();
 	}
 
@@ -140,7 +140,7 @@ export class Game
 	{
 		if (this.cameraRotate)
 		{
-			// this.rotateCamera();
+			this.rotateCamera();
 		}
 	}
 
@@ -151,18 +151,54 @@ export class Game
 
 
 	//--------------------------------------------------------------------------
+	//	PAUSE & TIME
+	//--------------------------------------------------------------------------
+
+	togglePause()
+	{
+		if (!this.pause)
+		{
+			this.pauseStart = this.gameClock.getElapsedTime();
+			this.elapsedTime += this.pauseStart;
+		}
+		else
+		{
+			this.gameClock.start();
+		}
+		this.pause = !this.pause;
+	}
+
+	time()
+	{
+		if (this.pause)
+			return this.elapsedTime;
+		else
+			return this.elapsedTime + this.gameClock.getElapsedTime();
+	}
+
+	initializeGameClock()
+	{
+		this.gameClock = new THREE.Clock();
+		this.gameClock.start();
+		this.pause = false;
+		this.elapsedTime = 0;
+		this.pauseStart = 0;
+	}
+
+
+	//--------------------------------------------------------------------------
 	//	UPDATE
 	//--------------------------------------------------------------------------
 
 	update()
 	{
 		setTimeout(() => { requestAnimationFrame(this.update); }, 1000 / G.fps);
+		if (this.pause)
+		{
+			return;
+		}
 		this.powerupManager.update();
 		this.updateCamera();
-
-		// Debug
-		if (this.cameraRotate)
-			return;
 
 		for (let player in this.players)
 			this.players[player].update();
@@ -201,28 +237,33 @@ export class Game
 				this.players[player].resetBoost();
 				this.ball.bounceFromPlayer(this.players[player]);
 				this.ball.speedUp();
-				this.resetBounces();
 				this.players[player].bounce = true;
 				this.ball.affectBySpin();
 				this.ball.move();
 				return ;
 			}
+			else
+				this.players[player].bounce = false;
 		}
 		for (let wall in this.arena.walls)
 		{
 			if (this.ball.box.intersectsBox(this.arena.walls[wall].box))
 			{
 				if (this.arena.walls[wall].bounce == true)
+				{
 					continue ;
+				}
 				this.arena.walls[wall].lightEffect();
 				this.ball.reduceSpin();
 				this.ball.bounceFromWall(this.arena.walls[wall]);
-				this.resetBounces();
 				this.arena.walls[wall].bounce = true;
 				this.ball.affectBySpin();
 				this.ball.move();
 				return ;
 			}
+			else
+				this.arena.walls[wall].bounce = false;
+
 		}
 		if (this.powerupManager.powerup != null)
 		{
@@ -239,7 +280,6 @@ export class Game
 				this.powerupManager.removePowerup();
 			}
 		}
-		this.resetBounces();
 		this.ball.affectBySpin();
 		this.ball.move();
 	}
@@ -260,7 +300,6 @@ export class Game
 		}
 		else if (this.ball.mesh.position.x >= this.players["p2"].paddle.position.x + goalOffSet)
 		{
-			console.log("P2, lose life");
 			this.players["p2"].loseLife(1);
 			this.ui.playerCards[this.players["p2"].name].decreaseLife(1);
 			return (true);

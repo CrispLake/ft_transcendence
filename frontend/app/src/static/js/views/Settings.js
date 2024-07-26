@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/25 15:41:42 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/25 15:47:42 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/26 08:11:29 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ export default class extends AbstractView {
       }
       catch(error) {
         console.log('imgHandler error: ', error);
-        this.Redirect('/500');
+        Notification('notification-div', `<h3>${error.response.data.username}</h3>`, 1);
       }
     }
     
@@ -70,9 +70,10 @@ export default class extends AbstractView {
                 this.usernameURL,
                 payload, {
                 headers: {'Authorization': `Token ${token}`}
-                });
+            });
+            Notification('notification-div', '<h3>Username changed</h3>', 0);
         } catch (error) {
-            console.error('Error changing username');
+            Notification('notification-div', `<h3>${error.response.data.username}</h3>`, 1);
         }
     }
 
@@ -98,8 +99,10 @@ export default class extends AbstractView {
                 });
             this.DeleteKey();
             this.CreateKey(response.data.token);
+            Notification('notification-div', '<h3>Password changed</h3>', 0);
         } catch (error) {
-            console.error('Error changing password');
+            console.error('Error changing password', error.response);
+            Notification('notification-div', `<h3>${error.response.data.username}</h3>`, 1);
         }
     }
 
@@ -136,49 +139,55 @@ export default class extends AbstractView {
     async getHtml() {
         return `
             <div class="profile-div">
-                <div class="profile-card">
+                <div class="profile-card setting-page">
 
                         <div class="change-form">
-                            <h2 class="font-text">Change Username</h2>
+                            <h2 class="font-heading setting-heading">Change Username:</h2>
+                            
                             <form id="change-username-form" action="" method="">
 
-                            <label class="font-text" for="username">username:</label>
-                            <input class="font-text login-input" type="text" id="username" name="username" required><br><br>
-
-                            <button class="font-sub change-username-submit-button" id="changeUsernameSubmitButton" type="submit">
-                                <div class="text-holder">
-                                <span id="change-username-button-text">Change</span>
-                                </div>
-                            </button>
-
-                            <div id="notification-div"></div>
-
+                              <div class="input-div">
+                                <input class="font-text settings-input" type="text" id="username" name="username" required><br><br>
+                                <button class="font-sub change-button" id="changeUsernameSubmitButton" type="submit">
+                                  <div class="text-holder">
+                                    <span class="font-sub change-button-text">Submit</span>
+                                  </div>
+                              </button>
+                              </div>
+                            
                             </form>
                         </div>
 
                         <div class="change-form">
-                            <h2>Change Password</h2>
+                            <h2 class="font-heading setting-heading">Change Password:</h2>
                             <form id="change-password-form" action="" method="">
 
-                            <label class="font-text" for="password">password:</label>
-                            <input class="font-text login-input" type="password" id="password" name="password" required><br><br>
-
-                            <button class="font-sub change-password-submit-button" id="changepasswordSubmitButton" type="submit">
-                                <div class="text-holder">
-                                <span id="change-password-button-text">Change</span>
-                                </div>
-                            </button>
-
-                            <div id="notification-div"></div>
+                            <div class="input-div">
+                              <input class="font-text settings-input" type="password" id="password" name="password" required><br><br>
+                              <button class="font-sub change-button" id="changepasswordSubmitButton" type="submit">
+                                  <div class="text-holder">
+                                    <span class="font-sub change-button-text">Submit</span>
+                                  </div>
+                              </button>
+                            </div>
 
                             </form>
                         </div>
 
                         <div class="change-form">
-                            <form id="img-form">
-                              <input type="file" id="file-input" accept="image/*" />
-                              <button type="submit" id="upload-button">Upload</button>
-                            </form>
+                          <h2 class="font-heading setting-heading">Change profile picture:</h2>
+                          <form id="img-form">
+
+                            <div class="input-div">
+                              <input class="font-text settings-input-file file" type="file" id="file-input" accept="image/*" />
+                              <button class="font-sub change-button">
+                                <div class="text-holder">
+                                  <span class="font-sub change-button-text">Upload</span>
+                                </div>
+                              </button>
+                              </div>
+
+                          </form>
                         </div>
                 </div>
             </div>

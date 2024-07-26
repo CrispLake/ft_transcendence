@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/22 13:36:52 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/24 07:08:02 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/25 15:43:45 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,6 @@ export default class extends AbstractView {
 
   async getHtml() {
     return `
-      <div id="notification-div" class="notification-div"><p class="message"></p></div>
       <div class="login-page">
         
         <div class="login-form">

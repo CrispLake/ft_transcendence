@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 09:22:19 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/24 06:59:10 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/25 15:58:03 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,9 +94,8 @@ export default class extends AbstractView {
         const winrate = ((wins / total) * 100);
         const winrateF = isNaN(winrate) ? '0' : winrate.toFixed(2);
 
-        // TODO: maybe get image trough backend
-        const imageUrl = "static/images/pfp.png";
-        const pfp = `<img src="${imageUrl}" alt="Profile picture">`;
+        const imageUrl = `http://localhost:8000/account/${this.profileData.id}/image`;
+        const pfp = `<img class="profile-picture" src="${imageUrl}" alt="Profile picture">`;
         const matchHistory = `/history/${this.profileData.id}`;
 
         return `

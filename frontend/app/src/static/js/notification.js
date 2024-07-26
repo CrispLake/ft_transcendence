@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 12:45:45 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/24 06:24:07 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/25 15:45:43 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,5 +38,5 @@ export const Notification = async (elementID, content, type) => {
   element.style.opacity = '1';
   setTimeout(() => {
     element.style.opacity = '0';
-  }, 5000);
+  }, 3000);
 }

@@ -1,0 +1,34 @@
+.scrollable-container {
+
+    max-height: 600px; /* Set this to the desired max height */
+    overflow-y: auto;
+    border: 1px solid #ccc; /* Optional: add border for better visibility */
+    padding: 0; /* Optional: add padding for better layout */
+}
+
+.entry {
+    margin-bottom: 0; /* Optional: space between entries */
+    border: 1, 0, black;
+}
+
+.entry h3 {
+    margin: 0;
+    padding: 0;
+}
+
+.entry p {
+    margin: 0;
+    padding: 0;
+}
+
+/* Error message container */
+.error-message {
+    color: red;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+/* Error border color for input */
+.input-error {
+    border: 2px solid red;
+}

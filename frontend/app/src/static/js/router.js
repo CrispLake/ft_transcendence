@@ -117,7 +117,7 @@ const router = async () => {
   // Handle authentication if needed
   // redirects to login if not authenticated
   if (view.auth) {
-    if (!view.Authenticate()) {
+    if (! await view.Authenticate()) {
       console.log('not authenticated');
       view.Redirect('/login');
       return;

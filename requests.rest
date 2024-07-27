@@ -7,8 +7,8 @@ Authorization: Token 91975a4745dcf9a9a858a04cea79674c8444fb85
 
 ###
 
-GET http://localhost:8000/account/testUser33
-Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
+GET http://localhost:8000/account/AI
+Authorization: Token 9a1e8d3a8eddb2276bfd657863e0773afb12f16b
 
 ###
 

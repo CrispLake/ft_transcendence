@@ -73,8 +73,20 @@ def tournament(request, player_id=None):
         if serializer.is_valid():
             serializer.save()
 
+            game1_player1_score = serializer.data['game1_player1_score']
+            game1_player2_score = serializer.data['game1_player2_score']
+
+            game2_player1_score = serializer.data['game2_player1_score']
+            game2_player2_score = serializer.data['game2_player2_score']
+
             game3_player1_score = serializer.data['game3_player1_score']
             game3_player2_score = serializer.data['game3_player2_score']
+
+            update_score(game1_player1, game1_player1_score)
+            update_score(game1_player2, game1_player2_score)
+
+            update_score(game2_player1, game2_player1_score)
+            update_score(game2_player2, game2_player2_score)
 
             update_score(game3_player1, game3_player1_score)
             update_score(game3_player2, game3_player2_score)

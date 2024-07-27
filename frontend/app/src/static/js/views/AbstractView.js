@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:08:11 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/23 13:04:08 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/26 06:12:29 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,11 @@ export default class {
     this.listeners = false; // event listener functions to be added
     this.auth = false; // if true, user needs to be authenticated
     this.childs = false; // if true, router will use appendChild instead of innerHtml
+    this.init();
+  }
+
+  async init() {
+    this.myID = await this.fetchMyID();
     this.urlParams = new URLSearchParams(window.location.search);
   }
 
@@ -58,17 +63,15 @@ export default class {
       return -1;
     }
   }
-
+  
     async Authenticate() {
-        const key = localStorage.getItem('auth_token');
-
         try {
             const response = await axios.get(
                 'http://localhost:8000/account',
-                { headers: {'Authorization': `Token ${key}`} }
+                { headers: {'Authorization': `Token ${this.GetKey()}`} }
             );
             if (response.status === 401) {
-                localStorage.removeItem('auth_token');
+                this.DeleteKey();
                 console.error('Incorrect token');
                 return false;
             }

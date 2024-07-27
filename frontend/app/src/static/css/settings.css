@@ -21,7 +21,75 @@
   height: 80%;
   width: 50%;
 
-
   background-color: var(--bg-secondary);
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+
+
+
+.input-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 400px;
+  min-width: 400px;
+  height: 64px;
+}
+
+.settings-input {
+  border: none;
+  height: 64px;
+}
+
+.settings-input-file {
+  border: none;
+}
+
+.setting-heading {
+  font-size: 32px;
+  margin-bottom: 0.5rem;
+}
+
+.change-button-text {
+  font-size: 28px;
+  padding: 0;
+  margin: 0;
+}
+
+.setting-page {
+  gap: 2rem;
+}
+
+.file {
+  font-size: 18px;
+  padding: 0;
+  margin: 0;
+}
+
+
+.change-form {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+  max-width: 400px;
+}
+
+.change-button {
+  width: 150px;
+  max-width: 150px;
+  min-width: 150px;
+  height: 64px;
+  border: none;
+  background-color: var(--black);
+  color: var(--white);
+  transition: ease 0.15s;
+}
+
+.change-button:hover {
+  cursor: pointer;
+  color: var(--black);
+  background-color: var(--yellow);
 }

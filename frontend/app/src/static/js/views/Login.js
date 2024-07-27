@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/22 13:36:52 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/13 13:53:40 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/25 15:43:45 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,10 +94,15 @@ export default class extends AbstractView {
       this.CreateKey(response.data.token);
       const loginEvent = new CustomEvent('loginEvent', {detail: response.status}); // Custom event to be triggered when submitted
       window.dispatchEvent(loginEvent);
+      console.log(event.target.href)
+      if (!event.target.href) {
+        this.Redirect('/profile');
+        return;
+      }
       this.Redirect(`/${event.target.href}`);
     } catch(error) {
         console.log('Invalid credentials!!');
-        Notification('error-message', '<h3>Invalid credentials!</h3>', 1);
+        Notification('notification-div', '<p class="font-text message">Invalid credentials!</p>', 1);
     }
   }
 
@@ -150,8 +155,6 @@ export default class extends AbstractView {
                 <span id="login-button-text">Authenticate</span>
                 </div>
               </button>
-              
-              <div id="notification-div"></div>
 
             </form>
         </div>

@@ -114,6 +114,14 @@ path {
   padding-left: 1rem;
 }
 
+.friend {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 0.5rem;
+}
+
 .friend a {
   transition: ease-in 0.1s;
   text-decoration: none;
@@ -223,4 +231,19 @@ path {
   padding-left: 0.5rem;
   font-size: 18px;
   border-bottom: solid 1px;
+}
+
+.status-div {
+  border-radius: 12px;
+
+  height: 12px;
+  width: 12px;
+}
+
+.online {
+  background-color: var(--green);
+}
+
+.offline {
+  background-color: red;
 }

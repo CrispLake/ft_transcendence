@@ -6,11 +6,12 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 09:22:19 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/23 12:45:54 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/25 15:58:03 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import AbstractView from './AbstractView.js'; // Adjust the import as necessary
+import { Notification } from '../notification.js';
+import AbstractView from './AbstractView.js';
 
 export default class extends AbstractView {
     constructor(params) {
@@ -52,7 +53,10 @@ export default class extends AbstractView {
     logoutHandler(event) {
       event.preventDefault();
       this.DeleteKey();
-      this.Redirect('/');
+      Notification('notification-div', '<p class="font-text message">Logout success!</p>', 0);
+      setTimeout(() => {
+        this.Redirect('/');
+      }, 3000);
     }
 
     AddListeners() {
@@ -90,22 +94,29 @@ export default class extends AbstractView {
         const winrate = ((wins / total) * 100);
         const winrateF = isNaN(winrate) ? '0' : winrate.toFixed(2);
 
-        const imageUrl = "static/images/pfp.png";
-        const pfp = `<img src="${imageUrl}" alt="Profile picture">`;
+        const imageUrl = `http://localhost:8000/account/${this.profileData.id}/image`;
+        const pfp = `<img class="profile-picture" src="${imageUrl}" alt="Profile picture">`;
         const matchHistory = `/history/${this.profileData.id}`;
 
         return `
+            <div id="notification-div" class="notification-div"><p class="message"></p></div>
             <div class="profile-div">
                 <div class="profile-card">
                     ${pfp}
-                    <h1 class="font-heading">${profileName}</h1>
-                    <h2>total games: ${total}</h2>
-                    <h2>wins: ${wins}</h2>
-                    <h2>losses: ${losses}</h2>
-                    <h2>winrate: ${winrateF}%</h2>
-                    <a href="/settings" data-link>Settings</a>
-                    <button href="${matchHistory}">History</button>
-                    <button id="logoutButton">Logout</button>
+                    <h1 class="font-sub">${profileName}</h1>
+                    <p class="font-text">total games: ${total}</p>
+                    <p class="font-text">wins: ${wins}</p>
+                    <p class="font-text">losses: ${losses}</å>
+                    <p class="font-text">winrate: ${winrateF}%</p>
+
+                    <div class="buttons-div">
+                      <button class="profile-button font-heading">
+                        <a href="/settings" data-link>Settings</a>
+                      </button>
+                      <button class="profile-button font-heading" id="logoutButton">
+                        Logout
+                      </button>
+                    </div>
                 </div>
             </div>
         `;

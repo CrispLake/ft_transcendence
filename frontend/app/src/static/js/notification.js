@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 12:45:45 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/13 14:05:59 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/25 15:45:43 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,15 @@ export const Notification = async (elementID, content, type) => {
 
   // Select error or success message, more could be added
   if (type === OK) {
-    element.setAttribute('style', 'background-color: light-green');
+    element.style.backgroundColor = 'var(--green)';
   }
   else if (type === ERROR) {
-    element.setAttribute('style', 'background-color: coral');
+    element.style.backgroundColor = 'var(--pink)';
   }
 
   // Make notification appear and disappear
-  await element.setAttribute('style', 'opacity: 1');
-  setTimeout(() => element.setAttribute('style', 'opacity: 0'), 5000);
+  element.style.opacity = '1';
+  setTimeout(() => {
+    element.style.opacity = '0';
+  }, 3000);
 }

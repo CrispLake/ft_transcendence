@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 08:00:37 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/22 11:16:53 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/24 06:58:29 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,18 +94,30 @@ body {
 
 /* NOTE: Global notification function */
 .notification-div {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  height: 150px !important;
+  width: 800px !important;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  background-color: rgb(237,67,55);
-  margin-top: 2rem;
-  height: 80px;
-  width: 100%;
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
   
   opacity: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  z-index: 15;
+  margin: 0;
+  padding: 0;
+}
 
-  transition: ease-in-out 0.3s;
+.message {
+  font-size: 32px;
+  margin: 0;
+  padding: 0;
+  text-align: center;
 }
 
 .footer {
@@ -124,16 +136,4 @@ body {
   width: 65%;
 }
 
-/* .darker {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-
-  background-color: black;
-  opacity: 70%;
-
-  z-index: 0;
-} */
  

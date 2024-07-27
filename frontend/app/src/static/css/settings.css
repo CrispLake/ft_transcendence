@@ -83,11 +83,13 @@
   min-width: 150px;
   height: 64px;
   border: none;
-  background-color: grey;
+  background-color: var(--black);
+  color: var(--white);
   transition: ease 0.15s;
 }
 
 .change-button:hover {
   cursor: pointer;
+  color: var(--black);
   background-color: var(--yellow);
 }

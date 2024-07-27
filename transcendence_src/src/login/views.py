@@ -26,7 +26,6 @@ class CustomAuthToken(ObtainAuthToken):
         })
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 @update_last_activity
 def serve_profile_image(request, id=None):
     if id is None:

@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/22 13:36:52 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/12 06:02:08 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/27 10:48:16 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,21 +31,21 @@ export default class extends AbstractView {
                 this.Redirect('/500');
                 return;
             }
-
-            const formData = new FormData(formElement);
-            const data = Object.fromEntries(formData);
-            const payload = {
-                user: data
-            };
         
             try {
+                const formData = new FormData(formElement);
+                const data = Object.fromEntries(formData);
+                const payload = {
+                    user: data
+                };
                 const response = await axios.post(
                     this.registerURL,
                     payload
                 );
                 this.Redirect('/login');
             } catch (error) {
-                console.error('Error registering');
+                console.error('Error registering: ', error.response.data.user.username);
+                Notification('notification-div', `<h3>${error.response.data.user.username}</h3>`, 1);
             }
         }
 

@@ -13,7 +13,7 @@ Authorization: Token 9a1e8d3a8eddb2276bfd657863e0773afb12f16b
 ###
 
 GET http://localhost:8000/account
-Authorization: Token 9a1e8d3a8eddb2276bfd657863e0773afb12f16b
+Authorization: Token 91975a4745dcf9a9a858a04cea79674c8444fb85
 
 # Friends
 
@@ -117,7 +117,7 @@ Content-Type: application/json
 
 {
     "username": "testUser2",
-    "password": "test"
+    "password": "testPassword"
 }
 
 ###

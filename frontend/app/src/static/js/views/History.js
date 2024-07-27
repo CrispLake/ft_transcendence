@@ -57,15 +57,14 @@ export default class extends AbstractView {
       }
     }
 
-    render2pGames(games, elementID, title) {
+    render2pGames(games, elementID) {
         const categoryContent = document.getElementById(elementID);
-        console.log(games);
         categoryContent.innerHTML = `
             <ul>
                 ${games.map(game => `
                     <li class="game-card ${this.getWinner(game)}">
                       <div class="font-text gamecard-left">
-                        <a class="player-name" data-id="${game.player1}">${game.player1Username}</a> 
+                        <a class="player-name" href="/profile/${game.player1}" data-id="${game.player1}">${game.player1Username}</a> 
                       </div>
                       
                       <div class="gamecard-middle font-sub">
@@ -74,7 +73,7 @@ export default class extends AbstractView {
                       </div>
                       
                       <div class="font-text gamecard-right">
-                        <a class="player-name" data-id="${game.player2}">${game.player2Username}</a> 
+                        <a class="player-name" href="/profile/${game.player2}" data-id="${game.player2}">${game.player2Username}</a> 
                       </div>
                     </li>
                 `).join('')}
@@ -90,36 +89,6 @@ export default class extends AbstractView {
             });
         });
     }
-
-    // render4pGames(games, elementID, title) {
-    //     const categoryContent = document.getElementById(elementID);
-    //     categoryContent.innerHTML = `
-    //         <ul>
-    //             ${games.map(game => `
-    //                 <li>
-    //                     <span class="${game.player1Username !== 'Guest' ? 'username' : 'guest'}" data-id="${game.player1}">${game.player1Username}</span> 
-    //                     (${game.player1Score}) vs 
-    //                     <span class="${game.player2Username !== 'Guest' ? 'username' : 'guest'}" data-id="${game.player2}">${game.player2Username}</span> 
-    //                     (${game.player2Score}) vs
-    //                     <span class="${game.player3Username !== 'Guest' ? 'username' : 'guest'}" data-id="${game.player3}">${game.player3Username}</span> 
-    //                     (${game.player3Score}) vs
-    //                     <span class="${game.player4Username !== 'Guest' ? 'username' : 'guest'}" data-id="${game.player4}">${game.player4Username}</span> 
-    //                     (${game.player4Score})
-    //                     on ${new Date(game.date).toLocaleString()}
-    //                 </li>
-    //             `).join('')}
-    //         </ul>
-    //     `;
-    
-    //     // Add event listeners to usernames
-    //     const usernameElements = categoryContent.querySelectorAll('.username');
-    //     usernameElements.forEach(usernameElement => {
-    //         usernameElement.addEventListener('click', () => {
-    //             const playerId = usernameElement.getAttribute('data-id');
-    //             this.Redirect(`/profile/${playerId}`);
-    //         });
-    //     });
-    // }
 
     renderEmpty(elementID, title) {
         const categoryContent = document.getElementById(elementID);
@@ -159,15 +128,6 @@ export default class extends AbstractView {
                 this.render2pGames(games, categoryName, 'Pong 2p');
         }
 
-        // else if (categoryName === 'pong4p') {
-        //     const games = await this.fetchGames(this.pong4pURL);
-
-        //     if (Object.keys(games).length === 0)
-        //         this.renderEmpty(categoryName, 'Pong 4p');
-        //     else
-        //         this.render4pGames(games, categoryName, 'Pong 4p');
-        // }
-
         else if (categoryName === 'gonp2p') {
             const games = await this.fetchGames(this.gonp2pURL);
 
@@ -176,15 +136,6 @@ export default class extends AbstractView {
             else
                 this.render2pGames(games, categoryName, 'Gonp 2p');
         }
-
-        // else if (categoryName === 'gonp4p') {
-        //     const games = await this.fetchGames(this.gonp4pURL);
-
-        //     if (Object.keys(games).length === 0)
-        //         this.renderEmpty(categoryName, 'Gonp 4p');
-        //     else
-        //         this.render4pGames(games, categoryName, 'Gonp 4p');
-        // }
     }
 
     AddListeners() {

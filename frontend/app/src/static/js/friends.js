@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 06:52:04 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/25 12:55:23 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/27 16:14:28 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,12 +80,10 @@ const fetchFriendData = async () => {
     const response = await axios.get('http://localhost:8000/account', {
       headers: { 'Authorization': `Token ${view.GetKey()}` }
     });
-    console.log('DATA: ', response.data);
     return response.data;
   }
   catch(error) {
     console.log('Error fetching friendlist.');
-    view.Redirect('/500');
     return { error: 'Error fetching friendlist.' };
   }
 }
@@ -130,8 +128,6 @@ const parseRequestData = (data) => {
 const fetchRequestData = async () => {
   try {
     if (!view.Authenticate()) {
-      console.log('No token found in loginDataFetch, exit!');
-      // view.Redirect('/login');
       return;
     }
     const response = await axios.get('http://localhost:8000/friend-request/list', {
@@ -140,9 +136,7 @@ const fetchRequestData = async () => {
     return response.data;
   }
   catch(error) {
-    console.log('Error fetching friendlist.');
-    view.Redirect('/500');
-    return { error: 'Error fetching friendlist.' };
+    return;
   }
 }
 
@@ -165,12 +159,11 @@ const loginDataFetch = async (event) => {
   }
   
   const responseRequest = await fetchRequestData();
-  if (!responseRequest) {
+  if (responseRequest.error) {
     return;
   }
   
   const myID = await fetchMyID();
-  console.log('BEFORE: ', responseRequest);
   const requests = responseRequest.filter(entry => entry.to_user.id === myID);
   const requestContent = await parseRequestData(requests);
 

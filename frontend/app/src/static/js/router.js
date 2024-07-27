@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 13:31:25 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/27 16:26:40 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/27 16:57:01 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,6 @@ const getParams = (match) => {
 
 // Makes back and forward arrows work in browser 
 const navigateTo = (url) => {
-  console.log('navigating: ', url);
-  console.log('CHECKING LOC: ', window.location);
   history.pushState(
     { prevUrl: window.location.href },
      null,

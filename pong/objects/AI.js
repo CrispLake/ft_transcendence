@@ -381,31 +381,33 @@ export class AI
         let startPos = new THREE.Vector2(this.game.ball.mesh.position.x, this.game.ball.mesh.position.z);
         let angle = this.game.ball.angle;
         // let endZ = this.game.arena.width / 2 - G.wallThickness - G.initialBallRadius;
-        let endX = this.game.arena.width / 2;
-        let endZ = this.game.arena.length / 2;
-        console.log("EndZ = " + endZ);
+        let endZ = this.game.arena.width / 2;
+        let endX = this.game.arena.length / 2;
+        // console.log("EndZ = " + endZ);
         let z = this.getIntersectionZ(startPos, endX, angle);
-        console.log("hitZ = " + z);
+        // console.log("hitZ = " + z);
         while (Math.abs(z) > this.movementBoundary + this.paddleLength / 2)
         {
             if (z < 0)
             {
                 let x = this.getIntersectionX(startPos, -endZ, angle);
-                console.log("hitX = " + x);
+                // console.log("hitX = " + x);
                 startPos.set(x, -endZ);
-                let angleFromHorizontalWall = PongMath.degToRad(90) - angle;
-                angle = angle - 2 * angleFromHorizontalWall;
+                let angleFromHorizontalWall = PongMath.degToRad(360) - angle;
+                // angle = angle - 2 * angleFromHorizontalWall;
+                angle = angleFromHorizontalWall;
             }
             else
             {
                 let x = this.getIntersectionX(startPos, endZ, angle);
-                console.log("hitX = " + x);
+                // console.log("hitX = " + x);
                 startPos.set(x, endZ);
-                let angleFromHorizontalWall = PongMath.degToRad(90) - angle;
-                angle = angle - 2 * angleFromHorizontalWall;
+                let angleFromHorizontalWall = PongMath.degToRad(360) - angle;
+                // angle = angle - 2 * angleFromHorizontalWall;
+                angle = angleFromHorizontalWall;
             }
             z = this.getIntersectionZ(startPos, endX, angle);
-            console.log("hitZ = " + z);
+            // console.log("hitZ = " + z);
         }
         console.log("FINAL HIT Z = " + z);
         this.targetPos = z;

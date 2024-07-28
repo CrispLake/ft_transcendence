@@ -224,6 +224,9 @@ export class Game
 		{
 			if (this.ball.box.intersectsBox(this.players[player].box))
 			{
+				// console.log("PADDLE HIT: ball.x = " + this.ball.mesh.position.x);
+				// console.log("PADDLE HIT: ball.z = " + this.ball.mesh.position.z);
+				// console.log("PADDLE HIT: ball.a = " + this.ball.angle);
 				if (this.players[player].bounce == true)
 					continue ;
 
@@ -249,7 +252,9 @@ export class Game
 		{
 			if (this.ball.box.intersectsBox(this.arena.walls[wall].box))
 			{
-				console.log("WALL HIT: ball.x = " + this.ball.mesh.position.x);
+				// console.log("WALL HIT: ball.x = " + this.ball.mesh.position.x);
+				// console.log("WALL HIT: ball.z = " + this.ball.mesh.position.z);
+				// console.log("WALL HIT: ball.a = " + this.ball.angle);
 				if (this.arena.walls[wall].bounce == true)
 				{
 					continue ;

@@ -413,12 +413,78 @@ export class AI
         this.targetPos = z;
     }
 
+    ballGoingUp()
+    {
+        return (0 < this.game.ball.angle && this.game.ball.angle < Math.PI);
+    }
+
+    ballGoingDown()
+    {
+        return (Math.PI < this.game.ball.angle && this.game.ball.angle < Math.PI * 2);
+    }
+
+    getTargetPositionWithSpin()
+    {
+        let startPos = new THREE.Vector2(this.game.ball.mesh.position.x, this.game.ball.mesh.position.z);
+        let angle = this.game.ball.angle;
+        let angleDelta = this.game.ball.spin;
+        let extendedRadiusAngle1 = 180 - angleDelta / 2;
+        let distancePerFrame = this.game.ball.speed;
+        let radius = distancePerFrame / 2 * Math.tan(extendedRadiusAngle1);
+        let distanceFromBallToCenter = radius / Math.sin(extendedRadiusAngle1);
+        let extendedRadiusAngle2 = 180 - angle - extendedRadiusAngle1;
+        let center = new THREE.Vector2(startPos.x + Math.cos(extendedRadiusAngle2) * distanceFromBallToCenter, startPos.y + Math.sin(extendedRadiusAngle2) * distanceFromBallToCenter);
+        let wallZ = this.game.arena.width / 2;
+        let goalX = this.game.arena.length / 2;
+        let centerToBottomWall = Math.abs(wallZ - center.y);
+        let centerToTopWall = Math.abs(center.y - -wallZ);
+        let centerToRightWall = Math.abs(goalX - center.x);
+        let centerToLeftWall = Math.abs(center.x - -goalX);
+
+        let hitGoal;
+        if (centerToLeftWall < radius)
+            hitGoal = center.x + Math.sqrt(radius * radius - centerToLeftWall * centerToLeftWall);
+        else if (centerToRightWall < radius)
+            hitGoal = center.x - Math.sqrt(radius * radius - centerToRightWall * centerToRightWall);
+
+        while (Math.abs(hitGoal) > wallZ)
+        {
+            let hitWall;
+            if (this.ballGoingUp() && centerToTopWall < radius)
+            {
+                hitWall = center.y + Math.sqrt(radius * radius - centerToTopWall * centerToTopWall);
+                startPos.set(hitWall, -wallZ);
+            }
+            else if (this.ballGoingDown() && centerToBottomWall < radius)
+            {
+                hitWall = center.y - Math.sqrt(radius * radius - centerToBottomWall * centerToBottomWall);
+                startPos.set(hitWall, wallZ);
+            }
+
+            // Add needed parameters
+            this.calculateNewAngle();
+            this.calculateCenter();
+
+            if (centerToLeftWall < radius)
+                hitGoal = center.x + Math.sqrt(radius * radius - centerToLeftWall * centerToLeftWall);
+            else if (centerToRightWall < radius)
+                hitGoal = center.x - Math.sqrt(radius * radius - centerToRightWall * centerToRightWall);
+        }
+
+
+
+        this.targetPos = z;
+    }
+
     readGame()
     {
         console.log("Reading game...");
         if (this.ballMovesTowards())
         {
-            this.getTargetPosition();
+            if (this.considerSpin && this.game.ball.spin != 0)
+                this.getTargetPositionWIthSpin();
+            else
+                this.getTargetPosition();
         }
         else
         {
@@ -486,20 +552,3 @@ export class AI
         this.stayWithinBoundaries();
     }
 };
-
-
-
-/*
-
-Consider two straight lines:
-
-    a1x+b1y+c1=0
-    a2x+b2y+c2=0
-
-
-The formula for the point of intersection of the two lines will be as follows:
-
-    x = (b1c2-b2c1)/(a1b2-a2b1)
-    y = (c1a2-c2a1)/(a1b2-a2b1)
-
-*/

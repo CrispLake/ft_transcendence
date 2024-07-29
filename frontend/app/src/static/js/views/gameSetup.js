@@ -36,7 +36,7 @@ export default class extends AbstractView {
             this.entries = [{
                 id: this.entryIdCounter++,
                 title: response.data.user.username,
-                image: `<img src="static/images/pfp.png" alt="Profile picture" width="50" height="50">`
+                image: `<img src="http://localhost:8000/account/${response.data.user.id}/image" alt="User icon" width="50" height="50">`
             }]
         } catch (error) {
             console.error('Error fetching profile data', error);
@@ -45,16 +45,17 @@ export default class extends AbstractView {
         console.log(response)
 
     }
+
     launchPongViewHandler(event) {
         console.log("4PLAYERHANDLER");
         event.preventDefault();
-        console.log(this.entryIdCounter)
         const params = {
             players: this.playerCounter,
             multimode: this.entryIdCounter > 2 ? true : false
         };
         this.Redirect('/play', params);
     }
+
     launchPong4PViewHandler(event) {
         console.log("4PLAYERHANDLER");
         event.preventDefault();
@@ -121,7 +122,7 @@ export default class extends AbstractView {
         const newEntry = {
             id: this.entryIdCounter++,
             title: userData.data.username,
-            image: `<img src="static/images/user.png" alt="User icon" width="50" height="50">`
+            image: `<img src="http://localhost:8000/account/${userData.data.user_id}/image" alt="User icon" width="50" height="50">`
         };
         this.playerCounter++;
         this.entries.push(newEntry);
@@ -181,6 +182,8 @@ export default class extends AbstractView {
                 </div>
     `);
     }
+
+    // Handles user authentication
     async LoginHandler(event) {
         event.preventDefault();
         const formElement = document.getElementById('login-form');
@@ -230,6 +233,7 @@ export default class extends AbstractView {
         const submitButton = document.getElementById('LoginSubmitButton');
         const loginForm = document.getElementById('login-form');
 
+        // TODO: Move these inside try -> catch block to prevent if else jungle
         if (launchPong) {
             launchPong.addEventListener('click', this.launchPongViewHandler);
         } else {
@@ -268,6 +272,7 @@ export default class extends AbstractView {
         }
     }
 
+    // TODO: Move these inside try -> catch block to prevent if else jungle
     RemoveListeners() {
         const launchPong = document.getElementById('launch-pong');
         // const launchPong2p = document.getElementById('launch-pong2p');
@@ -328,27 +333,50 @@ export default class extends AbstractView {
 
     async getHtml() {
         return `
-            <div class="new-page">
-                <div class="new-content">
-                    <button class="font-sub launch-button" id="launch-pong">
-                        <div class="text-holder">
-                            <span>Play Pong</span>
-                        </div>
-                    <button class="font-sub add-button" id="add-button">
-                        <div class="text-holder">
-                            <span>Add Guest</span>
-                        </div>
-                    </button>
-                    <button class="font-sub add-button" id="add-ai-button">
-                        <div class="text-holder">
-                            <span>Add AI</span>
-                        </div>
-                    </button>
-                    <div id="list-container" class="font-text list-container scrollable-container">
-                    </div>
+          <div class="game-settings-page">
+
+          <div class="setup-left">
+            <div class="buttons-div">
+
+              <button class="font-sub add-button blue" id="add-button">
+                <div class="text-holder">
+                    <span>Add Guest</span>
                 </div>
+              </button>
+
+              <button class="font-sub add-button blue" id="add-ai-button">
+                <div class="text-holder">
+                    <span>Add AI</span>
+                </div>
+              </button>
+
+              <button class="font-sub add-button blue" id="add-user-button">
+                <div class="text-holder">
+                    <span>Add User</span>
+                </div>
+              </button>
+
             </div>
-            <div class="login-page">
+
+            <div id="list-container" class="font-text list-container scrollable-container">
+            </div>
+
+            <div class="bottom-div">
+              <button class="font-heading launch-button" id="launch-pong">
+                <div class="text-holder">
+                    <span>START</span>
+                </div>
+              </button>
+            </div>
+
+          </div>
+
+          <div class="setup-right">
+            <img class="setup-img" src="//images.ctfassets.net/7oor54l3o0n4/50Lc9CdOtq4kmiWKsaAoiG/30649d5473cd45f3a2de6d7c9f067752/hive-peer-to-peer-project-based-learning-6.png" class="story-image">
+            
+          </div>
+
+            <div class="pop-up-login login-page">
                 <div class="login-form">
                     <h2 class="font-sub login-heading">&lt;Add user&gt;</h2>
                     <form id="login-form" action="" method="">
@@ -357,14 +385,17 @@ export default class extends AbstractView {
                         <label class="font-text" for="password">password:</label>
                         <input class="font-text login-input" type="password" id="password" name="password" required><br><br>
                         <button class="font-sub login-submit-button" id="LoginSubmitButton" type="submit">
-                            <div class="text-holder">
-                                <span id="login-button-text">Authenticate</span>
-                            </div>
+                          <div class="text-holder">
+                              <span id="login-button-text">Authenticate</span>
+                          </div>
                         </button>
-                        <div id="notification-div"></div>
                     </form>
                 </div>
             </div>
+
+            
+          
+          </div>
         `;
     }
 }

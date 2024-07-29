@@ -25,7 +25,7 @@ Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
 ###
 
 POST http://localhost:8000/friend-request/send
-Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
+Authorization: Token cf4fb0e3bdf451e24806def244a1ce5e77dbeb1b
 Content-Type: application/json
 
 {
@@ -371,8 +371,8 @@ POST http://localhost:8000/login HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "testUser20",
-    "password": "testPassword"
+    "username": "testUser1111",
+    "password": "test"
 }
 
 ###

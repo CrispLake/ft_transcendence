@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 09:22:19 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/27 17:11:30 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/29 06:28:19 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ export default class extends AbstractView {
             return;
         }
 
-        if (this.params.id === 'guest') {
+        if (this.params && this.params.id === 'guest') {
           this.profileData = {
             id: 'guest',
             losses: 0,

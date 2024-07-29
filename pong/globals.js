@@ -117,8 +117,8 @@ export const startPos4P = {
 //  AI
 //--------------------------------------------------------------------------
 
-// export const AIreadInterval = 1;
-export const AIreadInterval = 0.5;
+export const AIreadInterval = 2;
+// export const AIreadInterval = 0.5;
 
 
 //--------------------------------------------------------------------------

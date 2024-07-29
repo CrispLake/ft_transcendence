@@ -182,7 +182,7 @@ export class Ball
         if (wall.alignment == G.vertical)
             this.speedX = -this.speedX;
         else
-        this.speedZ = -this.speedZ;
+            this.speedZ = -this.speedZ;
 
         // Update angle based on the new direction
         this.updateAngle();
@@ -223,7 +223,6 @@ export class Ball
                 this.angle = 90 + G.minAngleFromWall;
         }
         this.angle = PongMath.degToRad(this.angle);
-
     }
 
     addSpin(power)

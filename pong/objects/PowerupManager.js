@@ -12,24 +12,15 @@ export class PowerupManager
     {
         this.game = game;
         this.scene = game.gameScene;
-        if (this.game.settings.multiMode)
+        this.powerups = [];
+        if (this.game.settings.powerups == true)
         {
-            this.powerups = [
-                new PowerPaddleLong(this.game),
-                new PowerPaddleShort(this.game),
-                new PowerLifePlus(this.game),
-            ]
+            // this.powerups.push(new PowerPaddleLong(this.game));
+            // this.powerups.push(new PowerPaddleShort(this.game));
+            // this.powerups.push(new PowerLifePlus(this.game));
         }
-        else
-        {
-            this.powerups = [
-                new PowerPaddleLong(this.game),
-                // new PowerPaddleShort(this.game),
-                // new PowerLifePlus(this.game),
-                // new PowerWavyWalls(this.game)
-            ]
-        }
-        
+        if (this.game.settings.multiMode == false)
+            // this.powerups.push(new PowerWavyWalls(this.game));
         this.availablePowerups = [...this.powerups];
         this.powerup = null;
         this.spawnTimer = new THREE.Clock();
@@ -53,7 +44,7 @@ export class PowerupManager
             this.handleWavyWalls();
             return;
         }
-        if (this.spawnTimer.getElapsedTime() >= G.powerupIntervalSec && this.arenaIsEmpty)
+        if (this.spawnTimer.getElapsedTime() >= G.powerupIntervalSec && this.arenaIsEmpty && this.powerups.length > 0)
         {
             this.spawnPowerup();
             this.arenaIsEmpty = false;

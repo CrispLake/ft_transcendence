@@ -336,37 +336,43 @@ export default class extends AbstractView {
           <div class="game-settings-page">
 
           <div class="setup-left">
-            <div class="buttons-div">
+            <div class="buttons-holder-div">
+              <div class="buttons-div">
 
-              <button class="font-sub add-button blue" id="add-button">
-                <div class="text-holder">
-                    <span>Add Guest</span>
-                </div>
-              </button>
+                <button class="font-sub add-button blue" id="add-button">
+                  <div class="text-holder">
+                      <span>Add Guest</span>
+                  </div>
+                </button>
 
-              <button class="font-sub add-button blue" id="add-ai-button">
-                <div class="text-holder">
-                    <span>Add AI</span>
-                </div>
-              </button>
+                <button class="font-sub add-button blue" id="add-ai-button">
+                  <div class="text-holder">
+                      <span>Add AI</span>
+                  </div>
+                </button>
 
-              <button class="font-sub add-button blue" id="add-user-button">
-                <div class="text-holder">
-                    <span>Add User</span>
-                </div>
-              </button>
+                <button class="font-sub add-button blue" id="add-user-button">
+                  <div class="text-holder">
+                      <span>Add User</span>
+                  </div>
+                </button>
 
+                
+
+              </div>
+
+              <div class="launch-div">
+                <button class="font-heading launch-button" id="launch-pong">
+                  <div class="text-holder">
+                      <span>START</span>
+                  </div>
+                </button>
+              </div>
             </div>
-
-            <div id="list-container" class="font-text list-container scrollable-container">
-            </div>
-
-            <div class="bottom-div">
-              <button class="font-heading launch-button" id="launch-pong">
-                <div class="text-holder">
-                    <span>START</span>
-                </div>
-              </button>
+           
+            <div class="players-container">
+              <div id="list-container" class="font-text list-container scrollable-container">
+              </div>
             </div>
 
           </div>

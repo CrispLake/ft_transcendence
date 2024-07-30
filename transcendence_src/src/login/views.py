@@ -104,6 +104,12 @@ def get_csrf_token(request):
 @permission_classes([IsAuthenticated])
 @update_last_activity
 def update_account(request):
+    image = request.FILES.get('pfp')
+    max_size = 2 * 1024 * 1024
+
+    if image is not None and image.size > max_size:
+        return Response({'error': 'File size exceeds 2 MB'}, status=status.HTTP_400_BAD_REQUEST)
+
     account = request.user.account
     serializer = AccountSerializer(account, data=request.data, partial=True)
     if serializer.is_valid():

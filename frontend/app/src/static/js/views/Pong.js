@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/22 08:18:54 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/31 15:27:22 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ export default class extends AbstractView {
     if (this.controls === null) {
       this.controls = new OrbitControls(this.game.camera, this. game.renderer.domElement);
     }
-
+    
     RectAreaLightUniformsLib.init();
   }
 

@@ -64,7 +64,11 @@ export default class extends AbstractView {
                 ${games.map(game => `
                     <li class="game-card ${this.getWinner(game)}">
                       <div class="font-text gamecard-left">
-                        <a class="player-name" href="/profile/${game.player1}" data-id="${game.player1}">${game.player1Username}</a> 
+                        ${
+                          game.player1
+                          ? `<a class="player-name" href="/profile/${game.player1}" data-id="${game.player1}">${game.player1Username}</a>`
+                          : '<a class="player-name guest" href="#">Guest</a>'
+                        }
                       </div>
                       
                       <div class="gamecard-middle font-sub">
@@ -73,7 +77,11 @@ export default class extends AbstractView {
                       </div>
                       
                       <div class="font-text gamecard-right">
-                        <a class="player-name" href="/profile/${game.player2}" data-id="${game.player2}">${game.player2Username}</a> 
+                        ${
+                          game.player2
+                          ? `<a class="player-name" href="/profile/${game.player2}" data-id="${game.player2}">${game.player2Username}</a>`
+                          : '<a class="player-name guest" href="#">Guest</a>'
+                        }
                       </div>
                     </li>
                 `).join('')}

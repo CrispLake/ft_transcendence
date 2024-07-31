@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 13:31:25 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/26 05:57:17 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/27 16:57:01 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ import GameSetup from './views/gameSetup.js';
 
 // List of current event listeners
 let views_memory = new Array();
+let redirected = false;
+let nextRoute = '';
 
 // No idea of this regeex lol
 const PathToRegex = path => new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
@@ -47,8 +49,11 @@ const getParams = (match) => {
 
 // Makes back and forward arrows work in browser 
 const navigateTo = (url) => {
-  console.log('navigating: ', url);
-  history.pushState(null, null, url);
+  history.pushState(
+    { prevUrl: window.location.href },
+     null,
+     url
+  );
   router();
 };
 
@@ -95,6 +100,13 @@ const router = async () => {
     }
   }
 
+  const parseRoute = (route) => {
+    console.log(route);
+    const newRoute = route.split(':8000');
+    console.log(newRoute);
+    return newRoute;
+  }
+
   // Check route list against browser address path
   const routeList = routes.map(route => {
     return { 
@@ -118,8 +130,15 @@ const router = async () => {
   // redirects to login if not authenticated
   if (view.auth) {
     if (! await view.Authenticate()) {
-      console.log('not authenticated');
       view.Redirect('/login');
+      redirected = true;
+      nextRoute = parseRoute(window.history.state.prevUrl);
+      return;
+    }
+    else if (redirected) {
+      view.Redirect(`${nextRoute}`);
+      redirected = false;
+      nextRoute = null;
       return;
     }
   }

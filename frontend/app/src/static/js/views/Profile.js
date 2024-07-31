@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 09:22:19 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/25 15:58:03 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/29 06:28:19 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ export default class extends AbstractView {
         this.auth = true;
         this.listeners = true;
         this.params = params;
-        this.profileData = null; // Initialize profile data
+        this.profileData = null;
         this.profileURL = 'http://localhost:8000/account';
 
         this.logoutHandler = this.logoutHandler.bind(this);
@@ -30,9 +30,25 @@ export default class extends AbstractView {
         const token = this.GetKey();
         if (!token) {
             console.log('No auth token found');
+            return;
+        }
+
+        if (this.params && this.params.id === 'guest') {
+          this.profileData = {
+            id: 'guest',
+            losses: 0,
+            wins: 999,
+            pfp: "/login/profile_pics/login/profile_pics/F4TItB0W8AASbJz.jpg",
+            user: {
+              id: 'guest',
+              username: 'Guest'
+            }
+          }  
+          return;
         }
 
         let url = this.profileURL;
+        
         if (this.params && this.params.id) {
             url += `/${this.params.id}`;
         }
@@ -43,9 +59,9 @@ export default class extends AbstractView {
                 { headers: {'Authorization': `Token ${token}`} }
             );
             this.profileData = response.data;
+            console.log(response.data);
         } catch (error) {
             console.error('Error fetching profile data', error);
-            // Handle error, e.g., by setting an error message
             this.profileData = { error: 'Failed to load profile data' };
         }
     }

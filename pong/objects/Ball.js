@@ -177,6 +177,7 @@ export class Ball
     {
         // Get direction to wall from center
         let direction = this.getDirection(wall);
+        console.log("BALL ANGLE, at int.: " + PongMath.radToDeg(this.angle));
 
         // Change direction based on wall alignment
         if (wall.alignment == G.vertical)
@@ -186,11 +187,13 @@ export class Ball
 
         // Update angle based on the new direction
         this.updateAngle();
+        console.log("BALL ANGLE, inv z.:  " + PongMath.radToDeg(this.angle));
 
         // Change angle based on spin against the wall
         let angleIncrease = PongMath.lerp(this.spin, -G.maxSpin, G.maxSpin, -G.maxAngleIncreaseFromSpinBounce, G.maxAngleIncreaseFromSpinBounce);
         this.angle += angleIncrease;
         this.angle = PongMath.within2Pi(this.angle);
+        console.log("BALL ANGLE, lerped:  " + PongMath.radToDeg(this.angle));
 
         // Keep angle within reasonable values
         this.angle = PongMath.radToDeg(this.angle);
@@ -223,6 +226,7 @@ export class Ball
                 this.angle = 90 + G.minAngleFromWall;
         }
         this.angle = PongMath.degToRad(this.angle);
+        console.log("BALL ANGLE, correct: " + PongMath.radToDeg(this.angle));
     }
 
     addSpin(power)

@@ -37,6 +37,7 @@ class Balls
             this.balls[i].material.dispose();
         }
         this.balls = [];
+        this.balls.length = 0;
     }
 }
 
@@ -75,6 +76,26 @@ class Circles
             this.circles[i].material.dispose();
         }
         this.circles = [];
+    }
+}
+
+class IntersectionPoint
+{
+    constructor(x, z, wall)
+    {
+        this.pos = new THREE.Vector2(x, z);
+        this.wall = wall;
+    }
+
+    set(x, z, wall)
+    {
+        this.setPos(x, z);
+        this.wall = wall;
+    }
+
+    setPos(x, z)
+    {
+        this.pos.set(x, z);
     }
 }
 
@@ -121,7 +142,9 @@ export class AI
         this.initializeBrain();        
     }
     
-    // ----Initialization Functions----
+    //--------------------------------------------------------------------------
+    //  INITIALIZATION
+    //--------------------------------------------------------------------------
     
     addToScene()
     {
@@ -191,7 +214,9 @@ export class AI
     }
 
 
-    // ----Boost Meter----
+    //--------------------------------------------------------------------------
+    //  BOOST METER
+    //--------------------------------------------------------------------------
 
     removeBoostMeter()
     {
@@ -245,7 +270,9 @@ export class AI
     }
 
 
-    // ----Boost----
+    //--------------------------------------------------------------------------
+    //  BOOST
+    //--------------------------------------------------------------------------
 
     increaseBoost()
     {
@@ -282,7 +309,9 @@ export class AI
     }
 
 
-    // ----Light----
+    //--------------------------------------------------------------------------
+    //  LIGHT EFFECT
+    //--------------------------------------------------------------------------
 
     resetLightEffect()
     {
@@ -310,7 +339,9 @@ export class AI
             this.resetLightEffect();
     }
 
-    // ----Life----
+    //--------------------------------------------------------------------------
+    //  LIFE
+    //--------------------------------------------------------------------------
 
     loseLife(lifeAmount)
     {
@@ -331,7 +362,9 @@ export class AI
     }
 
 
-    // ----Paddle----
+    //--------------------------------------------------------------------------
+    //  PADDLE
+    //--------------------------------------------------------------------------
 
     resize(length)
     {
@@ -382,35 +415,6 @@ export class AI
 
 
     //--------------------------------------------------------------------------
-    //  DEBUG
-    //--------------------------------------------------------------------------
-
-    visualizeCircle()   // DEBUG
-    {
-        this.scene.remove(this.circle);
-        this.circle.geometry.dispose();
-        this.circle.material.dispose();
-        this.scene.remove(this.circleCenter);
-        this.circleCenter.geometry.dispose();
-        this.circleCenter.material.dispose();
-        
-        const circleGeometry = new THREE.CircleGeometry(this.radius, 32);
-        const circleMaterial = new THREE.MeshStandardMaterial({color: COLOR.WHITE, emissive: COLOR.WHITE, wireframe: true});
-        this.circle = new THREE.Mesh(circleGeometry, circleMaterial);
-        this.circle.position.set(this.center.x, 0, this.center.y);
-        this.circle.rotation.x -= Math.PI / 2;
-
-        const centerGeometry = new THREE.SphereGeometry(1, 32, 32);
-        const centerMaterial = new THREE.MeshStandardMaterial({color: COLOR.WHITE, emissive: COLOR.RED, opacity: 0.5});
-        this.circleCenter = new THREE.Mesh(centerGeometry, centerMaterial);
-        this.circleCenter.position.set(this.center.x, 0, this.center.y);
-
-        this.scene.add(this.circle);
-        this.scene.add(this.circleCenter);
-    }
-
-
-    //--------------------------------------------------------------------------
     //  BOOLEAN FUNCTIONS
     //--------------------------------------------------------------------------
 
@@ -436,7 +440,35 @@ export class AI
 
     wallHit()
     {
-        return (this.firstPoint.x != -this.goalX && this.firstPoint.x != this.goalX);
+        return (this.firstPoint.pos.x != -this.goalX && this.firstPoint.pos.x != this.goalX);
+    }
+
+    goalHit()
+    {
+        console.log("playerNum: " + this.playerNum);
+        console.log("hit: " + this.firstPoint.wall);
+        if (this.playerNum == 1 && this.firstPoint.wall == "left")
+        {
+            if (this.withinBorders(this.firstPoint.pos.y, this.goalZ))
+                return true;
+        }
+        else if (this.playerNum == 2 && this.firstPoint.wall == "right")
+        {
+            if (this.withinBorders(this.firstPoint.pos.y, this.goalZ))
+                return true;
+        }
+        else if (this.playerNum == 3 && this.firstPoint.wall == "top")
+        {
+            if (this.withinBorders(this.firstPoint.pos.x, this.goalX))
+                return true;
+        }
+        else if (this.playerNum == 4 && this.firstPoint.wall == "bottom")
+        {
+            if (this.withinBorders(this.firstPoint.pos.x, this.goalX))
+                return true;
+        }
+        console.log("Goal not hit");
+        return false;
     }
 
     ballMovesTowards()
@@ -465,7 +497,7 @@ export class AI
         this.targetPos = 0;
         this.considerSpin = false;
         this.canSpin = false;
-        this.maxBounces = 10;
+        this.maxBounces = 3;
         if (this.difficulty >= 2)
             this.considerSpin = true;
         if (this.difficulty >= 3)
@@ -490,7 +522,7 @@ export class AI
         this.hitGoal = 0;
 
         this.intersectionPoints = [];
-        this.firstPoint = new THREE.Vector2();
+        this.firstPoint = new IntersectionPoint(0, 0, "none");
 
         
         // DEBUG
@@ -551,29 +583,66 @@ export class AI
     //  CURVED PATH
     //--------------------------------------------------------------------------
 
-    calculateNewAngle(wall)
+    getAngleAtIntersection()
     {
-        this.angle = PongMath.radToDeg(this.angle);
+        let a = this.angleBetweenVectors(this.center, this.firstPoint.pos);
+        console.log("Angle from center: " + PongMath.radToDeg(a));
+        if (this.angleDelta >= 0)
+            a += Math.PI / 2;
+        else
+            a -= Math.PI / 2;
+        console.log("Angle at intersection: " + PongMath.radToDeg(a));
+        this.angle = PongMath.within2Pi(a);
+    }
 
-        this.angle = 360 - this.angle;
+    calculateNewAngle()
+    {
+        console.log("Angle, current: " + PongMath.radToDeg(this.angle));
+        this.getAngleAtIntersection();
+        console.log("Angle, at int.: " + PongMath.radToDeg(this.angle));
+        this.angleDelta *= (100 - G.spinReduction) / 100;
+        this.angle = PongMath.within2Pi(Math.PI - this.angle);
+        console.log("Angle, inv. z:  " + PongMath.radToDeg(this.angle));
+        
         this.angle += PongMath.lerp(this.angleDelta, -G.maxSpin, G.maxSpin, -G.maxAngleIncreaseFromSpinBounce, G.maxAngleIncreaseFromSpinBounce);
         this.angle = PongMath.within2Pi(this.angle);
+        console.log("Angle, lerped:  " + PongMath.radToDeg(this.angle));
+        this.angle = PongMath.radToDeg(this.angle);
 
-        if (wall == "top")
+        if (this.firstPoint.wall == "top")
         {
+            console.log("Hit top wall");
             if (this.angle > 180 && this.angle < 270 + G.minAngleFromWall)
                 this.angle = 270 + G.minAngleFromWall;
             else if (this.angle < 180 && this.angle > 90 - G.minAngleFromWall)
                 this.angle = 90 - G.minAngleFromWall;
         }
-        else if (wall == "bottom")
+        else if (this.firstPoint.wall == "bottom")
         {
+            console.log("Hit bottom wall");
             if (this.angle < 360 && this.angle > 270 - G.minAngleFromWall)
                 this.angle = 270 - G.minAngleFromWall;
             else if (this.angle > 0 && this.angle < 90 + G.minAngleFromWall)
                 this.angle = 90 + G.minAngleFromWall;
         }
+        else if (this.firstPoint.wall == "left")
+        {
+            console.log("Hit left wall");
+            if (this.angle < 270 && this.angle > 180 - G.minAngleFromWall)
+                this.angle = 180 - G.minAngleFromWall;
+            else if (this.angle > 270 && this.angle < G.minAngleFromWall)
+                this.angle = G.minAngleFromWall;
+        }
+        else if (this.firstPoint.wall == "right")
+        {
+            console.log("Hit right wall");
+            if (this.angle > 90 && this.angle < 180 + G.minAngleFromWall)
+                this.angle = 180 + G.minAngleFromWall;
+            else if (this.angle < 90 && this.angle > 360 - G.minAngleFromWall)
+                this.angle = 360 - G.minAngleFromWall;
+        }
 
+        console.log("Angle, correct: " + this.angle);
         this.angle = PongMath.degToRad(this.angle);
     }
 
@@ -619,58 +688,49 @@ export class AI
         return (-border <= point && point <= border);
     }
 
-
     getValidIntersectionPoints()
     {
         // Frist we empty the array
         this.intersectionPoints = [];
 
-        // console.log("center.x = " + this.center.x);
-        // console.log("center.y = " + this.center.y);
-        // console.log("radius = " + this.radius);
-        // console.log("centerToTopWall = " + this.centerToTopWall);
-        // console.log("centerToBottomWall = " + this.centerToBottomWall);
-        // console.log("centerToLeftWall = " + this.centerToLeftWall);
-        // console.log("centerToRightWall = " + this.centerToRightWall);
-
         // Then we fill it with all the intersection points
         if (this.radius >= this.centerToTopWall)
         {
             const deltaX = Math.sqrt(Math.pow(this.radius, 2) - Math.pow((-this.wallZ - this.center.y), 2));
-            if (this.withinBorders(this.center.x - deltaX, this.goalX))
-                this.intersectionPoints.push(new THREE.Vector2(this.center.x - deltaX, -this.wallZ));
-            if (this.withinBorders(this.center.x + deltaX, this.goalX))
-                this.intersectionPoints.push(new THREE.Vector2(this.center.x + deltaX, -this.wallZ));
+            if (this.withinBorders(this.center.x - deltaX, this.goalX) && this.ballPos.x != this.center.x - deltaX && this.ballPos.y != -this.wallZ)
+                this.intersectionPoints.push(new IntersectionPoint(this.center.x - deltaX, -this.wallZ, "top"));
+            if (this.withinBorders(this.center.x + deltaX, this.goalX) && this.ballPos.x != this.center.x + deltaX && this.ballPos.y != -this.wallZ)
+                this.intersectionPoints.push(new IntersectionPoint(this.center.x + deltaX, -this.wallZ, "top"));
         }
         if (this.radius >= this.centerToBottomWall)
         {
             const deltaX = Math.sqrt(Math.pow(this.radius, 2) - Math.pow((this.wallZ - this.center.y), 2));
-            if (this.withinBorders(this.center.x - deltaX, this.goalX))
-                this.intersectionPoints.push(new THREE.Vector2(this.center.x - deltaX, this.wallZ));
-            if (this.withinBorders(this.center.x + deltaX, this.goalX))
-                this.intersectionPoints.push(new THREE.Vector2(this.center.x + deltaX, this.wallZ));
+            if (this.withinBorders(this.center.x - deltaX, this.goalX) && this.ballPos.x != this.center.x - deltaX && this.ballPos.y != this.wallZ)
+                this.intersectionPoints.push(new IntersectionPoint(this.center.x - deltaX, this.wallZ, "bottom"));
+            if (this.withinBorders(this.center.x + deltaX, this.goalX) && this.ballPos.x != this.center.x + deltaX && this.ballPos.y != this.wallZ)
+                this.intersectionPoints.push(new IntersectionPoint(this.center.x + deltaX, this.wallZ, "bottom"));
         }
         if (this.radius >= this.centerToLeftWall)
         {
             const deltaZ = Math.sqrt(Math.pow(this.radius, 2) - Math.pow((-this.goalX - this.center.x), 2));
-            if (this.withinBorders(this.center.y - deltaZ, this.wallZ))
-                this.intersectionPoints.push(new THREE.Vector2(-this.goalX, this.center.y - deltaZ));
-            if (this.withinBorders(this.center.y + deltaZ, this.wallZ))
-                this.intersectionPoints.push(new THREE.Vector2(-this.goalX, this.center.y + deltaZ));
+            if (this.withinBorders(this.center.y - deltaZ, this.wallZ) && this.ballPos.x != -this.goalX && this.ballPos.y != this.center.y - deltaZ)
+                this.intersectionPoints.push(new IntersectionPoint(-this.goalX, this.center.y - deltaZ, "left"));
+            if (this.withinBorders(this.center.y + deltaZ, this.wallZ) && this.ballPos.x != -this.goalX && this.ballPos.y != this.center.y + deltaZ)
+                this.intersectionPoints.push(new IntersectionPoint(-this.goalX, this.center.y + deltaZ, "left"));
         }
         if (this.radius >= this.centerToRightWall)
         {
             const deltaZ = Math.sqrt(Math.pow(this.radius, 2) - Math.pow((this.goalX - this.center.x), 2));
-            if (this.withinBorders(this.center.y - deltaZ, this.wallZ))
-                this.intersectionPoints.push(new THREE.Vector2(this.goalX, this.center.y - deltaZ));
-            if (this.withinBorders(this.center.y + deltaZ, this.wallZ))
-                this.intersectionPoints.push(new THREE.Vector2(this.goalX, this.center.y + deltaZ));
+            if (this.withinBorders(this.center.y - deltaZ, this.wallZ) && this.ballPos.x != this.goalX && this.ballPos.y != this.center.y - deltaZ)
+                this.intersectionPoints.push(new IntersectionPoint(this.goalX, this.center.y - deltaZ, "right"));
+            if (this.withinBorders(this.center.y + deltaZ, this.wallZ) && this.ballPos.x != this.goalX && this.ballPos.y != this.center.y + deltaZ)
+                this.intersectionPoints.push(new IntersectionPoint(this.goalX, this.center.y + deltaZ, "right"));
         }
     }
 
     angleBetweenVectors(point0, point1)
     {
-        return (Math.atan2(point1.y - point0.y, point1.x - point0.x));
+        return (PongMath.within2Pi(PongMath.degToRad(90) - Math.atan2(point1.y - point0.y, point1.x - point0.x)));
     }
 
     getFirstIntersectionPointClockwise()
@@ -679,22 +739,30 @@ export class AI
         let minAngle = Math.PI * 2;
         let first = -1;
 
+        console.log("Current angle: " + PongMath.radToDeg(currentAngle).toFixed(2));
         for (let i = 0; i < this.intersectionPoints.length; i++)
         {
-            let intersectionAngle = this.angleBetweenVectors(this.center, this.intersectionPoints[i]);
-            let angleDifference = PongMath.within2Pi(intersectionAngle - currentAngle);
+            let intersectionAngle = this.angleBetweenVectors(this.center, this.intersectionPoints[i].pos);
+            console.log("Intersection[" + i + "] Point: " + this.intersectionPoints[i].pos.x.toFixed(2) + ", " + this.intersectionPoints[i].pos.y.toFixed(2) + ", " + this.intersectionPoints[i].wall);
+            console.log("Intersection[" + i + "] angle: " + PongMath.radToDeg(intersectionAngle).toFixed(2));
+            let angleDifference = PongMath.within2Pi(currentAngle - intersectionAngle);
+            console.log("Angle difference: " + PongMath.radToDeg(angleDifference).toFixed(2));
             if (angleDifference < minAngle)
             {
                 minAngle = angleDifference;
+                console.log("Min angle: " + PongMath.radToDeg(minAngle).toFixed(2));
                 first = i;
             }
         }
         if (first >= 0)
         {
             console.log("First intersection point CW: " + first);
-            this.firstPoint.set(this.intersectionPoints[first].x, this.intersectionPoints[first].y);
-            this.balls.setColor(first, COLOR.YELLOW); // DEBUG
+            this.firstPoint.set(this.intersectionPoints[first].pos.x, this.intersectionPoints[first].pos.y, this.intersectionPoints[first].wall);
+            console.log("FirstPoint: " + this.firstPoint.pos.x.toFixed(2) + ", " + this.firstPoint.pos.y.toFixed(2) + ", " + this.firstPoint.wall);
+            this.balls.setColor(this.ballAmount + first, COLOR.YELLOW); // DEBUG
         }
+        else
+            console.log("No intersection points found");
     }
 
     getFirstIntersectionPointCounterClockwise()
@@ -705,8 +773,8 @@ export class AI
 
         for (let i = 0; i < this.intersectionPoints.length; i++)
         {
-            let intersectionAngle = this.angleBetweenVectors(this.center, this.intersectionPoints[i]);
-            let angleDifference = PongMath.within2Pi(intersectionAngle - currentAngle);
+            let intersectionAngle = this.angleBetweenVectors(this.center, this.intersectionPoints[i].pos);
+            let angleDifference = PongMath.within2Pi(currentAngle - intersectionAngle);
             if (angleDifference > maxAngle)
             {
                 maxAngle = angleDifference;
@@ -715,52 +783,78 @@ export class AI
         }
         if (first >= 0)
         {
-            console.log("First intersection point CCW: " + first);
-            this.firstPoint.set(this.intersectionPoints[first].x, this.intersectionPoints[first].y);
+            console.log("First intersection point CW: " + first);
+            this.firstPoint.set(this.intersectionPoints[first].pos.x, this.intersectionPoints[first].pos.y, this.intersectionPoints[first].wall);
+            console.log("FirstPoint: " + this.firstPoint.pos.x.toFixed(2) + ", " + this.firstPoint.pos.y.toFixed(2) + ", " + this.firstPoint.wall);
             this.balls.setColor(first, COLOR.YELLOW); // DEBUG
         }
     }
 
     getTargetPositionWithSpin()
     {
-        console.log("-----------------------------------------------------------");
+        console.log("---SPIN----------------------------------------------------");
         this.ballPos.set(this.game.ball.mesh.position.x, this.game.ball.mesh.position.z);
         this.angle = this.game.ball.angle;
         this.angleDelta = this.game.ball.spin;
         this.distancePerFrame = this.game.ball.speed;
+        this.WallX = this.game.arena.length / 2;
         this.wallZ = this.game.arena.width / 2;
         this.goalX = this.game.arena.length / 2;
+        this.goalZ = this.game.arena.width / 2;
+        console.log("Ball position: " + this.ballPos.x.toFixed(2) + ", " + this.ballPos.y.toFixed(2));
+        console.log("Ball angle: " + PongMath.radToDeg(this.angle).toFixed(2));
         this.calculateCenter();
         this.calculateCenterToWalls();
         this.getValidIntersectionPoints();
-        
+
         this.circles.empty();   // DEBUG
         this.circles.add(this.center, this.radius); // DEBUG
         this.balls.removeBalls(); // DEBUG
+        this.ballAmount = 0; // DEBUG
         for (let point in this.intersectionPoints)  // DEBUG
-            this.balls.addBall(this.intersectionPoints[point]);
+            this.balls.addBall(this.intersectionPoints[point].pos);
  
         if (this.clockwiseSpin())
             this.getFirstIntersectionPointClockwise();
         else 
             this.getFirstIntersectionPointCounterClockwise();
 
-        while (this.intersectionPoints.length > 0 && this.wallHit())
+        let bounces = 0;
+        while (this.intersectionPoints.length > 0 && !this.goalHit())
         {
-            this.ballPos.set(this.firstPoint.x, this.firstPoint.y);
+            console.log("-----------------------------------------------------------");
+            console.log("firstPoint: " + this.firstPoint.pos.x.toFixed(2) + ", " + this.firstPoint.pos.y.toFixed(2));
+            this.ballPos.set(this.firstPoint.pos.x, this.firstPoint.pos.y);
+            this.calculateNewAngle();
+            console.log("New ball position: " + this.ballPos.x.toFixed(2) + ", " + this.ballPos.y.toFixed(2));
+            console.log("New ball angle: " + PongMath.radToDeg(this.angle).toFixed(2));
             this.calculateCenter();
             this.calculateCenterToWalls();
             this.getValidIntersectionPoints();
+            
+            // for (let point in this.intersectionPoints)  // DEBUG
+            //     console.log("Intersection point: " + this.intersectionPoints[point].pos.x.toFixed(2) + ", " + this.intersectionPoints[point].pos.y.toFixed(2)); // DEBUG
             this.circles.add(this.center, this.radius); // DEBUG
+            this.ballAmount = this.balls.balls.length; // DEBUG
             for (let point in this.intersectionPoints)  // DEBUG
-                this.balls.addBall(this.intersectionPoints[point]);
+                this.balls.addBall(this.intersectionPoints[point].pos);
+            
             if (this.clockwiseSpin())
                 this.getFirstIntersectionPointClockwise();
             else 
                 this.getFirstIntersectionPointCounterClockwise();
+            bounces++;
+            if (bounces >= this.maxBounces)
+                break;
         }
 
-        this.targetPos = this.firstPoint.y;
+        console.log("Target position: " + this.firstPoint.pos.x.toFixed(2) + ", " + this.firstPoint.pos.y.toFixed(2));
+        if (this.alignment == G.vertical)
+            this.targetPos = this.firstPoint.pos.y;
+        else
+            this.targetPos = this.firstPoint.pos.x;
+
+        // this.game.togglePause();
     }
 
 

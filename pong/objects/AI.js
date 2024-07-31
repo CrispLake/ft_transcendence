@@ -4,6 +4,80 @@ import * as G from '../globals.js';
 // import * as SETTINGS from '../gameSetting.js';
 import * as PongMath from '../math.js';
 
+class Balls
+{
+    constructor(scene)
+    {
+        this.scene = scene;
+        this.balls = [];
+    }
+
+    addBall(pos)
+    {
+        const ballGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+        const ballMaterial = new THREE.MeshStandardMaterial({color: COLOR.CYAN, emissive: COLOR.CYAN});
+        const ball = new THREE.Mesh(ballGeometry, ballMaterial);
+        ball.position.set(pos.x, 0, pos.y);
+        this.balls.push(ball);
+        this.scene.add(ball);
+    }
+
+    setColor(index, color)
+    {
+        this.balls[index].material.color.set(color);
+        this.balls[index].material.emissive.set(color);
+    }
+
+    removeBalls()
+    {
+        for (let i = 0; i < this.balls.length; i++)
+        {
+            this.scene.remove(this.balls[i]);
+            this.balls[i].geometry.dispose();
+            this.balls[i].material.dispose();
+        }
+        this.balls = [];
+    }
+}
+
+class Circles
+{
+    constructor(scene)
+    {
+        this.scene = scene;
+        this.circles = [];
+    }
+
+    add(center, radius)
+    {
+        const circleGeometry = new THREE.CircleGeometry(radius, 32);
+        const circleMaterial = new THREE.MeshBasicMaterial({color: COLOR.WHITE, wireframe: true});
+        const circle = new THREE.Mesh(circleGeometry, circleMaterial);
+        circle.position.set(center.x, 0, center.y);
+        circle.rotation.x -= Math.PI / 2;
+        this.circles.push(circle);
+        this.scene.add(circle);
+
+        const centerGeometry = new THREE.SphereGeometry(1, 32, 32);
+        const centerMaterial = new THREE.MeshStandardMaterial({color: COLOR.WHITE, emissive: COLOR.RED, opacity: 0.5});
+        const circleCenter = new THREE.Mesh(centerGeometry, centerMaterial);
+        circleCenter.position.set(center.x, 0, center.y);
+        this.circles.push(circleCenter);
+        this.scene.add(circleCenter);
+    }
+
+    empty()
+    {
+        for (let i = 0; i < this.circles.length; i++)
+        {
+            this.scene.remove(this.circles[i]);
+            this.circles[i].geometry.dispose();
+            this.circles[i].material.dispose();
+        }
+        this.circles = [];
+    }
+}
+
 export class AI
 {
     constructor(game, playerNum, name)
@@ -335,15 +409,6 @@ export class AI
         this.scene.add(this.circleCenter);
     }
 
-    drawBall(pos)   // DEBUG
-    {
-        const ballGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-        const ballMaterial = new THREE.MeshStandardMaterial({color: COLOR.CYAN, emissive: COLOR.CYAN});
-        const ball = new THREE.Mesh(ballGeometry, ballMaterial);
-        ball.position.set(pos.x, 0, pos.y);
-        this.scene.add(ball);
-    }
-
 
     //--------------------------------------------------------------------------
     //  BOOLEAN FUNCTIONS
@@ -424,9 +489,13 @@ export class AI
         this.hitWall = 0;
         this.hitGoal = 0;
 
+        this.intersectionPoints = [];
         this.firstPoint = new THREE.Vector2();
 
+        
         // DEBUG
+        this.circles = new Circles(this.scene);
+        this.balls = new Balls(this.scene);
         this.circle = new THREE.Mesh(new THREE.CircleGeometry(0, 0), new THREE.MeshBasicMaterial({color: COLOR.WHITE}));
         this.circleCenter = new THREE.Mesh(new THREE.SphereGeometry(0, 0, 0), new THREE.MeshStandardMaterial({color: COLOR.WHITE, emissive: COLOR.RED, opacity: 0.5}));
     }
@@ -450,38 +519,30 @@ export class AI
 
     getTargetPosition()
     {
-        let ballPos = new THREE.Vector2(this.game.ball.mesh.position.x, this.game.ball.mesh.position.z);
-        let angle = this.game.ball.angle;
-        let endZ = this.game.arena.width / 2;
-        let endX = this.game.arena.length / 2;
+        this.ballPos.set(this.game.ball.mesh.position.x, this.game.ball.mesh.position.z);
+        this.angle = this.game.ball.angle;
+        this.wallZ = this.game.arena.width / 2;
+        this.goalX = this.game.arena.length / 2;
         let x = 0;
-        let z = this.getIntersectionZ(ballPos, endX, angle);
-        let print = true;
+        let z = this.getIntersectionZ(this.ballPos, this.goalX, this.angle);
         let bounces = 0;
-        while (Math.abs(z) > this.movementBoundary + this.paddleLength / 2 && x < Math.abs(endX) && bounces < this.maxBounces)
+        while (Math.abs(z) > this.movementBoundary + this.paddleLength / 2 && x < Math.abs(this.goalX) && bounces < this.maxBounces)
         {
             if (z < 0)
             {
-                x = this.getIntersectionX(ballPos, -endZ, angle);
-                ballPos.set(x, -endZ);
-                angle = PongMath.degToRad(360) - angle;
+                x = this.getIntersectionX(this.ballPos, -this.wallZ, this.angle);
+                this.ballPos.set(x, -this.wallZ);
+                this.angle = PongMath.degToRad(360) - this.angle;
             }
             else
             {
-                x = this.getIntersectionX(ballPos, endZ, angle);
-                ballPos.set(x, endZ);
-                angle = PongMath.degToRad(360) - angle;
+                x = this.getIntersectionX(this.ballPos, this.wallZ, this.angle);
+                this.ballPos.set(x, this.wallZ);
+                this.angle = PongMath.degToRad(360) - this.angle;
             }
-            z = this.getIntersectionZ(ballPos, endX, angle);
-            if (print)
-            {
-                console.log("x = " + x);
-                console.log("z = " + z);
-                print = false;
-            }
+            z = this.getIntersectionZ(this.ballPos, this.goalX, this.angle);
             bounces++;
         }
-        console.log("FINAL HIT Z = " + z);
         this.targetPos = z;
     }
 
@@ -520,7 +581,7 @@ export class AI
     {
         let base = this.distancePerFrame / 2;
         this.extendedRadiusAngle1 = (PongMath.degToRad(180) - this.angleDelta) / 2;
-        this.radius = base * Math.tan(this.extendedRadiusAngle1);
+        this.radius = Math.abs(base * Math.tan(this.extendedRadiusAngle1));
         this.extendedRadius = Math.sqrt(base * base + this.radius * this.radius);
         this.extendedRadiusAngle2 = PongMath.degToRad(180) - this.angle % PongMath.degToRad(90) - this.extendedRadiusAngle1;
         
@@ -553,39 +614,57 @@ export class AI
         this.centerToLeftWall = Math.abs(this.center.x - -this.goalX);
     }
 
+    withinBorders(point, border)
+    {
+        return (-border <= point && point <= border);
+    }
+
+
     getValidIntersectionPoints()
     {
+        // Frist we empty the array
+        this.intersectionPoints = [];
+
+        // console.log("center.x = " + this.center.x);
+        // console.log("center.y = " + this.center.y);
+        // console.log("radius = " + this.radius);
+        // console.log("centerToTopWall = " + this.centerToTopWall);
+        // console.log("centerToBottomWall = " + this.centerToBottomWall);
+        // console.log("centerToLeftWall = " + this.centerToLeftWall);
+        // console.log("centerToRightWall = " + this.centerToRightWall);
+
+        // Then we fill it with all the intersection points
         if (this.radius >= this.centerToTopWall)
         {
             const deltaX = Math.sqrt(Math.pow(this.radius, 2) - Math.pow((-this.wallZ - this.center.y), 2));
-            if (-this.goalX <= deltaX && deltaX <= this.goalX)
-                this.intersectionsPoints.push(new THREE.Vector2(this.center.x - deltaX, -this.wallZ));
-            if (-this.goalX <= -deltaX && -deltaX <= this.goalX)
-                this.intersectionsPoints.push(new THREE.Vector2(this.center.x + deltaX, -this.wallZ));
+            if (this.withinBorders(this.center.x - deltaX, this.goalX))
+                this.intersectionPoints.push(new THREE.Vector2(this.center.x - deltaX, -this.wallZ));
+            if (this.withinBorders(this.center.x + deltaX, this.goalX))
+                this.intersectionPoints.push(new THREE.Vector2(this.center.x + deltaX, -this.wallZ));
         }
         if (this.radius >= this.centerToBottomWall)
         {
             const deltaX = Math.sqrt(Math.pow(this.radius, 2) - Math.pow((this.wallZ - this.center.y), 2));
-            if (-this.goalX <= deltaX && deltaX <= this.goalX)
-                this.intersectionsPoints.push(new THREE.Vector2(this.center.x - deltaX, this.wallZ));
-            if (-this.goalX <= -deltaX && -deltaX <= this.goalX)
-                this.intersectionsPoints.push(new THREE.Vector2(this.center.x + deltaX, this.wallZ));
+            if (this.withinBorders(this.center.x - deltaX, this.goalX))
+                this.intersectionPoints.push(new THREE.Vector2(this.center.x - deltaX, this.wallZ));
+            if (this.withinBorders(this.center.x + deltaX, this.goalX))
+                this.intersectionPoints.push(new THREE.Vector2(this.center.x + deltaX, this.wallZ));
         }
         if (this.radius >= this.centerToLeftWall)
         {
             const deltaZ = Math.sqrt(Math.pow(this.radius, 2) - Math.pow((-this.goalX - this.center.x), 2));
-            if (-this.wallZ <= deltaZ && deltaZ <= this.wallZ)
-                this.intersectionsPoints.push(new THREE.Vector2(-this.goalX, this.center.y - deltaZ));
-            if (-this.wallZ <= -deltaZ && -deltaZ <= this.wallZ)
-                this.intersectionsPoints.push(new THREE.Vector2(-this.goalX, this.center.y + deltaZ));
+            if (this.withinBorders(this.center.y - deltaZ, this.wallZ))
+                this.intersectionPoints.push(new THREE.Vector2(-this.goalX, this.center.y - deltaZ));
+            if (this.withinBorders(this.center.y + deltaZ, this.wallZ))
+                this.intersectionPoints.push(new THREE.Vector2(-this.goalX, this.center.y + deltaZ));
         }
         if (this.radius >= this.centerToRightWall)
         {
             const deltaZ = Math.sqrt(Math.pow(this.radius, 2) - Math.pow((this.goalX - this.center.x), 2));
-            if (-this.wallZ <= deltaZ && deltaZ <= this.wallZ)
-                this.intersectionsPoints.push(new THREE.Vector2(this.goalX, this.center.y - deltaZ));
-            if (-this.wallZ <= -deltaZ && -deltaZ <= this.wallZ)
-                this.intersectionsPoints.push(new THREE.Vector2(this.goalX, this.center.y + deltaZ));
+            if (this.withinBorders(this.center.y - deltaZ, this.wallZ))
+                this.intersectionPoints.push(new THREE.Vector2(this.goalX, this.center.y - deltaZ));
+            if (this.withinBorders(this.center.y + deltaZ, this.wallZ))
+                this.intersectionPoints.push(new THREE.Vector2(this.goalX, this.center.y + deltaZ));
         }
     }
 
@@ -598,11 +677,11 @@ export class AI
     {
         const currentAngle = this.angleBetweenVectors(this.center, this.ballPos);
         let minAngle = Math.PI * 2;
-        let first = 0;
+        let first = -1;
 
-        for (let i = 0; i < this.intersectionsPoints.length; i++)
+        for (let i = 0; i < this.intersectionPoints.length; i++)
         {
-            let intersectionAngle = this.angleBetweenVectors(this.center, this.intersectionsPoints[i]);
+            let intersectionAngle = this.angleBetweenVectors(this.center, this.intersectionPoints[i]);
             let angleDifference = PongMath.within2Pi(intersectionAngle - currentAngle);
             if (angleDifference < minAngle)
             {
@@ -610,19 +689,23 @@ export class AI
                 first = i;
             }
         }
-        // return (this.intersectionsPoints[first]);
-        this.firstPoint.set(this.intersectionsPoints[first].x, this.intersectionsPoints[first].y);
+        if (first >= 0)
+        {
+            console.log("First intersection point CW: " + first);
+            this.firstPoint.set(this.intersectionPoints[first].x, this.intersectionPoints[first].y);
+            this.balls.setColor(first, COLOR.YELLOW); // DEBUG
+        }
     }
 
     getFirstIntersectionPointCounterClockwise()
     {
         const currentAngle = this.angleBetweenVectors(this.center, this.ballPos);
         let maxAngle = 0;
-        let first = 0;
+        let first = -1;
 
-        for (let i = 0; i < this.intersectionsPoints.length; i++)
+        for (let i = 0; i < this.intersectionPoints.length; i++)
         {
-            let intersectionAngle = this.angleBetweenVectors(this.center, this.intersectionsPoints[i]);
+            let intersectionAngle = this.angleBetweenVectors(this.center, this.intersectionPoints[i]);
             let angleDifference = PongMath.within2Pi(intersectionAngle - currentAngle);
             if (angleDifference > maxAngle)
             {
@@ -630,14 +713,17 @@ export class AI
                 first = i;
             }
         }
-        // return (this.intersectionsPoints[first]);
-        console.log("first = " + first);
-        this.firstPoint.set(this.intersectionsPoints[first].x, this.intersectionsPoints[first].y);
+        if (first >= 0)
+        {
+            console.log("First intersection point CCW: " + first);
+            this.firstPoint.set(this.intersectionPoints[first].x, this.intersectionPoints[first].y);
+            this.balls.setColor(first, COLOR.YELLOW); // DEBUG
+        }
     }
 
     getTargetPositionWithSpin()
     {
-        this.intersectionsPoints = [];
+        console.log("-----------------------------------------------------------");
         this.ballPos.set(this.game.ball.mesh.position.x, this.game.ball.mesh.position.z);
         this.angle = this.game.ball.angle;
         this.angleDelta = this.game.ball.spin;
@@ -646,29 +732,28 @@ export class AI
         this.goalX = this.game.arena.length / 2;
         this.calculateCenter();
         this.calculateCenterToWalls();
-
-        this.visualizeCircle(); // DEBUG
-
         this.getValidIntersectionPoints();
- 
-        // DEBUG
-        for (let i = 0; i < this.intersectionsPoints.length; i++)
-        {
-            console.log("point[" + i + "].x = " + this.intersectionsPoints[i].x);
-            console.log("point[" + i + "].y = " + this.intersectionsPoints[i].y);
-        }
+        
+        this.circles.empty();   // DEBUG
+        this.circles.add(this.center, this.radius); // DEBUG
+        this.balls.removeBalls(); // DEBUG
+        for (let point in this.intersectionPoints)  // DEBUG
+            this.balls.addBall(this.intersectionPoints[point]);
  
         if (this.clockwiseSpin())
             this.getFirstIntersectionPointClockwise();
         else 
             this.getFirstIntersectionPointCounterClockwise();
 
-        while (this.wallHit())
+        while (this.intersectionPoints.length > 0 && this.wallHit())
         {
             this.ballPos.set(this.firstPoint.x, this.firstPoint.y);
             this.calculateCenter();
             this.calculateCenterToWalls();
             this.getValidIntersectionPoints();
+            this.circles.add(this.center, this.radius); // DEBUG
+            for (let point in this.intersectionPoints)  // DEBUG
+                this.balls.addBall(this.intersectionPoints[point]);
             if (this.clockwiseSpin())
                 this.getFirstIntersectionPointClockwise();
             else 

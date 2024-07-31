@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:08:11 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/27 15:56:40 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/07/31 15:40:39 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,27 +65,22 @@ export default class {
   }
   
     async Authenticate() {
-        // try {
-        //     const response = await axios.get(
-        //         'http://localhost:8000/account',
-        //         { headers: {'Authorization': `Token ${this.GetKey()}`} }
-        //     );
-        //     if (response.status === 401) {
-        //         this.DeleteKey();
-        //         console.error('Incorrect token');
-        //         return false;
-        //     }
-        //     console.log('Correct token');
-        //     return true;
-        // } catch (error) {
-        //     console.error('Incorrect token');
-        //     return false;
-        // }
-        const key = this.GetKey();
-        if (!key) {
+      try {
+          const response = await axios.get(
+              'http://localhost:8000/account',
+              { headers: {'Authorization': `Token ${this.GetKey()}`} }
+          );
+          if (response.status === 401) {
+              this.DeleteKey();
+              console.error('Incorrect token');
+              return false;
+          }
+          console.log('Correct token');
+          return true;
+      } catch (error) {
+          console.error('Incorrect token');
           return false;
-        }
-        return true;
+      }
     }
 
   CreateKey(token) {

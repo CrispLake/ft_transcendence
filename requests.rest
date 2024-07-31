@@ -8,7 +8,7 @@ Authorization: Token 91975a4745dcf9a9a858a04cea79674c8444fb85
 ###
 
 GET http://localhost:8000/account/AI
-Authorization: Token 9a1e8d3a8eddb2276bfd657863e0773afb12f16b
+Authorization: Token bd9df7a68c7d240a167297e6a6a5bf4bc6ac7333
 
 ###
 
@@ -82,12 +82,12 @@ Content-Type: image/jpeg
 
 ###
 
-GET http://localhost:8000/account/2/image
-Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
+GET http://localhost:8000/account/1/image
+Authorization: Token bd9df7a68c7d240a167297e6a6a5bf4bc6ac7333
 
 ###
 
-GET http://localhost:8000/account/5/image
+GET http://localhost:8000/account/1/image
 Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
 
 ###
@@ -224,14 +224,16 @@ Content-Type: application/json
 ###
 
 POST http://localhost:8000/pong-4p HTTP/1.1
-Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b, Token d7666b33106ca023ac17cd750f2074b86605bab2
+Authorization: Token bd9df7a68c7d240a167297e6a6a5bf4bc6ac7333
 Content-Type: application/json
 
 {
-    "player1": 1,
+    "player1": 2,
     "player1Score": 3,
-    "player2": 2,
-    "player2Score": 2
+    "player2": 1,
+    "player2Score": 2,
+    "player3": 1,
+    "player3Score": 2
 }
 
 ###
@@ -291,13 +293,16 @@ Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
 ###
 
 POST http://localhost:8000/gonp-4p HTTP/1.1
-Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
+Authorization: Token bd9df7a68c7d240a167297e6a6a5bf4bc6ac7333
 Content-Type: application/json
 
 {
-    "player1": 1,
-    "player1Score": 0,
-    "player2Score": 2
+    "player1": 2,
+    "player1Score": 3,
+    "player2": 1,
+    "player2Score": 2,
+    "player3": 1,
+    "player3Score": 2
 }
 
 ###

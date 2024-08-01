@@ -13,6 +13,7 @@
 import AbstractView from './AbstractView.js';
 
 import GameMode from './GameMode.js';
+import GameSetup from './GameSetup.js';
 // import Pong from './Pong.js';
 
 
@@ -43,8 +44,9 @@ export default class extends AbstractView {
     this.gameMode = await gameModeObj.getUserInput();
   }
 
-  GameSetup() {
-    
+  async GameSetup() {
+    const gameSetupObj = new GameSetup(this.gameMode);
+    this.settings = await gameSetupObj.getUserInput();
   }
 
   Pong() {
@@ -68,7 +70,6 @@ export default class extends AbstractView {
   async app() {
     console.log('Starting by choosing game mode');
     await this.ChooseGameMode();
-    console.log(`mode : ${this.gameMode}`);
     await this.GameSetup();
 
     switch (this.gameMode) {

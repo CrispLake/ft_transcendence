@@ -12,6 +12,7 @@ export default class extends AbstractView {
         
         this.entryIdCounter = 0;
         this.playerCounter = 0;
+        this.maxPlayers = 0;
         console.log(localStorage.auth_token)
         this.loginURL = 'http://localhost:8000/login';
 
@@ -23,6 +24,23 @@ export default class extends AbstractView {
         this.addAiEntryHandler = this.addAiEntryHandler.bind(this);
         this.addExistingUserEntryHandler = this.addExistingUserEntryHandler.bind(this);
         this.LoginHandler = this.LoginHandler.bind(this);
+    }
+    waitForUser() {
+        // return new Promise((resolve) => {
+        //     document.getElementById()
+        // });
+    }
+
+    async getUserInput() {
+        const appDiv = await document.getElementById('app');
+        if (!appDiv) {
+            this.Redirect('/500');
+            return;
+        }
+        this.maxPlayers = this.params;
+
+        appDiv.innerHTML = await this.getHtml();
+        const mode = await this.waitForUser();
     }
 
     async getFirstEntry() {
@@ -38,6 +56,7 @@ export default class extends AbstractView {
                 title: response.data.user.username,
                 image: `<img src="http://localhost:8000/account/${response.data.user.id}/image" alt="User icon" width="50" height="50">`
             }]
+            this.renderEntries();
         } catch (error) {
             console.error('Error fetching profile data', error);
             this.addGuestEntryHandler();

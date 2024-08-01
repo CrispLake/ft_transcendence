@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/01 14:23:26 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/01 16:52:57 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,15 @@ import AbstractView from "./AbstractView.js";
 export default class extends AbstractView {
   constructor(params) {
     super(params);
-    const playerCount = this.urlParams.get('players') || 1;
-    const multimode = this.urlParams.get('multimode') || false;
-    console.log("Multimode: " + multimode)
-    console.log("Playercount: " + playerCount)
+
+    this.playerCount = params.playerCount || 1;     // int (1-4)
+    this.multimode = params.multimode || false;     // true / false
+    this.tournament = params.tournament || false;   // true / false
+    this.diff = parms.diff || 1;                    // int (1-3)
+    
     this.setTitle('Pong');
     this.listeners = true;
     this.childs = true;
-
-    this.winner = 'jarmo';
     
     // Game variables
     this.settings = new Settings(playerCount, multimode == "false" ? false : true);

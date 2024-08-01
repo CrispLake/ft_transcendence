@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/01 15:12:35 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/01 16:44:50 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,11 +67,12 @@ export default class extends AbstractView {
   // from setup to displaying stats after the game
   app() {
     console.log('Starting by choosing game mode');
-    this.gameMode = this.ChooseGameMode();
-    this.settings = this.GameSetup(this.gameMode);
+    this.ChooseGameMode();
+    this.GameSetup();
 
     switch (this.gameMode) {
       case this.modes.pong2:
+        Pong();
         break;
         
       case this.modes.pong4:

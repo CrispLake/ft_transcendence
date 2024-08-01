@@ -12,6 +12,13 @@ export default class extends AbstractView {
         this.player4_mode = this.player4_mode.bind(this);
         this.tournament_mode = this.tournament_mode.bind(this);
         this.gonp_mode = this.gonp_mode.bind(this);
+
+        this.modes = {
+          'pong2': 1,
+          'pong4': 2,
+          'tournament': 3,
+          'gonp': 4,
+        }
     }
 
     getMode() {
@@ -34,16 +41,27 @@ export default class extends AbstractView {
         this.mode = 4;
     }
 
+    // Helper function to make sure getUserInput waits for user to
+    waitForUser() {
+      return new Promise((resolve) => {
+        document.getElementById('button-2player').addEventListener('click', () => {
+          resolve(this.modes.pong2);
+        })
+      });
+    }
+
+    // Returns mode to play on --> see constructor for mode details
     async getUserInput() {
       const appDiv = await document.getElementById('app');
       if (!appDiv) {
         this.Redirect('/500');
         return;
       }
-
-      // inject html
-      // wait for input
-      // return data
+      
+      appDiv.innerHTML = await this.getHtml();
+      const mode = await this.waitForUser();
+      console.log(mode);
+      return mode;
     }
 
     AddListeners() {

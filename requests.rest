@@ -132,6 +132,36 @@ Content-Type: application/json
 
 ###
 
+# Matches tournament
+
+###
+
+GET http://localhost:8000/tournament HTTP/1.1
+Authorization: Token 9a1e8d3a8eddb2276bfd657863e0773afb12f16b
+
+###
+
+POST http://localhost:8000/tournament HTTP/1.1
+Authorization: Token 9a1e8d3a8eddb2276bfd657863e0773afb12f16b
+Content-Type: application/json
+
+{
+    "game1_player1": 2,
+    "game1_player1_score": 3,
+    "game1_player2": 1,
+    "game1_player2_score": 0,
+    "game2_player1": 1,
+    "game2_player1_score": 3,
+    "game2_player2": 1,
+    "game2_player2_score": 0,
+    "game3_player1": 2,
+    "game3_player1_score": 3,
+    "game3_player2": 1,
+    "game3_player2_score": 0
+}
+
+###
+
 # Matches pong 2p
 
 ###
@@ -317,7 +347,7 @@ Content-Type: application/json
 
 {
     "user": {
-        "username": "testUser1111",
+        "username": "AI",
         "password": "test"
     }
 }
@@ -367,7 +397,7 @@ Content-Type: application/json
 
 {
     "username": "testUser1",
-    "password": "test"
+    "password": "testPassword"
 }
 
 ###

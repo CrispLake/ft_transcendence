@@ -8,8 +8,8 @@ export class Settings
 		this.multiMode = false;
 		this.players = 1;
 		this.spin = true;
-		this.powerups = true;
-		this.difficulty = 2;
+		this.powerups = false;
+		this.difficulty = 3;
 		// this.playerColors = {
 		// 	p1: COLOR.CYAN,
 		// 	p2: COLOR.CYAN,

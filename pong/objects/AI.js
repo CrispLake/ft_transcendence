@@ -1,83 +1,7 @@
 import * as THREE from 'three';
 import * as COLOR from '../colors.js';
 import * as G from '../globals.js';
-// import * as SETTINGS from '../gameSetting.js';
 import * as PongMath from '../math.js';
-
-class Balls
-{
-    constructor(scene)
-    {
-        this.scene = scene;
-        this.balls = [];
-    }
-
-    addBall(pos)
-    {
-        const ballGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-        const ballMaterial = new THREE.MeshStandardMaterial({color: COLOR.CYAN, emissive: COLOR.CYAN});
-        const ball = new THREE.Mesh(ballGeometry, ballMaterial);
-        ball.position.set(pos.x, 0, pos.y);
-        this.balls.push(ball);
-        this.scene.add(ball);
-    }
-
-    setColor(index, color)
-    {
-        this.balls[index].material.color.set(color);
-        this.balls[index].material.emissive.set(color);
-    }
-
-    removeBalls()
-    {
-        for (let i = 0; i < this.balls.length; i++)
-        {
-            this.scene.remove(this.balls[i]);
-            this.balls[i].geometry.dispose();
-            this.balls[i].material.dispose();
-        }
-        this.balls = [];
-        this.balls.length = 0;
-    }
-}
-
-class Circles
-{
-    constructor(scene)
-    {
-        this.scene = scene;
-        this.circles = [];
-    }
-
-    add(center, radius)
-    {
-        const circleGeometry = new THREE.CircleGeometry(radius, 32);
-        const circleMaterial = new THREE.MeshBasicMaterial({color: COLOR.WHITE, wireframe: true});
-        const circle = new THREE.Mesh(circleGeometry, circleMaterial);
-        circle.position.set(center.x, 0, center.y);
-        circle.rotation.x -= Math.PI / 2;
-        this.circles.push(circle);
-        this.scene.add(circle);
-
-        const centerGeometry = new THREE.SphereGeometry(1, 32, 32);
-        const centerMaterial = new THREE.MeshStandardMaterial({color: COLOR.WHITE, emissive: COLOR.RED, opacity: 0.5});
-        const circleCenter = new THREE.Mesh(centerGeometry, centerMaterial);
-        circleCenter.position.set(center.x, 0, center.y);
-        this.circles.push(circleCenter);
-        this.scene.add(circleCenter);
-    }
-
-    empty()
-    {
-        for (let i = 0; i < this.circles.length; i++)
-        {
-            this.scene.remove(this.circles[i]);
-            this.circles[i].geometry.dispose();
-            this.circles[i].material.dispose();
-        }
-        this.circles = [];
-    }
-}
 
 class IntersectionPoint
 {
@@ -138,6 +62,7 @@ export class AI
         this.clockBoostMeter = new THREE.Clock();
         this.effect = false;
         this.boostMeterAnimation = false;
+        this.active = false;
         this.bounce = false;
         this.initializeBrain();        
     }
@@ -211,6 +136,58 @@ export class AI
             this.color = COLOR.PADDLE4;
             this.colorLight = COLOR.PADDLE4_LIGHT;
         }
+    }
+
+
+    //--------------------------------------------------------------------------
+    //  BRAIN
+    //--------------------------------------------------------------------------
+
+    initializeBrain()
+    {
+        this.difficulty = this.game.settings.difficulty;
+        this.gameReadTimer = new THREE.Clock();
+        this.gameReadTimer.start();
+        this.readInterval = G.AIreadInterval / Math.pow(2, this.difficulty - 1);  // diffculty: 1 -> 1/1s, 2 -> 1/2s, 3 -> 1/4s, etc...
+        this.goToTarget = false;
+        this.targetPos = 0;
+        this.considerSpin = false;
+        this.canSpin = false;
+        this.maxBounces = 3;
+        if (this.spin)
+        {
+            if (this.difficulty >= 2)
+                this.considerSpin = true;
+            if (this.difficulty >= 3)
+                this.canSpin = true;
+        }
+
+        this.ballPos = new THREE.Vector2(0, 0);
+        this.angle = 0;
+        this.angleDelta = 0;
+        this.extendedRadiusAngle1 = 0;
+        this.distancePerFrame = 0;
+        this.radius = 0;
+        this.distanceFromBallToCenter = 0;
+        this.extendedRadiusAngle2 = 0;
+        this.center = new THREE.Vector2(0, 0);
+        this.wallZ = 0;
+        this.goalX = 0;
+        this.centerToBottomWall = 0;
+        this.centerToTopWall = 0;
+        this.centerToRightWall = 0;
+        this.centerToLeftWall = 0;
+        this.hitWall = 0;
+        this.hitGoal = 0;
+
+        this.intersectionPoints = [];
+        this.firstPoint = new IntersectionPoint(0, 0, "none");
+
+        this.pathLengthToHit = 0;
+        this.ballTimeToTarget = 0;
+        this.ballTimeToTargetTimer = new THREE.Clock();
+
+        this.spinDirection = 0;
     }
 
 
@@ -445,8 +422,6 @@ export class AI
 
     goalHit()
     {
-        console.log("playerNum: " + this.playerNum);
-        console.log("hit: " + this.firstPoint.wall);
         if (this.playerNum == 1 && this.firstPoint.wall == "left")
         {
             if (this.withinBorders(this.firstPoint.pos.y, this.goalZ))
@@ -467,7 +442,6 @@ export class AI
             if (this.withinBorders(this.firstPoint.pos.x, this.goalX))
                 return true;
         }
-        console.log("Goal not hit");
         return false;
     }
 
@@ -481,55 +455,6 @@ export class AI
             return (this.game.ball.speedZ < 0);
         if (this.playerNum == 4)
             return (this.game.ball.speedZ >= 0);
-    }
-
-    //--------------------------------------------------------------------------
-    //  BRAIN
-    //--------------------------------------------------------------------------
-
-    initializeBrain()
-    {
-        this.difficulty = this.game.settings.difficulty;
-        this.gameReadTimer = new THREE.Clock();
-        this.gameReadTimer.start();
-        this.readInterval = G.AIreadInterval / Math.pow(2, this.difficulty - 1);  // diffculty: 1 -> 1/1s, 2 -> 1/2s, 3 -> 1/4s, etc...
-        this.goToTarget = false;
-        this.targetPos = 0;
-        this.considerSpin = false;
-        this.canSpin = false;
-        this.maxBounces = 3;
-        if (this.difficulty >= 2)
-            this.considerSpin = true;
-        if (this.difficulty >= 3)
-            this.canSpin = true;
-
-        this.ballPos = new THREE.Vector2(0, 0);
-        this.angle = 0;
-        this.angleDelta = 0;
-        this.extendedRadiusAngle1 = 0;
-        this.distancePerFrame = 0;
-        this.radius = 0;
-        this.distanceFromBallToCenter = 0;
-        this.extendedRadiusAngle2 = 0;
-        this.center = new THREE.Vector2(0, 0);
-        this.wallZ = 0;
-        this.goalX = 0;
-        this.centerToBottomWall = 0;
-        this.centerToTopWall = 0;
-        this.centerToRightWall = 0;
-        this.centerToLeftWall = 0;
-        this.hitWall = 0;
-        this.hitGoal = 0;
-
-        this.intersectionPoints = [];
-        this.firstPoint = new IntersectionPoint(0, 0, "none");
-
-        
-        // DEBUG
-        this.circles = new Circles(this.scene);
-        this.balls = new Balls(this.scene);
-        this.circle = new THREE.Mesh(new THREE.CircleGeometry(0, 0), new THREE.MeshBasicMaterial({color: COLOR.WHITE}));
-        this.circleCenter = new THREE.Mesh(new THREE.SphereGeometry(0, 0, 0), new THREE.MeshStandardMaterial({color: COLOR.WHITE, emissive: COLOR.RED, opacity: 0.5}));
     }
 
 
@@ -549,8 +474,10 @@ export class AI
         return (slope * (endX - startPos.x) + startPos.y);
     }
 
-    getTargetPosition()
+    getTargetPosition() // TODO: Make it work for 4-player mode
     {
+        console.log("getTargetPosition()");
+        this.pathLengthToHit = 0;
         this.ballPos.set(this.game.ball.mesh.position.x, this.game.ball.mesh.position.z);
         this.angle = this.game.ball.angle;
         this.wallZ = this.game.arena.width / 2;
@@ -560,21 +487,25 @@ export class AI
         let bounces = 0;
         while (Math.abs(z) > this.movementBoundary + this.paddleLength / 2 && x < Math.abs(this.goalX) && bounces < this.maxBounces)
         {
+            // We get here if the ball path would hit the goal outside the arena
             if (z < 0)
             {
                 x = this.getIntersectionX(this.ballPos, -this.wallZ, this.angle);
+                this.pathLengthToHit += PongMath.distanceBetweenPoints(this.ballPos.x, this.ballPos.y, -this.wallZ, x);
                 this.ballPos.set(x, -this.wallZ);
                 this.angle = PongMath.degToRad(360) - this.angle;
             }
             else
             {
                 x = this.getIntersectionX(this.ballPos, this.wallZ, this.angle);
+                this.pathLengthToHit += PongMath.distanceBetweenPoints(this.ballPos.x, this.ballPos.y, this.wallZ, x);
                 this.ballPos.set(x, this.wallZ);
                 this.angle = PongMath.degToRad(360) - this.angle;
             }
             z = this.getIntersectionZ(this.ballPos, this.goalX, this.angle);
             bounces++;
         }
+        this.pathLengthToHit += PongMath.distanceBetweenPoints(this.ballPos.x, this.ballPos.y, z, goalX);
         this.targetPos = z;
     }
 
@@ -586,32 +517,25 @@ export class AI
     getAngleAtIntersection()
     {
         let a = this.angleBetweenVectors(this.center, this.firstPoint.pos);
-        console.log("Angle from center: " + PongMath.radToDeg(a));
         if (this.angleDelta >= 0)
             a += Math.PI / 2;
         else
             a -= Math.PI / 2;
-        console.log("Angle at intersection: " + PongMath.radToDeg(a));
         this.angle = PongMath.within2Pi(a);
     }
 
     calculateNewAngle()
     {
-        console.log("Angle, current: " + PongMath.radToDeg(this.angle));
         this.getAngleAtIntersection();
-        console.log("Angle, at int.: " + PongMath.radToDeg(this.angle));
         this.angleDelta *= (100 - G.spinReduction) / 100;
         this.angle = PongMath.within2Pi(Math.PI - this.angle);
-        console.log("Angle, inv. z:  " + PongMath.radToDeg(this.angle));
         
         this.angle += PongMath.lerp(this.angleDelta, -G.maxSpin, G.maxSpin, -G.maxAngleIncreaseFromSpinBounce, G.maxAngleIncreaseFromSpinBounce);
         this.angle = PongMath.within2Pi(this.angle);
-        console.log("Angle, lerped:  " + PongMath.radToDeg(this.angle));
         this.angle = PongMath.radToDeg(this.angle);
 
         if (this.firstPoint.wall == "top")
         {
-            console.log("Hit top wall");
             if (this.angle > 180 && this.angle < 270 + G.minAngleFromWall)
                 this.angle = 270 + G.minAngleFromWall;
             else if (this.angle < 180 && this.angle > 90 - G.minAngleFromWall)
@@ -619,7 +543,6 @@ export class AI
         }
         else if (this.firstPoint.wall == "bottom")
         {
-            console.log("Hit bottom wall");
             if (this.angle < 360 && this.angle > 270 - G.minAngleFromWall)
                 this.angle = 270 - G.minAngleFromWall;
             else if (this.angle > 0 && this.angle < 90 + G.minAngleFromWall)
@@ -627,7 +550,6 @@ export class AI
         }
         else if (this.firstPoint.wall == "left")
         {
-            console.log("Hit left wall");
             if (this.angle < 270 && this.angle > 180 - G.minAngleFromWall)
                 this.angle = 180 - G.minAngleFromWall;
             else if (this.angle > 270 && this.angle < G.minAngleFromWall)
@@ -635,14 +557,12 @@ export class AI
         }
         else if (this.firstPoint.wall == "right")
         {
-            console.log("Hit right wall");
             if (this.angle > 90 && this.angle < 180 + G.minAngleFromWall)
                 this.angle = 180 + G.minAngleFromWall;
             else if (this.angle < 90 && this.angle > 360 - G.minAngleFromWall)
                 this.angle = 360 - G.minAngleFromWall;
         }
 
-        console.log("Angle, correct: " + this.angle);
         this.angle = PongMath.degToRad(this.angle);
     }
 
@@ -739,30 +659,21 @@ export class AI
         let minAngle = Math.PI * 2;
         let first = -1;
 
-        console.log("Current angle: " + PongMath.radToDeg(currentAngle).toFixed(2));
         for (let i = 0; i < this.intersectionPoints.length; i++)
         {
             let intersectionAngle = this.angleBetweenVectors(this.center, this.intersectionPoints[i].pos);
-            console.log("Intersection[" + i + "] Point: " + this.intersectionPoints[i].pos.x.toFixed(2) + ", " + this.intersectionPoints[i].pos.y.toFixed(2) + ", " + this.intersectionPoints[i].wall);
-            console.log("Intersection[" + i + "] angle: " + PongMath.radToDeg(intersectionAngle).toFixed(2));
             let angleDifference = PongMath.within2Pi(currentAngle - intersectionAngle);
-            console.log("Angle difference: " + PongMath.radToDeg(angleDifference).toFixed(2));
             if (angleDifference < minAngle)
             {
                 minAngle = angleDifference;
-                console.log("Min angle: " + PongMath.radToDeg(minAngle).toFixed(2));
                 first = i;
             }
         }
         if (first >= 0)
         {
-            console.log("First intersection point CW: " + first);
+            this.pathLengthToHit += PongMath.arcLength(this.radius, minAngle);
             this.firstPoint.set(this.intersectionPoints[first].pos.x, this.intersectionPoints[first].pos.y, this.intersectionPoints[first].wall);
-            console.log("FirstPoint: " + this.firstPoint.pos.x.toFixed(2) + ", " + this.firstPoint.pos.y.toFixed(2) + ", " + this.firstPoint.wall);
-            this.balls.setColor(this.ballAmount + first, COLOR.YELLOW); // DEBUG
         }
-        else
-            console.log("No intersection points found");
     }
 
     getFirstIntersectionPointCounterClockwise()
@@ -783,16 +694,13 @@ export class AI
         }
         if (first >= 0)
         {
-            console.log("First intersection point CW: " + first);
+            this.pathLengthToHit += PongMath.arcLength(this.radius, maxAngle);
             this.firstPoint.set(this.intersectionPoints[first].pos.x, this.intersectionPoints[first].pos.y, this.intersectionPoints[first].wall);
-            console.log("FirstPoint: " + this.firstPoint.pos.x.toFixed(2) + ", " + this.firstPoint.pos.y.toFixed(2) + ", " + this.firstPoint.wall);
-            this.balls.setColor(first, COLOR.YELLOW); // DEBUG
         }
     }
 
     getTargetPositionWithSpin()
     {
-        console.log("---SPIN----------------------------------------------------");
         this.ballPos.set(this.game.ball.mesh.position.x, this.game.ball.mesh.position.z);
         this.angle = this.game.ball.angle;
         this.angleDelta = this.game.ball.spin;
@@ -801,19 +709,11 @@ export class AI
         this.wallZ = this.game.arena.width / 2;
         this.goalX = this.game.arena.length / 2;
         this.goalZ = this.game.arena.width / 2;
-        console.log("Ball position: " + this.ballPos.x.toFixed(2) + ", " + this.ballPos.y.toFixed(2));
-        console.log("Ball angle: " + PongMath.radToDeg(this.angle).toFixed(2));
         this.calculateCenter();
         this.calculateCenterToWalls();
         this.getValidIntersectionPoints();
-
-        this.circles.empty();   // DEBUG
-        this.circles.add(this.center, this.radius); // DEBUG
-        this.balls.removeBalls(); // DEBUG
-        this.ballAmount = 0; // DEBUG
-        for (let point in this.intersectionPoints)  // DEBUG
-            this.balls.addBall(this.intersectionPoints[point].pos);
  
+        this.pathLengthToHit = 0;
         if (this.clockwiseSpin())
             this.getFirstIntersectionPointClockwise();
         else 
@@ -822,22 +722,11 @@ export class AI
         let bounces = 0;
         while (this.intersectionPoints.length > 0 && !this.goalHit())
         {
-            console.log("-----------------------------------------------------------");
-            console.log("firstPoint: " + this.firstPoint.pos.x.toFixed(2) + ", " + this.firstPoint.pos.y.toFixed(2));
             this.ballPos.set(this.firstPoint.pos.x, this.firstPoint.pos.y);
             this.calculateNewAngle();
-            console.log("New ball position: " + this.ballPos.x.toFixed(2) + ", " + this.ballPos.y.toFixed(2));
-            console.log("New ball angle: " + PongMath.radToDeg(this.angle).toFixed(2));
             this.calculateCenter();
             this.calculateCenterToWalls();
             this.getValidIntersectionPoints();
-            
-            // for (let point in this.intersectionPoints)  // DEBUG
-            //     console.log("Intersection point: " + this.intersectionPoints[point].pos.x.toFixed(2) + ", " + this.intersectionPoints[point].pos.y.toFixed(2)); // DEBUG
-            this.circles.add(this.center, this.radius); // DEBUG
-            this.ballAmount = this.balls.balls.length; // DEBUG
-            for (let point in this.intersectionPoints)  // DEBUG
-                this.balls.addBall(this.intersectionPoints[point].pos);
             
             if (this.clockwiseSpin())
                 this.getFirstIntersectionPointClockwise();
@@ -848,13 +737,10 @@ export class AI
                 break;
         }
 
-        console.log("Target position: " + this.firstPoint.pos.x.toFixed(2) + ", " + this.firstPoint.pos.y.toFixed(2));
         if (this.alignment == G.vertical)
             this.targetPos = this.firstPoint.pos.y;
         else
             this.targetPos = this.firstPoint.pos.x;
-
-        // this.game.togglePause();
     }
 
 
@@ -864,26 +750,111 @@ export class AI
 
     readGame()
     {
+        console.log("----READ-------------------------------------------------------");
         if (this.ballMovesTowards())
         {
             if (this.considerSpin && this.game.ball.spin != 0)
                 this.getTargetPositionWithSpin();
             else
                 this.getTargetPosition();
+            if (this.canSpin)
+                this.handleSpin();
         }
         else
         {
+            if (this.ballTimeToTargetTimer.running)
+            {
+                this.ballTimeToTargetTimer.stop();
+            }
             this.targetPos = 0;
         }
     }
 
-    input()
+    handleSpin()
     {
-        const distanceToTarget = this.paddle.position.z - this.targetPos;
-        if (distanceToTarget > this.speed)
+        this.ballTimeToTarget = this.pathLengthToHit / (this.game.ball.speed * G.fps);
+        this.ballTimeToTargetTimer.start();
+    }
+
+    handleInput()
+    {
+        const paddleDistanceToTarget = this.paddle.position.z - this.targetPos;
+        if (paddleDistanceToTarget > this.speed)
             this.move(-this.speed);
-        else if (distanceToTarget < -this.speed)
+        else if (paddleDistanceToTarget < -this.speed)
             this.move(this.speed);
+    }
+
+    getSpinDirection()
+    {
+        if (Math.random() < 0.5)
+            this.spinDirection = G.SpinLeft;
+        else
+            this.spinDirection = G.SpinRight;
+    }
+
+    handleSpinInput()
+    {
+        const timeToMoveHalfPaddle = (this.paddleLength / 2) / (this.speed * G.fps);
+        const ballTimeToTarget = this.ballTimeToTarget - this.ballTimeToTargetTimer.getElapsedTime();
+        console.log("timeToMoveHalfPaddle: " + timeToMoveHalfPaddle.toFixed(3));
+        console.log("ballTimeToTarget:     " + ballTimeToTarget.toFixed(3));
+        if (!this.active && ballTimeToTarget < timeToMoveHalfPaddle)
+        {
+            this.move(this.speed * this.spinDirection);
+        }
+        else
+        {
+            const paddleDistanceToTarget = this.paddle.position.z - this.targetPos;
+            if (paddleDistanceToTarget > this.speed)
+                this.move(-this.speed);
+            else if (paddleDistanceToTarget < -this.speed)
+                this.move(this.speed);
+        }
+
+        if (this.active)
+        {
+            if (this.ballTimeToTargetTimer.running)
+            {
+                this.ballTimeToTargetTimer.stop();
+                this.boostPressed = false;
+                this.boostReleased = true;
+                this.updateBoost();
+                this.getSpinDirection();
+            }
+        }
+        else
+        {
+            if (this.ballTimeToTargetTimer.running)
+            {
+                let timeToHit = this.ballTimeToTarget - this.ballTimeToTargetTimer.getElapsedTime();
+                if (timeToHit < G.boostFillingTime)
+                {
+                    if (this.boostPressed == false)
+                    {
+                        this.boostPressed = true;
+                        this.boostReleased = false;
+                    }
+                }
+                else if (timeToHit < 0)
+                {
+                    if (this.boostPressed == true)
+                    {
+                        this.boostPressed = false;
+                        this.boostReleased = true;
+                    }
+                }
+                else
+                {
+                    if (this.boostPressed == true)
+                    {
+                        this.boostPressed = false;
+                        this.boostReleased = true;
+                    }
+                }
+                this.updateBoost();
+            }
+        }
     }
 
     move(movement)
@@ -929,7 +900,10 @@ export class AI
             this.readGame();
             this.gameReadTimer.start();
         }
-        this.input();
+        if (this.canSpin)
+            this.handleSpinInput();
+        else
+            this.handleInput();
         
         this.stayWithinBoundaries();
     }

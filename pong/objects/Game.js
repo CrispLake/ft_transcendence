@@ -225,8 +225,9 @@ export class Game
 		{
 			if (this.ball.box.intersectsBox(this.players[player].box))
 			{
-				// console.log("PADDLE HIT: ball.x = " + this.ball.mesh.position.x);
-				// console.log("PADDLE HIT: ball.z = " + this.ball.mesh.position.z);
+				console.log("-----------------------------------------------------------");
+				console.log("PADDLE HIT: " + this.ball.mesh.position.x.toFixed(2) + ", " + this.ball.mesh.position.z.toFixed(2));
+				console.log("Old ball spin: " + this.ball.spin);
 				// console.log("PADDLE HIT: ball.a = " + this.ball.angle);
 				if (this.players[player].bounce == true)
 					continue ;
@@ -244,6 +245,8 @@ export class Game
 				this.players[player].bounce = true;
 				this.ball.affectBySpin();
 				this.ball.move();
+				console.log("New ball spin: " + this.ball.spin);
+				console.log("-----------------------------------------------------------");
 				return ;
 			}
 			else

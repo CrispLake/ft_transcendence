@@ -45,6 +45,7 @@ export const boostMeterThickness = 0.1;
 export const boostMeterLength = paddleLength;
 export const maxBoost = 1;
 export const boostIncrement = 0.02;
+export const boostFillingTime = (maxBoost / boostIncrement) / fps;
 export const boostOffset = 1;
 export const boostMeterAnimationTime = 1;
 export const boostAnimationMaxMovement = 0.4
@@ -55,7 +56,7 @@ export const boostAnimationMaxMovement = 0.4
 //--------------------------------------------------------------------------
 
 export const initialBallRadius = 0.2;
-export const initialBallSpeed = 0.2;
+export const initialBallSpeed = 0.15;
 export const initialStartingAngle = 90;
 export const maxBallRotationSpeed = 0.3;
 /*
@@ -118,7 +119,8 @@ export const startPos4P = {
 //--------------------------------------------------------------------------
 
 export const AIreadInterval = 2;
-// export const AIreadInterval = 0.5;
+export const SpinLeft = -1;
+export const SpinRight = 1;
 
 
 //--------------------------------------------------------------------------

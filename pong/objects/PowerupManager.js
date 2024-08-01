@@ -15,12 +15,12 @@ export class PowerupManager
         this.powerups = [];
         if (this.game.settings.powerups == true)
         {
-            // this.powerups.push(new PowerPaddleLong(this.game));
-            // this.powerups.push(new PowerPaddleShort(this.game));
-            // this.powerups.push(new PowerLifePlus(this.game));
+            this.powerups.push(new PowerPaddleLong(this.game));
+            this.powerups.push(new PowerPaddleShort(this.game));
+            this.powerups.push(new PowerLifePlus(this.game));
+            if (this.game.settings.multiMode == false)
+                this.powerups.push(new PowerWavyWalls(this.game));
         }
-        if (this.game.settings.multiMode == false)
-            // this.powerups.push(new PowerWavyWalls(this.game));
         this.availablePowerups = [...this.powerups];
         this.powerup = null;
         this.spawnTimer = new THREE.Clock();

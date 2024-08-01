@@ -47,6 +47,10 @@ export default class extends AbstractView {
   async GameSetup() {
     const gameSetupObj = new GameSetup(this.gameMode);
     this.settings = await gameSetupObj.getUserInput();
+    this.settings.players.map(entry =>
+        console.log(`id: ${entry.id}\n${entry.token}\n${entry.username}`
+        ));
+    gameSetupObj.RemoveListeners();
   }
 
   Pong() {

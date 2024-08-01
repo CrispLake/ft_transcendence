@@ -25,10 +25,27 @@ export default class extends AbstractView {
         this.addExistingUserEntryHandler = this.addExistingUserEntryHandler.bind(this);
         this.LoginHandler = this.LoginHandler.bind(this);
     }
+
     waitForUser() {
-        // return new Promise((resolve) => {
-        //     document.getElementById()
-        // });
+        return new Promise((resolve) => {
+            try {
+                document.getElementById('launch-pong').addEventListener('click', () => {
+                    resolve(this.entries);
+                })
+            }
+            catch(error) {
+                console.log(error);
+                this.Redirect('/500')
+            }
+        });
+    }
+
+    transform_users(users) {
+        return users.map(user => ({
+            id: user.player_id,
+            token: user.token,
+            username: user.title
+        }));
     }
 
     async getUserInput() {
@@ -40,7 +57,14 @@ export default class extends AbstractView {
         this.maxPlayers = this.params;
 
         appDiv.innerHTML = await this.getHtml();
-        const mode = await this.waitForUser();
+        this.AddListeners();
+        const users = await this.waitForUser();
+        const params = {
+            players: this.transform_users(users),
+            multimode: false,
+            ai_difficulty: 1
+        }
+        return params;
     }
 
     async getFirstEntry() {
@@ -48,10 +72,12 @@ export default class extends AbstractView {
         try {
             response = await axios.get(
                 'http://localhost:8000/account',
-                { headers: {'Authorization': `Token ${localStorage.auth_token}`} }
+                { headers: {'Authorization': `Token ${this.GetKey()}`} }
             );
             console.log("Response: " + response);
             this.entries = [{
+                player_id: response.data.user.id,
+                token: this.GetKey(),
                 id: this.entryIdCounter++,
                 title: response.data.user.username,
                 image: `<img src="http://localhost:8000/account/${response.data.user.id}/image" alt="User icon" width="50" height="50">`
@@ -62,7 +88,6 @@ export default class extends AbstractView {
             this.addGuestEntryHandler();
         }
         console.log(response)
-
     }
 
     launchPongViewHandler(event) {
@@ -188,19 +213,6 @@ export default class extends AbstractView {
             });
         }
     }
-    async returnFirstEntry() {
-        console.log(this.entries);
-        if (this.entries.length <= 0) { 
-            return ;
-        }
-        return (`<div class="entry" id="entry-${this.entries[0].id``}">
-                ${this.entries[0].image}
-                <h3>${this.entries[0].title}</h3>
-                    <ul>
-                    </ul>
-                </div>
-    `);
-    }
 
     // Handles user authentication
     async LoginHandler(event) {
@@ -240,37 +252,14 @@ export default class extends AbstractView {
             }, { once: true });
         }
     }
-    
-
 
     AddListeners() {
-        const launchPong = document.getElementById('launch-pong');
-        // const launchPong2p = document.getElementById('launch-pong2p');
-        // const launchPong4p = document.getElementById('launch-pong4p');
         const addButton = document.getElementById('add-button');
         const addAiButton = document.getElementById('add-ai-button');
         const submitButton = document.getElementById('LoginSubmitButton');
         const loginForm = document.getElementById('login-form');
 
         // TODO: Move these inside try -> catch block to prevent if else jungle
-        if (launchPong) {
-            launchPong.addEventListener('click', this.launchPongViewHandler);
-        } else {
-            console.log('505 - Internal server error - could not find launch button');
-            this.Redirect('/500');
-        }
-        // if (launchPong2p) {
-        //     launchPong2p.addEventListener('click', this.launchPong2PViewHandler);
-        // } else {
-        //     console.log('505 - Internal server error - could not find launch button');
-        //     this.Redirect('/500');
-        // }
-        // if (launchPong4p) {
-        //     launchPong4p.addEventListener('click', this.launchPong4PViewHandler);
-        // } else {
-        //     console.log('505 - Internal server error - could not find launch button');
-        //     this.Redirect('/500');
-        // }
         if (addButton) {
             addButton.addEventListener('click', this.addGuestEntryHandler);
         } else {
@@ -293,32 +282,11 @@ export default class extends AbstractView {
 
     // TODO: Move these inside try -> catch block to prevent if else jungle
     RemoveListeners() {
-        const launchPong = document.getElementById('launch-pong');
-        // const launchPong2p = document.getElementById('launch-pong2p');
-        // const launchPong4p = document.getElementById('launch-pong4p');
         const addButton = document.getElementById('add-button');
         const addAiButton = document.getElementById('add-ai-button');
         const submitButton = document.getElementById('LoginSubmitButton');
         const loginForm = document.getElementById('login-form');
 
-        if (launchPong) {
-            launchPong.removeEventListener('click', this.launchPongViewHandler);
-        } else {
-            console.log('505 - Internal server error - could not find launch button');
-            this.Redirect('/500');
-        }
-        // if (launchPong2p) {
-        //     launchPong2p.removeEventListener('click', this.launchPong2PViewHandler);
-        // } else {
-        //     console.log('505 - Internal server error - could not find launch button');
-        //     this.Redirect('/500');
-        // }
-        // if (launchPong4p) {
-        //     launchPong4p.removeEventListener('click', this.launchPong4PViewHandler);
-        // } else {
-        //     console.log('505 - Internal server error - could not find launch button');
-        //     this.Redirect('/500');
-        // }
         if (addButton) {
             addButton.removeEventListener('click', this.addGuestEntryHandler);
         } else {
@@ -338,17 +306,6 @@ export default class extends AbstractView {
             this.Redirect('/500');
         }
     }
-        // </button>
-        // <button class="font-sub launch-button" id="launch-pong2p">
-        //     <div class="text-holder">
-        //         <span>Launch Pong 2P</span>
-        //     </div>
-        // </button>
-        // <button class="font-sub launch-button" id="launch-pong4p">
-        //     <div class="text-holder">
-        //         <span>Launch Pong 4P</span>
-        //     </div>
-        // </button>
 
     async getHtml() {
         return `

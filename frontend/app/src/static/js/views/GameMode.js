@@ -8,11 +8,6 @@ export default class extends AbstractView {
         this.params = params;
         this.mode = 0;
 
-        // this.player2_mode = this.player2_mode.bind(this);
-        // this.player4_mode = this.player4_mode.bind(this);
-        // this.tournament_mode = this.tournament_mode.bind(this);
-        // this.gonp_mode = this.gonp_mode.bind(this);
-
         this.modes = {
           'pong2': 1,
           'pong4': 2,

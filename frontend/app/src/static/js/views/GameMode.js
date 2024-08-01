@@ -8,10 +8,10 @@ export default class extends AbstractView {
         this.params = params;
         this.mode = 0;
 
-        this.player2_mode = this.player2_mode.bind(this);
-        this.player4_mode = this.player4_mode.bind(this);
-        this.tournament_mode = this.tournament_mode.bind(this);
-        this.gonp_mode = this.gonp_mode.bind(this);
+        // this.player2_mode = this.player2_mode.bind(this);
+        // this.player4_mode = this.player4_mode.bind(this);
+        // this.tournament_mode = this.tournament_mode.bind(this);
+        // this.gonp_mode = this.gonp_mode.bind(this);
 
         this.modes = {
           'pong2': 1,
@@ -21,32 +21,28 @@ export default class extends AbstractView {
         }
     }
 
-    getMode() {
-      return this.mode;
-    }
-
-    player2_mode() {
-        this.mode = 1;
-    }
-
-    player4_mode() {
-        this.mode = 2;
-    }
-
-    tournament_mode() {
-        this.mode = 3;
-    }
-
-    gonp_mode() {
-        this.mode = 4;
-    }
-
     // Helper function to make sure getUserInput waits for user to
+    // Select game mode to play on --> then returns the mode to main
     waitForUser() {
       return new Promise((resolve) => {
-        document.getElementById('button-2player').addEventListener('click', () => {
-          resolve(this.modes.pong2);
-        })
+        try {
+          document.getElementById('button-2player').addEventListener('click', () => {
+            resolve(this.modes.pong2);
+          });
+          document.getElementById('button-4player').addEventListener('click', () => {
+            resolve(this.modes.pong4);
+          });
+          document.getElementById('button-gonp').addEventListener('click', () => {
+            resolve(this.modes.gonp);
+          });
+          document.getElementById('button-tournament').addEventListener('click', () => {
+            resolve(this.modes.tournament);
+          });
+        }
+        catch(error) {
+          console.log(error);
+          this.Redirect('/500');
+        }
       });
     }
 
@@ -60,31 +56,7 @@ export default class extends AbstractView {
       
       appDiv.innerHTML = await this.getHtml();
       const mode = await this.waitForUser();
-      console.log(mode);
       return mode;
-    }
-
-    AddListeners() {
-        const button_2player = document.getElementById('button-2player');
-        const button_4player = document.getElementById('button-4player');
-        const button_tournament = document.getElementById('button-tournament');
-        const button_gonp = document.getElementById('button-gonp');
-
-        button_2player.addEventListener('click', this.player2_mode);
-        button_4player.addEventListener('click', this.player4_mode);
-        button_tournament.addEventListener('click', this.tournament_mode);
-        button_gonp.addEventListener('click', this.gonp_mode);
-    }
-
-    RemoveListeners() {
-        const button_2player = document.getElementById('button-2player');
-        const button_4player = document.getElementById('button-4player');
-        const button_tournament = document.getElementById('button-tournament');
-
-        button_2player.removeEventListener('click', this.player2_mode);
-        button_4player.removeEventListener('click', this.player4_mode);
-        button_tournament.removeEventListener('click', this.tournament_mode);
-        button_gonp.removeEventListener('click', this.gonp_mode);
     }
 
     async getHtml() {

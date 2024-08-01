@@ -65,10 +65,11 @@ export default class extends AbstractView {
 
   // This function will be responsible running the whole process
   // from setup to displaying stats after the game
-  app() {
+  async app() {
     console.log('Starting by choosing game mode');
-    this.ChooseGameMode();
-    this.GameSetup();
+    await this.ChooseGameMode();
+    console.log(`mode : ${this.gameMode}`);
+    await this.GameSetup();
 
     switch (this.gameMode) {
       case this.modes.pong2:

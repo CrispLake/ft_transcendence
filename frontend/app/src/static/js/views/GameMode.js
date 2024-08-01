@@ -14,6 +14,10 @@ export default class extends AbstractView {
         this.gonp_mode = this.gonp_mode.bind(this);
     }
 
+    getMode() {
+      return this.mode;
+    }
+
     player2_mode() {
         this.mode = 1;
     }
@@ -28,6 +32,18 @@ export default class extends AbstractView {
 
     gonp_mode() {
         this.mode = 4;
+    }
+
+    async getUserInput() {
+      const appDiv = await document.getElementById('app');
+      if (!appDiv) {
+        this.Redirect('/500');
+        return;
+      }
+
+      // inject html
+      // wait for input
+      // return data
     }
 
     AddListeners() {

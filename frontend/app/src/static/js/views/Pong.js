@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/31 15:27:22 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/01 14:23:26 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ export default class extends AbstractView {
     this.setTitle('Pong');
     this.listeners = true;
     this.childs = true;
+
+    this.winner = 'jarmo';
     
     // Game variables
     this.settings = new Settings(playerCount, multimode == "false" ? false : true);

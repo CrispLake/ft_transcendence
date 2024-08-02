@@ -909,6 +909,9 @@ export class AI
 
     update()
     {
+        this.moveLeft = false;
+        this.moveRight = false;
+
         if (this.effect)
             this.updateLightEffect();
         if (this.gameReadTimer.getElapsedTime() >= this.readInterval)
@@ -927,8 +930,5 @@ export class AI
             this.move(this.speed);
         
         this.stayWithinBoundaries();
-
-        this.moveLeft = false;
-        this.moveRight = false;
     }
 };

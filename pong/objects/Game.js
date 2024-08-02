@@ -235,6 +235,10 @@ export class Game
 					continue ;
 				}
 				console.log("Player " + player + " hit the ball.");
+				console.log("Player sign: " + this.players[player].sign);
+				console.log("Player boost amount: " + this.players[player].boostAmount);
+				console.log("Player moveLeft: " + this.players[player].moveLeft);
+				console.log("Player moveRight: " + this.players[player].moveRight);
 
 				// Set player who touched the ball to active, rest to inactive.
 				for (let p in this.players)

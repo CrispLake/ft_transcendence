@@ -18,12 +18,11 @@ export default class extends AbstractView {
 
         this.getFirstEntry()
         this.launchPongViewHandler = this.launchPongViewHandler.bind(this);
-        // this.launchPong2PViewHandler = this.launchPong2PViewHandler.bind(this);
-        // this.launchPong4PViewHandler = this.launchPong4PViewHandler.bind(this);
         this.addGuestEntryHandler = this.addGuestEntryHandler.bind(this);
         this.addAiEntryHandler = this.addAiEntryHandler.bind(this);
         this.addExistingUserEntryHandler = this.addExistingUserEntryHandler.bind(this);
         this.LoginHandler = this.LoginHandler.bind(this);
+        this.AddUserHandler = this.AddUserHandler.bind(this);
     }
 
     waitForUser() {
@@ -236,7 +235,7 @@ export default class extends AbstractView {
             if (errorMessageDiv) {
                 errorMessageDiv.textContent = '';
             }
-    
+
         } catch (error) {
             console.log('Invalid credentials!!');
             if (errorMessageDiv) {
@@ -251,57 +250,45 @@ export default class extends AbstractView {
                 }
             }, { once: true });
         }
+        const button = document.getElementById('pop-up-login');
+        button.style.display = 'none';
+    }
+
+    AddUserHandler(event) {
+        event.preventDefault();
+        const button = document.getElementById('pop-up-login');
+        button.style.display = 'block';
     }
 
     AddListeners() {
         const addButton = document.getElementById('add-button');
         const addAiButton = document.getElementById('add-ai-button');
-        const submitButton = document.getElementById('LoginSubmitButton');
         const loginForm = document.getElementById('login-form');
+        const addUserButton = document.getElementById('add-user-button');
 
-        // TODO: Move these inside try -> catch block to prevent if else jungle
-        if (addButton) {
+        try {
             addButton.addEventListener('click', this.addGuestEntryHandler);
-        } else {
-            console.log('505 - Internal server error - could not find add button');
-            this.Redirect('/500');
-        }
-        if (addAiButton) {
             addAiButton.addEventListener('click', this.addAiEntryHandler);
-        } else {
-            console.log('505 - Internal server error - could not find add AI button');
-            this.Redirect('/500');
-        }
-        if (submitButton && loginForm) {
             loginForm.addEventListener('submit', this.LoginHandler);
-        } else {
-            console.log('505 - Internal server error - could not find LoginSubmitButton');
+            addUserButton.addEventListener('click', this.AddUserHandler);
+        } catch (error) {
+            console.log('505 - Internal server error - could not find add button');
             this.Redirect('/500');
         }
     }
 
-    // TODO: Move these inside try -> catch block to prevent if else jungle
     RemoveListeners() {
         const addButton = document.getElementById('add-button');
         const addAiButton = document.getElementById('add-ai-button');
-        const submitButton = document.getElementById('LoginSubmitButton');
         const loginForm = document.getElementById('login-form');
+        const addUserButton = document.getElementById('add-user-button');
 
-        if (addButton) {
+        try {
             addButton.removeEventListener('click', this.addGuestEntryHandler);
-        } else {
-            console.log('505 - Internal server error - could not find add button');
-            this.Redirect('/500');
-        }
-        if (addAiButton) {
             addAiButton.removeEventListener('click', this.addAiEntryHandler);
-        } else {
-            console.log('505 - Internal server error - could not find add AI button');
-            this.Redirect('/500');
-        }
-        if (submitButton && loginForm) {
             loginForm.removeEventListener('submit', this.LoginHandler);
-        } else {
+            addUserButton.removeEventListener('click', this.AddUserHandler);
+        } catch (error) {
             console.log('505 - Internal server error - could not find LoginSubmitButton');
             this.Redirect('/500');
         }
@@ -358,7 +345,7 @@ export default class extends AbstractView {
             
           </div>
 
-            <div class="pop-up-login login-page">
+            <div class="pop-up-login login-page" id="pop-up-login">
                 <div class="login-form">
                     <h2 class="font-sub login-heading">&lt;Add user&gt;</h2>
                     <form id="login-form" action="" method="">

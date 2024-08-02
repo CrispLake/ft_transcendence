@@ -12,12 +12,14 @@ import { AI } from './AI.js';
 import { Ball } from './Ball.js';
 import * as PongMath from '../math.js';
 import { PowerupManager } from './PowerupManager.js';
+import { Results } from './Results.js';
 
 export class Game
 {
 	constructor()
 	{
 		this.settings = new Settings();
+		this.results = new Results();
 		this.gameScene = new THREE.Scene();
 		this.fontLoader = new FontLoader();
 		this.gameCamera = this.createCamera();
@@ -208,7 +210,10 @@ export class Game
 		if (this.goal())
 		{
 			if (this.gameEnded())
+			{
+				this.saveResults();
 				this.resetGame();
+			}
 			else
 				this.resetPositions();
 			this.powerupManager.reset();
@@ -387,5 +392,18 @@ export class Game
 		var curDate = null;
 		do { curDate = new Date(); }
 		while(curDate-date < millis);
+	}
+
+	saveResults()
+	{
+		if (this.settings.multiMode)
+			this.results.setResult4p(this.players["p1"], this.players["p2"], this.players["p3"], this.players["p4"]);
+		else
+			this.results.setResult2p(this.players["p1"], this.players["p2"]);
+
+		// DEBUG
+		console.log("RESULTS:");
+		console.log(this.results.getResult2p());
+		console.log(this.results.getResult4p());
 	}
 }

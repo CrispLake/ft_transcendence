@@ -46,7 +46,7 @@ export class AI
         this.boostMaterial = new THREE.MeshStandardMaterial({color: COLOR.BOOSTMETER, emissive: COLOR.BOOSTMETER})
         this.boostMeter = new THREE.Mesh(this.boostGeometry, this.boostMaterial);
         this.paddleLength = G.paddleLength;
-        this.score = 0;
+        this.lives = G.lives;
         this.moveLeft = false;
         this.moveRight = false;
         this.setMovingBoundaries();

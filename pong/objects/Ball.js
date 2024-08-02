@@ -246,6 +246,8 @@ export class Ball
         else
         {
             let spinPower = ((player.moveLeft) ? 1 : -1) * player.sign * player.boostAmount;
+            if (player.playerNum > 2)
+                spinPower = -spinPower;
             spinPower = PongMath.lerp(spinPower, -G.maxBoost, G.maxBoost, -G.maxSpin, G.maxSpin);
             this.addSpin(spinPower);
         }

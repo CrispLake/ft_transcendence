@@ -90,10 +90,22 @@ export default class extends AbstractView {
         console.log(response)
     }
 
+    MaxPlayerLimitReached() {
+        if (this.entryIdCounter == this.maxPlayers)
+            return true;
+        return false;
+    }
+
     addAiEntryHandler(event) {
         if (event) {
             event.preventDefault();
         }
+        
+        if (this.MaxPlayerLimitReached()) {
+            console.log('Max player limit reached');
+            return;
+        }
+
         const newEntry = {
             id: this.entryIdCounter++,
             title: `AI`,
@@ -107,6 +119,12 @@ export default class extends AbstractView {
         if (event) {
             event.preventDefault();
         }
+
+        if (this.MaxPlayerLimitReached()) {
+            console.log('Max player limit reached');
+            return;
+        }
+
         const newEntry = {
             id: this.entryIdCounter++,
             title: `Guest Player`,
@@ -115,6 +133,18 @@ export default class extends AbstractView {
         this.playerCounter++;
         this.entries.push(newEntry);
         this.renderEntries();
+    }
+
+    AddUserHandler(event) {
+        event.preventDefault();
+
+        if (this.MaxPlayerLimitReached()) {
+            console.log('Max player limit reached');
+            return;
+        }
+
+        const button = document.getElementById('pop-up-login');
+        button.style.display = 'block';
     }
 
     async addExistingUserEntryHandler(userData) {
@@ -232,12 +262,6 @@ export default class extends AbstractView {
             }, { once: true });
         }
         this.HideLoginPopUp();
-    }
-
-    AddUserHandler(event) {
-        event.preventDefault();
-        const button = document.getElementById('pop-up-login');
-        button.style.display = 'block';
     }
 
     AddListeners() {

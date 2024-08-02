@@ -157,3 +157,30 @@
 .players-container {
   
 }
+
+.toggle-container {
+    width: 300px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.toggle-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.toggle-button:focus {
+    outline: none;
+}
+
+.toggle-content {
+    display: none;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-top: none;
+}

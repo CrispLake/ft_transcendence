@@ -16,12 +16,16 @@ export default class extends AbstractView {
         console.log(localStorage.auth_token)
         this.loginURL = 'http://localhost:8000/login';
 
+        this.powerups = false;
+        this.ai_difficulty = 1;
+
         this.getFirstEntry()
         this.addGuestEntryHandler = this.addGuestEntryHandler.bind(this);
         this.addAiEntryHandler = this.addAiEntryHandler.bind(this);
         this.addExistingUserEntryHandler = this.addExistingUserEntryHandler.bind(this);
         this.LoginHandler = this.LoginHandler.bind(this);
         this.AddUserHandler = this.AddUserHandler.bind(this);
+        this.PowerUpToggle = this.PowerUpToggle.bind(this);
     }
 
     waitForUser() {
@@ -46,7 +50,7 @@ export default class extends AbstractView {
         }));
     }
 
-    //TODO: If entry count is less than max players? Fill with AIs?
+    //TODO: If entry count is less than max players? Fill with AIs? Or prompt the user to add more players/AIs?
     async getUserInput() {
         const appDiv = document.getElementById('app');
         if (!appDiv) {
@@ -62,7 +66,8 @@ export default class extends AbstractView {
             players: users,
             settings : {
                 multimode: this.params < 3 ? false : true,
-                ai_difficulty: 1
+                ai_difficulty: this.ai_difficulty,
+                powerups: this.powerups
             }
         }
         return params;
@@ -277,17 +282,33 @@ export default class extends AbstractView {
         this.HideLoginPopUp();
     }
 
+    PowerUpToggle(event) {
+        event.preventDefault();
+
+        const PowerUpToggle = document.getElementById('toggle-content');
+        if (PowerUpToggle.style.display === 'none' || PowerUpToggle.style.display === '') {
+            PowerUpToggle.style.display = 'block';
+            this.powerups = true;
+        }
+        else {
+            PowerUpToggle.style.display = 'none';
+            this.powerups = false;
+        }
+    }
+
     AddListeners() {
         const addButton = document.getElementById('add-button');
         const addAiButton = document.getElementById('add-ai-button');
         const loginForm = document.getElementById('login-form');
         const addUserButton = document.getElementById('add-user-button');
+        const PowerUpToggle = document.getElementById('toggle-container');
 
         try {
             addButton.addEventListener('click', this.addGuestEntryHandler);
             addAiButton.addEventListener('click', this.addAiEntryHandler);
             loginForm.addEventListener('submit', this.LoginHandler);
             addUserButton.addEventListener('click', this.AddUserHandler);
+            PowerUpToggle.addEventListener('click', this.PowerUpToggle);
         } catch (error) {
             console.log('505 - Internal server error - could not find add button');
             this.Redirect('/500');
@@ -305,6 +326,7 @@ export default class extends AbstractView {
             addAiButton.removeEventListener('click', this.addAiEntryHandler);
             loginForm.removeEventListener('submit', this.LoginHandler);
             addUserButton.removeEventListener('click', this.AddUserHandler);
+            PowerUpToggle.removeEventListener('click', this.PowerUpToggle);
         } catch (error) {
             console.log('505 - Internal server error - could not find LoginSubmitButton');
             this.Redirect('/500');
@@ -337,8 +359,6 @@ export default class extends AbstractView {
                   </div>
                 </button>
 
-                
-
               </div>
 
               <div class="launch-div">
@@ -348,6 +368,13 @@ export default class extends AbstractView {
                   </div>
                 </button>
               </div>
+
+            <div class="toggle-container" id="toggle-container">
+            <button class="toggle-button">Toggle Content</button>
+            <div class="toggle-content" id="toggle-content">
+                <p>Powerups enabled</p>
+            </div>
+
             </div>
            
             <div class="players-container">
@@ -379,7 +406,6 @@ export default class extends AbstractView {
                 </div>
             </div>
 
-            
           
           </div>
         `;

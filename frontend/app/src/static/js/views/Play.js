@@ -14,6 +14,7 @@ import { Settings } from '../pong/objects/Settings.js';
 import AbstractView from './AbstractView.js';
 
 import GameMode from './GameMode.js';
+import GameSetup from './GameSetup.js';
 import Pong from './Pong.js';
 
 export default class extends AbstractView {
@@ -40,13 +41,6 @@ export default class extends AbstractView {
     this.gameMode = await gameModeObj.getUserInput();
   }
 
-  // Retrieve game settings based on game mode
-  // TODO: create Settings object with setup data
-  GameSetup() {
-    // TODO: get data here
-    this.settings = new Settings(1, false);
-  }
-
   // TODO: make it wait and return the results --> also for 4p
   //        remove event listeners when game finished!
   // Launch 2p or 4p pong game
@@ -59,6 +53,16 @@ export default class extends AbstractView {
   }
 
   // Launch 2p Gonp
+  async GameSetup() {
+    const gameSetupObj = new GameSetup(this.gameMode);
+    this.settings = await gameSetupObj.getUserInput();
+    this.settings.players.map(entry =>
+        console.log(`id: ${entry.id}\n${entry.token}\n${entry.username}`
+        ));
+    gameSetupObj.RemoveListeners();
+    this.settings = new Settings(1, false);
+  }
+
   Gonp() {
     
   }

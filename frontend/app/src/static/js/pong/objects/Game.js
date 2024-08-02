@@ -15,8 +15,9 @@ export class Game
 {
 	constructor(settings)
 	{
+    this.finished = false;
+    console.log('Game finished: ', false);
 		console.log("Creating Game Object...");
-		console.log(settings);
 		this.settings = settings;
 		this.scene = new THREE.Scene();
 		this.players = [];
@@ -138,10 +139,15 @@ export class Game
 		this.arena.update();
 		if (this.goal())
 			{
-				if (this.gameEnded())
-					this.resetGame();
+				if (this.gameEnded()) {
+          // TODO: making changes here
+          this.finished = true;
+          console.log('marked game as finished');
+          return;
+					// this.resetGame();
+        }
 				else
-				this.updateScore();
+				  this.updateScore();
 		}
 		this.composer.render();
 		this.renderer.autoClear = false;

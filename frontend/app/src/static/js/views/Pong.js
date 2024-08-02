@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/01 16:52:57 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/02 13:29:06 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@ import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUnifo
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Game } from '../pong/objects/Game.js';
 import * as KEY from '../pong/keys.js';
-import { Settings } from '../pong/objects/Settings.js';
 
 import AbstractView from "./AbstractView.js";
 
@@ -22,18 +21,17 @@ export default class extends AbstractView {
   constructor(params) {
     super(params);
 
-    this.playerCount = params.playerCount || 1;     // int (1-4)
-    this.multimode = params.multimode || false;     // true / false
-    this.tournament = params.tournament || false;   // true / false
-    this.diff = parms.diff || 1;                    // int (1-3)
+    // this.playerCount = params.playerCount || 1;     // int (1-4)
+    // this.multimode = params.multimode || false;     // true / false
+    // this.tournament = params.tournament || false;   // true / false
+    // this.diff = parms.diff || 1;                    // int (1-3)
     
     this.setTitle('Pong');
     this.listeners = true;
     this.childs = true;
     
     // Game variables
-    this.settings = new Settings(playerCount, multimode == "false" ? false : true);
-    this.game = new Game(this.settings);
+    // this.game = new Game(this.settings);
     this.controls = null;
 
     // Binding 'this' for external use
@@ -41,18 +39,30 @@ export default class extends AbstractView {
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
     this.getHtml = this.getHtml.bind(this);
-    this.init = this.init.bind(this);
+    // this.init = this.init.bind(this);
   }
 
-  init() {
-    if (this.game === null) {
-      this.game = new Game();
-    }
-    if (this.controls === null) {
-      this.controls = new OrbitControls(this.game.camera, this. game.renderer.domElement);
-    }
-    
-    RectAreaLightUniformsLib.init();
+  // init() {
+  //   if (this.game === null) {
+  //     this.game = new Game();
+  //   }
+  //   if (this.controls === null) {
+  //     this.controls = new OrbitControls(this.game.camera, this. game.renderer.domElement);
+  //   }
+  //   RectAreaLightUniformsLib.init();
+  // }
+
+  // Handles single game with provided settings configuration
+  async launchGame(gameSettings) {
+    // this.settings = gameSettings;
+    this.game = new Game(gameSettings);
+    const html = await document.getElementById('app');
+    html.innerHTML = '';
+    const elemetn = await this.getHtml();
+    html.appendChild(elemetn);
+    console.log('before game');
+    // TODO: how to escape the game here
+    console.log('after game');
   }
 
   handleKeyDown(event) {
@@ -95,8 +105,6 @@ export default class extends AbstractView {
         break;
     }
   }
-
-  // rematchHandler
 
   handleKeyUp(event) {
     switch (event.key) {

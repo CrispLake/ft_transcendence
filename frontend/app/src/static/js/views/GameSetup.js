@@ -227,6 +227,13 @@ export default class extends AbstractView {
     // Handles user authentication
     async LoginHandler(event) {
         event.preventDefault();
+
+        if (this.MaxPlayerLimitReached()) {
+            this.HideLoginPopUp();
+            console.log('Max player limit reached');
+            return;
+        }
+
         const formElement = document.getElementById('login-form');
         const usernameInput = document.getElementById('username');
         const errorMessageDiv = document.getElementById('error-message');

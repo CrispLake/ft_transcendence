@@ -317,7 +317,6 @@ export class Player
                 this.paddle.position.x = -this.movementBoundary;
             if (this.paddle.position.x > this.movementBoundary)
                 this.paddle.position.x = this.movementBoundary;
-
             this.boostMeter.position.x = this.paddle.position.x;
         }
         this.light.position.copy(this.paddle.position);

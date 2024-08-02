@@ -505,7 +505,7 @@ export class AI
             z = this.getIntersectionZ(this.ballPos, this.goalX, this.angle);
             bounces++;
         }
-        this.pathLengthToHit += PongMath.distanceBetweenPoints(this.ballPos.x, this.ballPos.y, z, goalX);
+        this.pathLengthToHit += PongMath.distanceBetweenPoints(this.ballPos.x, this.ballPos.y, z, this.goalX);
         this.targetPos = z;
     }
 
@@ -750,7 +750,7 @@ export class AI
 
     readGame()
     {
-        console.log("----READ-------------------------------------------------------");
+        console.log("----READ---------------------------------------------------");
         if (this.ballMovesTowards())
         {
             if (this.considerSpin && this.game.ball.spin != 0)
@@ -780,9 +780,9 @@ export class AI
     {
         const paddleDistanceToTarget = this.paddle.position.z - this.targetPos;
         if (paddleDistanceToTarget > this.speed)
-            this.move(-this.speed);
+            this.moveLeft = true;
         else if (paddleDistanceToTarget < -this.speed)
-            this.move(this.speed);
+            this.moveRight = true;
     }
 
     getSpinDirection()
@@ -793,23 +793,38 @@ export class AI
             this.spinDirection = G.SpinRight;
     }
 
+    ballIsInchingIn()
+    {
+        const timeToMoveQuarterPaddle = (this.paddleLength / 2) / (this.speed * G.fps);
+        const ballTimeToTarget = this.ballTimeToTarget - this.ballTimeToTargetTimer.getElapsedTime();
+        return (!this.active && ballTimeToTarget < timeToMoveQuarterPaddle);
+    }
+
+    targetIsInsideBoundary()
+    {
+        return (this.targetPos < this.movementBoundary && this.targetPos > -this.movementBoundary);
+    }
+
     handleSpinInput()
     {
-        const timeToMoveHalfPaddle = (this.paddleLength / 2) / (this.speed * G.fps);
-        const ballTimeToTarget = this.ballTimeToTarget - this.ballTimeToTargetTimer.getElapsedTime();
-        console.log("timeToMoveHalfPaddle: " + timeToMoveHalfPaddle.toFixed(3));
-        console.log("ballTimeToTarget:     " + ballTimeToTarget.toFixed(3));
-        if (!this.active && ballTimeToTarget < timeToMoveHalfPaddle)
+        
+        if (this.ballIsInchingIn() && this.targetIsInsideBoundary())
         {
-            this.move(this.speed * this.spinDirection);
+            console.log("AI attempts to spin: " + this.spinDirection);
+            // this.move(this.speed * this.spinDirection);
+            if (this.spinDirection == G.SpinLeft)
+                this.moveLeft = true;
+            else if (this.spinDirection == G.SpinRight)
+                this.moveRight = true;
         }
         else
         {
+            console.log("AI moving to target");
             const paddleDistanceToTarget = this.paddle.position.z - this.targetPos;
             if (paddleDistanceToTarget > this.speed)
-                this.move(-this.speed);
+                this.moveLeft = true;
             else if (paddleDistanceToTarget < -this.speed)
-                this.move(this.speed);
+                this.moveRight = true;
         }
 
         if (this.active)
@@ -821,6 +836,7 @@ export class AI
                 this.boostReleased = true;
                 this.updateBoost();
                 this.getSpinDirection();
+                console.log("Spin direction: " + this.spinDirection);
             }
         }
         else
@@ -904,7 +920,15 @@ export class AI
             this.handleSpinInput();
         else
             this.handleInput();
+
+        if (this.moveLeft)
+            this.move(-this.speed);
+        if (this.moveRight)
+            this.move(this.speed);
         
         this.stayWithinBoundaries();
+
+        this.moveLeft = false;
+        this.moveRight = false;
     }
 };

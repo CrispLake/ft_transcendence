@@ -230,7 +230,11 @@ export class Game
 				console.log("Old ball spin: " + this.ball.spin);
 				// console.log("PADDLE HIT: ball.a = " + this.ball.angle);
 				if (this.players[player].bounce == true)
+				{
+					console.log("Bounce already detected.");
 					continue ;
+				}
+				console.log("Player " + player + " hit the ball.");
 
 				// Set player who touched the ball to active, rest to inactive.
 				for (let p in this.players)

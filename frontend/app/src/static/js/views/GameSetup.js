@@ -12,17 +12,58 @@ export default class extends AbstractView {
         
         this.entryIdCounter = 0;
         this.playerCounter = 0;
+        this.maxPlayers = 0;
         console.log(localStorage.auth_token)
         this.loginURL = 'http://localhost:8000/login';
 
         this.getFirstEntry()
         this.launchPongViewHandler = this.launchPongViewHandler.bind(this);
-        // this.launchPong2PViewHandler = this.launchPong2PViewHandler.bind(this);
-        // this.launchPong4PViewHandler = this.launchPong4PViewHandler.bind(this);
         this.addGuestEntryHandler = this.addGuestEntryHandler.bind(this);
         this.addAiEntryHandler = this.addAiEntryHandler.bind(this);
         this.addExistingUserEntryHandler = this.addExistingUserEntryHandler.bind(this);
         this.LoginHandler = this.LoginHandler.bind(this);
+        this.AddUserHandler = this.AddUserHandler.bind(this);
+    }
+
+    waitForUser() {
+        return new Promise((resolve) => {
+            try {
+                document.getElementById('launch-pong').addEventListener('click', () => {
+                    resolve(this.entries);
+                })
+            }
+            catch(error) {
+                console.log(error);
+                this.Redirect('/500')
+            }
+        });
+    }
+
+    transform_users(users) {
+        return users.map(user => ({
+            id: user.player_id,
+            token: user.token,
+            username: user.title
+        }));
+    }
+
+    async getUserInput() {
+        const appDiv = await document.getElementById('app');
+        if (!appDiv) {
+            this.Redirect('/500');
+            return;
+        }
+        this.maxPlayers = this.params;
+
+        appDiv.innerHTML = await this.getHtml();
+        this.AddListeners();
+        const users = this.transform_users(await this.waitForUser());
+        const params = {
+            players: users,
+            multimode: false,
+            ai_difficulty: 1
+        }
+        return params;
     }
 
     async getFirstEntry() {
@@ -30,20 +71,22 @@ export default class extends AbstractView {
         try {
             response = await axios.get(
                 'http://localhost:8000/account',
-                { headers: {'Authorization': `Token ${localStorage.auth_token}`} }
+                { headers: {'Authorization': `Token ${this.GetKey()}`} }
             );
             console.log("Response: " + response);
             this.entries = [{
+                player_id: response.data.user.id,
+                token: this.GetKey(),
                 id: this.entryIdCounter++,
                 title: response.data.user.username,
                 image: `<img src="http://localhost:8000/account/${response.data.user.id}/image" alt="User icon" width="50" height="50">`
             }]
+            this.renderEntries();
         } catch (error) {
             console.error('Error fetching profile data', error);
             this.addGuestEntryHandler();
         }
         console.log(response)
-
     }
 
     launchPongViewHandler(event) {
@@ -120,6 +163,8 @@ export default class extends AbstractView {
         }
         console.log(profileData);
         const newEntry = {
+            player_id: userData.data.user_id,
+            token: userData.data.token,
             id: this.entryIdCounter++,
             title: userData.data.username,
             image: `<img src="http://localhost:8000/account/${userData.data.user_id}/image" alt="User icon" width="50" height="50">`
@@ -169,19 +214,6 @@ export default class extends AbstractView {
             });
         }
     }
-    async returnFirstEntry() {
-        console.log(this.entries);
-        if (this.entries.length <= 0) { 
-            return ;
-        }
-        return (`<div class="entry" id="entry-${this.entries[0].id``}">
-                ${this.entries[0].image}
-                <h3>${this.entries[0].title}</h3>
-                    <ul>
-                    </ul>
-                </div>
-    `);
-    }
 
     // Handles user authentication
     async LoginHandler(event) {
@@ -205,7 +237,7 @@ export default class extends AbstractView {
             if (errorMessageDiv) {
                 errorMessageDiv.textContent = '';
             }
-    
+
         } catch (error) {
             console.log('Invalid credentials!!');
             if (errorMessageDiv) {
@@ -220,116 +252,49 @@ export default class extends AbstractView {
                 }
             }, { once: true });
         }
+        const button = document.getElementById('pop-up-login');
+        button.style.display = 'none';
     }
-    
 
+    AddUserHandler(event) {
+        event.preventDefault();
+        const button = document.getElementById('pop-up-login');
+        button.style.display = 'block';
+    }
 
     AddListeners() {
-        const launchPong = document.getElementById('launch-pong');
-        // const launchPong2p = document.getElementById('launch-pong2p');
-        // const launchPong4p = document.getElementById('launch-pong4p');
         const addButton = document.getElementById('add-button');
         const addAiButton = document.getElementById('add-ai-button');
-        const submitButton = document.getElementById('LoginSubmitButton');
         const loginForm = document.getElementById('login-form');
+        const addUserButton = document.getElementById('add-user-button');
 
-        // TODO: Move these inside try -> catch block to prevent if else jungle
-        if (launchPong) {
-            launchPong.addEventListener('click', this.launchPongViewHandler);
-        } else {
-            console.log('505 - Internal server error - could not find launch button');
-            this.Redirect('/500');
-        }
-        // if (launchPong2p) {
-        //     launchPong2p.addEventListener('click', this.launchPong2PViewHandler);
-        // } else {
-        //     console.log('505 - Internal server error - could not find launch button');
-        //     this.Redirect('/500');
-        // }
-        // if (launchPong4p) {
-        //     launchPong4p.addEventListener('click', this.launchPong4PViewHandler);
-        // } else {
-        //     console.log('505 - Internal server error - could not find launch button');
-        //     this.Redirect('/500');
-        // }
-        if (addButton) {
+        try {
             addButton.addEventListener('click', this.addGuestEntryHandler);
-        } else {
-            console.log('505 - Internal server error - could not find add button');
-            this.Redirect('/500');
-        }
-        if (addAiButton) {
             addAiButton.addEventListener('click', this.addAiEntryHandler);
-        } else {
-            console.log('505 - Internal server error - could not find add AI button');
-            this.Redirect('/500');
-        }
-        if (submitButton && loginForm) {
             loginForm.addEventListener('submit', this.LoginHandler);
-        } else {
-            console.log('505 - Internal server error - could not find LoginSubmitButton');
+            addUserButton.addEventListener('click', this.AddUserHandler);
+        } catch (error) {
+            console.log('505 - Internal server error - could not find add button');
             this.Redirect('/500');
         }
     }
 
-    // TODO: Move these inside try -> catch block to prevent if else jungle
     RemoveListeners() {
-        const launchPong = document.getElementById('launch-pong');
-        // const launchPong2p = document.getElementById('launch-pong2p');
-        // const launchPong4p = document.getElementById('launch-pong4p');
         const addButton = document.getElementById('add-button');
         const addAiButton = document.getElementById('add-ai-button');
-        const submitButton = document.getElementById('LoginSubmitButton');
         const loginForm = document.getElementById('login-form');
+        const addUserButton = document.getElementById('add-user-button');
 
-        if (launchPong) {
-            launchPong.removeEventListener('click', this.launchPongViewHandler);
-        } else {
-            console.log('505 - Internal server error - could not find launch button');
-            this.Redirect('/500');
-        }
-        // if (launchPong2p) {
-        //     launchPong2p.removeEventListener('click', this.launchPong2PViewHandler);
-        // } else {
-        //     console.log('505 - Internal server error - could not find launch button');
-        //     this.Redirect('/500');
-        // }
-        // if (launchPong4p) {
-        //     launchPong4p.removeEventListener('click', this.launchPong4PViewHandler);
-        // } else {
-        //     console.log('505 - Internal server error - could not find launch button');
-        //     this.Redirect('/500');
-        // }
-        if (addButton) {
+        try {
             addButton.removeEventListener('click', this.addGuestEntryHandler);
-        } else {
-            console.log('505 - Internal server error - could not find add button');
-            this.Redirect('/500');
-        }
-        if (addAiButton) {
             addAiButton.removeEventListener('click', this.addAiEntryHandler);
-        } else {
-            console.log('505 - Internal server error - could not find add AI button');
-            this.Redirect('/500');
-        }
-        if (submitButton && loginForm) {
             loginForm.removeEventListener('submit', this.LoginHandler);
-        } else {
+            addUserButton.removeEventListener('click', this.AddUserHandler);
+        } catch (error) {
             console.log('505 - Internal server error - could not find LoginSubmitButton');
             this.Redirect('/500');
         }
     }
-        // </button>
-        // <button class="font-sub launch-button" id="launch-pong2p">
-        //     <div class="text-holder">
-        //         <span>Launch Pong 2P</span>
-        //     </div>
-        // </button>
-        // <button class="font-sub launch-button" id="launch-pong4p">
-        //     <div class="text-holder">
-        //         <span>Launch Pong 4P</span>
-        //     </div>
-        // </button>
 
     async getHtml() {
         return `
@@ -382,7 +347,7 @@ export default class extends AbstractView {
             
           </div>
 
-            <div class="pop-up-login login-page">
+            <div class="pop-up-login login-page" id="pop-up-login">
                 <div class="login-form">
                     <h2 class="font-sub login-heading">&lt;Add user&gt;</h2>
                     <form id="login-form" action="" method="">

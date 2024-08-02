@@ -15,9 +15,9 @@ export default class extends AbstractView {
 
         this.modes = {
           'pong2': 1,
-          'pong4': 2,
-          'tournament': 3,
-          'gonp': 4,
+          'gonp': 2,
+          'pong4': 3,
+          'tournament': 4,
         }
     }
 
@@ -56,7 +56,7 @@ export default class extends AbstractView {
 
     // Returns mode to play on --> see constructor for mode details
     async getUserInput() {
-      const appDiv = await document.getElementById('app');
+      const appDiv = document.getElementById('app');
       if (!appDiv) {
         this.Redirect('/500');
         return;

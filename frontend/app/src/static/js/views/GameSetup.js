@@ -48,20 +48,22 @@ export default class extends AbstractView {
     }
 
     async getUserInput() {
-        const appDiv = await document.getElementById('app');
+        const appDiv = document.getElementById('app');
         if (!appDiv) {
             this.Redirect('/500');
             return;
         }
-        this.maxPlayers = this.params;
+        this.maxPlayers = this.params < 3 ? 2 : 4;
 
         appDiv.innerHTML = await this.getHtml();
         this.AddListeners();
         const users = this.transform_users(await this.waitForUser());
         const params = {
             players: users,
-            multimode: false,
-            ai_difficulty: 1
+            settings : {
+                multimode: this.params < 3 ? false : true,
+                ai_difficulty: 1
+            }
         }
         return params;
     }

@@ -26,6 +26,7 @@ export default class extends AbstractView {
         this.LoginHandler = this.LoginHandler.bind(this);
         this.AddUserHandler = this.AddUserHandler.bind(this);
         this.PowerUpToggle = this.PowerUpToggle.bind(this);
+        this.AiDifficultySlider = this.AiDifficultySlider.bind(this);
     }
 
     waitForUser() {
@@ -286,6 +287,10 @@ export default class extends AbstractView {
         event.preventDefault();
 
         const PowerUpToggle = document.getElementById('toggle-content');
+        if (!PowerUpToggle) {
+            console.log('505 - Internal server error - could not find slider');
+            this.Redirect('/500');
+        }
         if (PowerUpToggle.style.display === 'none' || PowerUpToggle.style.display === '') {
             PowerUpToggle.style.display = 'block';
             this.powerups = true;
@@ -296,12 +301,29 @@ export default class extends AbstractView {
         }
     }
 
+    AiDifficultySlider(event) {
+        event.preventDefault();
+
+        const rangeSlider = document.getElementById('range-slider');
+        const sliderValue = document.getElementById('slider-value');
+
+        try {
+            sliderValue.textContent = rangeSlider.value;
+            this.ai_difficulty = rangeSlider.value;
+        } catch (error) {
+            console.log('505 - Internal server error - could not find slider');
+            this.Redirect('/500');
+        }
+
+    }
+
     AddListeners() {
         const addButton = document.getElementById('add-button');
         const addAiButton = document.getElementById('add-ai-button');
         const loginForm = document.getElementById('login-form');
         const addUserButton = document.getElementById('add-user-button');
         const PowerUpToggle = document.getElementById('toggle-container');
+        const rangeSlider = document.getElementById('range-slider');
 
         try {
             addButton.addEventListener('click', this.addGuestEntryHandler);
@@ -309,6 +331,7 @@ export default class extends AbstractView {
             loginForm.addEventListener('submit', this.LoginHandler);
             addUserButton.addEventListener('click', this.AddUserHandler);
             PowerUpToggle.addEventListener('click', this.PowerUpToggle);
+            rangeSlider.addEventListener('input', this.AiDifficultySlider);
         } catch (error) {
             console.log('505 - Internal server error - could not find add button');
             this.Redirect('/500');
@@ -327,6 +350,7 @@ export default class extends AbstractView {
             loginForm.removeEventListener('submit', this.LoginHandler);
             addUserButton.removeEventListener('click', this.AddUserHandler);
             PowerUpToggle.removeEventListener('click', this.PowerUpToggle);
+            rangeSlider.addEventListener('input', this.AiDifficultySlider);
         } catch (error) {
             console.log('505 - Internal server error - could not find LoginSubmitButton');
             this.Redirect('/500');
@@ -369,12 +393,17 @@ export default class extends AbstractView {
                 </button>
               </div>
 
-            <div class="toggle-container" id="toggle-container">
-            <button class="toggle-button">Toggle Content</button>
-            <div class="toggle-content" id="toggle-content">
-                <p>Powerups enabled</p>
+            <div class="toggle-container">
+                <button class="toggle-button" id="toggle-container">Toggle Content</button>
+                <div class="toggle-content" id="toggle-content">
+                    <p>Powerups enabled</p>
+                </div>
             </div>
 
+            <div class="slider-container">
+                <label for="range-slider">Select a value (1-4):</label>
+                <input type="range" id="range-slider" min="1" max="4" value="1" step="1">
+                <span id="slider-value">1</span>
             </div>
            
             <div class="players-container">

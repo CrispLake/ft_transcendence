@@ -184,3 +184,21 @@
     border: 1px solid #ddd;
     border-top: none;
 }
+
+.slider-container {
+    width: 300px;
+    margin: 0 auto;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+input[type="range"] {
+    width: 100%;
+    margin: 20px 0;
+}
+
+#slider-value {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 1.2em;
+}

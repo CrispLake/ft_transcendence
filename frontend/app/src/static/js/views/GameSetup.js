@@ -57,9 +57,9 @@ export default class extends AbstractView {
 
         appDiv.innerHTML = await this.getHtml();
         this.AddListeners();
-        const users = await this.waitForUser();
+        const users = this.transform_users(await this.waitForUser());
         const params = {
-            players: this.transform_users(users),
+            players: users,
             multimode: false,
             ai_difficulty: 1
         }

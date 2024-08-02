@@ -6,10 +6,11 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/01 18:33:33 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/02 13:09:23 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+import { Settings } from '../pong/objects/Settings.js';
 import AbstractView from './AbstractView.js';
 
 import GameMode from './GameMode.js';
@@ -40,8 +41,10 @@ export default class extends AbstractView {
   }
 
   // Retrieve game settings based on game mode
+  // TODO: create Settings object with setup data
   GameSetup() {
-    
+    // TODO: get data here
+    this.settings = new Settings(1, false);
   }
 
   // TODO: make it wait and return the results --> also for 4p
@@ -51,8 +54,8 @@ export default class extends AbstractView {
   async Pong() {
     const pong = new Pong();
     pong.AddListeners();
-    await pong.launchGame();
-    console.log('after game');
+    await pong.launchGame(this.settings);
+    // pong.RemoveListeners();
   }
 
   // Launch 2p Gonp
@@ -97,13 +100,5 @@ export default class extends AbstractView {
   AddListeners() {
     this.gameDiv = document.getElementById('app');
     this.app();
-  }
-
-  RemoveListeners() {
-    
-  }
-
-  async getHtml() {
-    return ``;
   }
 }

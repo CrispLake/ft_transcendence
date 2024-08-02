@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/01 18:32:20 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/02 13:09:42 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@ import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUnifo
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Game } from '../pong/objects/Game.js';
 import * as KEY from '../pong/keys.js';
-import { Settings } from '../pong/objects/Settings.js';
 
 import AbstractView from "./AbstractView.js";
 
@@ -32,7 +31,6 @@ export default class extends AbstractView {
     this.childs = true;
     
     // Game variables
-    this.settings = new Settings(1, false);
     // this.game = new Game(this.settings);
     this.controls = null;
 
@@ -57,12 +55,14 @@ export default class extends AbstractView {
   // Handles single game with provided settings configuration
   async launchGame(gameSettings) {
     // this.settings = gameSettings;
-    this.game = new Game(this.settings);
+    this.game = new Game(gameSettings);
     const html = await document.getElementById('app');
     html.innerHTML = '';
     const elemetn = await this.getHtml();
     html.appendChild(elemetn);
     console.log('before game');
+    // TODO: how to escape the game here
+    console.log('after game');
   }
 
   handleKeyDown(event) {

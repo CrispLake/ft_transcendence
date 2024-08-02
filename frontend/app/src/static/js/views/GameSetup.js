@@ -82,6 +82,7 @@ export default class extends AbstractView {
                 title: response.data.user.username,
                 image: `<img src="http://localhost:8000/account/${response.data.user.id}/image" alt="User icon" width="50" height="50">`
             }]
+            this.playerCounter++;
             this.renderEntries();
         } catch (error) {
             console.error('Error fetching profile data', error);
@@ -176,22 +177,18 @@ export default class extends AbstractView {
     }
 
     removeEntryHandler(entryId) {
-        console.log("ENTRY ID:" + entryId);
         if (entryId == 0) {
             return ;
         }
-        this.entries = this.entries.filter(entry => entry.id !== entryId);
-        this.entryIdCounter = this.entries.length;
-        this.playerCounter = 0;
-        this.renderEntries();
-        for (let i = 0; i < this.entries.length; i++)
-        {
-            if (this.entries[i].title != "AI") {
-                console.log("PLAYER FOUND")
-                this.playerCounter++;
-            }
+        if (this.entries[entryId].title != "AI") {
+            this.playerCounter--;
         }
-        console.log(this.playerCounter);
+        this.entries = this.entries.filter(entry => entry.id !== entryId);
+        this.entries.forEach((entry, index) => {
+            entry.id = index;
+        });
+        this.entryIdCounter = this.entries.length;
+        this.renderEntries();
     }
 
     HideLoginPopUp() {
@@ -211,7 +208,7 @@ export default class extends AbstractView {
                 <h3>${entry.title}</h3>
                     <ul>
                     </ul>
-                    <button class="remove-button" data-id="${entry.id}">Remove</button>
+                    ${entry.id !== 0 ? `<button class="remove-button" data-id="${entry.id}">Remove</button>` : ''}
                 </div>
             `).join('');
             const removeButtons = listContainer.querySelectorAll('.remove-button');

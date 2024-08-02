@@ -163,6 +163,8 @@ export default class extends AbstractView {
         }
         console.log(profileData);
         const newEntry = {
+            player_id: userData.data.user_id,
+            token: userData.data.token,
             id: this.entryIdCounter++,
             title: userData.data.username,
             image: `<img src="http://localhost:8000/account/${userData.data.user_id}/image" alt="User icon" width="50" height="50">`

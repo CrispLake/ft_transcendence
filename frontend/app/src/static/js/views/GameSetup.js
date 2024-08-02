@@ -17,7 +17,6 @@ export default class extends AbstractView {
         this.loginURL = 'http://localhost:8000/login';
 
         this.getFirstEntry()
-        this.launchPongViewHandler = this.launchPongViewHandler.bind(this);
         this.addGuestEntryHandler = this.addGuestEntryHandler.bind(this);
         this.addAiEntryHandler = this.addAiEntryHandler.bind(this);
         this.addExistingUserEntryHandler = this.addExistingUserEntryHandler.bind(this);
@@ -89,36 +88,6 @@ export default class extends AbstractView {
             this.addGuestEntryHandler();
         }
         console.log(response)
-    }
-
-    launchPongViewHandler(event) {
-        console.log("4PLAYERHANDLER");
-        event.preventDefault();
-        const params = {
-            players: this.playerCounter,
-            multimode: this.entryIdCounter > 2 ? true : false
-        };
-        this.Redirect('/play', params);
-    }
-
-    launchPong4PViewHandler(event) {
-        console.log("4PLAYERHANDLER");
-        event.preventDefault();
-        const params = {
-            players: 1,
-            multimode: true
-        };
-        this.Redirect('/play', params);
-    }
-
-    launchPong2PViewHandler(event) {
-        console.log("2PLAYERHANDLER");
-        event.preventDefault();
-        const params = {
-            players: 2,
-            multimode: false
-        };
-        this.Redirect('/play', params);
     }
 
     addAiEntryHandler(event) {
@@ -195,7 +164,15 @@ export default class extends AbstractView {
         console.log(this.playerCounter);
     }
 
+    HideLoginPopUp() {
+        const button = document.getElementById('pop-up-login');
+        button.style.display = 'none';
+        const formElement = document.getElementById('login-form');
+        formElement.reset();
+    }
+
     renderEntries() {
+        this.HideLoginPopUp();
         const listContainer = document.getElementById('list-container');
         if (listContainer) {
             listContainer.innerHTML = this.entries.map(entry => `
@@ -254,8 +231,7 @@ export default class extends AbstractView {
                 }
             }, { once: true });
         }
-        const button = document.getElementById('pop-up-login');
-        button.style.display = 'none';
+        this.HideLoginPopUp();
     }
 
     AddUserHandler(event) {

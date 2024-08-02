@@ -46,6 +46,7 @@ export default class extends AbstractView {
         }));
     }
 
+    //TODO: If entry count is less than max players? Fill with AIs?
     async getUserInput() {
         const appDiv = document.getElementById('app');
         if (!appDiv) {
@@ -91,6 +92,7 @@ export default class extends AbstractView {
         console.log(response)
     }
 
+    // TODO: Notification for player limit reached
     MaxPlayerLimitReached() {
         if (this.entryIdCounter == this.maxPlayers)
             return true;
@@ -242,6 +244,13 @@ export default class extends AbstractView {
     
         const formData = new FormData(formElement);
         const payload = Object.fromEntries(formData);
+
+        //TODO: Notification for user already in match
+        if (this.entries.some(entry => entry.title === payload.username)) {
+            console.log('User already in the match');
+            this.HideLoginPopUp();
+            return;
+        }
     
         try {
             const response = await axios.post(this.loginURL, payload);

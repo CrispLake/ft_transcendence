@@ -31,7 +31,7 @@ export const wallLength4Player = 5;
 
 
 //--------------------------------------------------------------------------
-//  PADDLE
+//  PLAYER
 //--------------------------------------------------------------------------
 
 export const paddleLightIntensity = 1;
@@ -48,7 +48,9 @@ export const boostIncrement = 0.02;
 export const boostFillingTime = (maxBoost / boostIncrement) / fps;
 export const boostOffset = 1;
 export const boostMeterAnimationTime = 1;
-export const boostAnimationMaxMovement = 0.4
+export const boostAnimationMaxMovement = 0.4;
+export const stunTime = 1;
+export const maxStunShake = 0.2;
 
 
 //--------------------------------------------------------------------------

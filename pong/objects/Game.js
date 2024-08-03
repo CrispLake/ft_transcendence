@@ -61,8 +61,9 @@ export class Game
 	createCamera()
 	{
 		const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
-		// camera.position.set(-22, 25, 23);
-		camera.position.set(0, 80, 0);
+		camera.position.set(-22, 25, 23);
+		// camera.position.set(0, 80, 0);
+		// camera.position.set(0, 30, 0);
 		camera.lookAt(0, 0, 0);
 		return (camera);
 	}

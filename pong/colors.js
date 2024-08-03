@@ -30,6 +30,7 @@ export const PADDLE3_LIGHT = WHITE;
 export const PADDLE4_LIGHT = WHITE;
 export const BOOSTMETER = WHITE;
 export const BOOSTMETER_FULL = RED;
+export const STUNNED = RED;
 
 export const BALL = WHITE;
 

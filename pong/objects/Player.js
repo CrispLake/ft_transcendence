@@ -43,6 +43,9 @@ export class Player
         this.clockBoostMeter = new THREE.Clock();
         this.effect = false;
         this.boostMeterAnimation = false;
+        this.stunTimer = new THREE.Clock();
+        this.stunned = false;
+        this.stunPosition = new THREE.Vector3();
         this.active = false;
         this.bounce = false;
         this.box.setFromObject(this.paddle);
@@ -176,6 +179,11 @@ export class Player
         if (elapsedTime >= G.boostMeterAnimationTime)
         {
             this.resetBoostAnimation();
+            this.stunPosition = this.paddle.position.clone();
+            this.paddle.material.emissive.set(COLOR.STUNNED);
+            this.light.color.set(COLOR.STUNNED);
+            this.stunned = true;
+            this.stunTimer.start();
         }
     }
 
@@ -351,6 +359,26 @@ export class Player
     {
         if (this.effect)
             this.updateLightEffect();
+        if (this.stunned)
+        {
+            let elapsedTime = this.stunTimer.getElapsedTime();
+            if (elapsedTime >= G.stunTime)
+            {
+                this.paddle.position.copy(this.stunPosition);
+                this.paddle.material.emissive.set(this.color);
+                this.light.color.set(this.color);
+                this.stunned = false;
+                this.stunTimer.stop();
+            }
+            else
+            {
+                const maxShake = G.maxStunShake * ((G.stunTime - elapsedTime) / G.stunTime);
+                const randomX = Math.random() * maxShake;
+                const randomZ = Math.random() * maxShake;
+                this.paddle.position.set(this.stunPosition.x + randomX, this.stunPosition.y, this.stunPosition.z + randomZ);
+                return;
+            }
+        }
         if (this.moveLeft)
             this.move(-this.speed);
         if (this.moveRight)

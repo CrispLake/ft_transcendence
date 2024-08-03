@@ -188,6 +188,7 @@ export class AI
         this.ballTimeToTargetTimer = new THREE.Clock();
 
         this.spinDirection = 0;
+        this.offset = 0;
     }
 
 
@@ -476,7 +477,6 @@ export class AI
 
     getTargetPosition() // TODO: Make it work for 4-player mode
     {
-        console.log("getTargetPosition()");
         this.pathLengthToHit = 0;
         this.ballPos.set(this.game.ball.mesh.position.x, this.game.ball.mesh.position.z);
         this.angle = this.game.ball.angle;
@@ -750,7 +750,6 @@ export class AI
 
     readGame()
     {
-        console.log("----READ---------------------------------------------------");
         if (this.ballMovesTowards())
         {
             if (this.considerSpin && this.game.ball.spin != 0)
@@ -793,6 +792,17 @@ export class AI
             this.spinDirection = G.SpinRight;
     }
 
+    setOffsetFromTargetPosition()
+    {
+        // We set the offset to a random value between 0 and 10% of the paddle length
+        this.offset = Math.random() * (this.paddleLength / 2) * G.maxOffset;
+    }
+
+    adjustForOffset(distance)
+    {
+        return distance + this.offset;
+    }
+
     ballIsInchingIn()
     {
         const timeToMoveQuarterPaddle = (this.paddleLength / 2) / (this.speed * G.fps);
@@ -810,8 +820,6 @@ export class AI
         
         if (this.ballIsInchingIn() && this.targetIsInsideBoundary())
         {
-            console.log("AI attempts to spin: " + this.spinDirection);
-            // this.move(this.speed * this.spinDirection);
             if (this.spinDirection == G.SpinLeft)
                 this.moveLeft = true;
             else if (this.spinDirection == G.SpinRight)
@@ -819,8 +827,8 @@ export class AI
         }
         else
         {
-            console.log("AI moving to target");
-            const paddleDistanceToTarget = this.paddle.position.z - this.targetPos;
+            let paddleDistanceToTarget = this.paddle.position.z - this.targetPos;
+            paddleDistanceToTarget = this.adjustForOffset(paddleDistanceToTarget);
             if (paddleDistanceToTarget > this.speed)
                 this.moveLeft = true;
             else if (paddleDistanceToTarget < -this.speed)
@@ -836,7 +844,7 @@ export class AI
                 this.boostReleased = true;
                 this.updateBoost();
                 this.getSpinDirection();
-                console.log("Spin direction: " + this.spinDirection);
+                this.setOffsetFromTargetPosition();
             }
         }
         else

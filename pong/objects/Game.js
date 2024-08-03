@@ -230,20 +230,8 @@ export class Game
 		{
 			if (this.ball.box.intersectsBox(this.players[player].box))
 			{
-				console.log("-----------------------------------------------------------");
-				console.log("PADDLE HIT: " + this.ball.mesh.position.x.toFixed(2) + ", " + this.ball.mesh.position.z.toFixed(2));
-				console.log("Old ball spin: " + this.ball.spin);
-				// console.log("PADDLE HIT: ball.a = " + this.ball.angle);
 				if (this.players[player].bounce == true)
-				{
-					console.log("Bounce already detected.");
 					continue ;
-				}
-				console.log("Player " + player + " hit the ball.");
-				console.log("Player sign: " + this.players[player].sign);
-				console.log("Player boost amount: " + this.players[player].boostAmount);
-				console.log("Player moveLeft: " + this.players[player].moveLeft);
-				console.log("Player moveRight: " + this.players[player].moveRight);
 
 				// Set player who touched the ball to active, rest to inactive.
 				for (let p in this.players)
@@ -258,8 +246,6 @@ export class Game
 				this.players[player].bounce = true;
 				this.ball.affectBySpin();
 				this.ball.move();
-				console.log("New ball spin: " + this.ball.spin);
-				console.log("-----------------------------------------------------------");
 				return ;
 			}
 			else
@@ -269,9 +255,6 @@ export class Game
 		{
 			if (this.ball.box.intersectsBox(this.arena.walls[wall].box))
 			{
-				// console.log("WALL HIT: ball.x = " + this.ball.mesh.position.x);
-				// console.log("WALL HIT: ball.z = " + this.ball.mesh.position.z);
-				// console.log("WALL HIT: ball.a = " + this.ball.angle);
 				if (this.arena.walls[wall].bounce == true)
 				{
 					continue ;
@@ -305,11 +288,6 @@ export class Game
 		}
 		this.ball.affectBySpin();
 		this.ball.move();
-		if (this.ball.mesh.position.x > this.arena.length / 2 || this.ball.mesh.position.x < -this.arena.length / 2)
-		{
-			// console.log("GOAL: ball.x = " + this.ball.mesh.position.x);
-			console.log("GOAL: ball.z = " + this.ball.mesh.position.z);
-		}
 	}
 
 

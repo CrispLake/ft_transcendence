@@ -121,6 +121,7 @@ export const startPos4P = {
 export const AIreadInterval = 2;
 export const SpinLeft = -1;
 export const SpinRight = 1;
+export const maxOffset = 0.2;
 
 
 //--------------------------------------------------------------------------

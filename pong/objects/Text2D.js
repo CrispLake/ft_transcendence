@@ -49,4 +49,11 @@ export class Text2D
         this.text = newText;
         this.create2DTextMesh();
     }
+
+    update2DTextSize(size)
+    {
+        this.scene.remove(this.mesh);
+        this.size = size;
+        this.create2DTextMesh();
+    }
 }

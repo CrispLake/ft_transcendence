@@ -7,7 +7,7 @@ import * as PongMath from './math.js';
 //--------------------------------------------------------------------------
 
 export const winningScore = 3;
-export const lives = 3;
+export const lives = 2;
 export const fps = 60;
 
 
@@ -130,8 +130,14 @@ export const maxOffset = 0.2;
 //  UI
 //--------------------------------------------------------------------------
 
-export const playerCardHeight = PongMath.widthPercentage(6);
-export const playerCardWidth = PongMath.widthPercentage(8);
+export const playerCardSizeRatio = 4 / 3;
+export const playerCardWidth = 120;
+export const playerCardHeight = playerCardWidth * playerCardSizeRatio;
+export const lifeSizeRatio = 2 / 3;
+export const lifeGapWidthRatio = 1 / 20;
+
+// export const playerCardHeight = PongMath.widthPercentage(6);
+// export const playerCardWidth = PongMath.widthPercentage(8);
 export const playerCardThickness = 0.2;
 export const playerCardBorderThickness = 4;
 export const playerCardNameSize = playerCardWidth / 6;

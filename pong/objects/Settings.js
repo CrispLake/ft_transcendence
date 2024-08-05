@@ -6,9 +6,9 @@ export class Settings
 	{
 		this.tournament = false;
 		this.multiMode = false;
-		this.players = 1;
+		this.players = 2;
 		this.spin = true;
-		this.powerups = false;
+		this.powerups = true;
 		this.difficulty = 3;
 	}
 }

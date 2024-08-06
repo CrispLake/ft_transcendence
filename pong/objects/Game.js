@@ -219,10 +219,15 @@ export class Game
 				this.resetPositions();
 			this.powerupManager.reset();
 		}
+
+		// Render game scene
 		this.composer.render();
+
+		// Render UI scene
 		this.renderer.autoClear = false;
     	this.renderer.clearDepth();
 		this.renderer.render(this.uiScene, this.uiCamera);
+		this.renderer.autoClear = true;
 	}
 
 	updateBallPosition()

@@ -15,19 +15,21 @@ export class PlayerCard
         this.name = player.name;
         this.lives = G.lives;
         this.position = new THREE.Vector3();
+        this.card = new THREE.Group();
         this.initializeSize(info);
-        // this.setSize(info);
         this.setPosition();
         this.createCardBackground();
         this.createBorder();
         this.createName();
         this.createLifeArray();
+        this.groupTogether();
+        this.card.position.copy(this.position);
         this.addToScene();
+
     }
 
     initializeSize(info)
     {
-        // Get new values from info
         this.width = info.width;
         this.height = info.height;
         this.sideMargin = info.sideMargin;
@@ -39,36 +41,11 @@ export class PlayerCard
         this.lifeHeight = info.lifeHeight;
         this.lifeWidth = info.lifeWidth;
         this.lifeGap = info.lifeGap;
-    }
-
-    setSize(info)
-    {
-        // Get new values from info
-        this.width = info.width;
-        this.height = info.height;
-        this.sideMargin = info.sideMargin;
-        this.topBottomMargin = info.topBottomMargin;
-        this.nameSize = info.nameSize;
-        this.lives = info.lives;
-        this.lifeBoxWidth = info.lifeBoxWidth;
-        this.lifeBoxHeight = info.lifeBoxHeight;
-        this.lifeHeight = info.lifeHeight;
-        this.lifeWidth = info.lifeWidth;
-        this.lifeGap = info.lifeGap;
-
-        // Set everything according to the new values
-        this.cardMesh.geometry.width = this.width;
-        this.cardMesh.geometry.height = this.height;
-        this.borderTop.geometry.width = this.width + G.playerCardBorderThickness;
-        this.borderBottom.geometry.width = this.width + G.playerCardBorderThickness;
-        this.borderLeft.geometry.height = this.height;
-        this.borderRight.geometry.height = this.height;
-        this.nameText.update2DTextSize(this.width / 6);
     }
 
     setPosition()
     {
-        const margin = PongMath.widthPercentage(2);
+        const margin = 10;
         const cardDistFromSide = window.innerWidth / 2 - this.width / 2 - margin;
         const cardDistFromTop = window.innerHeight / 2 - this.height / 2 - margin;
 
@@ -80,6 +57,48 @@ export class PlayerCard
             this.position.set(-cardDistFromSide, cardDistFromTop, 0);
         else if (this.playerNum == 4)
             this.position.set(cardDistFromSide, -cardDistFromTop, 0);
+
+        if (this.playerNum == 1)
+        {
+            console.log("-----------------------------------------------------------");
+            // console.log("card: " + this.playerNum);
+            console.log("window width: " + window.innerWidth);
+            console.log("half window width: " + (window.innerWidth / 2));
+            console.log("margin: " + margin);
+            console.log("distFromSide: " + (this.width / 2 + margin));
+            console.log("expected pos: " + (window.innerWidth / 2 - this.width / 2 - margin));
+            console.log("card pos: " + this.position.x + ", " + this.position.y);
+        }
+
+        this.card.position.copy(this.position);
+    }
+
+    initPosition()
+    {
+        const margin = 10;
+        const cardDistFromSide = window.innerWidth / 2 - this.width / 2 - margin;
+        const cardDistFromTop = window.innerHeight / 2 - this.height / 2 - margin;
+
+        if (this.playerNum == 1)
+            this.position.set(-cardDistFromSide, -cardDistFromTop, 0);
+        else if (this.playerNum == 2)
+            this.position.set(cardDistFromSide, cardDistFromTop, 0);
+        else if (this.playerNum == 3)
+            this.position.set(-cardDistFromSide, cardDistFromTop, 0);
+        else if (this.playerNum == 4)
+            this.position.set(cardDistFromSide, -cardDistFromTop, 0);
+
+        if (this.playerNum == 1)
+        {
+            console.log("-----------------------------------------------------------");
+            // console.log("card: " + this.playerNum);
+            console.log("window width: " + window.innerWidth);
+            console.log("half window width: " + (window.innerWidth / 2));
+            console.log("margin: " + margin);
+            console.log("distFromSide: " + (this.width / 2 + margin));
+            console.log("expected pos: " + (window.innerWidth / 2 - this.width / 2 - margin));
+            console.log("card pos: " + this.position.x + ", " + this.position.y);
+        }
     }
 
     createCardBackground()
@@ -87,7 +106,8 @@ export class PlayerCard
         this.cardGeometry = new THREE.BoxGeometry(this.width, this.height, G.playerCardThickness);
         this.cardMaterial = new THREE.MeshBasicMaterial({color: COLOR.UI_PLAYERCARD_BG});
         this.cardMesh = new THREE.Mesh(this.cardGeometry, this.cardMaterial);
-        this.cardMesh.position.set(this.position.x, this.position.y, this.position.z);
+        // this.cardMesh.position.set(this.position.x, this.position.y, this.position.z);
+        this.cardMesh.position.set(0, 0, 0);
     }
 
     createBorder()
@@ -99,10 +119,14 @@ export class PlayerCard
         this.borderBottom = new THREE.Mesh(this.borderHorizontalGeometry, this.borderMaterial);
         this.borderLeft = new THREE.Mesh(this.borderVerticalGeometry, this.borderMaterial);
         this.borderRight = new THREE.Mesh(this.borderVerticalGeometry, this.borderMaterial);
-        this.borderTop.position.set(this.position.x, this.position.y + this.height / 2, this.position.z);
-        this.borderBottom.position.set(this.position.x, this.position.y - this.height / 2, this.position.z);
-        this.borderLeft.position.set(this.position.x - this.width / 2, this.position.y, this.position.z);
-        this.borderRight.position.set(this.position.x + this.width / 2, this.position.y, this.position.z);
+        // this.borderTop.position.set(this.position.x, this.position.y + this.height / 2, this.position.z);
+        // this.borderBottom.position.set(this.position.x, this.position.y - this.height / 2, this.position.z);
+        // this.borderLeft.position.set(this.position.x - this.width / 2, this.position.y, this.position.z);
+        // this.borderRight.position.set(this.position.x + this.width / 2, this.position.y, this.position.z);
+        this.borderTop.position.set(0, 0 + this.height / 2, 0);
+        this.borderBottom.position.set(0, 0 - this.height / 2, 0);
+        this.borderLeft.position.set(0 - this.width / 2, 0, 0);
+        this.borderRight.position.set(0 + this.width / 2, 0, 0);
     }
 
     createName()
@@ -115,39 +139,54 @@ export class PlayerCard
     createLifeArray()
     {
         this.lifeArray = [];
-        const maxLifeSpan = (this.lives - 1) * (this.width + this.lifeGap);
+        const maxLifeSpan = (this.lives - 1) * (this.lifeWidth + this.lifeGap);
         for (let i = 0; i < this.lives; i++)
         {
-            let x = PongMath.lerp(i, 1, this.lives, this.position.x - (maxLifeSpan / 2), this.position.x + (maxLifeSpan / 2));
+            let x = PongMath.lerp(i, 0, this.lives - 1, this.position.x - (maxLifeSpan / 2), this.position.x + (maxLifeSpan / 2));
             let y = this.position.y - this.height / 2 + this.topBottomMargin + this.lifeBoxHeight / 2;
             let lifePos = new THREE.Vector3();
             lifePos.set(x, y, this.position.z);
             let life = new Life(this.scene, lifePos, this.lifeHeight, this.lifeWidth);
+            console.log("life[" + i + "] = " + lifePos.x + ", " + lifePos.y);
             this.lifeArray.push(life);
         }
     }
 
+    groupTogether()
+    {
+        this.card.add(this.cardMesh);
+        this.card.add(this.borderTop);
+        this.card.add(this.borderBottom);
+        this.card.add(this.borderLeft);
+        this.card.add(this.borderRight);
+        // this.card.add(this.nameText.mesh);
+        for (let life in this.lifeArray)
+            this.card.add(this.lifeArray[life].life);
+    }
+
     addToScene()
     {
-        console.log("Adding card to scene.");
-        this.scene.add(this.cardMesh);
-        this.scene.add(this.borderTop);
-        this.scene.add(this.borderBottom);
-        this.scene.add(this.borderLeft);
-        this.scene.add(this.borderRight);
-        for (let life in this.lifeArray)
-            this.lifeArray[life].addToScene();
+        // console.log("Adding card to scene.");
+        // this.scene.add(this.cardMesh);
+        // this.scene.add(this.borderTop);
+        // this.scene.add(this.borderBottom);
+        // this.scene.add(this.borderLeft);
+        // this.scene.add(this.borderRight);
+        // for (let life in this.lifeArray)
+        //     this.lifeArray[life].addToScene();
+        this.scene.add(this.card);
     }
 
     removeFromScene()
     {
-        this.scene.remove(this.cardMesh);
-        this.scene.remove(this.borderTop);
-        this.scene.remove(this.borderBottom);
-        this.scene.remove(this.borderLeft);
-        this.scene.remove(this.borderRight);
-        for (let life in this.lifeArray)
-            this.lifeArray[life].removeFromScene();
+        // this.scene.remove(this.cardMesh);
+        // this.scene.remove(this.borderTop);
+        // this.scene.remove(this.borderBottom);
+        // this.scene.remove(this.borderLeft);
+        // this.scene.remove(this.borderRight);
+        // for (let life in this.lifeArray)
+        //     this.lifeArray[life].removeFromScene();
+        this.scene.remove(this.card);
     }
 
     updateLife()

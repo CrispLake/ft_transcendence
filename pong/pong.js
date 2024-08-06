@@ -133,7 +133,10 @@ function onWindowResize( event )
     game.renderer.setSize(width, height);
     game.gameCamera.aspect = width / height;
     game.gameCamera.updateProjectionMatrix();
-    game.uiCamera.aspect = width / height;
+    game.uiCamera.left = -width / 2;
+    game.uiCamera.right = width / 2;
+    game.uiCamera.top = height / 2;
+    game.uiCamera.bottom = -height / 2;
     game.uiCamera.updateProjectionMatrix();
     game.ui.resize();
 }

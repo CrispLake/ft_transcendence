@@ -45,7 +45,7 @@ export class Life
 
     addToScene()
     {
-        console.log("Adding life to scene.");
+        // console.log("Adding life to scene.");
         this.scene.add(this.background);
         this.scene.add(this.borderTop);
         this.scene.add(this.borderBottom);

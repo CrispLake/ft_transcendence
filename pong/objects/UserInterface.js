@@ -30,11 +30,11 @@ export class UserInterface
     {
         this.card.width = G.playerCardWidth;
         this.card.height = G.playerCardHeight;
-        this.card.sideMargin = this.card.width * 0.1;
-        this.card.topBottomMargin = this.card.height * 0.1;
-        this.card.nameSize = this.card.width / 6;
-        this.card.lifeBoxWidth = this.card.width - (this.card.sideMargin * 2);
-        this.card.lifeBoxHeight = this.card.height * 0.2;
+        this.card.sideMargin = G.playerCardSideMargin;
+        this.card.topBottomMargin = G.playerCardTopBottomMargin;
+        this.card.nameSize = G.playerCardNameSize;
+        this.card.lifeBoxWidth = G.lifeBoxWidth;
+        this.card.lifeBoxHeight = G.lifeBoxHeight;
         this.card.lives = G.lives;
 
         if (this.card.lives * (this.card.lifeBoxHeight * G.lifeSizeRatio) + ((this.card.lives - 1) * this.card.lifeBoxHeight * G.lifeSizeRatio * G.lifeGapWidthRatio) <= this.card.lifeBoxWidth)
@@ -58,16 +58,12 @@ export class UserInterface
     addPlayerCard(player)
     {
         this.playerCards[player.name] = new PlayerCard(player, this.scene, this.fontLoader, this.card);
-        // this.playerCards.push(new PlayerCard(player, this.scene, this.fontLoader, this.card));
     }
 
     resize()
     {
         for (let card in this.playerCards)
-        {    
-            // this.playerCards[card].setSize(this.card);
             this.playerCards[card].setPosition();
-        }
         if (window.innerWidth <= (this.card.width + this.card.sideMargin) * 2 && this.addedToScene == true)
             this.removeFromScene();
         if (window.innerWidth > (this.card.width + this.card.sideMargin) * 2 && this.addedToScene == false)

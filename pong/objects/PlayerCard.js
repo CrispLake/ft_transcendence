@@ -17,16 +17,19 @@ export class PlayerCard
         this.position = new THREE.Vector3();
         this.card = new THREE.Group();
         this.initializeSize(info);
-        this.setPosition();
         this.createCardBackground();
         this.createBorder();
         this.createName();
         this.createLifeArray();
         this.groupTogether();
-        this.card.position.copy(this.position);
+        this.setPosition();
         this.addToScene();
-
     }
+
+
+    //--------------------------------------------------------------------------
+    //  INITIALIZATION
+    //--------------------------------------------------------------------------
 
     initializeSize(info)
     {
@@ -41,6 +44,53 @@ export class PlayerCard
         this.lifeHeight = info.lifeHeight;
         this.lifeWidth = info.lifeWidth;
         this.lifeGap = info.lifeGap;
+    }
+
+    createCardBackground()
+    {
+        this.cardGeometry = new THREE.BoxGeometry(this.width, this.height, G.playerCardThickness);
+        this.cardMaterial = new THREE.MeshBasicMaterial({color: COLOR.UI_PLAYERCARD_BG});
+        this.cardMesh = new THREE.Mesh(this.cardGeometry, this.cardMaterial);
+        this.cardMesh.position.set(0, 0, 0);
+    }
+
+    createBorder()
+    {
+        this.borderHorizontalGeometry = new THREE.BoxGeometry(this.width + G.playerCardBorderThickness, G.playerCardBorderThickness, G.playerCardThickness);
+        this.borderVerticalGeometry = new THREE.BoxGeometry(G.playerCardBorderThickness, this.height, G.playerCardThickness);
+        this.borderMaterial = new THREE.MeshStandardMaterial({color: COLOR.UI_PLAYERCARD_BORDER, emissive: COLOR.UI_PLAYERCARD_BORDER});
+        this.borderTop = new THREE.Mesh(this.borderHorizontalGeometry, this.borderMaterial);
+        this.borderBottom = new THREE.Mesh(this.borderHorizontalGeometry, this.borderMaterial);
+        this.borderLeft = new THREE.Mesh(this.borderVerticalGeometry, this.borderMaterial);
+        this.borderRight = new THREE.Mesh(this.borderVerticalGeometry, this.borderMaterial);
+        this.borderTop.position.set(0, 0 + this.height / 2, 0);
+        this.borderBottom.position.set(0, 0 - this.height / 2, 0);
+        this.borderLeft.position.set(0 - this.width / 2, 0, 0);
+        this.borderRight.position.set(0 + this.width / 2, 0, 0);
+    }
+
+    createName()
+    {
+        this.namePosition = new THREE.Vector3(0, 0, 0);
+        this.nameText = new Text2D(this.scene, this.name, this.namePosition, G.playerCardNameSize, COLOR.UI_NAME, this.fontLoader, (mesh) => {
+            this.card.add(mesh);
+        });
+        this.namePosition.y += G.playerCardHeight / 2 - Math.min(10, G.playerCardHeight * 0.95);
+    }
+
+    createLifeArray()
+    {
+        this.lifeArray = [];
+        const maxLifeSpan = (this.lives - 1) * (this.lifeWidth + this.lifeGap);
+        for (let i = 0; i < this.lives; i++)
+        {
+            let x = PongMath.lerp(i, 0, this.lives - 1,-(maxLifeSpan / 2), (maxLifeSpan / 2));
+            let y = -this.height / 2 + this.topBottomMargin + this.lifeBoxHeight / 2;
+            let lifePos = new THREE.Vector3(0, 0, 0);
+            lifePos.set(x, y, 0);
+            let life = new Life(this.scene, lifePos, this.lifeHeight, this.lifeWidth);
+            this.lifeArray.push(life);
+        }
     }
 
     setPosition()
@@ -58,98 +108,7 @@ export class PlayerCard
         else if (this.playerNum == 4)
             this.position.set(cardDistFromSide, -cardDistFromTop, 0);
 
-        if (this.playerNum == 1)
-        {
-            console.log("-----------------------------------------------------------");
-            // console.log("card: " + this.playerNum);
-            console.log("window width: " + window.innerWidth);
-            console.log("half window width: " + (window.innerWidth / 2));
-            console.log("margin: " + margin);
-            console.log("distFromSide: " + (this.width / 2 + margin));
-            console.log("expected pos: " + (window.innerWidth / 2 - this.width / 2 - margin));
-            console.log("card pos: " + this.position.x + ", " + this.position.y);
-        }
-
         this.card.position.copy(this.position);
-    }
-
-    initPosition()
-    {
-        const margin = 10;
-        const cardDistFromSide = window.innerWidth / 2 - this.width / 2 - margin;
-        const cardDistFromTop = window.innerHeight / 2 - this.height / 2 - margin;
-
-        if (this.playerNum == 1)
-            this.position.set(-cardDistFromSide, -cardDistFromTop, 0);
-        else if (this.playerNum == 2)
-            this.position.set(cardDistFromSide, cardDistFromTop, 0);
-        else if (this.playerNum == 3)
-            this.position.set(-cardDistFromSide, cardDistFromTop, 0);
-        else if (this.playerNum == 4)
-            this.position.set(cardDistFromSide, -cardDistFromTop, 0);
-
-        if (this.playerNum == 1)
-        {
-            console.log("-----------------------------------------------------------");
-            // console.log("card: " + this.playerNum);
-            console.log("window width: " + window.innerWidth);
-            console.log("half window width: " + (window.innerWidth / 2));
-            console.log("margin: " + margin);
-            console.log("distFromSide: " + (this.width / 2 + margin));
-            console.log("expected pos: " + (window.innerWidth / 2 - this.width / 2 - margin));
-            console.log("card pos: " + this.position.x + ", " + this.position.y);
-        }
-    }
-
-    createCardBackground()
-    {
-        this.cardGeometry = new THREE.BoxGeometry(this.width, this.height, G.playerCardThickness);
-        this.cardMaterial = new THREE.MeshBasicMaterial({color: COLOR.UI_PLAYERCARD_BG});
-        this.cardMesh = new THREE.Mesh(this.cardGeometry, this.cardMaterial);
-        // this.cardMesh.position.set(this.position.x, this.position.y, this.position.z);
-        this.cardMesh.position.set(0, 0, 0);
-    }
-
-    createBorder()
-    {
-        this.borderHorizontalGeometry = new THREE.BoxGeometry(this.width + G.playerCardBorderThickness, G.playerCardBorderThickness, G.playerCardThickness);
-        this.borderVerticalGeometry = new THREE.BoxGeometry(G.playerCardBorderThickness, this.height, G.playerCardThickness);
-        this.borderMaterial = new THREE.MeshStandardMaterial({color: COLOR.UI_PLAYERCARD_BORDER, emissive: COLOR.UI_PLAYERCARD_BORDER});
-        this.borderTop = new THREE.Mesh(this.borderHorizontalGeometry, this.borderMaterial);
-        this.borderBottom = new THREE.Mesh(this.borderHorizontalGeometry, this.borderMaterial);
-        this.borderLeft = new THREE.Mesh(this.borderVerticalGeometry, this.borderMaterial);
-        this.borderRight = new THREE.Mesh(this.borderVerticalGeometry, this.borderMaterial);
-        // this.borderTop.position.set(this.position.x, this.position.y + this.height / 2, this.position.z);
-        // this.borderBottom.position.set(this.position.x, this.position.y - this.height / 2, this.position.z);
-        // this.borderLeft.position.set(this.position.x - this.width / 2, this.position.y, this.position.z);
-        // this.borderRight.position.set(this.position.x + this.width / 2, this.position.y, this.position.z);
-        this.borderTop.position.set(0, 0 + this.height / 2, 0);
-        this.borderBottom.position.set(0, 0 - this.height / 2, 0);
-        this.borderLeft.position.set(0 - this.width / 2, 0, 0);
-        this.borderRight.position.set(0 + this.width / 2, 0, 0);
-    }
-
-    createName()
-    {
-        this.namePosition = new THREE.Vector3(this.position.x, this.position.y, this.position.z);
-        this.nameText = new Text2D(this.scene, this.name, this.namePosition, G.playerCardNameSize, COLOR.UI_NAME, this.fontLoader);
-        this.namePosition.y += G.playerCardHeight / 2 - Math.min(10, G.playerCardHeight * 0.95);
-    }
-
-    createLifeArray()
-    {
-        this.lifeArray = [];
-        const maxLifeSpan = (this.lives - 1) * (this.lifeWidth + this.lifeGap);
-        for (let i = 0; i < this.lives; i++)
-        {
-            let x = PongMath.lerp(i, 0, this.lives - 1, this.position.x - (maxLifeSpan / 2), this.position.x + (maxLifeSpan / 2));
-            let y = this.position.y - this.height / 2 + this.topBottomMargin + this.lifeBoxHeight / 2;
-            let lifePos = new THREE.Vector3();
-            lifePos.set(x, y, this.position.z);
-            let life = new Life(this.scene, lifePos, this.lifeHeight, this.lifeWidth);
-            console.log("life[" + i + "] = " + lifePos.x + ", " + lifePos.y);
-            this.lifeArray.push(life);
-        }
     }
 
     groupTogether()
@@ -164,30 +123,25 @@ export class PlayerCard
             this.card.add(this.lifeArray[life].life);
     }
 
+
+    //--------------------------------------------------------------------------
+    //  SCENE
+    //--------------------------------------------------------------------------
+
     addToScene()
     {
-        // console.log("Adding card to scene.");
-        // this.scene.add(this.cardMesh);
-        // this.scene.add(this.borderTop);
-        // this.scene.add(this.borderBottom);
-        // this.scene.add(this.borderLeft);
-        // this.scene.add(this.borderRight);
-        // for (let life in this.lifeArray)
-        //     this.lifeArray[life].addToScene();
         this.scene.add(this.card);
     }
 
     removeFromScene()
     {
-        // this.scene.remove(this.cardMesh);
-        // this.scene.remove(this.borderTop);
-        // this.scene.remove(this.borderBottom);
-        // this.scene.remove(this.borderLeft);
-        // this.scene.remove(this.borderRight);
-        // for (let life in this.lifeArray)
-        //     this.lifeArray[life].removeFromScene();
         this.scene.remove(this.card);
     }
+
+
+    //--------------------------------------------------------------------------
+    //  LIFE
+    //--------------------------------------------------------------------------
 
     updateLife()
     {

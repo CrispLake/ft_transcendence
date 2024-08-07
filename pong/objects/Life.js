@@ -43,33 +43,13 @@ export class Life
         this.borderRight.position.set(this.position.x + this.width / 2, this.position.y, 0);
     }
 
-    addToScene()
-    {
-        // console.log("Adding life to scene.");
-        this.scene.add(this.background);
-        this.scene.add(this.borderTop);
-        this.scene.add(this.borderBottom);
-        this.scene.add(this.borderLeft);
-        this.scene.add(this.borderRight);
-    }
-
-    removeFromScene()
-    {
-        this.scene.remove(this.background);
-        this.scene.remove(this.borderTop);
-        this.scene.remove(this.borderBottom);
-        this.scene.remove(this.borderLeft);
-        this.scene.remove(this.borderRight);
-    }
-
     empty()
     {
-        this.scene.remove(this.background);
+        this.background.visible = false;
     }
 
     fill()
     {
-        this.scene.add(this.background);
+        this.background.visible = true;
     }
-
 }

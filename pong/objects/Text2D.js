@@ -3,7 +3,7 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
 export class Text2D
 {
-    constructor(scene, text, position, size, color, fontLoader)
+    constructor(scene, text, position, size, color, fontLoader, onCreate)
     {
         this.scene = scene;
         this.text = text;
@@ -12,6 +12,7 @@ export class Text2D
         this.color = color;
         this.fontLoader = fontLoader;
         this.mesh = null;
+        this.onCreate = onCreate;
         this.create2DTextMesh();
     }
 
@@ -40,6 +41,9 @@ export class Text2D
             this.textHeight = boundingBox.max.y - boundingBox.min.y;
             this.mesh.position.set(this.position.x - this.textWidth / 2, this.position.y - this.textHeight, this.position.z);
             this.scene.add(this.mesh);
+
+            if (this.onCreate)
+                this.onCreate(this.mesh);
         });
     }
 

@@ -14,7 +14,7 @@ export class Arena
         this.composer = composer;
         this.camera = camera;
 
-        this.width = G.floorWidth - G.wallThickness * 2;
+        this.width = G.floorWidth;
         this.length = G.arenaLength;
 
         // ----PONG Text----

@@ -71,11 +71,10 @@ export class PlayerCard
 
     createName()
     {
-        this.namePosition = new THREE.Vector3(0, 0, 0);
-        this.nameText = new Text2D(this.scene, this.name, this.namePosition, G.playerCardNameSize, COLOR.UI_NAME, this.fontLoader, (mesh) => {
+        this.nameText = new Text2D(this.scene, this.name, G.playerCardNameSize, COLOR.UI_NAME, this.fontLoader, this.width - (this.sideMargin * 2), (mesh) => {
+            mesh.position.set(-this.nameText.textWidth / 2, this.height / 2 - G.playerCardTopBottomMargin - this.nameText.textHeight, 0);
             this.card.add(mesh);
         });
-        this.namePosition.y += G.playerCardHeight / 2 - Math.min(10, G.playerCardHeight * 0.95);
     }
 
     createLifeArray()
@@ -95,7 +94,7 @@ export class PlayerCard
 
     setPosition()
     {
-        const margin = 10;
+        const margin = 20;
         const cardDistFromSide = window.innerWidth / 2 - this.width / 2 - margin;
         const cardDistFromTop = window.innerHeight / 2 - this.height / 2 - margin;
 

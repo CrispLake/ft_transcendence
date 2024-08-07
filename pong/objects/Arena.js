@@ -16,8 +16,6 @@ export class Arena
 
         this.width = G.floorWidth - G.wallThickness * 2;
         this.length = G.arenaLength;
-        // this.wavyWalls = false;
-        // this.wavyWallTimer = new THREE.Clock();
 
         // ----PONG Text----
         this.pongText = new Text3D(
@@ -30,12 +28,6 @@ export class Arena
             this.renderer,
             this.composer,
             this.camera);
-
-        // ----Back Wall----
-        this.backWallGeometry = new THREE.BoxGeometry(25, 15, 2);
-        this.backWallMeshMaterial = new THREE.MeshStandardMaterial({color: 0xffffff, emissive: COLOR.BACKWALL});
-        this.backWall = new THREE.Mesh(this.backWallGeometry, this.backWallMeshMaterial);
-        this.backWall.position.set(0, 0, -10.5);
         
         // ----Floor----
         this.floorGeometry = new THREE.BoxGeometry(this.length, G.floorThickness, this.width);

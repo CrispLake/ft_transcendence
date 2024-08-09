@@ -43,7 +43,8 @@ export default class extends AbstractView {
         return users.map(user => ({
             id: user.player_id,
             token: user.token,
-            username: user.title
+            username: user.title,
+            winrate: user.winrate
         }));
     }
 
@@ -73,12 +74,26 @@ export default class extends AbstractView {
                 'http://localhost:8000/account',
                 { headers: {'Authorization': `Token ${this.GetKey()}`} }
             );
-            console.log("Response: " + response);
+            console.log("Response: " + response.data);
+            const wins = response.data.user.wins;
+            const losses = response.data.user.losses;
+            const total = wins + losses;
+
+            console.log('wins: ', wins, 'losses: ', losses);
+
+            let winrate;
+            if (total === 0) {
+              winrate = 0;
+            }
+            else {
+              winrate = ((wins / total) * 100);
+            }
             this.entries = [{
                 player_id: response.data.user.id,
                 token: this.GetKey(),
                 id: this.entryIdCounter++,
                 title: response.data.user.username,
+                winrate: winrate,
                 image: `<img src="http://localhost:8000/account/${response.data.user.id}/image" alt="User icon" width="50" height="50">`
             }]
             this.renderEntries();
@@ -126,7 +141,9 @@ export default class extends AbstractView {
         const newEntry = {
             id: this.entryIdCounter++,
             title: `AI`,
-            image: `<img src="static/images/ai.avif" alt="AI icon" width="50" height="50">`
+            image: `<img src="static/images/ai.avif" alt="AI icon" width="50" height="50">`,
+            // TODO: take winrate from form
+            winrate: 50
         };
         this.entries.push(newEntry);
         this.renderEntries();
@@ -139,7 +156,9 @@ export default class extends AbstractView {
         const newEntry = {
             id: this.entryIdCounter++,
             title: `Guest Player`,
-            image: `<img src="static/images/guest.png" alt="Guest icon" width="50" height="50">`
+            image: `<img src="static/images/guest.png" alt="Guest icon" width="50" height="50">`,
+            winrate: Math.floor(Math.random() * (60 - 20 + 1)) + 20
+            // NOTE: guest has random winrate between 20% - 60%
         };
         this.playerCounter++;
         this.entries.push(newEntry);
@@ -162,11 +181,22 @@ export default class extends AbstractView {
             this.profileData = { error: 'Failed to load profile data' };
         }
         console.log(profileData);
+        const wins = response.data.user.wins;
+        const losses = response.data.user.losses;
+        const total = wins + losses;
+        let winrate;
+        if (total === 0) {
+          winrate = 0;
+        }
+        else {
+          winrate = ((wins / total) * 100);
+        }
         const newEntry = {
             player_id: userData.data.user_id,
             token: userData.data.token,
             id: this.entryIdCounter++,
             title: userData.data.username,
+            winrate: winrate,
             image: `<img src="http://localhost:8000/account/${userData.data.user_id}/image" alt="User icon" width="50" height="50">`
         };
         this.playerCounter++;

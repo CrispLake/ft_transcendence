@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/02 13:29:06 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/02 13:53:04 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,16 @@ export default class extends AbstractView {
     console.log('before game');
     // TODO: how to escape the game here
     console.log('after game');
+  }
+
+  async fakeGame(gameSettings) {
+    console.log('did a fake game lol returning results');
+    return {
+      "player1": 1,
+      "player1Score": 3,
+      "player2": 2,
+      "player2Score": 2
+    }
   }
 
   handleKeyDown(event) {

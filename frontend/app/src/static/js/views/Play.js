@@ -29,9 +29,9 @@ export default class extends AbstractView {
     
     this.modes = {
       'pong2': 1,
-      'pong4': 2,
-      'tournament': 3,
-      'gonp': 4,
+      'gonp': 2,
+      'pong4': 3,
+      'tournament': 4,
     }
   }
 

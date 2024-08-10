@@ -49,7 +49,6 @@ export class Arena
 
     addToScene()
     {
-        this.scene.add(this.backWall);
         this.scene.add(this.floor);
         this.scene.add(this.ambientLight);
         for (let wall in this.walls)

@@ -173,8 +173,16 @@ export class Player
         let color = PongMath.colorLerp(elapsedTime, 0, G.boostMeterAnimationTime, COLOR.BOOSTMETER, COLOR.BOOSTMETER_FULL);
         this.boostMeter.material.emissive.set(color);
         let movementMultiplier = PongMath.lerp(elapsedTime, 0, G.boostMeterAnimationTime, 0, G.boostAnimationMaxMovement);
-        this.boostMeter.position.x = (this.paddle.position.x + this.boostOffset) + Math.random() * movementMultiplier;
-        this.boostMeter.position.z = this.paddle.position.z + Math.random() * movementMultiplier;
+        if (this.playerNum < 3)
+        {
+            this.boostMeter.position.x = (this.paddle.position.x + this.boostOffset) + Math.random() * movementMultiplier;
+            this.boostMeter.position.z = this.paddle.position.z + Math.random() * movementMultiplier;
+        }
+        else
+        {
+            this.boostMeter.position.z = (this.paddle.position.z + this.boostOffset) + Math.random() * movementMultiplier;
+            this.boostMeter.position.x = this.paddle.position.x + Math.random() * movementMultiplier;
+        }
 
         if (elapsedTime >= G.boostMeterAnimationTime)
         {

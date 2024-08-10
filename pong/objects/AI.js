@@ -212,7 +212,10 @@ export class AI
             if (this.playerNum < 3)
                 this.boostMeter.position.set(this.paddle.position.x + this.boostOffset, this.paddle.position.y, this.paddle.position.z);
             else
+            {
                 this.boostMeter.position.set(this.paddle.position.x, this.paddle.position.y, this.paddle.position.z + this.boostOffset);
+                this.boostMeter.rotation.y += Math.PI / 2;
+            }
             this.scene.add(this.boostMeter);
         }
     }

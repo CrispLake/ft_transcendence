@@ -9,17 +9,20 @@ export default class extends AbstractView {
         this.listeners = true;
 
         this.entries = [];
-        
+
         this.entryIdCounter = 0;
         this.playerCounter = 0;
         this.maxPlayers = 0;
-        console.log(localStorage.auth_token)
         this.loginURL = 'http://localhost:8000/login';
+        this.currentDeg = 0;
 
         this.powerups = false;
         this.ai_difficulty = 1;
 
-        this.getFirstEntry()
+
+        this.getFirstEntry();
+        this.HandlePrev = this.HandlePrev.bind(this);
+        this.HandleNext = this.HandleNext.bind(this);
         this.addGuestEntryHandler = this.addGuestEntryHandler.bind(this);
         this.addAiEntryHandler = this.addAiEntryHandler.bind(this);
         this.addExistingUserEntryHandler = this.addExistingUserEntryHandler.bind(this);
@@ -30,6 +33,7 @@ export default class extends AbstractView {
     }
 
     waitForUser() {
+        this.AddListeners();
         return new Promise((resolve) => {
             try {
                 document.getElementById('launch-pong').addEventListener('click', () => {
@@ -54,7 +58,7 @@ export default class extends AbstractView {
 
     //TODO: If entry count is less than max players? Fill with AIs? Or prompt the user to add more players/AIs?
     async getUserInput() {
-        const appDiv = document.getElementById('app');
+        const appDiv = await document.getElementById('app');
         if (!appDiv) {
             this.Redirect('/500');
             return;
@@ -62,8 +66,8 @@ export default class extends AbstractView {
         this.maxPlayers = this.params < 3 ? 2 : 4;
 
         appDiv.innerHTML = await this.getHtml();
-        this.AddListeners();
-        const users = this.transform_users(await this.waitForUser());
+        const data = await this.waitForUser();
+        const users = this.transform_users(data);
         const params = {
             players: users,
             settings : {
@@ -124,7 +128,7 @@ export default class extends AbstractView {
         if (event) {
             event.preventDefault();
         }
-        
+
         if (this.MaxPlayerLimitReached()) {
             console.log('Max player limit reached');
             return;
@@ -238,12 +242,12 @@ export default class extends AbstractView {
 
     renderEntries() {
         this.HideLoginPopUp();
-        const listContainer = document.getElementById('list-container');
+        const listContainer = document.getElementById('carousel-carousel');
         if (listContainer) {
-            listContainer.innerHTML = this.entries.map(entry => `
-                <div class="entry" id="entry-${entry.id}">
+            listContainer.innerHTML = this.entries.map((entry, index) => `
+                <div class="carousel-item id-${index}" id="entry-${entry.id}">
                 ${entry.image}
-                <h3>${entry.title}</h3>
+                <h3 class="font-text carousel-name-text">${entry.title}</h3>
                     <ul>
                     </ul>
                     ${entry.id !== 0 ? `<button class="remove-button" data-id="${entry.id}">Remove</button>` : ''}
@@ -272,12 +276,12 @@ export default class extends AbstractView {
         const formElement = document.getElementById('login-form');
         const usernameInput = document.getElementById('username');
         const errorMessageDiv = document.getElementById('error-message');
-    
+
         if (!formElement) {
             this.Redirect('/500');
             return;
         }
-    
+
         const formData = new FormData(formElement);
         const payload = Object.fromEntries(formData);
 
@@ -287,7 +291,7 @@ export default class extends AbstractView {
             this.HideLoginPopUp();
             return;
         }
-    
+
         try {
             const response = await axios.post(this.loginURL, payload);
             this.addExistingUserEntryHandler(response);
@@ -318,16 +322,16 @@ export default class extends AbstractView {
 
         const PowerUpToggle = document.getElementById('toggle-content');
         if (!PowerUpToggle) {
-            console.log('505 - Internal server error - could not find slider');
+            console.log('505 - Internal server error - could not find toggle');
             this.Redirect('/500');
         }
-        if (PowerUpToggle.style.display === 'none' || PowerUpToggle.style.display === '') {
-            PowerUpToggle.style.display = 'block';
+        if (!this.powerups) {
             this.powerups = true;
+            PowerUpToggle.checked = true;
         }
         else {
-            PowerUpToggle.style.display = 'none';
             this.powerups = false;
+            PowerUpToggle.checked = false;
         }
     }
 
@@ -338,6 +342,7 @@ export default class extends AbstractView {
         const sliderValue = document.getElementById('slider-value');
 
         try {
+            console.log('hello from: ', rangeSlider.value)
             sliderValue.textContent = rangeSlider.value;
             this.ai_difficulty = rangeSlider.value;
         } catch (error) {
@@ -347,25 +352,41 @@ export default class extends AbstractView {
 
     }
 
+    HandleNext(event) {
+        event.preventDefault();
+        const carousel = document.getElementById("carousel-carousel");
+        if (!carousel) { return; }
+        this.currentDeg = this.currentDeg - 60;
+        console.log('click logged and deg: ', this.currentDeg);
+        carousel.style.transform = `rotateY(${this.currentDeg}deg)`;
+    }
+
+    HandlePrev(event) {
+        event.preventDefault();
+        const carousel = document.getElementById("carousel-carousel");
+        if (!carousel) { return; }
+        this.currentDeg = this.currentDeg + 60;
+        carousel.style.transform = `rotateY(${this.currentDeg}deg)`;
+    }
+
     AddListeners() {
         const addButton = document.getElementById('add-button');
         const addAiButton = document.getElementById('add-ai-button');
         const loginForm = document.getElementById('login-form');
         const addUserButton = document.getElementById('add-user-button');
-        const PowerUpToggle = document.getElementById('toggle-container');
+        const powerUpToggle = document.getElementById('toggle-container');
         const rangeSlider = document.getElementById('range-slider');
 
-        try {
-            addButton.addEventListener('click', this.addGuestEntryHandler);
-            addAiButton.addEventListener('click', this.addAiEntryHandler);
-            loginForm.addEventListener('submit', this.LoginHandler);
-            addUserButton.addEventListener('click', this.AddUserHandler);
-            PowerUpToggle.addEventListener('click', this.PowerUpToggle);
-            rangeSlider.addEventListener('input', this.AiDifficultySlider);
-        } catch (error) {
-            console.log('505 - Internal server error - could not find add button');
-            this.Redirect('/500');
-        }
+        addButton.addEventListener('click', this.addGuestEntryHandler);
+        addAiButton.addEventListener('click', this.addAiEntryHandler);
+        loginForm.addEventListener('submit', this.LoginHandler);
+        addUserButton.addEventListener('click', this.AddUserHandler);
+        powerUpToggle.addEventListener('click', this.PowerUpToggle);
+        rangeSlider.addEventListener('input', this.AiDifficultySlider);
+
+
+        document.querySelector(".next").addEventListener("click", this.HandleNext);
+        document.querySelector(".prev").addEventListener("click", this.HandlePrev);
     }
 
     RemoveListeners() {
@@ -373,13 +394,15 @@ export default class extends AbstractView {
         const addAiButton = document.getElementById('add-ai-button');
         const loginForm = document.getElementById('login-form');
         const addUserButton = document.getElementById('add-user-button');
+        const powerUpToggle = document.getElementById('toggle-container');
+        const rangeSlider = document.getElementById('range-slider');
 
         try {
             addButton.removeEventListener('click', this.addGuestEntryHandler);
             addAiButton.removeEventListener('click', this.addAiEntryHandler);
             loginForm.removeEventListener('submit', this.LoginHandler);
             addUserButton.removeEventListener('click', this.AddUserHandler);
-            PowerUpToggle.removeEventListener('click', this.PowerUpToggle);
+            powerUpToggle.removeEventListener('click', this.PowerUpToggle);
             rangeSlider.addEventListener('input', this.AiDifficultySlider);
         } catch (error) {
             console.log('505 - Internal server error - could not find LoginSubmitButton');
@@ -391,11 +414,9 @@ export default class extends AbstractView {
         return `
           <div class="game-settings-page">
 
-          <div class="setup-left">
-            <div class="buttons-holder-div">
-              <div class="buttons-div">
+              <div class="add-buttons-div">
 
-                <button class="font-sub add-button blue" id="add-button">
+                <button id="add-button" class="font-sub add-button blue" >
                   <div class="text-holder">
                       <span>Add Guest</span>
                   </div>
@@ -412,40 +433,49 @@ export default class extends AbstractView {
                       <span>Add User</span>
                   </div>
                 </button>
+            </div>
 
-              </div>
 
-              <div class="launch-div">
-                <button class="font-heading launch-button" id="launch-pong">
-                  <div class="text-holder">
-                      <span>START</span>
-                  </div>
-                </button>
-              </div>
+            <div class="carousel-holder font-text powerup-text">
+                <div class="prev">Prev</div>
+                 <div id="carousel-container">
+                    <div id="carousel-carousel"></div>
+                </div>
+                <div class="next">Next</div>
+            </div>
 
-            <div class="toggle-container">
-                <button class="toggle-button" id="toggle-container">Toggle Content</button>
-                <div class="toggle-content" id="toggle-content">
-                    <p>Powerups enabled</p>
+            <div class="toggles-div">
+
+                <span id="toggle-container" class="font-text powerup-text">Powerups:
+                    <label class="switch">
+                        <input id="toggle-content" type="checkbox">
+                        <span class="slider round"></span>
+                    </label>
+                </span>
+
+
+                <div class="slider-container">
+                    <label class="font-text powerup-text" for="range-slider">AI Diff:</label>
+                    <input type="range" id="range-slider" min="1" max="3" value="1" step="1">
+                    <span class="font-text powerup-text" id="slider-value">1</span>
+                </div>
+
+            </div>
+
+
+            <div class="start-container">
+                <div id="launch-pong">
+                    <span class="start-text"></span>
                 </div>
             </div>
 
-            <div class="slider-container">
-                <label for="range-slider">Select a value (1-4):</label>
-                <input type="range" id="range-slider" min="1" max="4" value="1" step="1">
-                <span id="slider-value">1</span>
-            </div>
-           
-            <div class="players-container">
-              <div id="list-container" class="font-text list-container scrollable-container">
-              </div>
-            </div>
 
-          </div>
 
-          <div class="setup-right">
-            <img class="setup-img" src="//images.ctfassets.net/7oor54l3o0n4/50Lc9CdOtq4kmiWKsaAoiG/30649d5473cd45f3a2de6d7c9f067752/hive-peer-to-peer-project-based-learning-6.png" class="story-image">
-            
+
+
+
+
+
           </div>
 
             <div class="pop-up-login login-page" id="pop-up-login">
@@ -464,9 +494,6 @@ export default class extends AbstractView {
                     </form>
                 </div>
             </div>
-
-          
-          </div>
         `;
     }
 }

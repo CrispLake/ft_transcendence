@@ -103,7 +103,7 @@ const parseRequestData = (data) => {
   if (data.length < 1) {
     return '';
   }
-  
+
   let res = `<div class="request-div"><p class="request-title">Pending requests (${data.length})</p></div>`;
   data.forEach(entry => {
     res += `
@@ -128,7 +128,7 @@ const parseRequestData = (data) => {
 const fetchRequestData = async () => {
   try {
     if (!view.Authenticate()) {
-      return;
+      return null;
     }
     const response = await axios.get('http://localhost:8000/friend-request/list', {
       headers: { 'Authorization': `Token ${view.GetKey()}` }
@@ -136,7 +136,7 @@ const fetchRequestData = async () => {
     return response.data;
   }
   catch(error) {
-    return;
+    return null;
   }
 }
 
@@ -157,12 +157,12 @@ const loginDataFetch = async (event) => {
   if (!friendList) {
     return;
   }
-  
+
   const responseRequest = await fetchRequestData();
-  if (responseRequest.error) {
+  if (!responseRequest) {
     return;
   }
-  
+
   const myID = await fetchMyID();
   const requests = responseRequest.filter(entry => entry.to_user.id === myID);
   const requestContent = await parseRequestData(requests);
@@ -172,7 +172,7 @@ const loginDataFetch = async (event) => {
     addListenersToButtons(requests);
     observer.disconnect(); // Stop observing after adding the listeners
   });
-  
+
   // Start observing the friend list for changes
   observer.observe(friendList, { childList: true, subtree: true });
 
@@ -194,7 +194,7 @@ const fillFriendList = () => {
   if (!friendList) {
     return;
   }
-  
+
   friendList.innerHTML = friendData;
 }
 

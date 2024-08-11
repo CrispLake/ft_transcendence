@@ -27,7 +27,7 @@ export default class extends AbstractView {
     this.settings = null;
     this.gameMode = null;
     this.results = null;
-    
+
     this.modes = {
       'pong2': 1,
       'gonp': 2,
@@ -45,7 +45,9 @@ export default class extends AbstractView {
   // Launch 2p Gonp
   async GameSetup() {
     const gameSetupObj = new GameSetup(this.gameMode);
+    console.log('before gamesetup getuserinput: ');
     this.settings = await gameSetupObj.getUserInput();
+    console.log('AFTER gamesetup getuserinput: ');
     this.settings.players.map(entry =>
         console.log(`id: ${entry.id}\n${entry.token}\n${entry.username}`
         ));
@@ -66,7 +68,7 @@ export default class extends AbstractView {
   }
 
   Gonp() {
-    
+
   }
 
   // Launch 4p tournament
@@ -110,7 +112,7 @@ export default class extends AbstractView {
         break;
     }
   }
-  
+
   // Used as init function here as router will call AddListeners()
   // and constructor has already been executed when originally loaded
   AddListeners() {

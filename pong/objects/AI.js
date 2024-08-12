@@ -421,14 +421,24 @@ export class AI
 
     wallHit(pos)
     {
-        if ((pos.y == this.wallZ || pos.y == -this.wallZ)
-            && Math.abs(pos.x) <= this.wallX
-            && Math.abs(pos.x) >= this.wallX - G.wallLength4Player)
-            return true;
-        if ((pos.x == this.wallX || pos.x == -this.wallX)
-            && Math.abs(pos.y) <= this.wallZ
-            && Math.abs(pos.y) >= this.wallZ - G.wallLength4Player)
-            return true;
+        if (this.settings.multiMode)
+        {
+            if ((pos.y == this.wallZ || pos.y == -this.wallZ)
+                && Math.abs(pos.x) <= this.wallX
+                && Math.abs(pos.x) >= this.wallX - G.wallLength4Player)
+                return true;
+            if ((pos.x == this.wallX || pos.x == -this.wallX)
+                && Math.abs(pos.y) <= this.wallZ
+                && Math.abs(pos.y) >= this.wallZ - G.wallLength4Player)
+                return true;
+        }
+        else
+        {
+            if ((pos.y == this.wallZ || pos.y == -this.wallZ)
+                && pos.x <= this.wallX
+                && pos.x >= -this.wallX)
+                return true;
+        }
         return false;
     }
 
@@ -526,6 +536,11 @@ export class AI
         this.targetPos = z;
     }
 
+
+    //--------------------------------------------------------------------------
+    //  STRAIGHT PATH MULTI MODE
+    //--------------------------------------------------------------------------
+
     getFirstIntersectionPoint()
     {
         let x, z;
@@ -598,12 +613,12 @@ export class AI
             if (this.alignment == G.vertical)
             {
                 this.targetPos = this.firstPoint.pos.y;
-                console.log("Player[" + this.playerNum + "] : target.z = " + this.targetPos.toFixed(2) + " | dist = " + this.pathLengthToHit.toFixed(2));
+                // console.log("Player[" + this.playerNum + "] : target.z = " + this.targetPos.toFixed(2) + " | dist = " + this.pathLengthToHit.toFixed(2));
             }
             else
             {
                 this.targetPos = this.firstPoint.pos.x;
-                console.log("Player[" + this.playerNum + "] : target.x = " + this.targetPos.toFixed(2) + " | dist = " + this.pathLengthToHit.toFixed(2));
+                // console.log("Player[" + this.playerNum + "] : target.x = " + this.targetPos.toFixed(2) + " | dist = " + this.pathLengthToHit.toFixed(2));
             }
         }
     }
@@ -816,7 +831,9 @@ export class AI
             this.getFirstIntersectionPointCounterClockwise();
 
         let bounces = 0;
-        while (this.intersectionPoints.length > 0 && !this.ownGoalHit())
+        while (this.intersectionPoints.length > 0
+            && this.wallHit(this.firstPoint.pos)
+            && bounces < this.maxBounces)
         {
             this.ballPos.set(this.firstPoint.pos.x, this.firstPoint.pos.y);
             this.calculateNewAngle();
@@ -829,14 +846,15 @@ export class AI
             else 
                 this.getFirstIntersectionPointCounterClockwise();
             bounces++;
-            if (bounces >= this.maxBounces)
-                break;
         }
 
-        if (this.alignment == G.vertical)
-            this.targetPos = this.firstPoint.pos.y;
-        else
-            this.targetPos = this.firstPoint.pos.x;
+        if (this.ownGoalHit())
+        {
+            if (this.alignment == G.vertical)
+                this.targetPos = this.firstPoint.pos.y;
+            else
+                this.targetPos = this.firstPoint.pos.x;
+        }
     }
 
 
@@ -1015,9 +1033,11 @@ export class AI
         if (this.paddleLength != G.paddleLength)
             this.resize(G.paddleLength);
         this.setPos(this.startPos.x, this.startPos.y, this.startPos.z);
+        this.light.position.copy(this.paddle.position);
+        this.box.setFromObject(this.paddle);
         this.boostAmount = 0;
         this.updateBoostMeter();
-        this.box.setFromObject(this.paddle);
+        this.targetPos = 0;
     }
 
     update()

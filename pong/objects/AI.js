@@ -171,8 +171,8 @@ export class AI
         this.distanceFromBallToCenter = 0;
         this.extendedRadiusAngle2 = 0;
         this.center = new THREE.Vector2(0, 0);
-        this.wallZ = 0;
-        this.goalX = 0;
+        this.wallZ = this.game.arena.width / 2;
+        this.wallX = this.game.arena.length / 2;
         this.centerToBottomWall = 0;
         this.centerToTopWall = 0;
         this.centerToRightWall = 0;
@@ -419,31 +419,39 @@ export class AI
         return (this.game.ball.spin >= 0);
     }
 
-    wallHit()
+    wallHit(pos)
     {
-        return (this.firstPoint.pos.x != -this.goalX && this.firstPoint.pos.x != this.goalX);
+        if ((pos.y == this.wallZ || pos.y == -this.wallZ)
+            && Math.abs(pos.x) <= this.wallX
+            && Math.abs(pos.x) >= this.wallX - G.wallLength4Player)
+            return true;
+        if ((pos.x == this.wallX || pos.x == -this.wallX)
+            && Math.abs(pos.y) <= this.wallZ
+            && Math.abs(pos.y) >= this.wallZ - G.wallLength4Player)
+            return true;
+        return false;
     }
 
-    goalHit()
+    ownGoalHit()
     {
         if (this.playerNum == 1 && this.firstPoint.wall == "left")
         {
-            if (this.withinBorders(this.firstPoint.pos.y, this.goalZ))
+            if (this.withinBorders(this.firstPoint.pos.y, this.wallZ))
                 return true;
         }
         else if (this.playerNum == 2 && this.firstPoint.wall == "right")
         {
-            if (this.withinBorders(this.firstPoint.pos.y, this.goalZ))
+            if (this.withinBorders(this.firstPoint.pos.y, this.wallZ))
                 return true;
         }
         else if (this.playerNum == 3 && this.firstPoint.wall == "top")
         {
-            if (this.withinBorders(this.firstPoint.pos.x, this.goalX))
+            if (this.withinBorders(this.firstPoint.pos.x, this.wallX))
                 return true;
         }
         else if (this.playerNum == 4 && this.firstPoint.wall == "bottom")
         {
-            if (this.withinBorders(this.firstPoint.pos.x, this.goalX))
+            if (this.withinBorders(this.firstPoint.pos.x, this.wallX))
                 return true;
         }
         return false;
@@ -477,6 +485,12 @@ export class AI
         let slope = Math.tan(angle - Math.PI / 2) * -1;  // We add 90 degrees to get 0 slope in x-axis and infinity in y-axis. We multiply by -1 to because z-axis is inverted.
         return (slope * (endX - startPos.x) + startPos.y);
     }
+    
+    getwallPositions()
+    {
+        this.wallZ = this.game.arena.width / 2;
+        this.wallX = this.game.arena.length / 2;
+    }
 
     getTargetPosition() // TODO: Make it work for 4-player mode
     {
@@ -484,11 +498,11 @@ export class AI
         this.ballPos.set(this.game.ball.mesh.position.x, this.game.ball.mesh.position.z);
         this.angle = this.game.ball.angle;
         this.wallZ = this.game.arena.width / 2;
-        this.goalX = this.game.arena.length / 2;
+        this.wallX = this.game.arena.length / 2;
         let x = 0;
-        let z = this.getIntersectionZ(this.ballPos, this.goalX, this.angle);
+        let z = this.getIntersectionZ(this.ballPos, this.wallX, this.angle);
         let bounces = 0;
-        while (Math.abs(z) > this.movementBoundary + this.paddleLength / 2 && x < Math.abs(this.goalX) && bounces < this.maxBounces)
+        while (Math.abs(z) > this.movementBoundary + this.paddleLength / 2 && x < Math.abs(this.wallX) && bounces < this.maxBounces)
         {
             // We get here if the ball path would hit the goal outside the arena
             if (z < 0)
@@ -505,13 +519,94 @@ export class AI
                 this.ballPos.set(x, this.wallZ);
                 this.angle = PongMath.degToRad(360) - this.angle;
             }
-            z = this.getIntersectionZ(this.ballPos, this.goalX, this.angle);
+            z = this.getIntersectionZ(this.ballPos, this.wallX, this.angle);
             bounces++;
         }
-        this.pathLengthToHit += PongMath.distanceBetweenPoints(this.ballPos.x, this.ballPos.y, z, this.goalX);
+        this.pathLengthToHit += PongMath.distanceBetweenPoints(this.ballPos.x, this.ballPos.y, z, this.wallX);
         this.targetPos = z;
     }
 
+    getFirstIntersectionPoint()
+    {
+        let x, z;
+        if (this.angle > PongMath.degToRad(0) && this.angle <= PongMath.degToRad(90))
+        {
+            x = this.getIntersectionX(this.ballPos, this.wallZ, this.angle);
+            if (x > this.wallX)
+            {
+                z = this.getIntersectionZ(this.ballPos, this.wallX, this.angle);
+                this.firstPoint.set(this.wallX, z, "right");
+            }
+            else
+                this.firstPoint.set(x, this.wallZ, "bottom");
+        }
+        else if (this.angle > PongMath.degToRad(90) && this.angle <= PongMath.degToRad(180))
+        {
+            x = this.getIntersectionX(this.ballPos, -this.wallZ, this.angle);
+            if (x > this.wallX)
+            {
+                z = this.getIntersectionZ(this.ballPos, this.wallX, this.angle);
+                this.firstPoint.set(this.wallX, z, "right");
+            }
+            else
+                this.firstPoint.set(x, -this.wallZ, "top");
+        }
+        else if (this.angle > PongMath.degToRad(180) && this.angle <= PongMath.degToRad(270))
+        {
+            x = this.getIntersectionX(this.ballPos, -this.wallZ, this.angle);
+            if (x < -this.wallX)
+            {
+                z = this.getIntersectionZ(this.ballPos, -this.wallX, this.angle);
+                this.firstPoint.set(-this.wallX, z, "left");
+            }
+            else
+                this.firstPoint.set(x, -this.wallZ, "top");
+        }
+        else if (this.angle > PongMath.degToRad(270) && this.angle <= PongMath.degToRad(360))
+        {
+            x = this.getIntersectionX(this.ballPos, this.wallZ, this.angle);
+            if (x < -this.wallX)
+            {
+                z = this.getIntersectionZ(this.ballPos, -this.wallX, this.angle);
+                this.firstPoint.set(-this.wallX, z, "left");
+            }
+            else
+                this.firstPoint.set(x, this.wallZ, "bottom");
+        }
+    }
+
+    getTargetPositionMultiMode()
+    {
+        this.pathLengthToHit = 0;
+        this.ballPos.set(this.game.ball.mesh.position.x, this.game.ball.mesh.position.z);
+        this.angle = this.game.ball.angle;
+        this.getwallPositions();
+        this.getFirstIntersectionPoint();
+        this.pathLengthToHit += PongMath.distanceBetweenPoints(this.ballPos.x, this.ballPos.y, this.firstPoint.pos.x, this.firstPoint.pos.y);
+        let bounces = 0;
+        while (this.wallHit(this.firstPoint.pos) && bounces < this.maxBounces)
+        {
+            this.ballPos.set(this.firstPoint.pos.x, this.firstPoint.pos.y);
+            this.angle = PongMath.degToRad(360) - this.angle;
+            this.getFirstIntersectionPoint();
+            this.pathLengthToHit += PongMath.distanceBetweenPoints(this.ballPos.x, this.ballPos.y, this.firstPoint.pos.x, this.firstPoint.pos.y);
+            bounces++;
+        }
+        if (this.ownGoalHit())
+        {
+            // console.log("firstPoint: " + this.firstPoint.pos.x + ", " + this.firstPoint.pos.y + " | wall: " + this.firstPoint.wall);
+            if (this.alignment == G.vertical)
+            {
+                this.targetPos = this.firstPoint.pos.y;
+                console.log("Player[" + this.playerNum + "] : target.z = " + this.targetPos.toFixed(2) + " | dist = " + this.pathLengthToHit.toFixed(2));
+            }
+            else
+            {
+                this.targetPos = this.firstPoint.pos.x;
+                console.log("Player[" + this.playerNum + "] : target.x = " + this.targetPos.toFixed(2) + " | dist = " + this.pathLengthToHit.toFixed(2));
+            }
+        }
+    }
 
     //--------------------------------------------------------------------------
     //  CURVED PATH
@@ -602,8 +697,8 @@ export class AI
     {
         this.centerToBottomWall = Math.abs(this.wallZ - this.center.y);
         this.centerToTopWall = Math.abs(this.center.y - -this.wallZ);
-        this.centerToRightWall = Math.abs(this.goalX - this.center.x);
-        this.centerToLeftWall = Math.abs(this.center.x - -this.goalX);
+        this.centerToRightWall = Math.abs(this.wallX - this.center.x);
+        this.centerToLeftWall = Math.abs(this.center.x - -this.wallX);
     }
 
     withinBorders(point, border)
@@ -620,34 +715,34 @@ export class AI
         if (this.radius >= this.centerToTopWall)
         {
             const deltaX = Math.sqrt(Math.pow(this.radius, 2) - Math.pow((-this.wallZ - this.center.y), 2));
-            if (this.withinBorders(this.center.x - deltaX, this.goalX) && this.ballPos.x != this.center.x - deltaX && this.ballPos.y != -this.wallZ)
+            if (this.withinBorders(this.center.x - deltaX, this.wallX) && this.ballPos.x != this.center.x - deltaX && this.ballPos.y != -this.wallZ)
                 this.intersectionPoints.push(new IntersectionPoint(this.center.x - deltaX, -this.wallZ, "top"));
-            if (this.withinBorders(this.center.x + deltaX, this.goalX) && this.ballPos.x != this.center.x + deltaX && this.ballPos.y != -this.wallZ)
+            if (this.withinBorders(this.center.x + deltaX, this.wallX) && this.ballPos.x != this.center.x + deltaX && this.ballPos.y != -this.wallZ)
                 this.intersectionPoints.push(new IntersectionPoint(this.center.x + deltaX, -this.wallZ, "top"));
         }
         if (this.radius >= this.centerToBottomWall)
         {
             const deltaX = Math.sqrt(Math.pow(this.radius, 2) - Math.pow((this.wallZ - this.center.y), 2));
-            if (this.withinBorders(this.center.x - deltaX, this.goalX) && this.ballPos.x != this.center.x - deltaX && this.ballPos.y != this.wallZ)
+            if (this.withinBorders(this.center.x - deltaX, this.wallX) && this.ballPos.x != this.center.x - deltaX && this.ballPos.y != this.wallZ)
                 this.intersectionPoints.push(new IntersectionPoint(this.center.x - deltaX, this.wallZ, "bottom"));
-            if (this.withinBorders(this.center.x + deltaX, this.goalX) && this.ballPos.x != this.center.x + deltaX && this.ballPos.y != this.wallZ)
+            if (this.withinBorders(this.center.x + deltaX, this.wallX) && this.ballPos.x != this.center.x + deltaX && this.ballPos.y != this.wallZ)
                 this.intersectionPoints.push(new IntersectionPoint(this.center.x + deltaX, this.wallZ, "bottom"));
         }
         if (this.radius >= this.centerToLeftWall)
         {
-            const deltaZ = Math.sqrt(Math.pow(this.radius, 2) - Math.pow((-this.goalX - this.center.x), 2));
-            if (this.withinBorders(this.center.y - deltaZ, this.wallZ) && this.ballPos.x != -this.goalX && this.ballPos.y != this.center.y - deltaZ)
-                this.intersectionPoints.push(new IntersectionPoint(-this.goalX, this.center.y - deltaZ, "left"));
-            if (this.withinBorders(this.center.y + deltaZ, this.wallZ) && this.ballPos.x != -this.goalX && this.ballPos.y != this.center.y + deltaZ)
-                this.intersectionPoints.push(new IntersectionPoint(-this.goalX, this.center.y + deltaZ, "left"));
+            const deltaZ = Math.sqrt(Math.pow(this.radius, 2) - Math.pow((-this.wallX - this.center.x), 2));
+            if (this.withinBorders(this.center.y - deltaZ, this.wallZ) && this.ballPos.x != -this.wallX && this.ballPos.y != this.center.y - deltaZ)
+                this.intersectionPoints.push(new IntersectionPoint(-this.wallX, this.center.y - deltaZ, "left"));
+            if (this.withinBorders(this.center.y + deltaZ, this.wallZ) && this.ballPos.x != -this.wallX && this.ballPos.y != this.center.y + deltaZ)
+                this.intersectionPoints.push(new IntersectionPoint(-this.wallX, this.center.y + deltaZ, "left"));
         }
         if (this.radius >= this.centerToRightWall)
         {
-            const deltaZ = Math.sqrt(Math.pow(this.radius, 2) - Math.pow((this.goalX - this.center.x), 2));
-            if (this.withinBorders(this.center.y - deltaZ, this.wallZ) && this.ballPos.x != this.goalX && this.ballPos.y != this.center.y - deltaZ)
-                this.intersectionPoints.push(new IntersectionPoint(this.goalX, this.center.y - deltaZ, "right"));
-            if (this.withinBorders(this.center.y + deltaZ, this.wallZ) && this.ballPos.x != this.goalX && this.ballPos.y != this.center.y + deltaZ)
-                this.intersectionPoints.push(new IntersectionPoint(this.goalX, this.center.y + deltaZ, "right"));
+            const deltaZ = Math.sqrt(Math.pow(this.radius, 2) - Math.pow((this.wallX - this.center.x), 2));
+            if (this.withinBorders(this.center.y - deltaZ, this.wallZ) && this.ballPos.x != this.wallX && this.ballPos.y != this.center.y - deltaZ)
+                this.intersectionPoints.push(new IntersectionPoint(this.wallX, this.center.y - deltaZ, "right"));
+            if (this.withinBorders(this.center.y + deltaZ, this.wallZ) && this.ballPos.x != this.wallX && this.ballPos.y != this.center.y + deltaZ)
+                this.intersectionPoints.push(new IntersectionPoint(this.wallX, this.center.y + deltaZ, "right"));
         }
     }
 
@@ -708,10 +803,8 @@ export class AI
         this.angle = this.game.ball.angle;
         this.angleDelta = this.game.ball.spin;
         this.distancePerFrame = this.game.ball.speed;
-        this.WallX = this.game.arena.length / 2;
+        this.wallX = this.game.arena.length / 2;
         this.wallZ = this.game.arena.width / 2;
-        this.goalX = this.game.arena.length / 2;
-        this.goalZ = this.game.arena.width / 2;
         this.calculateCenter();
         this.calculateCenterToWalls();
         this.getValidIntersectionPoints();
@@ -723,7 +816,7 @@ export class AI
             this.getFirstIntersectionPointCounterClockwise();
 
         let bounces = 0;
-        while (this.intersectionPoints.length > 0 && !this.goalHit())
+        while (this.intersectionPoints.length > 0 && !this.ownGoalHit())
         {
             this.ballPos.set(this.firstPoint.pos.x, this.firstPoint.pos.y);
             this.calculateNewAngle();
@@ -758,7 +851,12 @@ export class AI
             if (this.considerSpin && this.game.ball.spin != 0)
                 this.getTargetPositionWithSpin();
             else
-                this.getTargetPosition();
+            {
+                if (this.settings.multiMode)
+                    this.getTargetPositionMultiMode();
+                else
+                    this.getTargetPosition();
+            }
             if (this.canSpin)
                 this.handleSpin();
         }
@@ -780,7 +878,11 @@ export class AI
 
     handleInput()
     {
-        const paddleDistanceToTarget = this.paddle.position.z - this.targetPos;
+        let paddleDistanceToTarget;
+        if (this.alignment == G.vertical)
+            paddleDistanceToTarget = this.paddle.position.z - this.targetPos;
+        else
+            paddleDistanceToTarget = this.paddle.position.x - this.targetPos;
         if (paddleDistanceToTarget > this.speed)
             this.moveLeft = true;
         else if (paddleDistanceToTarget < -this.speed)

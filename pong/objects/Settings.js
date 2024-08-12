@@ -9,6 +9,6 @@ export class Settings
 		this.players = 1;
 		this.spin = true;
 		this.powerups = true;
-		this.difficulty = 3;
+		this.difficulty = 2;
 	}
 }

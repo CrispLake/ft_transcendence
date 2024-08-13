@@ -13,6 +13,7 @@ import { Ball } from './Ball.js';
 import * as PongMath from '../math.js';
 import { PowerupManager } from './PowerupManager.js';
 import { Results } from './Results.js';
+import { Text2D } from './Text2D.js';
 
 export class Game
 {
@@ -34,6 +35,8 @@ export class Game
 		this.cameraRotate = false;
 		this.pause = false;
 		this.update = this.update.bind(this);
+		this.initializeCountDown();
+		this.animateStart = true;
 		this.update();
 	}
 
@@ -191,16 +194,75 @@ export class Game
 
 
 	//--------------------------------------------------------------------------
+	//	START ANIMATION
+	//--------------------------------------------------------------------------
+
+	createCountDownText(text)
+	{
+		this.countDownText = new Text2D(this.uiScene, text, 200, COLOR.WHITE, this.fontLoader, window.innerWidth, (mesh) => {
+			mesh.position.set(-this.countDownText.textWidth / 2, -this.countDownText.textHeight / 2, 0);
+			this.uiScene.add(mesh);
+		});
+	}
+
+	initializeCountDown()
+	{
+		this.gameClock.start();
+		this.countDown = 3;
+		this.createCountDownText(this.countDown.toString());
+		console.log(this.countDown);
+	}
+	
+	startAnimation()
+	{
+		if (this.gameClock.getElapsedTime() >= 1)
+		{
+			this.countDown--;
+			if (this.countDown > 0)
+			{
+				this.countDownText.update2DText(this.countDown.toString());
+			}
+			else if (this.countDown == 0)
+			{
+				this.countDownText.update2DText("START");
+			}
+			else
+			{
+				this.animateStart = false;
+				this.uiScene.remove(this.countDownText.mesh);
+			}
+			this.gameClock.elapsedTime--;
+		}
+	}
+
+
+	//--------------------------------------------------------------------------
 	//	UPDATE
 	//--------------------------------------------------------------------------
+
+	render()
+	{
+		// Render game scene
+		this.composer.render();
+
+		// Render UI scene
+		this.renderer.autoClear = false;
+    	this.renderer.clearDepth();
+		this.renderer.render(this.uiScene, this.uiCamera);
+		this.renderer.autoClear = true;
+	}
 
 	update()
 	{
 		setTimeout(() => { requestAnimationFrame(this.update); }, 1000 / G.fps);
-		if (this.pause)
+		if (this.animateStart)
 		{
+			this.startAnimation();
+			this.render();
 			return;
 		}
+		if (this.pause)
+			return;
 		this.powerupManager.update();
 		this.updateCamera();
 
@@ -219,15 +281,7 @@ export class Game
 				this.resetPositions();
 			this.powerupManager.reset();
 		}
-
-		// Render game scene
-		this.composer.render();
-
-		// Render UI scene
-		this.renderer.autoClear = false;
-    	this.renderer.clearDepth();
-		this.renderer.render(this.uiScene, this.uiCamera);
-		this.renderer.autoClear = true;
+		this.render();
 	}
 
 	updateBallPosition()

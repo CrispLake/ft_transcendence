@@ -3,7 +3,7 @@ import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
 export class Text2D
 {
-    constructor(scene, text, size, color, fontLoader, maxWidth,  onCreate)
+    constructor(scene, text, size, color, fontLoader, maxWidth, onCreate)
     {
         this.scene = scene;
         this.text = text;

@@ -1,18 +1,5 @@
-import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
-// import { FontLoader } from 'three/addons/loaders/FontLoader.js';
-// import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
-// import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-// import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-// import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
-// import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
-// import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
-// import * as PongMath from './math.js';
-// import * as G from './globals.js';
-// import * as COLOR from './colors.js';
-// import { Text2D } from './objects/Text2D.js';
-// import { UserInterface } from './objects/UserInterface.js';
 import * as KEY from './keys.js';
 import { Game } from './objects/Game.js';
 

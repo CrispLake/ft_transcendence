@@ -142,22 +142,22 @@ export class Ball
 
     wallUp(wall)
     {
-        return (wall.alignment == G.horizontal && this.speedZ < 0);
+        return (wall.alignment == G.horizontal && wall.mesh.position.z < 0);
     }
 
     wallDown(wall)
     {
-        return (wall.alignment == G.horizontal && this.speedZ > 0);
+        return (wall.alignment == G.horizontal && wall.mesh.position.z > 0);
     }
 
     wallLeft(wall)
     {
-        return (wall.alignment == G.vertical && this.speedX < 0);
+        return (wall.alignment == G.vertical && wall.mesh.position.x < 0);
     }
 
     wallRight(wall)
     {
-        return (wall.alignment == G.vertical && this.speedX > 0);
+        return (wall.alignment == G.vertical && wall.mesh.position.x > 0);
     }
 
     getDirection(wall)
@@ -179,9 +179,17 @@ export class Ball
         let direction = this.getDirection(wall);
 
         // Change direction based on wall alignment
-        if (wall.alignment == G.vertical)
+        // if (wall.alignment == G.vertical)
+        //     this.speedX = -this.speedX;
+        // else
+        //     this.speedZ = -this.speedZ;
+        if (direction == 1 && this.speedX < 0)
             this.speedX = -this.speedX;
-        else
+        else if (direction == 2 && this.speedX > 0)
+            this.speedX = -this.speedX;
+        else if (direction == 3 && this.speedZ < 0)
+            this.speedZ = -this.speedZ;
+        else if (direction == 4 && this.speedZ > 0)
             this.speedZ = -this.speedZ;
 
         // Update angle based on the new direction

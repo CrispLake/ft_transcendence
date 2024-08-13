@@ -304,9 +304,8 @@ export class Game
 			if (this.ball.box.intersectsBox(this.arena.walls[wall].box))
 			{
 				if (this.arena.walls[wall].bounce == true)
-				{
 					continue ;
-				}
+
 				this.arena.walls[wall].lightEffect();
 				this.ball.reduceSpin();
 				this.ball.bounceFromWall(this.arena.walls[wall]);

@@ -1,4 +1,5 @@
 import AbstractView from './AbstractView.js';
+import { Notification } from '../notification.js';
 
 export default class extends AbstractView {
     constructor(params) {
@@ -12,7 +13,7 @@ export default class extends AbstractView {
 
         this.entryIdCounter = 0;
         this.playerCounter = 0;
-        this.maxPlayers = 0;
+        this.maxPlayers = -1;
         this.loginURL = 'http://localhost:8000/login';
         this.currentDeg = 0;
 
@@ -21,14 +22,14 @@ export default class extends AbstractView {
 
 
         this.getFirstEntry();
+        this.waitForUser = this.waitForUser.bind(this);
+        this.HandlePopupExit = this.HandlePopupExit.bind(this);
         this.HandlePrev = this.HandlePrev.bind(this);
         this.HandleNext = this.HandleNext.bind(this);
         this.addGuestEntryHandler = this.addGuestEntryHandler.bind(this);
         this.addAiEntryHandler = this.addAiEntryHandler.bind(this);
         this.addExistingUserEntryHandler = this.addExistingUserEntryHandler.bind(this);
         this.LoginHandler = this.LoginHandler.bind(this);
-        this.AddUserHandler = this.AddUserHandler.bind(this);
-        this.PowerUpToggle = this.PowerUpToggle.bind(this);
         this.AiDifficultySlider = this.AiDifficultySlider.bind(this);
     }
 
@@ -36,8 +37,11 @@ export default class extends AbstractView {
         this.AddListeners();
         return new Promise((resolve) => {
             try {
-                document.getElementById('launch-pong').addEventListener('click', () => {
-                    resolve(this.entries);
+                document.getElementById('start-game-button').addEventListener('click', (event) => {
+                    event.preventDefault();
+                    if (this.playerCounter === this.maxPlayers) {
+                        resolve(this.entries);
+                    }
                 })
             }
             catch(error) {
@@ -106,7 +110,7 @@ export default class extends AbstractView {
                 id: this.entryIdCounter++,
                 title: response.data.user.username,
                 winrate: winrate,
-                image: `<img src="http://localhost:8000/account/${response.data.user.id}/image" alt="User icon" width="50" height="50">`
+                image: `<img class="card-image" src="http://localhost:8000/account/${response.data.user.id}/image" alt="User icon" >`
             }]
             this.playerCounter++;
             this.renderEntries();
@@ -137,10 +141,11 @@ export default class extends AbstractView {
         const newEntry = {
             id: this.entryIdCounter++,
             title: `AI`,
-            image: `<img src="static/images/ai.avif" alt="AI icon" width="50" height="50">`,
+            image: `<img class="card-image" src="static/images/ai.avif" alt="AI icon" >`,
             // TODO: take winrate from form
             winrate: 50
         };
+        this.playerCounter++;
         this.entries.push(newEntry);
         this.renderEntries();
     }
@@ -158,25 +163,13 @@ export default class extends AbstractView {
         const newEntry = {
             id: this.entryIdCounter++,
             title: `Guest Player`,
-            image: `<img src="static/images/guest.png" alt="Guest icon" width="50" height="50">`,
+            image: `<img class="card-image" src="static/images/guest.png" alt="Guest icon">`,
             winrate: Math.floor(Math.random() * (60 - 20 + 1)) + 20
             // NOTE: guest has random winrate between 20% - 60%
         };
         this.playerCounter++;
         this.entries.push(newEntry);
         this.renderEntries();
-    }
-
-    AddUserHandler(event) {
-        event.preventDefault();
-
-        if (this.MaxPlayerLimitReached()) {
-            console.log('Max player limit reached');
-            return;
-        }
-
-        const button = document.getElementById('pop-up-login');
-        button.style.display = 'block';
     }
 
     async addExistingUserEntryHandler(userData) {
@@ -211,7 +204,7 @@ export default class extends AbstractView {
             id: this.entryIdCounter++,
             title: userData.data.username,
             winrate: winrate,
-            image: `<img src="http://localhost:8000/account/${userData.data.user_id}/image" alt="User icon" width="50" height="50">`
+            image: `<img class="card-image" src="http://localhost:8000/account/${userData.data.user_id}/image" alt="User icon">`
         };
         this.playerCounter++;
         this.entries.push(newEntry);
@@ -261,6 +254,20 @@ export default class extends AbstractView {
                 });
             });
         }
+
+        const launchButtonText = document.getElementById('start-game-text');
+        if (!launchButtonText) { return; }
+
+        if (this.playerCounter === this.maxPlayers) {
+            launchButtonText.textContent = `START GAME`;
+        }
+        else {
+            launchButtonText.textContent = `PLAYERS ${this.playerCounter}/${this.maxPlayers}`;
+        }
+
+
+
+
     }
 
     // Handles user authentication
@@ -369,6 +376,11 @@ export default class extends AbstractView {
         carousel.style.transform = `rotateY(${this.currentDeg}deg)`;
     }
 
+    HandlePopupExit(event) {
+        event.preventDefault();
+        this.HideLoginPopUp();
+    }
+
     AddListeners() {
         const addButton = document.getElementById('add-button');
         const addAiButton = document.getElementById('add-ai-button');
@@ -376,12 +388,12 @@ export default class extends AbstractView {
         const addUserButton = document.getElementById('add-user-button');
         const powerUpToggle = document.getElementById('toggle-container');
         const rangeSlider = document.getElementById('range-slider');
+        const popupExit = document.getElementById('popup-exit-button');
 
+        popupExit.addEventListener('click', this.HandlePopupExit);
         addButton.addEventListener('click', this.addGuestEntryHandler);
         addAiButton.addEventListener('click', this.addAiEntryHandler);
         loginForm.addEventListener('submit', this.LoginHandler);
-        addUserButton.addEventListener('click', this.AddUserHandler);
-        powerUpToggle.addEventListener('click', this.PowerUpToggle);
         rangeSlider.addEventListener('input', this.AiDifficultySlider);
 
 
@@ -396,12 +408,13 @@ export default class extends AbstractView {
         const addUserButton = document.getElementById('add-user-button');
         const powerUpToggle = document.getElementById('toggle-container');
         const rangeSlider = document.getElementById('range-slider');
+        const popupExit = document.getElementById('popup-exit-button');
 
         try {
             addButton.removeEventListener('click', this.addGuestEntryHandler);
+            popupExit.removeEventListener('click', this.HandlePopupExit);
             addAiButton.removeEventListener('click', this.addAiEntryHandler);
             loginForm.removeEventListener('submit', this.LoginHandler);
-            addUserButton.removeEventListener('click', this.AddUserHandler);
             powerUpToggle.removeEventListener('click', this.PowerUpToggle);
             rangeSlider.addEventListener('input', this.AiDifficultySlider);
         } catch (error) {
@@ -435,7 +448,6 @@ export default class extends AbstractView {
                 </button>
             </div>
 
-
             <div class="carousel-holder font-text powerup-text">
                 <div class="prev">Prev</div>
                  <div id="carousel-container">
@@ -453,7 +465,6 @@ export default class extends AbstractView {
                     </label>
                 </span>
 
-
                 <div class="slider-container">
                     <label class="font-text powerup-text" for="range-slider">AI Diff:</label>
                     <input type="range" id="range-slider" min="1" max="3" value="1" step="1">
@@ -462,11 +473,8 @@ export default class extends AbstractView {
 
             </div>
 
-
-            <div class="start-container">
-                <div id="launch-pong">
-                    <span class="start-text"></span>
-                </div>
+            <div id="start-game-button" class="start-container">
+                <span id="start-game-text" class="font-heading start-text">Launch Game</span>
             </div>
 
 
@@ -479,9 +487,12 @@ export default class extends AbstractView {
           </div>
 
             <div class="pop-up-login login-page" id="pop-up-login">
-                <div class="login-form">
-                    <h2 class="font-sub login-heading">&lt;Add user&gt;</h2>
-                    <form id="login-form" action="" method="">
+                <div class="login-form popup-login-form">
+                    <div id="popup-exit-button" class="font-sub popup-exit-button">
+                        <p class=" popup-exit-button-text">X</p>
+                    </div>
+                    <h2 class="font-sub login-heading popup-login-heading">&lt;Add user&gt;</h2>
+                    <form id="login-form"   action="" method="">
                         <label class="font-text" for="username">username:</label>
                         <input class="font-text login-input" type="text" id="username" name="username" required><br><br>
                         <label class="font-text" for="password">password:</label>

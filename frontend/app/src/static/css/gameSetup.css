@@ -119,7 +119,7 @@ input:checked + .slider:before {
 }
 
 #carousel-container {
-    margin-top: 4rem;
+    margin-top: 2rem;
     width: 1000px;
     height: 500px;
     position: relative;
@@ -149,6 +149,8 @@ input:checked + .slider:before {
     color: #FFF;
     border-radius: 10px;
     background-color: var(--blue);
+
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .id-0 {
@@ -169,6 +171,25 @@ input:checked + .slider:before {
     transform: rotateY(180deg) translateZ(250px);
 }
 
+.card-image {
+    width: 150px;
+    margin-top: 2rem;
+
+}
+
+.remove-button {
+    background-color: var(--black);
+    color: var(--white);
+    transition: ease 0.15s;
+    border: none;
+    padding: 10px 20px;
+}
+
+.remove-button:hover {
+    color: var(--black);
+    cursor: pointer;
+    background-color: var(--pink);
+}
 
 .next, .prev {
   color: var(--white);
@@ -187,6 +208,8 @@ input:checked + .slider:before {
 
 .carousel-name-text {
     font-size: 32px;
+    margin: 0;
+    padding: 0;
 }
 
 .carousel-holder {
@@ -195,6 +218,31 @@ input:checked + .slider:before {
     align-items: center;
 }
 
+.start-container {
+    background-color: var(--black);
+    color: var(--white);
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    transition: ease 0.2s;
+    min-width: 482px !important;
+}
+
+.start-container:hover {
+    font-size: 82px;
+    color: var(--black);
+    background: var(--yellow);
+    cursor: pointer;
+    content: "START GAME";
+}
+
+.start-text {
+    font-size: 96px;
+    padding: 0px 20px;
+    margin-top: 20px;
+}
 
 .game-settings-page {
     width: 100%;
@@ -219,6 +267,46 @@ input:checked + .slider:before {
   display: none;
   left: 0;
   top: 0;
+
+}
+
+.popup-login-form {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 60%;
+}
+
+.popup-login-heading {
+    width: 200%;
+    text-align: center;
+    margin-bottom: 4rem;
+    font-size: 86px !important;
+}
+
+.popup-exit-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 50px;
+    width: 50px;
+    color: var(--black);
+    margin-right: 1rem;
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 48px !important;
+}
+
+.popup-exit-button-text {
+    transition: ease 0.15s;
+}
+
+.popup-exit-button:hover {
+    cursor: pointer;
+    font-size: 32px !important;
 }
 
 .toggle-button {

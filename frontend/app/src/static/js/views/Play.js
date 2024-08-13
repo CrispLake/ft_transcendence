@@ -24,7 +24,7 @@ export default class extends AbstractView {
     this.setTitle('Play');
     this.listeners = true;
 
-    this.settings = null;
+    this.setupObj = null;
     this.gameMode = null;
     this.results = null;
 
@@ -44,17 +44,16 @@ export default class extends AbstractView {
 
   // Launch 2p Gonp
   async GameSetup() {
-    const gameSetupObj = new GameSetup(this.gameMode);
-    console.log('before gamesetup getuserinput: ');
-    this.settings = await gameSetupObj.getUserInput();
-    console.log('AFTER gamesetup getuserinput: ');
-    this.settings.players.map(entry =>
-        console.log(`id: ${entry.id}\n${entry.token}\n${entry.username}`
-        ));
-    gameSetupObj.RemoveListeners();
-    console.log('hello: ', this.settings.players);
-    this.settings = new Settings(1, false);
-  }
+        const gameSetupObj = new GameSetup(this.gameMode);
+        console.log('before gamesetup getuserinput: ');
+        this.setupObj = await gameSetupObj.getUserInput();
+        console.log('AFTER gamesetup getuserinput: ');
+        this.setupObj.players.map(entry =>
+            console.log(`id: ${entry.id}\n${entry.token}\n${entry.username}`
+            ));
+        gameSetupObj.RemoveListeners();
+        console.log(this.settings)
+    }
 
   // TODO: make it wait and return the results --> also for 4p
   //        remove event listeners when game finished!
@@ -63,7 +62,7 @@ export default class extends AbstractView {
   async Pong() {
     const pong = new Pong();
     pong.AddListeners();
-    this.results = await pong.fakeGame();
+    this.results = await pong.fakeGame(this.setupObj);
     pong.RemoveListeners();
   }
 

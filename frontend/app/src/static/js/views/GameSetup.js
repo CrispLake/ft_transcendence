@@ -1,5 +1,6 @@
 import AbstractView from './AbstractView.js';
 import { Notification } from '../notification.js';
+import { Settings } from '../pong/objects/Settings.js';
 
 export default class extends AbstractView {
     constructor(params) {
@@ -60,7 +61,21 @@ export default class extends AbstractView {
         }));
     }
 
-    //TODO: If entry count is less than max players? Fill with AIs? Or prompt the user to add more players/AIs?
+    CreateSettingsObject() {
+        const settingsObj = new Settings({
+            multimode: this.params < 3 ? false : true,
+            diff: this.ai_difficulty,
+            powerups: this.powerups,
+            players: this.playerCounter,
+
+            //todo might remove
+            spin: true,
+        });
+        return settingsObj;
+    }
+
+    // Returns object containing list of players and settings object
+    // to be provided for the game
     async getUserInput() {
         const appDiv = await document.getElementById('app');
         if (!appDiv) {
@@ -72,13 +87,10 @@ export default class extends AbstractView {
         appDiv.innerHTML = await this.getHtml();
         const data = await this.waitForUser();
         const users = this.transform_users(data);
+        const settingsObj = this.CreateSettingsObject();
         const params = {
             players: users,
-            settings : {
-                multimode: this.params < 3 ? false : true,
-                ai_difficulty: this.ai_difficulty,
-                powerups: this.powerups
-            }
+            settings: settingsObj,
         }
         return params;
     }

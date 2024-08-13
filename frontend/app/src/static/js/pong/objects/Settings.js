@@ -1,14 +1,13 @@
 export class Settings
 {
-	constructor(playerCount, multiMode)
+    constructor({ playerCount, multiMode, tournament, powerups, diff })
 	{
-		console.log("players: " + playerCount + " multimode: " + multiMode);
 		this.multiMode = multiMode;
 		this.players = playerCount;
-		this.spin = true;
+        this.tournament = tournament;
+        this.powerups = powerups;
+        this.diff = diff;
 
-    // tournament
-    // power ups
-    // difficulty 1-3 for AI
-	}
+		this.spin = true;//  is this necessary??
+    }
 }

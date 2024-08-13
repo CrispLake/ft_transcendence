@@ -17,6 +17,10 @@ import * as KEY from '../pong/keys.js';
 
 import AbstractView from "./AbstractView.js";
 
+// {
+//  params[]
+//  settingsObject
+// }
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -25,11 +29,11 @@ export default class extends AbstractView {
     // this.multimode = params.multimode || false;     // true / false
     // this.tournament = params.tournament || false;   // true / false
     // this.diff = parms.diff || 1;                    // int (1-3)
-    
+
     this.setTitle('Pong');
     this.listeners = true;
     this.childs = true;
-    
+
     // Game variables
     // this.game = new Game(this.settings);
     this.controls = null;
@@ -66,7 +70,7 @@ export default class extends AbstractView {
   }
 
   async fakeGame(gameSettings) {
-    console.log('did a fake game lol returning results');
+    console.log(gameSettings);
     return {
       "player1": 1,
       "player1Score": 3,
@@ -184,5 +188,5 @@ export default class extends AbstractView {
   async getHtml() {
     return this.game.renderer.domElement;
   }
-  
+
 }

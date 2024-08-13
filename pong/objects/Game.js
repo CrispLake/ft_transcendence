@@ -240,18 +240,6 @@ export class Game
 	//	UPDATE
 	//--------------------------------------------------------------------------
 
-	render()
-	{
-		// Render game scene
-		this.composer.render();
-
-		// Render UI scene
-		this.renderer.autoClear = false;
-    	this.renderer.clearDepth();
-		this.renderer.render(this.uiScene, this.uiCamera);
-		this.renderer.autoClear = true;
-	}
-
 	update()
 	{
 		setTimeout(() => { requestAnimationFrame(this.update); }, 1000 / G.fps);
@@ -348,6 +336,18 @@ export class Game
 		}
 		this.ball.affectBySpin();
 		this.ball.move();
+	}
+
+	render()
+	{
+		// Render game scene
+		this.composer.render();
+
+		// Render UI scene
+		this.renderer.autoClear = false;
+    	this.renderer.clearDepth();
+		this.renderer.render(this.uiScene, this.uiCamera);
+		this.renderer.autoClear = true;
 	}
 
 

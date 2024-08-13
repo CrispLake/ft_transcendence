@@ -16,36 +16,8 @@ export class Text2D
         this.create2DTextMesh();
     }
 
-    // create2DTextMesh()
-    // {
-    //     this.fontLoader.load('./resources/font.json', (font) => {
-    //         const textGeometry = new TextGeometry(this.text,
-    //         {
-    //             font: font,
-    //             size: this.size,
-    //             height: 1,
-    //             depth: 0.1,
-    //             curveSegments: 12,
-    //             bevelEnabled: true,
-    //             bevelThickness: 2,
-    //             bevelSize: 1,
-    //             bevelOffset: 0,
-    //             bevelSegments: 3
-    //         });
-
-    //         const textMaterial = new THREE.MeshBasicMaterial({ color: this.color });
-    //         this.mesh = new THREE.Mesh(textGeometry, textMaterial);
-    //         textGeometry.computeBoundingBox();
-    //         const boundingBox = textGeometry.boundingBox;
-    //         this.textWidth = boundingBox.max.x - boundingBox.min.x;
-    //         this.textHeight = boundingBox.max.y - boundingBox.min.y;
-
-    //         if (this.onCreate)
-    //             this.onCreate(this.mesh);
-    //     });
-    // }
-
-    create2DTextMesh() {
+    create2DTextMesh()
+    {
         this.fontLoader.load('./resources/font.json', (font) => {
             const createGeometry = (size) => {
                 return new TextGeometry(this.text, {

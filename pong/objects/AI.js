@@ -502,7 +502,7 @@ export class AI
         this.wallX = this.game.arena.length / 2;
     }
 
-    getTargetPosition() // TODO: Make it work for 4-player mode
+    getTargetPosition()
     {
         this.pathLengthToHit = 0;
         this.ballPos.set(this.game.ball.mesh.position.x, this.game.ball.mesh.position.z);

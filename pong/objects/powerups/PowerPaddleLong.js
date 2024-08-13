@@ -17,8 +17,8 @@ export class PowerPaddleLong
         this.arrow2 = new Arrow(sizeMultiplier, G.arrowThickness, COLOR.POWER_PADDLE_LONG);
         
         this.arrow1.mesh.rotation.z = Math.PI;
-        this.arrow1.mesh.position.z -= G.arrowShaftLength * 1.1;
-        this.arrow2.mesh.position.z += G.arrowShaftLength * 1.1;
+        this.arrow1.mesh.position.z += G.arrowShaftLength * 1.1;
+        this.arrow2.mesh.position.z -= G.arrowShaftLength * 1.1;
         
         // ----Group arrows together----
         this.model = new THREE.Group();

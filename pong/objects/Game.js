@@ -37,6 +37,7 @@ export class Game
 		this.update = this.update.bind(this);
 		this.initializeCountDown();
 		this.animateStart = true;
+		this.gameEnded = false;
 		this.update();
 	}
 
@@ -145,7 +146,7 @@ export class Game
 
 	updateCamera()
 	{
-		if (this.cameraRotate)
+		if (this.cameraRotate || this.gameEnded)
 		{
 			this.rotateCamera();
 		}
@@ -243,6 +244,12 @@ export class Game
 	update()
 	{
 		setTimeout(() => { requestAnimationFrame(this.update); }, 1000 / G.fps);
+		if (this.gameEnded)
+		{
+			this.updateCamera();
+			this.render();
+			return;
+		}
 		if (this.animateStart)
 		{
 			this.startAnimation();
@@ -260,10 +267,11 @@ export class Game
 		this.arena.update();
 		if (this.goal())
 		{
-			if (this.gameEnded())
+			if (this.endingConditionFilled())
 			{
+				this.gameEnded = true;
 				this.saveResults();
-				this.resetGame();
+				this.endGame();
 			}
 			else
 				this.resetPositions();
@@ -387,7 +395,7 @@ export class Game
 		return (false)
 	}
 
-	gameEnded()
+	endingConditionFilled()
 	{
 		for (let player in this.players)
 		{
@@ -395,6 +403,11 @@ export class Game
 				return (true);
 		}
 		return (false);
+	}
+
+	endGame()
+	{
+		// TODO: Here we submit results to database, show results of the game, let user play again or go back to website, etc...
 	}
 
 	resetGame()

@@ -11,7 +11,7 @@ const RED = 0xFF0000;
 
 
 // ----Object Colors----
-export const FLOOR = GRAY;
+export const FLOOR = 0x5f5f5f;
 export const WALL = WHITE;
 export const PADDLE = CYAN;
 export const PLAYER1 = BLUE;

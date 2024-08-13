@@ -1,5 +1,6 @@
 import * as PongMath from './math.js';
 
+export const powerups = true;
 // Paddle
 export const playerLightIntensity = 1;
 export const playerLength = 1;
@@ -7,7 +8,7 @@ export const playerHeight = 1;
 export const playerThickness = 1;
 
 export const boostMeterWidth = playerHeight;
-export const boostMeterThickness = 0.1;
+export const boostMeterThickness = 0.05;
 export const boostMeterLength = playerLength;
 export const maxBoost = 1;
 export const boostIncrement = 0.01;
@@ -50,8 +51,14 @@ export const lanePositions = [
 ]
 
 // Pushers
-export const pusherSpeed = 0.2;
-export const pusherMinSize = 0.2;
+export const pusherSpeed = 0.15;
+export const pusherMinSize = 0.3;
 export const pusherMaxSize = 1;
+export const pusherFightValue = 0.003;
+
+
+export const passiveScore = 0.001;
+
+export const laneEnd = 0 + (laneLength / 2);
 
 export const fps = 60;

@@ -24,8 +24,8 @@ import * as SETTINGS from './gameSetting.js';
 RectAreaLightUniformsLib.init();
 const scene = new THREE.Scene();
 const arena = new Arena(scene);
-let player1 = new Player(scene, G.p1StartPos, 'BLU', COLOR.PLAYER1);
-let player2 = new Player(scene, G.p2StartPos, 'RED', COLOR.PLAYER2);
+let player1 = new Player(scene, G.p1StartPos, 'BLU', COLOR.PLAYER1, arena);
+let player2 = new Player(scene, G.p2StartPos, 'RED', COLOR.PLAYER2, arena);
 // let ball = new Ball(scene, G.ballStartPos);
 
 // -----Camera Setup----
@@ -106,13 +106,13 @@ class TextManager {
             this.outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), this.scene, this.camera, [this.textMesh]);
             this.outlinePass.edgeStrength = 10;
             this.outlinePass.edgeGlow = 1;
-            this.outlinePass.visibleEdgeColor.set(0x000000);
-            this.outlinePass.hiddenEdgeColor.set(0xffffff);
+            this.outlinePass.visibleEdgeColor.set(0x00ff00);
+            this.outlinePass.hiddenEdgeColor.set(0xff00ff);
             this.composer.addPass(this.outlinePass);
             const effectFXAA = new ShaderPass(FXAAShader);
             effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
             this.composer.addPass(effectFXAA);
-            this.textMaterial = new THREE.MeshBasicMaterial({ color: 0XD269FA });
+            this.textMaterial = new THREE.MeshBasicMaterial({ color: 0XB65B98 });
             this.createTextMesh(this.text);
         });
     }
@@ -142,20 +142,10 @@ class TextManager {
 
     updateText(newText) {
         if (this.textMesh) {
-            // Remove old mesh from the scene
             this.scene.remove(this.textMesh);
-
-            // Dispose of old geometry and material
             this.textMesh.geometry.dispose();
-            // this.textMesh.material.dispose();
-            console.log("disposed")
         }
-
-        // Create new text mesh
         this.createTextMesh(newText);
-
-        // Update the OutlinePass
-        // this.outlinePass.selectedObjects = [this.textMesh];
     }
 }
 
@@ -182,7 +172,6 @@ class Timer {
             if (remainingTime <= 0) {
                 clearInterval(this.timerId);
                 this.timerId = null;
-                console.log("Timer finished");
             }
         }, 1000);
     }
@@ -211,9 +200,41 @@ function setPushersColliding(colliding)
     }
 }
 
+function checkPowerupCollision() {
+	let speedup;
+	let balance = Math.random();
+	let player;
+	let players = [
+		player1,
+		player2
+	];
+	if (balance < 0.5) {
+		players[0] = player2;
+		players[1] = player1;
+	}
+	for (let i = 0; i < players.length; i++) {
+		player = players[i];
+		for (let j = 0; j < player.pushers.length; j++) {
+			if (arena.powerup) {
+				if (player.pushers[j].box.intersectsBox(arena.powerup.box)) {
+					scene.remove(arena.powerup.mesh)
+					arena.powerup.remove();
+					arena.powerup = null;
+					speedup = player.pushers[j].size > G.pusherMaxSize * 0.9;
+					player.pushers[j].upSize(G.pusherMaxSize);
+					if (speedup) {
+						player.pushers[j].speed *= 2;
+					}
+					console.log("Collected powerup");
+				}
+			}
+		}
+	}
+}
+
 function pushersLogic()
 {
-    pusherOutlinePass.selectedObjects = [...player1.pushers]
+    // pusherOutlinePass.selectedObjects = [...player1.pushers]
     setPushersColliding(false);
     for (let i = 0; i < player1.pushers.length; i++) {
         const obj1 = player1.pushers[i];
@@ -226,20 +247,25 @@ function pushersLogic()
             if (box1.intersectsBox(box2)) {
                 const overlapX = Math.min(box1.max.x, box2.max.x) - Math.max(box1.min.x, box2.min.x);
                 let mtv = new THREE.Vector3(overlapX, 0, 0);
-                if (obj1.colliding == false)
+                if (obj1.colliding == false) {
                     obj1.mesh.position.x -= mtv.x / 2 - 0.005;
-                if (obj2.colliding == false)
-                    obj2.mesh.position.x += mtv.x / 2 - 0.005;
-                obj1.downSize();
-                obj2.downSize();
+				}
+				if (obj2.colliding == false) {
+					obj2.mesh.position.x += mtv.x / 2 - 0.005;
+				}
+                obj1.downSize(G.pusherFightValue);
+                obj2.downSize(G.pusherFightValue);
                 obj1.colliding = true;
                 obj2.colliding = true;
                 obj1.updateBoundingBox();
                 obj2.updateBoundingBox();
+				continue ;
             }
-        }
-    }
-    movePushers();
+			// console.log(arena.powerup.box);
+		}
+	}
+	checkPowerupCollision();
+	movePushers();
 }
 
 // ----Update and render----
@@ -248,18 +274,29 @@ function movePushers() {
     for (let i = 0; i < player1.pushers.length; i++) {
         pusher = player1.pushers[i];
         player1.movePusher(pusher);
-        if (pusher.mesh.position.x >= player2.mesh.position.x) {
-            arena.lanes[pusher.lane].player1scored(pusher.size);
+        if (pusher.furtestX > G.laneEnd) {
+			// console.log()
+			arena.lanes[pusher.lane].player1scored(pusher.size - (G.pusherMinSize / 2));
             pusher.player.removePusher(pusher);
         }
-    }
+		else if (pusher.furtestX < arena.getOpposingSectionPositionByPusher(pusher))
+		{
+			arena.lanes[pusher.lane].player1scored(G.passiveScore);
+			pusher.downSize(G.passiveScore);
+		}
+	}
     for (let i = 0; i < player2.pushers.length; i++) {
         pusher = player2.pushers[i];
         player2.movePusher(pusher)
-        if (pusher.mesh.position.x <= player1.mesh.position.x) {
-            arena.lanes[pusher.lane].player2scored(pusher.size);
+        if (pusher.furtestX < -G.laneEnd) {
+            arena.lanes[pusher.lane].player2scored(pusher.size - (G.pusherMinSize / 2));
             pusher.player.removePusher(pusher);
         }
+		else if (pusher.furtestX > arena.getOpposingSectionPositionByPusher(pusher))
+		{
+			arena.lanes[pusher.lane].player2scored(G.passiveScore);
+			pusher.downSize(G.passiveScore);
+		}
     }
 }
 
@@ -269,21 +306,18 @@ function playersLogic()
 	player2.logicLoop();
 }
 
-const pusherOutlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
-pusherOutlinePass.edgeStrength = 3.0;
-pusherOutlinePass.edgeGlow = 0.0;
-pusherOutlinePass.edgeThickness = 1.0;
-pusherOutlinePass.pulsePeriod = 0;
-pusherOutlinePass.visibleEdgeColor.set('#000000'); // Black outline
-pusherOutlinePass.hiddenEdgeColor.set('#000000'); // Black outline
+// const pusherOutlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
+// pusherOutlinePass.edgeStrength = 3.0;
+// pusherOutlinePass.edgeGlow = 0.0;
+// pusherOutlinePass.edgeThickness = 1.0;
+// pusherOutlinePass.pulsePeriod = 0;
+// pusherOutlinePass.visibleEdgeColor.set('#000000'); // Black outline
+// pusherOutlinePass.hiddenEdgeColor.set('#000000'); // Black outline
 
-timer.start(42);
+timer.start(61);
 function update()
 {
     setTimeout(() => { requestAnimationFrame(update); }, 1000 / G.fps);
-    // updateBoost();
-    // updatePlayerPosition();
-	console.log((timer.getRemainingTime()));
 	playersLogic();
     pushersLogic();
     if (composer)
@@ -294,10 +328,10 @@ function update()
     {
         renderer.render(scene, camera);
     }
-    // console.log(timer.getRemainingTime());
+	arena.checkPowerupSpawn();
 	text.updateText(Math.floor(timer.getRemainingTime()).toString());
-
-    renderer.autoClear = false;
+	// arena.addToScene();
+	renderer.autoClear = false;
     renderer.clearDepth();
 }
 update();
@@ -314,7 +348,7 @@ function sleepMillis(millis)
 // ----Key Input----
 function handleKeyDown(event)
 {
-    if (event.repeat && event.key != KEY.P1_BOOST && event.key != KEY.P2_BOOST)
+    if (event.repeat && event.key != KEY.P1_BOOST && event.key != KEY.P2_BOOST && event.key != KEY.P1_BOOST_PAUSE && event.key != KEY.P2_BOOST_PAUSE)
     {
         handleKeyUp(event);
         return ;
@@ -327,19 +361,25 @@ function handleKeyDown(event)
         case KEY.P1_RIGHT:
             player1.moveRight = true;
             break;
+		case KEY.P1_BOOST_PAUSE:
+			player1.boostPaused = true;
+			break;
         case KEY.P1_BOOST:
             player1.boostPressed = true;
             break;
-        case KEY.P2_LEFT:
-            player2.moveLeft = true;
-            break;
+		case KEY.P2_LEFT:
+           player2.moveLeft = true;
+           break;
         case KEY.P2_RIGHT:
             player2.moveRight = true;
             break;
-        case KEY.P2_BOOST:
-            player2.boostPressed = true;
-            break;
-    }
+		case KEY.P2_BOOST_PAUSE:
+			player2.boostPaused = true;
+			break;
+		case KEY.P2_BOOST:
+			player2.boostPressed = true;
+			break;
+		}
 }
 
 function handleKeyUp(event)
@@ -352,19 +392,25 @@ function handleKeyUp(event)
         case KEY.P1_RIGHT:
             player1.moveRight = false;
             break;
+		case KEY.P1_BOOST_PAUSE:
+			player1.boostPaused = false;
+			break;
         case KEY.P1_BOOST:
             player1.boostPressed = false;
             break;
-        case KEY.P2_LEFT:
+		case KEY.P2_LEFT:
             player2.moveLeft = false;
             break;
         case KEY.P2_RIGHT:
             player2.moveRight = false;
             break;
+		case KEY.P2_BOOST_PAUSE:
+			player2.boostPaused = false;
+			break;
         case KEY.P2_BOOST:
             player2.boostPressed = false;
             break;
-    }
+	}
 }
 
 document.addEventListener('keydown', handleKeyDown);

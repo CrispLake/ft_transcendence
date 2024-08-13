@@ -148,6 +148,9 @@ export const lifeGapWidthRatio = 1 / 3;
 export const lifeThickness = 0.2;
 export const lifeBorderThickness = 2;
 
+export const countDownMinSize = 10;
+export const countDownMaxSize = 200;
+
 
 //--------------------------------------------------------------------------
 //  POWERUPS

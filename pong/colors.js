@@ -40,6 +40,8 @@ export const UI_PLAYERCARD_BG = DARK_GRAY;
 export const UI_PLAYERCARD_BORDER = PURPLE;
 export const UI_LIFE = WHITE;
 
+export const UI_COUNTDOWN_TEXT = WHITE;
+
 export const POWERUP_SPHERE = WHITE;
 export const POWER_PADDLE_LONG = GREEN;
 export const POWER_PADDLE_SHORT = RED;

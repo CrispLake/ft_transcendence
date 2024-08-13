@@ -199,7 +199,7 @@ export class Game
 
 	createCountDownText(text)
 	{
-		this.countDownText = new Text2D(this.uiScene, text, 200, COLOR.WHITE, this.fontLoader, window.innerWidth, (mesh) => {
+		this.countDownText = new Text2D(this.uiScene, text, G.countDownMaxSize, COLOR.UI_COUNTDOWN_TEXT, this.fontLoader, window.innerWidth, (mesh) => {
 			mesh.position.set(-this.countDownText.textWidth / 2, -this.countDownText.textHeight / 2, 0);
 			this.uiScene.add(mesh);
 		});

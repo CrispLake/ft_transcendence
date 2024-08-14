@@ -57,14 +57,16 @@ export default class extends AbstractView {
   async Pong() {
     const pong = new Pong();
     await pong.AddListeners();
+
     const gameResults = await pong.fakeGame(this.setupObj);
+
     await pong.RemoveListeners();
     const resultsView = new Results();
     await resultsView.getUserInput(gameResults);
   }
 
   Gonp() {
-
+    
   }
 
   // Launch 4p tournament

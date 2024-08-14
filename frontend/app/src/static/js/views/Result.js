@@ -56,6 +56,17 @@ export default class extends AbstractView {
         await this.waitForUser();
     }
 
+
+
+
+
+
+
+
+
+
+
+
   AddListeners() {
 
   }
@@ -68,6 +79,7 @@ export default class extends AbstractView {
     const winner = this.results.winner;
     console.log('winner: ', winner);
     return `
+        <div id="confettiContainer"></div>
         <div class="result-div">
             <div class="winner-text-div" >
                 <h1 class="font-sub winner-text">WINNER</h1>

@@ -62,6 +62,9 @@ export class AI
         this.clockBoostMeter = new THREE.Clock();
         this.effect = false;
         this.boostMeterAnimation = false;
+        this.stunTimer = new THREE.Clock();
+        this.stunned = false;
+        this.stunPosition = new THREE.Vector3();
         this.active = false;
         this.bounce = false;
         this.initializeBrain();        
@@ -183,6 +186,7 @@ export class AI
         this.intersectionPoints = [];
         this.firstPoint = new IntersectionPoint(0, 0, "none");
 
+        this.ballIntersectPos = 0;
         this.pathLengthToHit = 0;
         this.ballTimeToTarget = 0;
         this.ballTimeToTargetTimer = new THREE.Clock();
@@ -222,7 +226,10 @@ export class AI
 
     resetBoostAnimation()
     {
-        this.boostMeter.position.set(this.paddle.position.x + this.boostOffset, this.paddle.position.y, this.paddle.position.z);
+        if (this.alignment == G.vertical)
+            this.boostMeter.position.set(this.paddle.position.x + this.boostOffset, this.paddle.position.y, this.paddle.position.z);
+        else
+            this.boostMeter.position.set(this.paddle.position.x, this.paddle.position.y + this.boostOffset, this.paddle.position.z);
         this.boostMeter.material.emissive.set(COLOR.BOOSTMETER);
         this.boostMeterAnimation = false;
         this.boostAmount = 0;
@@ -241,12 +248,25 @@ export class AI
         let color = PongMath.colorLerp(elapsedTime, 0, G.boostMeterAnimationTime, COLOR.BOOSTMETER, COLOR.BOOSTMETER_FULL);
         this.boostMeter.material.emissive.set(color);
         let movementMultiplier = PongMath.lerp(elapsedTime, 0, G.boostMeterAnimationTime, 0, G.boostAnimationMaxMovement);
-        this.boostMeter.position.x = (this.paddle.position.x + this.boostOffset) + Math.random() * movementMultiplier;
-        this.boostMeter.position.z = this.paddle.position.z + Math.random() * movementMultiplier;
+        if (this.alignment == G.vertical)
+        {
+            this.boostMeter.position.x = (this.paddle.position.x + this.boostOffset) + Math.random() * movementMultiplier;
+            this.boostMeter.position.z = this.paddle.position.z + Math.random() * movementMultiplier;
+        }
+        else
+        {
+            this.boostMeter.position.z = (this.paddle.position.z + this.boostOffset) + Math.random() * movementMultiplier;
+            this.boostMeter.position.x = this.paddle.position.x + Math.random() * movementMultiplier;
+        }
 
         if (elapsedTime >= G.boostMeterAnimationTime)
         {
             this.resetBoostAnimation();
+            this.stunPosition = this.paddle.position.clone();
+            this.paddle.material.emissive.set(COLOR.STUNNED);
+            this.light.color.set(COLOR.STUNNED);
+            this.stunned = true;
+            this.stunTimer.start();
         }
     }
 
@@ -544,7 +564,7 @@ export class AI
     getFirstIntersectionPoint()
     {
         let x, z;
-        if (this.angle > PongMath.degToRad(0) && this.angle <= PongMath.degToRad(90))
+        if (this.angle > PongMath.degToRad(0) && this.angle < PongMath.degToRad(90))
         {
             x = this.getIntersectionX(this.ballPos, this.wallZ, this.angle);
             if (x > this.wallX)
@@ -555,7 +575,7 @@ export class AI
             else
                 this.firstPoint.set(x, this.wallZ, "bottom");
         }
-        else if (this.angle > PongMath.degToRad(90) && this.angle <= PongMath.degToRad(180))
+        else if (this.angle > PongMath.degToRad(90) && this.angle < PongMath.degToRad(180))
         {
             x = this.getIntersectionX(this.ballPos, -this.wallZ, this.angle);
             if (x > this.wallX)
@@ -566,7 +586,7 @@ export class AI
             else
                 this.firstPoint.set(x, -this.wallZ, "top");
         }
-        else if (this.angle > PongMath.degToRad(180) && this.angle <= PongMath.degToRad(270))
+        else if (this.angle > PongMath.degToRad(180) && this.angle < PongMath.degToRad(270))
         {
             x = this.getIntersectionX(this.ballPos, -this.wallZ, this.angle);
             if (x < -this.wallX)
@@ -577,7 +597,7 @@ export class AI
             else
                 this.firstPoint.set(x, -this.wallZ, "top");
         }
-        else if (this.angle > PongMath.degToRad(270) && this.angle <= PongMath.degToRad(360))
+        else if (this.angle > PongMath.degToRad(270) && this.angle < PongMath.degToRad(360))
         {
             x = this.getIntersectionX(this.ballPos, this.wallZ, this.angle);
             if (x < -this.wallX)
@@ -588,6 +608,14 @@ export class AI
             else
                 this.firstPoint.set(x, this.wallZ, "bottom");
         }
+        else if (this.angle == PongMath.degToRad(0))
+            this.firstPoint.set(0, this.wallZ, "bottom");
+        else if (this.angle == PongMath.degToRad(90))
+            this.firstPoint.set(this.wallX, 0, "right");
+        else if (this.angle == PongMath.degToRad(180))
+            this.firstPoint.set(0, -this.wallZ, "top");
+        else if (this.angle == PongMath.degToRad(270))
+            this.firstPoint.set(-this.wallX, 0, "left");
     }
 
     getTargetPositionMultiMode()
@@ -622,6 +650,7 @@ export class AI
             }
         }
     }
+
 
     //--------------------------------------------------------------------------
     //  CURVED PATH
@@ -807,7 +836,8 @@ export class AI
         }
         if (first >= 0)
         {
-            this.pathLengthToHit += PongMath.arcLength(this.radius, maxAngle);
+            let actualAngle = PongMath.degToRad(360) - maxAngle;
+            this.pathLengthToHit += PongMath.arcLength(this.radius, actualAngle);
             this.firstPoint.set(this.intersectionPoints[first].pos.x, this.intersectionPoints[first].pos.y, this.intersectionPoints[first].wall);
         }
     }
@@ -851,19 +881,32 @@ export class AI
         if (this.ownGoalHit())
         {
             if (this.alignment == G.vertical)
+            {
                 this.targetPos = this.firstPoint.pos.y;
+                this.ballIntersectPos = this.firstPoint.pos.y;
+            }
             else
+            {
                 this.targetPos = this.firstPoint.pos.x;
+                this.ballIntersectPos = this.firstPoint.pos.x;
+            }
         }
     }
 
+    
+    db(n, msg, x)   // DEBUG
+    {
+        if (this.playerNum == n)
+            console.log(n + ": " + msg + " = " + x);
+    }
 
     //--------------------------------------------------------------------------
-    //  ACTIONS
+    //  READ GAME
     //--------------------------------------------------------------------------
 
     readGame()
     {
+        this.db(3, "READ", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         if (this.ballMovesTowards())
         {
             if (this.considerSpin && this.game.ball.spin != 0)
@@ -876,7 +919,7 @@ export class AI
                     this.getTargetPosition();
             }
             if (this.canSpin)
-                this.handleSpin();
+                this.updateTimeToTarget();
         }
         else
         {
@@ -888,11 +931,27 @@ export class AI
         }
     }
 
-    handleSpin()
+    updateTimeToTarget()
     {
-        this.ballTimeToTarget = this.pathLengthToHit / (this.game.ball.speed * G.fps);
-        this.ballTimeToTargetTimer.start();
+        // this.ballTimeToTarget = this.pathLengthToHit / (this.game.ball.speed * G.fps);
+        // this.db(3, "ball: pathLength  ", this.pathLengthToHit.toFixed(2));
+        // this.db(3, "ball: timeToTarget", this.ballTimeToTarget.toFixed(2));
+        // this.ballTimeToTargetTimer.start();
+
+        this.ballTimeToHit = this.pathLengthToHit / (this.game.ball.speed * G.fps);
+        this.db(3, "ball: pathLength  ", this.pathLengthToHit.toFixed(2));
+        this.db(3, "ball: timeToHit", this.ballTimeToHit.toFixed(2));
+        if (this.targetIsInsideBoundary())
+        {
+            this.ballTimeToTarget = this.ballTimeToHit;
+            this.ballTimeToTargetTimer.start();
+        }
     }
+
+
+    //--------------------------------------------------------------------------
+    //  INPUT
+    //--------------------------------------------------------------------------
 
     handleInput()
     {
@@ -906,6 +965,11 @@ export class AI
         else if (paddleDistanceToTarget < -this.speed)
             this.moveRight = true;
     }
+
+
+    //--------------------------------------------------------------------------
+    //  SPIN INPUT
+    //--------------------------------------------------------------------------
 
     getSpinDirection()
     {
@@ -935,14 +999,18 @@ export class AI
 
     targetIsInsideBoundary()
     {
-        return (this.targetPos < this.movementBoundary && this.targetPos > -this.movementBoundary);
+        return (this.ownGoalHit() && this.ballIntersectPos < this.movementBoundary && this.ballIntersectPos > -this.movementBoundary);
     }
 
     handleSpinInput()
     {
-        
-        if (this.ballIsInchingIn() && this.targetIsInsideBoundary())
+        this.db(3, "ballIntersectPos", this.ballIntersectPos);
+        this.db(3, "pathLen", this.pathLengthToHit.toFixed(2));
+        this.db(3, "timeHit", this.ballTimeToTarget.toFixed(2));
+        if (this.ballTimeToTargetTimer.running && this.ballIsInchingIn() && this.targetIsInsideBoundary())
         {
+            // If ball is close to hitting goal, move in spinDirection.
+            this.db(3, "Spin", this.spinDirection);
             if (this.spinDirection == G.SpinLeft)
                 this.moveLeft = true;
             else if (this.spinDirection == G.SpinRight)
@@ -950,7 +1018,16 @@ export class AI
         }
         else
         {
-            let paddleDistanceToTarget = this.paddle.position.z - this.targetPos;
+            if (this.ballIsInchingIn() && !this.targetIsInsideBoundary()) this.db(3, "close: Y", "goal: N");
+            if (!this.ballIsInchingIn() && this.targetIsInsideBoundary()) this.db(3, "close: N", "goal: Y");
+            if (!this.ballIsInchingIn() && !this.targetIsInsideBoundary()) this.db(3, "close: N", "goal: N");
+            // If ball is far away and hitting goal, get into position (target)
+            // If ball is not hitting goal move towards center (target)
+            let paddleDistanceToTarget;
+            if (this.alignment == G.vertical)
+                paddleDistanceToTarget = this.paddle.position.z - this.targetPos;
+            else
+                paddleDistanceToTarget = this.paddle.position.x - this.targetPos;
             paddleDistanceToTarget = this.adjustForOffset(paddleDistanceToTarget);
             if (paddleDistanceToTarget > this.speed)
                 this.moveLeft = true;
@@ -958,6 +1035,7 @@ export class AI
                 this.moveRight = true;
         }
 
+        // If we were the last to hit the ball, reset brain
         if (this.active)
         {
             if (this.ballTimeToTargetTimer.running)
@@ -970,39 +1048,43 @@ export class AI
                 this.setOffsetFromTargetPosition();
             }
         }
-        else
+
+        if (this.targetIsInsideBoundary())  // TODO: make AI stop boosting. Probably need to move it outside this if statement.
         {
-            if (this.ballTimeToTargetTimer.running)
+            let timeToHit = this.ballTimeToTarget - this.ballTimeToTargetTimer.getElapsedTime();
+            if (timeToHit < G.boostFillingTime)
             {
-                let timeToHit = this.ballTimeToTarget - this.ballTimeToTargetTimer.getElapsedTime();
-                if (timeToHit < G.boostFillingTime)
+                if (this.boostPressed == false)
                 {
-                    if (this.boostPressed == false)
-                    {
-                        this.boostPressed = true;
-                        this.boostReleased = false;
-                    }
+                    this.boostPressed = true;
+                    this.boostReleased = false;
                 }
-                else if (timeToHit < 0)
+            }
+            else if (timeToHit < 0)
+            {
+                if (this.boostPressed == true)
                 {
-                    if (this.boostPressed == true)
-                    {
-                        this.boostPressed = false;
-                        this.boostReleased = true;
-                    }
+                    this.spinDirection = 0;
+                    this.boostPressed = false;
+                    this.boostReleased = true;
                 }
-                else
+            }
+            else
+            {
+                if (this.boostPressed == true)
                 {
-                    if (this.boostPressed == true)
-                    {
-                        this.boostPressed = false;
-                        this.boostReleased = true;
-                    }
+                    this.boostPressed = false;
+                    this.boostReleased = true;
                 }
-                this.updateBoost();
             }
         }
+        this.updateBoost();
     }
+
+
+    //--------------------------------------------------------------------------
+    //  BASE FUNCTIONS
+    //--------------------------------------------------------------------------
 
     move(movement)
     {
@@ -1038,6 +1120,7 @@ export class AI
         this.boostAmount = 0;
         this.updateBoostMeter();
         this.targetPos = 0;
+        this.spinDirection = 0;
     }
 
     update()
@@ -1047,6 +1130,26 @@ export class AI
 
         if (this.effect)
             this.updateLightEffect();
+        if (this.stunned)
+        {
+            let elapsedTime = this.stunTimer.getElapsedTime();
+            if (elapsedTime >= G.stunTime)
+            {
+                this.paddle.position.copy(this.stunPosition);
+                this.paddle.material.emissive.set(this.color);
+                this.light.color.set(this.color);
+                this.stunned = false;
+                this.stunTimer.stop();
+            }
+            else
+            {
+                const maxShake = G.maxStunShake * ((G.stunTime - elapsedTime) / G.stunTime);
+                const randomX = Math.random() * maxShake;
+                const randomZ = Math.random() * maxShake;
+                this.paddle.position.set(this.stunPosition.x + randomX, this.stunPosition.y, this.stunPosition.z + randomZ);
+                return;
+            }
+        }
         if (this.gameReadTimer.getElapsedTime() >= this.readInterval)
         {
             this.readGame();

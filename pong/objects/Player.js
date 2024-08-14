@@ -154,7 +154,10 @@ export class Player
 
     resetBoostAnimation()
     {
-        this.boostMeter.position.set(this.paddle.position.x + this.boostOffset, this.paddle.position.y, this.paddle.position.z);
+        if (this.alignment == G.vertical)
+            this.boostMeter.position.set(this.paddle.position.x + this.boostOffset, this.paddle.position.y, this.paddle.position.z);
+        else
+            this.boostMeter.position.set(this.paddle.position.x, this.paddle.position.y + this.boostOffset, this.paddle.position.z);
         this.boostMeter.material.emissive.set(COLOR.BOOSTMETER);
         this.boostMeterAnimation = false;
         this.boostAmount = 0;
@@ -173,7 +176,7 @@ export class Player
         let color = PongMath.colorLerp(elapsedTime, 0, G.boostMeterAnimationTime, COLOR.BOOSTMETER, COLOR.BOOSTMETER_FULL);
         this.boostMeter.material.emissive.set(color);
         let movementMultiplier = PongMath.lerp(elapsedTime, 0, G.boostMeterAnimationTime, 0, G.boostAnimationMaxMovement);
-        if (this.playerNum < 3)
+        if (this.alignment == G.vertical)
         {
             this.boostMeter.position.x = (this.paddle.position.x + this.boostOffset) + Math.random() * movementMultiplier;
             this.boostMeter.position.z = this.paddle.position.z + Math.random() * movementMultiplier;

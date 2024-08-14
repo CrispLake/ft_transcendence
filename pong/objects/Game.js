@@ -244,6 +244,7 @@ export class Game
 	update()
 	{
 		setTimeout(() => { requestAnimationFrame(this.update); }, 1000 / G.fps);
+		
 		if (this.gameEnded)
 		{
 			this.updateCamera();
@@ -259,8 +260,9 @@ export class Game
 		if (this.pause)
 			return;
 		this.powerupManager.update();
-		this.updateCamera();
+		// this.updateCamera();
 
+		console.log("-----------------------------------------------------------");
 		for (let player in this.players)
 			this.players[player].update();
 		this.updateBallPosition();

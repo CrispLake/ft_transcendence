@@ -27,7 +27,7 @@ export const cameraOrbitTimeSec = 120;
 
 // 4 Player
 export const arenaWidth4Player = 25;
-export const wallLength4Player = 5;
+export const wallLength4Player = 3;
 
 
 //--------------------------------------------------------------------------
@@ -120,7 +120,7 @@ export const startPos4P = {
 //  AI
 //--------------------------------------------------------------------------
 
-export const AIreadInterval = 2;
+export const AIreadInterval = 1;
 export const SpinLeft = -1;
 export const SpinRight = 1;
 export const maxOffset = 0.2;

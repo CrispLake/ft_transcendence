@@ -48,12 +48,8 @@ export default class extends AbstractView {
         const gameSetupObj = new GameSetup(this.gameMode);
         this.setupObj = await gameSetupObj.getUserInput();
         await gameSetupObj.RemoveListeners();
-    }
+  }
 
-  // TODO: make it wait and return the results --> also for 4p
-  //        remove event listeners when game finished!
-  // Launch 2p or 4p pong game
-  // PARAMS: players: 2 || 4
   async Pong() {
     const pong = new Pong();
     await pong.AddListeners();

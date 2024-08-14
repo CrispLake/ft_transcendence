@@ -25,20 +25,12 @@ export default class extends AbstractView {
   constructor(params) {
     super(params);
 
-    // this.playerCount = params.playerCount || 1;     // int (1-4)
-    // this.multimode = params.multimode || false;     // true / false
-    // this.tournament = params.tournament || false;   // true / false
-    // this.diff = parms.diff || 1;                    // int (1-3)
-
     this.setTitle('Pong');
     this.listeners = true;
     this.childs = true;
 
-    // Game variables
-    // this.game = new Game(this.settings);
     this.controls = null;
 
-    // Binding 'this' for external use
     this.onWindowResize = this.onWindowResize.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
@@ -70,8 +62,10 @@ export default class extends AbstractView {
   }
 
   async fakeGame(gameSettings) {
-    console.log('IN FAKE GAME: ', gameSettings);
     const results = this.CreateResultsObject(gameSettings);
+
+    // WAITING LOGIC HERE
+
     return results;
   }
 

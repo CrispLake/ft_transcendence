@@ -56,17 +56,6 @@ export default class extends AbstractView {
         await this.waitForUser();
     }
 
-
-
-
-
-
-
-
-
-
-
-
   AddListeners() {
 
   }
@@ -77,7 +66,17 @@ export default class extends AbstractView {
 
   async getHtml() {
     const winner = this.results.winner;
-    console.log('winner: ', winner);
+    let imageTag;
+    if (winner.username === "AI") {
+        imageTag = `<img class="winner-img" src="static/images/ai.avif" alt="User icon"/>`
+    }
+    else if (winner.username === "Guest Player") {
+        imageTag = `<img class="winner-img" src="static/images/guest.png" alt="User icon"/>`
+    }
+    else {
+        imageTag = `<img class="winner-img" src="http://localhost:8000/account/${winner.id}/image" alt="User icon"/>`
+    }
+
     return `
         <div id="confettiContainer"></div>
         <div class="result-div">
@@ -86,7 +85,7 @@ export default class extends AbstractView {
             </div>
 
             <div class="winner-card">
-                <img class="winner-img" src="http://localhost:8000/account/${winner.id}/image" alt="User icon"/>
+                ${imageTag}
                 <h3 class="font-text winner-username">${winner.username}</h3>
             </div>
 

@@ -21,7 +21,8 @@ export default class extends AbstractView {
 
         this.powerups = false;
         this.ai_difficulty = 1;
-
+        console.log(params);
+        this.gameMode = params;
 
         this.getFirstEntry();
         this.waitForUser = this.waitForUser.bind(this);
@@ -34,7 +35,7 @@ export default class extends AbstractView {
         this.LoginHandler = this.LoginHandler.bind(this);
         this.AiDifficultySlider = this.AiDifficultySlider.bind(this);
         this.MaxPlayerLimitReached = this.MaxPlayerLimitReached.bind(this);
-        this.AddUserHandler = this.AddUserHandler.bind(this);
+        this.AddUserHandler = this.AddUserHandler.bind(this)
     }
 
     // TODO: Notification for player limit reached
@@ -144,12 +145,17 @@ export default class extends AbstractView {
 
 
     addAiEntryHandler(event) {
-        if (event) {
-            event.preventDefault();
-        }
+        event.preventDefault();
 
         if (this.MaxPlayerLimitReached()) {
             console.log('Max player limit reached');
+            return;
+        }
+
+        // 2 == GONP in gamemode list
+        // and gonp does not have AI
+        if (this.gameMode == 2) {
+            Notification('notification-div', '<h3>AI does not know how to play GONP</h3>', 1);
             return;
         }
 
@@ -435,7 +441,9 @@ export default class extends AbstractView {
         addButton.addEventListener('click', this.addGuestEntryHandler);
         addAiButton.addEventListener('click', this.addAiEntryHandler);
         loginForm.addEventListener('submit', this.LoginHandler);
-        rangeSlider.addEventListener('input', this.AiDifficultySlider);
+        if (rangeSlider) {
+            rangeSlider.addEventListener('input', this.AiDifficultySlider);
+        }
 
 
         document.querySelector(".next").addEventListener("click", this.HandleNext);
@@ -458,7 +466,9 @@ export default class extends AbstractView {
             addAiButton.removeEventListener('click', this.addAiEntryHandler);
             loginForm.removeEventListener('submit', this.LoginHandler);
             powerUpToggle.removeEventListener('click', this.PowerUpToggle);
-            rangeSlider.addEventListener('input', this.AiDifficultySlider);
+            if (rangeSlider) {
+                rangeSlider.addEventListener('input', this.AiDifficultySlider);
+            }
         } catch (error) {
             console.log('505 - Internal server error - could not find LoginSubmitButton');
             this.Redirect('/500');
@@ -507,11 +517,18 @@ export default class extends AbstractView {
                     </label>
                 </span>
 
-                <div class="slider-container">
-                    <label class="font-text powerup-text" for="range-slider">AI Diff:</label>
-                    <input type="range" id="range-slider" min="1" max="3" value="1" step="1">
-                    <span class="font-text powerup-text" id="slider-value">1</span>
-                </div>
+                ${
+                this.gameMode === 2
+                ?
+                    ''
+                :
+
+                    `<div class="slider-container">
+                        <label class="font-text powerup-text" for="range-slider">AI Diff:</label>
+                        <input type="range" id="range-slider" min="1" max="3" value="1" step="1">
+                        <span class="font-text powerup-text" id="slider-value">1</span>
+                    </div>`
+                }
 
             </div>
 

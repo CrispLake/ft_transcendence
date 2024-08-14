@@ -71,11 +71,11 @@ export default class extends AbstractView {
 
     CreateResultsObject(gameSettings) {
         const results = {
-            "winner": gameSettings.players[0],
+            "winner": gameSettings.players[1],
             "player1": 1,
-            "player1Score": 3,
+            "player1Score": 2,
             "player2": 2,
-            "player2Score": 2
+            "player2Score": 4
         }
         return results;
     }

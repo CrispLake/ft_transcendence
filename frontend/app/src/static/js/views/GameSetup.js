@@ -33,8 +33,16 @@ export default class extends AbstractView {
         this.addExistingUserEntryHandler = this.addExistingUserEntryHandler.bind(this);
         this.LoginHandler = this.LoginHandler.bind(this);
         this.AiDifficultySlider = this.AiDifficultySlider.bind(this);
+        this.MaxPlayerLimitReached = this.MaxPlayerLimitReached.bind(this);
+        this.AddUserHandler = this.AddUserHandler.bind(this);
     }
 
+    // TODO: Notification for player limit reached
+    MaxPlayerLimitReached() {
+        if (this.entryIdCounter == this.maxPlayers)
+            return true;
+        return false;
+    }
     waitForUser() {
         this.AddListeners();
         return new Promise((resolve) => {
@@ -134,12 +142,6 @@ export default class extends AbstractView {
         console.log(response)
     }
 
-    // TODO: Notification for player limit reached
-    MaxPlayerLimitReached() {
-        if (this.entryIdCounter == this.maxPlayers)
-            return true;
-        return false;
-    }
 
     addAiEntryHandler(event) {
         if (event) {
@@ -183,6 +185,26 @@ export default class extends AbstractView {
         this.playerCounter++;
         this.entries.push(newEntry);
         this.renderEntries();
+    }
+
+
+    MaxPlayerLimitReached() {
+        if (this.entryIdCounter == this.maxPlayers)
+            return true;
+        return false;
+    }
+
+
+    AddUserHandler(event) {
+        event.preventDefault();
+
+        if (this.MaxPlayerLimitReached()) {
+            console.log('Max player limit reached');
+            return;
+        }
+
+        const button = document.getElementById('pop-up-login');
+        button.style.display = 'block';
     }
 
     async addExistingUserEntryHandler(userData) {
@@ -395,6 +417,7 @@ export default class extends AbstractView {
 
     HandlePopupExit(event) {
         event.preventDefault();
+        console.log('handlePopupExit');
         this.HideLoginPopUp();
     }
 
@@ -407,6 +430,7 @@ export default class extends AbstractView {
         const rangeSlider = document.getElementById('range-slider');
         const popupExit = document.getElementById('popup-exit-button');
 
+        addUserButton.addEventListener('click',this.AddUserHandler);
         popupExit.addEventListener('click', this.HandlePopupExit);
         addButton.addEventListener('click', this.addGuestEntryHandler);
         addAiButton.addEventListener('click', this.addAiEntryHandler);
@@ -428,6 +452,7 @@ export default class extends AbstractView {
         const popupExit = document.getElementById('popup-exit-button');
 
         try {
+            addUserButton.removeEventListener('click',this.AddUserHandler);
             addButton.removeEventListener('click', this.addGuestEntryHandler);
             popupExit.removeEventListener('click', this.HandlePopupExit);
             addAiButton.removeEventListener('click', this.addAiEntryHandler);

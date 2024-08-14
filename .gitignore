@@ -2,3 +2,4 @@
 .DS_Store
 transcendence_src/src/media/
 transcendence_src/src/media/login/profile_pics
+.vscode/

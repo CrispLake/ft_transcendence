@@ -32,10 +32,13 @@
 
 .nav__link {
   text-decoration: none;
-  padding-top: 0.5rem;
   transition: 0.3s;
   font-size: 2rem;
   color: black;
+  margin-top: 5px;
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .nav_button {
@@ -113,7 +116,7 @@
 /* PROFILE ICON */
 .profile-icon-div {
   pointer-events: none;
-  height: 4rem; 
+  height: 4rem;
   width: 64px;
 }
 .profile-icon-div svg {

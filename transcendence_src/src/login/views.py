@@ -34,14 +34,14 @@ def serve_profile_image(request, id=None):
     try:
         account = Account.objects.get(id=id)
         if account.pfp is None or account.pfp.name == '':
-            return Response({'error': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
 
         file_path = os.path.join(settings.MEDIA_ROOT, account.pfp.name)
 
         if os.path.exists(file_path):
             return FileResponse(open(file_path, 'rb'))
         else:
-            return Response({'error': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
     except Account.DoesNotExist:
         return Response({'detail': 'User doesn\'t exist.'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -108,7 +108,7 @@ def update_account(request):
     max_size = 2 * 1024 * 1024
 
     if image is not None and image.size > max_size:
-        return Response({'error': 'File size exceeds 2 MB'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'File size exceeds 2 MB'}, status=status.HTTP_400_BAD_REQUEST)
 
     account = request.user.account
     serializer = AccountSerializer(account, data=request.data, partial=True)
@@ -124,7 +124,7 @@ def update_user(request):
     user = request.user
 
     if 'password' in request.data:
-        return Response({'detail': 'Use the change-password endpoint to update password.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'Use the change password to update password.'}, status=status.HTTP_400_BAD_REQUEST)
 
     serializer = UserSerializer(user, data=request.data, partial=True)
     if serializer.is_valid():
@@ -146,7 +146,7 @@ def change_password(request):
 
         new_token = Token.objects.create(user=user)
 
-        return Response({'status': 'password set', 'token': new_token.key}, status=status.HTTP_200_OK)
+        return Response({'detail': 'password set', 'token': new_token.key}, status=status.HTTP_200_OK)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -174,14 +174,14 @@ def send_friend_request(request):
     try:
         to_user = User.objects.get(id=to_user_id)
     except User.DoesNotExist:
-        return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'detail': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
     friend_request, created = FriendRequest.objects.get_or_create(from_user=request.user, to_user=to_user)
 
     if created:
-        return Response({'status': 'friend request sent'}, status=status.HTTP_201_CREATED)
+        return Response({'detail': 'friend request sent'}, status=status.HTTP_201_CREATED)
     else:
-        return Response({'status': 'friend request already sent'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'friend request already sent'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -190,19 +190,19 @@ def respond_to_friend_request(request, request_id):
     try:
         friend_request = FriendRequest.objects.get(id=request_id)
     except FriendRequest.DoesNotExist:
-        return Response({'error': 'friend request doesn\'t exist'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'detail': 'friend request doesn\'t exist'}, status=status.HTTP_404_NOT_FOUND)
 
     if friend_request.to_user != request.user:
-        return Response({'status': 'not authorized'}, status=status.HTTP_403_FORBIDDEN)
+        return Response({'detail': 'not authorized'}, status=status.HTTP_403_FORBIDDEN)
 
     if request.data.get('accept'):
         request.user.account.friends.add(friend_request.from_user.account)
         friend_request.from_user.account.friends.add(request.user.account)
         friend_request.delete()
-        return Response({'status': 'friend request accepted'}, status=status.HTTP_200_OK)
+        return Response({'detail': 'friend request accepted'}, status=status.HTTP_200_OK)
     else:
         friend_request.delete()
-        return Response({'status': 'friend request rejected'}, status=status.HTTP_200_OK)
+        return Response({'detail': 'friend request rejected'}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -211,15 +211,15 @@ def remove_friend(request, remove_id):
     try:
         to_remove = User.objects.get(id=remove_id)
     except User.DoesNotExist:
-        return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'detail': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
     user_account = request.user.account
     to_remove_account = to_remove.account
 
     if not user_account.friends.filter(id=remove_id).exists():
-        return Response({'error': 'This user is not in your friends list'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'This user is not in your friends list'}, status=status.HTTP_400_BAD_REQUEST)
 
     user_account.friends.remove(to_remove_account)
     to_remove_account.friends.remove(user_account)
 
-    return Response({'status': 'friend removed'}, status=status.HTTP_200_OK)
+    return Response({'detail': 'friend removed'}, status=status.HTTP_200_OK)

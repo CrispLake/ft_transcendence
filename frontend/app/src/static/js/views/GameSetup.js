@@ -1,4 +1,6 @@
 import AbstractView from './AbstractView.js';
+import { Notification } from '../notification.js';
+import { Settings } from '../pong/objects/Settings.js';
 
 export default class extends AbstractView {
     constructor(params) {
@@ -9,31 +11,39 @@ export default class extends AbstractView {
         this.listeners = true;
 
         this.entries = [];
-        
+
         this.entryIdCounter = 0;
         this.playerCounter = 0;
-        this.maxPlayers = 0;
-        console.log(localStorage.auth_token)
+        this.maxPlayers = -1;
         this.loginURL = 'http://localhost:8000/login';
+        this.currentDeg = 0;
+        this.currentCard = 1;
 
         this.powerups = false;
         this.ai_difficulty = 1;
 
-        this.getFirstEntry()
+
+        this.getFirstEntry();
+        this.waitForUser = this.waitForUser.bind(this);
+        this.HandlePopupExit = this.HandlePopupExit.bind(this);
+        this.HandlePrev = this.HandlePrev.bind(this);
+        this.HandleNext = this.HandleNext.bind(this);
         this.addGuestEntryHandler = this.addGuestEntryHandler.bind(this);
         this.addAiEntryHandler = this.addAiEntryHandler.bind(this);
         this.addExistingUserEntryHandler = this.addExistingUserEntryHandler.bind(this);
         this.LoginHandler = this.LoginHandler.bind(this);
-        this.AddUserHandler = this.AddUserHandler.bind(this);
-        this.PowerUpToggle = this.PowerUpToggle.bind(this);
         this.AiDifficultySlider = this.AiDifficultySlider.bind(this);
     }
 
     waitForUser() {
+        this.AddListeners();
         return new Promise((resolve) => {
             try {
-                document.getElementById('launch-pong').addEventListener('click', () => {
-                    resolve(this.entries);
+                document.getElementById('start-game-button').addEventListener('click', (event) => {
+                    event.preventDefault();
+                    if (this.playerCounter === this.maxPlayers) {
+                        resolve(this.entries);
+                    }
                 })
             }
             catch(error) {
@@ -47,13 +57,28 @@ export default class extends AbstractView {
         return users.map(user => ({
             id: user.player_id,
             token: user.token,
-            username: user.title
+            username: user.title,
+            winrate: user.winrate
         }));
     }
 
-    //TODO: If entry count is less than max players? Fill with AIs? Or prompt the user to add more players/AIs?
+    CreateSettingsObject() {
+        const settingsObj = new Settings({
+            multimode: this.params < 3 ? false : true,
+            diff: this.ai_difficulty,
+            powerups: this.powerups,
+            players: this.playerCounter,
+
+            //todo might remove
+            spin: true,
+        });
+        return settingsObj;
+    }
+
+    // Returns object containing list of players and settings object
+    // to be provided for the game
     async getUserInput() {
-        const appDiv = document.getElementById('app');
+        const appDiv = await document.getElementById('app');
         if (!appDiv) {
             this.Redirect('/500');
             return;
@@ -61,15 +86,12 @@ export default class extends AbstractView {
         this.maxPlayers = this.params < 3 ? 2 : 4;
 
         appDiv.innerHTML = await this.getHtml();
-        this.AddListeners();
-        const users = this.transform_users(await this.waitForUser());
+        const data = await this.waitForUser();
+        const users = this.transform_users(data);
+        const settingsObj = this.CreateSettingsObject();
         const params = {
             players: users,
-            settings : {
-                multimode: this.params < 3 ? false : true,
-                ai_difficulty: this.ai_difficulty,
-                powerups: this.powerups
-            }
+            settings: settingsObj,
         }
         return params;
     }
@@ -81,13 +103,27 @@ export default class extends AbstractView {
                 'http://localhost:8000/account',
                 { headers: {'Authorization': `Token ${this.GetKey()}`} }
             );
-            console.log("Response: " + response);
+            console.log("Response: " + response.data);
+            const wins = response.data.user.wins;
+            const losses = response.data.user.losses;
+            const total = wins + losses;
+
+            console.log('wins: ', wins, 'losses: ', losses);
+
+            let winrate;
+            if (total === 0) {
+              winrate = 0;
+            }
+            else {
+              winrate = ((wins / total) * 100);
+            }
             this.entries = [{
                 player_id: response.data.user.id,
                 token: this.GetKey(),
                 id: this.entryIdCounter++,
                 title: response.data.user.username,
-                image: `<img src="http://localhost:8000/account/${response.data.user.id}/image" alt="User icon" width="50" height="50">`
+                winrate: winrate,
+                image: `<img class="card-image" src="http://localhost:8000/account/${response.data.user.id}/image" alt="User icon" >`
             }]
             this.playerCounter++;
             this.renderEntries();
@@ -109,7 +145,7 @@ export default class extends AbstractView {
         if (event) {
             event.preventDefault();
         }
-        
+
         if (this.MaxPlayerLimitReached()) {
             console.log('Max player limit reached');
             return;
@@ -118,8 +154,11 @@ export default class extends AbstractView {
         const newEntry = {
             id: this.entryIdCounter++,
             title: `AI`,
-            image: `<img src="static/images/ai.avif" alt="AI icon" width="50" height="50">`
+            image: `<img class="card-image" src="static/images/ai.avif" alt="AI icon" >`,
+            // TODO: take winrate from form
+            winrate: 50
         };
+        this.playerCounter++;
         this.entries.push(newEntry);
         this.renderEntries();
     }
@@ -137,23 +176,13 @@ export default class extends AbstractView {
         const newEntry = {
             id: this.entryIdCounter++,
             title: `Guest Player`,
-            image: `<img src="static/images/guest.png" alt="Guest icon" width="50" height="50">`
+            image: `<img class="card-image" src="static/images/guest.png" alt="Guest icon">`,
+            winrate: Math.floor(Math.random() * (60 - 20 + 1)) + 20
+            // NOTE: guest has random winrate between 20% - 60%
         };
         this.playerCounter++;
         this.entries.push(newEntry);
         this.renderEntries();
-    }
-
-    AddUserHandler(event) {
-        event.preventDefault();
-
-        if (this.MaxPlayerLimitReached()) {
-            console.log('Max player limit reached');
-            return;
-        }
-
-        const button = document.getElementById('pop-up-login');
-        button.style.display = 'block';
     }
 
     async addExistingUserEntryHandler(userData) {
@@ -172,12 +201,23 @@ export default class extends AbstractView {
             this.profileData = { error: 'Failed to load profile data' };
         }
         console.log(profileData);
+        const wins = response.data.user.wins;
+        const losses = response.data.user.losses;
+        const total = wins + losses;
+        let winrate;
+        if (total === 0) {
+          winrate = 0;
+        }
+        else {
+          winrate = ((wins / total) * 100);
+        }
         const newEntry = {
             player_id: userData.data.user_id,
             token: userData.data.token,
             id: this.entryIdCounter++,
             title: userData.data.username,
-            image: `<img src="http://localhost:8000/account/${userData.data.user_id}/image" alt="User icon" width="50" height="50">`
+            winrate: winrate,
+            image: `<img class="card-image" src="http://localhost:8000/account/${userData.data.user_id}/image" alt="User icon">`
         };
         this.playerCounter++;
         this.entries.push(newEntry);
@@ -208,12 +248,12 @@ export default class extends AbstractView {
 
     renderEntries() {
         this.HideLoginPopUp();
-        const listContainer = document.getElementById('list-container');
+        const listContainer = document.getElementById('carousel-carousel');
         if (listContainer) {
-            listContainer.innerHTML = this.entries.map(entry => `
-                <div class="entry" id="entry-${entry.id}">
+            listContainer.innerHTML = this.entries.map((entry, index) => `
+                <div class="carousel-item id-${index}" id="entry-${entry.id}">
                 ${entry.image}
-                <h3>${entry.title}</h3>
+                <h3 class="font-text carousel-name-text">${entry.title}</h3>
                     <ul>
                     </ul>
                     ${entry.id !== 0 ? `<button class="remove-button" data-id="${entry.id}">Remove</button>` : ''}
@@ -227,6 +267,20 @@ export default class extends AbstractView {
                 });
             });
         }
+
+        const launchButtonText = document.getElementById('start-game-text');
+        if (!launchButtonText) { return; }
+
+        if (this.playerCounter === this.maxPlayers) {
+            launchButtonText.textContent = `START GAME`;
+        }
+        else {
+            launchButtonText.textContent = `PLAYERS ${this.playerCounter}/${this.maxPlayers}`;
+        }
+
+
+
+
     }
 
     // Handles user authentication
@@ -242,12 +296,12 @@ export default class extends AbstractView {
         const formElement = document.getElementById('login-form');
         const usernameInput = document.getElementById('username');
         const errorMessageDiv = document.getElementById('error-message');
-    
+
         if (!formElement) {
             this.Redirect('/500');
             return;
         }
-    
+
         const formData = new FormData(formElement);
         const payload = Object.fromEntries(formData);
 
@@ -257,7 +311,7 @@ export default class extends AbstractView {
             this.HideLoginPopUp();
             return;
         }
-    
+
         try {
             const response = await axios.post(this.loginURL, payload);
             this.addExistingUserEntryHandler(response);
@@ -288,16 +342,16 @@ export default class extends AbstractView {
 
         const PowerUpToggle = document.getElementById('toggle-content');
         if (!PowerUpToggle) {
-            console.log('505 - Internal server error - could not find slider');
+            console.log('505 - Internal server error - could not find toggle');
             this.Redirect('/500');
         }
-        if (PowerUpToggle.style.display === 'none' || PowerUpToggle.style.display === '') {
-            PowerUpToggle.style.display = 'block';
+        if (!this.powerups) {
             this.powerups = true;
+            PowerUpToggle.checked = true;
         }
         else {
-            PowerUpToggle.style.display = 'none';
             this.powerups = false;
+            PowerUpToggle.checked = false;
         }
     }
 
@@ -308,6 +362,7 @@ export default class extends AbstractView {
         const sliderValue = document.getElementById('slider-value');
 
         try {
+            console.log('hello from: ', rangeSlider.value)
             sliderValue.textContent = rangeSlider.value;
             this.ai_difficulty = rangeSlider.value;
         } catch (error) {
@@ -317,25 +372,50 @@ export default class extends AbstractView {
 
     }
 
+    HandleNext(event) {
+        event.preventDefault();
+        if (this.currentCard >= this.playerCounter) { return; }
+        this.currentCard++;
+        const carousel = document.getElementById("carousel-carousel");
+        if (!carousel) { return; }
+        this.currentDeg = this.currentDeg - 60;
+        console.log('click logged and deg: ', this.currentDeg);
+        carousel.style.transform = `rotateY(${this.currentDeg}deg)`;
+    }
+
+    HandlePrev(event) {
+        event.preventDefault();
+        if (this.currentCard <= 1) { return; }
+        this.currentCard--;
+        const carousel = document.getElementById("carousel-carousel");
+        if (!carousel) { return; }
+        this.currentDeg = this.currentDeg + 60;
+        carousel.style.transform = `rotateY(${this.currentDeg}deg)`;
+    }
+
+    HandlePopupExit(event) {
+        event.preventDefault();
+        this.HideLoginPopUp();
+    }
+
     AddListeners() {
         const addButton = document.getElementById('add-button');
         const addAiButton = document.getElementById('add-ai-button');
         const loginForm = document.getElementById('login-form');
         const addUserButton = document.getElementById('add-user-button');
-        const PowerUpToggle = document.getElementById('toggle-container');
+        const powerUpToggle = document.getElementById('toggle-container');
         const rangeSlider = document.getElementById('range-slider');
+        const popupExit = document.getElementById('popup-exit-button');
 
-        try {
-            addButton.addEventListener('click', this.addGuestEntryHandler);
-            addAiButton.addEventListener('click', this.addAiEntryHandler);
-            loginForm.addEventListener('submit', this.LoginHandler);
-            addUserButton.addEventListener('click', this.AddUserHandler);
-            PowerUpToggle.addEventListener('click', this.PowerUpToggle);
-            rangeSlider.addEventListener('input', this.AiDifficultySlider);
-        } catch (error) {
-            console.log('505 - Internal server error - could not find add button');
-            this.Redirect('/500');
-        }
+        popupExit.addEventListener('click', this.HandlePopupExit);
+        addButton.addEventListener('click', this.addGuestEntryHandler);
+        addAiButton.addEventListener('click', this.addAiEntryHandler);
+        loginForm.addEventListener('submit', this.LoginHandler);
+        rangeSlider.addEventListener('input', this.AiDifficultySlider);
+
+
+        document.querySelector(".next").addEventListener("click", this.HandleNext);
+        document.querySelector(".prev").addEventListener("click", this.HandlePrev);
     }
 
     RemoveListeners() {
@@ -343,13 +423,16 @@ export default class extends AbstractView {
         const addAiButton = document.getElementById('add-ai-button');
         const loginForm = document.getElementById('login-form');
         const addUserButton = document.getElementById('add-user-button');
+        const powerUpToggle = document.getElementById('toggle-container');
+        const rangeSlider = document.getElementById('range-slider');
+        const popupExit = document.getElementById('popup-exit-button');
 
         try {
             addButton.removeEventListener('click', this.addGuestEntryHandler);
+            popupExit.removeEventListener('click', this.HandlePopupExit);
             addAiButton.removeEventListener('click', this.addAiEntryHandler);
             loginForm.removeEventListener('submit', this.LoginHandler);
-            addUserButton.removeEventListener('click', this.AddUserHandler);
-            PowerUpToggle.removeEventListener('click', this.PowerUpToggle);
+            powerUpToggle.removeEventListener('click', this.PowerUpToggle);
             rangeSlider.addEventListener('input', this.AiDifficultySlider);
         } catch (error) {
             console.log('505 - Internal server error - could not find LoginSubmitButton');
@@ -361,11 +444,9 @@ export default class extends AbstractView {
         return `
           <div class="game-settings-page">
 
-          <div class="setup-left">
-            <div class="buttons-holder-div">
-              <div class="buttons-div">
+              <div class="add-buttons-div">
 
-                <button class="font-sub add-button blue" id="add-button">
+                <button id="add-button" class="font-sub add-button blue" >
                   <div class="text-holder">
                       <span>Add Guest</span>
                   </div>
@@ -382,46 +463,53 @@ export default class extends AbstractView {
                       <span>Add User</span>
                   </div>
                 </button>
+            </div>
 
-              </div>
-
-              <div class="launch-div">
-                <button class="font-heading launch-button" id="launch-pong">
-                  <div class="text-holder">
-                      <span>START</span>
-                  </div>
-                </button>
-              </div>
-
-            <div class="toggle-container">
-                <button class="toggle-button" id="toggle-container">Toggle Content</button>
-                <div class="toggle-content" id="toggle-content">
-                    <p>Powerups enabled</p>
+            <div class="carousel-holder font-text powerup-text">
+                <div class="prev">Prev</div>
+                 <div id="carousel-container">
+                    <div id="carousel-carousel"></div>
                 </div>
+                <div class="next">Next</div>
             </div>
 
-            <div class="slider-container">
-                <label for="range-slider">Select a value (1-4):</label>
-                <input type="range" id="range-slider" min="1" max="4" value="1" step="1">
-                <span id="slider-value">1</span>
-            </div>
-           
-            <div class="players-container">
-              <div id="list-container" class="font-text list-container scrollable-container">
-              </div>
+            <div class="toggles-div">
+
+                <span id="toggle-container" class="font-text powerup-text">Powerups:
+                    <label class="switch">
+                        <input id="toggle-content" type="checkbox">
+                        <span class="slider round"></span>
+                    </label>
+                </span>
+
+                <div class="slider-container">
+                    <label class="font-text powerup-text" for="range-slider">AI Diff:</label>
+                    <input type="range" id="range-slider" min="1" max="3" value="1" step="1">
+                    <span class="font-text powerup-text" id="slider-value">1</span>
+                </div>
+
             </div>
 
-          </div>
+            <div id="start-game-button" class="start-container">
+                <span id="start-game-text" class="font-heading start-text">Launch Game</span>
+            </div>
 
-          <div class="setup-right">
-            <img class="setup-img" src="//images.ctfassets.net/7oor54l3o0n4/50Lc9CdOtq4kmiWKsaAoiG/30649d5473cd45f3a2de6d7c9f067752/hive-peer-to-peer-project-based-learning-6.png" class="story-image">
-            
+
+
+
+
+
+
+
           </div>
 
             <div class="pop-up-login login-page" id="pop-up-login">
-                <div class="login-form">
-                    <h2 class="font-sub login-heading">&lt;Add user&gt;</h2>
-                    <form id="login-form" action="" method="">
+                <div class="login-form popup-login-form">
+                    <div id="popup-exit-button" class="font-sub popup-exit-button">
+                        <p class=" popup-exit-button-text">X</p>
+                    </div>
+                    <h2 class="font-sub login-heading popup-login-heading">&lt;Add user&gt;</h2>
+                    <form id="login-form"   action="" method="">
                         <label class="font-text" for="username">username:</label>
                         <input class="font-text login-input" type="text" id="username" name="username" required><br><br>
                         <label class="font-text" for="password">password:</label>
@@ -434,9 +522,6 @@ export default class extends AbstractView {
                     </form>
                 </div>
             </div>
-
-          
-          </div>
         `;
     }
 }

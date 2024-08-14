@@ -32,7 +32,7 @@ export default class extends AbstractView {
   async addFriendHandler(event) {
     event.preventDefault();
     const resultDiv = document.getElementById('searchResult');
-    
+
     try {
       const payload = { "to_user": this.resultMemory }
       const response = await axios.post(
@@ -40,7 +40,7 @@ export default class extends AbstractView {
         payload,
         { headers: {'Authorization': `Token ${this.GetKey()}` } }
       );
-      
+
       resultDiv.innerHTML = `
         <h3 class="font-text response-success-text">Friend request sent succesfully!</h3>
       `;
@@ -48,7 +48,7 @@ export default class extends AbstractView {
     catch(error) {
       if (error.response.status === 400)
         resultDiv.innerHTML = `
-          <h3 class="font-text response-fail-text">Sending friend request failed succesfully: Already sent</h3>
+          <h3 class="font-text response-fail-text">Sending friend request failed succesfully: TODO</h3>
         `;
       else {
         console.log(error);
@@ -66,7 +66,7 @@ export default class extends AbstractView {
         url,
         { headers: {'Authorization': `Token ${this.GetKey()}` }
       });
-      
+
       const foundUser = response.data.find((entry) => {
         return entry.to_user.username === search;
       });
@@ -97,11 +97,11 @@ export default class extends AbstractView {
 
     const form = await document.getElementById('query');
     if (!form) { return; }
-    
+
     const resultDiv = await document.getElementById('searchResult');
     if (!resultDiv) { return; }
     resultDiv.innerHTML = '';
-    
+
     // Search friend from database
     try {
       const alreadyAdded = await this.checkFriendAlreadyAdded(form.value);
@@ -109,7 +109,7 @@ export default class extends AbstractView {
         console.log('already added');
         throw new CustomError('Friend already added', 400);
       }
-      
+
       const url = `http://localhost:8000/account/${form.value}`
       const response = await axios.get(url, {
         headers: {'Authorization': `Token ${this.GetKey()}`}
@@ -128,7 +128,7 @@ export default class extends AbstractView {
         profileLink.classList.add('result-text');
         profileLink.href = `/profile/${data.user.id}`;
         profileLink.textContent = data.user.username;
-        
+
         const addButton = document.createElement('button');
         addButton.addEventListener('click', this.addFriendHandler);
         this.addFriendHandler = true;
@@ -138,7 +138,7 @@ export default class extends AbstractView {
             <svg class="plus-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M6 12H18M12 6V18" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
           </div>
         `;
-        
+
         searchResult.appendChild(profileLink);
         searchResult.appendChild(addButton);
         resultDiv.appendChild(searchResult);
@@ -146,7 +146,7 @@ export default class extends AbstractView {
       else {
         console.log(error);
         this.Redirect('/500');
-      }   
+      }
     }
     catch(error) {
       if (error.status === 400) {
@@ -176,7 +176,7 @@ export default class extends AbstractView {
 
 
 
-  
+
   AddListeners() {
     const form = document.getElementById('search-form-button');
     if (!form) {
@@ -218,11 +218,11 @@ export default class extends AbstractView {
               </button>
             </form>
           </div>
-          
+
           <div id="searchResult" class="results">
-          
+
           </div>
-          
+
         </div>
 
         <div class="search-right">

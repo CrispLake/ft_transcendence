@@ -63,7 +63,7 @@ export default class {
       return -1;
     }
   }
-  
+
     async Authenticate() {
       try {
           const response = await axios.get(
@@ -95,9 +95,6 @@ export default class {
     return localStorage.getItem('auth_token');
   }
 
-  // AddListeners()
-  // RemoveListeners()
-
   Redirect(newRoute, params = {}) {
     const queryString = new URLSearchParams(params).toString();
     const url = queryString ? `${newRoute}?${queryString}` : newRoute;
@@ -106,6 +103,14 @@ export default class {
     });
     document.dispatchEvent(newEvent);
   }
+
+    AddListeners() {
+
+    }
+
+    RemoveListeners() {
+
+    }
 
   // Helper function to return any html necessary for given view
   async getHtml() {

@@ -24,15 +24,15 @@ export default class extends AbstractView {
     handle2Player(resolve) {
       resolve(this.modes.pong2);
     }
-    
+
     handle4Player(resolve) {
       resolve(this.modes.pong4);
     }
-    
+
     handleGonp(resolve) {
       resolve(this.modes.gonp);
     }
-    
+
     handleTournament(resolve) {
       resolve(this.modes.tournament);
     }
@@ -61,7 +61,7 @@ export default class extends AbstractView {
         this.Redirect('/500');
         return;
       }
-      
+
       appDiv.innerHTML = await this.getHtml();
       const mode = await this.waitForUser();
       return mode;
@@ -81,9 +81,10 @@ export default class extends AbstractView {
 
     async getHtml() {
         return `
-            <div class="game-settings-page">
+            <div class="game-mode-page">
 
-            <div class="setup-left">
+            <h1 class="font-heading gamemode-heading">please select game mode</h1>
+
             <div class="buttons-holder-div">
                 <div class="buttons-div">
 
@@ -111,7 +112,6 @@ export default class extends AbstractView {
                     </div>
                 </button>
 
-            </div>
             </div>
         `;
     }

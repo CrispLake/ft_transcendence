@@ -70,14 +70,21 @@ export default class extends AbstractView {
   }
 
   async fakeGame(gameSettings) {
-    console.log(gameSettings);
-    return {
-      "player1": 1,
-      "player1Score": 3,
-      "player2": 2,
-      "player2Score": 2
-    }
+    console.log('IN FAKE GAME: ', gameSettings);
+    const results = this.CreateResultsObject(gameSettings);
+    return results;
   }
+
+    CreateResultsObject(gameSettings) {
+        const results = {
+            "winner": gameSettings.players[0],
+            "player1": 1,
+            "player1Score": 3,
+            "player2": 2,
+            "player2Score": 2
+        }
+        return results;
+    }
 
   handleKeyDown(event) {
     switch (event.key) {

@@ -39,14 +39,14 @@ const getParams = (match) => {
       return;
     }
     const keys = [...match.route.path.matchAll(/:(\w+)/g)].map(result => result[1]);
-  
+
     return Object.fromEntries(keys.map((key, index) => {
       return [key, values[index]];
     }));
   };
-  
 
-// Makes back and forward arrows work in browser 
+
+// Makes back and forward arrows work in browser
 const navigateTo = (url) => {
   history.pushState(
     { prevUrl: window.location.href },
@@ -107,7 +107,7 @@ const router = async () => {
 
   // Check route list against browser address path
   const routeList = routes.map(route => {
-    return { 
+    return {
       route: route,
       result: location.pathname.match(PathToRegex(route.path))
     };
@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Adding event listener for all the links in the page
   document.body.addEventListener('click', navigationEventHandler);
   document.addEventListener('navigate', navigationEventHandler);
-  
+
   // Initial run of the router to load home page
   router();
 });

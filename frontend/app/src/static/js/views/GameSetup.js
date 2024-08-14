@@ -17,6 +17,7 @@ export default class extends AbstractView {
         this.maxPlayers = -1;
         this.loginURL = 'http://localhost:8000/login';
         this.currentDeg = 0;
+        this.currentCard = 1;
 
         this.powerups = false;
         this.ai_difficulty = 1;
@@ -373,6 +374,8 @@ export default class extends AbstractView {
 
     HandleNext(event) {
         event.preventDefault();
+        if (this.currentCard >= this.playerCounter) { return; }
+        this.currentCard++;
         const carousel = document.getElementById("carousel-carousel");
         if (!carousel) { return; }
         this.currentDeg = this.currentDeg - 60;
@@ -382,6 +385,8 @@ export default class extends AbstractView {
 
     HandlePrev(event) {
         event.preventDefault();
+        if (this.currentCard <= 1) { return; }
+        this.currentCard--;
         const carousel = document.getElementById("carousel-carousel");
         if (!carousel) { return; }
         this.currentDeg = this.currentDeg + 60;

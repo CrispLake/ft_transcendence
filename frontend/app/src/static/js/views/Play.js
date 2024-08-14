@@ -16,6 +16,7 @@ import AbstractView from './AbstractView.js';
 import Tournament from './Tournament.js';
 import GameSetup from './GameSetup.js';
 import GameMode from './GameMode.js';
+import Results from './Result.js';
 import Pong from './Pong.js';
 
 export default class extends AbstractView {
@@ -45,14 +46,8 @@ export default class extends AbstractView {
   // Launch 2p Gonp
   async GameSetup() {
         const gameSetupObj = new GameSetup(this.gameMode);
-        console.log('before gamesetup getuserinput: ');
         this.setupObj = await gameSetupObj.getUserInput();
-        console.log('AFTER gamesetup getuserinput: ');
-        this.setupObj.players.map(entry =>
-            console.log(`id: ${entry.id}\n${entry.token}\n${entry.username}`
-            ));
-        gameSetupObj.RemoveListeners();
-        console.log(this.settings)
+        await gameSetupObj.RemoveListeners();
     }
 
   // TODO: make it wait and return the results --> also for 4p
@@ -61,9 +56,11 @@ export default class extends AbstractView {
   // PARAMS: players: 2 || 4
   async Pong() {
     const pong = new Pong();
-    pong.AddListeners();
-    this.results = await pong.fakeGame(this.setupObj);
-    pong.RemoveListeners();
+    await pong.AddListeners();
+    const gameResults = await pong.fakeGame(this.setupObj);
+    await pong.RemoveListeners();
+    const resultsView = new Results();
+    await resultsView.getUserInput(gameResults);
   }
 
   Gonp() {
@@ -97,11 +94,11 @@ export default class extends AbstractView {
     await this.GameSetup();
 
     switch (this.gameMode) {
-      case this.modes.pong2:      // 1
-        this.Pong();
+      case this.modes.pong2:      // 2
+        await this.Pong();
         break;
       case this.modes.pong4:      // 2
-        this.Pong();
+        await this.Pong();
         break;
       case this.modes.tournament: // 3
         this.Tournament();

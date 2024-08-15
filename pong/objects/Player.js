@@ -89,6 +89,7 @@ export class Player
         this.paddle.position.set(x, y, z);
         this.light.position.copy(this.paddle.position);
         this.boostMeter.position.set(x + this.boostOffset, y, z);
+        this.box.setFromObject(this.paddle);
     }
 
     setAlignment()
@@ -347,6 +348,11 @@ export class Player
     //  PLAYER FUNCTIONS
     //--------------------------------------------------------------------------
 
+    setActive()
+    {
+        this.active = true;
+    }
+
     move(movement)
     {
         if (this.alignment == G.vertical)
@@ -363,7 +369,7 @@ export class Player
         this.setPos(this.startPos.x, this.startPos.y, this.startPos.z);
         this.boostAmount = 0;
         this.updateBoostMeter();
-        this.box.setFromObject(this.paddle);
+        // this.box.setFromObject(this.paddle);
     }
 
     update()

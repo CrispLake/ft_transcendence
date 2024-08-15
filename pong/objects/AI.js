@@ -107,6 +107,7 @@ export class AI
         this.paddle.position.set(x, y, z);
         this.light.position.copy(this.paddle.position);
         this.boostMeter.position.set(x + this.boostOffset, y, z);
+        this.box.setFromObject(this.paddle);
     }
 
     setAlignment()
@@ -182,6 +183,7 @@ export class AI
         this.centerToLeftWall = 0;
         this.hitWall = 0;
         this.hitGoal = 0;
+        this.shouldBoost = true;
 
         this.intersectionPoints = [];
         this.firstPoint = new IntersectionPoint(0, 0, "none");
@@ -407,7 +409,6 @@ export class AI
                 this.paddle.position.x = -this.movementBoundary;
             if (this.paddle.position.x > this.movementBoundary)
                 this.paddle.position.x = this.movementBoundary;
-
             this.boostMeter.position.x = this.paddle.position.x;
         }
         this.light.position.copy(this.paddle.position);
@@ -462,7 +463,7 @@ export class AI
         return false;
     }
 
-    ownGoalHit()
+    ownSideHit()
     {
         if (this.playerNum == 1 && this.firstPoint.wall == "left")
         {
@@ -554,6 +555,7 @@ export class AI
         }
         this.pathLengthToHit += PongMath.distanceBetweenPoints(this.ballPos.x, this.ballPos.y, z, this.wallX);
         this.targetPos = z;
+        console.log(this.playerNum + "ST-S: setting targetPos = " + this.targetPos);
     }
 
 
@@ -635,18 +637,17 @@ export class AI
             this.pathLengthToHit += PongMath.distanceBetweenPoints(this.ballPos.x, this.ballPos.y, this.firstPoint.pos.x, this.firstPoint.pos.y);
             bounces++;
         }
-        if (this.ownGoalHit())
+        if (this.ownSideHit())
         {
-            // console.log("firstPoint: " + this.firstPoint.pos.x + ", " + this.firstPoint.pos.y + " | wall: " + this.firstPoint.wall);
             if (this.alignment == G.vertical)
             {
                 this.targetPos = this.firstPoint.pos.y;
-                // console.log("Player[" + this.playerNum + "] : target.z = " + this.targetPos.toFixed(2) + " | dist = " + this.pathLengthToHit.toFixed(2));
+                console.log(this.playerNum + "ST-M: setting targetPos = " + this.targetPos);
             }
             else
             {
                 this.targetPos = this.firstPoint.pos.x;
-                // console.log("Player[" + this.playerNum + "] : target.x = " + this.targetPos.toFixed(2) + " | dist = " + this.pathLengthToHit.toFixed(2));
+                console.log(this.playerNum + "ST-M: setting targetPos = " + this.targetPos);
             }
         }
     }
@@ -878,16 +879,21 @@ export class AI
             bounces++;
         }
 
+        let ownGoal = this.ownGoalHit();
+        console.log(this.playerNum + ": ownGoalHit = " + ownGoal);
+
         if (this.ownGoalHit())
         {
             if (this.alignment == G.vertical)
             {
                 this.targetPos = this.firstPoint.pos.y;
+                console.log(this.playerNum + "SPIN: setting targetPos = " + this.targetPos);
                 this.ballIntersectPos = this.firstPoint.pos.y;
             }
             else
             {
                 this.targetPos = this.firstPoint.pos.x;
+                console.log(this.playerNum + "SPIN: setting targetPos = " + this.targetPos);
                 this.ballIntersectPos = this.firstPoint.pos.x;
             }
         }
@@ -898,54 +904,6 @@ export class AI
     {
         if (this.playerNum == n)
             console.log(n + ": " + msg + " = " + x);
-    }
-
-    //--------------------------------------------------------------------------
-    //  READ GAME
-    //--------------------------------------------------------------------------
-
-    readGame()
-    {
-        this.db(3, "READ", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        if (this.ballMovesTowards())
-        {
-            if (this.considerSpin && this.game.ball.spin != 0)
-                this.getTargetPositionWithSpin();
-            else
-            {
-                if (this.settings.multiMode)
-                    this.getTargetPositionMultiMode();
-                else
-                    this.getTargetPosition();
-            }
-            if (this.canSpin)
-                this.updateTimeToTarget();
-        }
-        else
-        {
-            if (this.ballTimeToTargetTimer.running)
-            {
-                this.ballTimeToTargetTimer.stop();
-            }
-            this.targetPos = 0;
-        }
-    }
-
-    updateTimeToTarget()
-    {
-        // this.ballTimeToTarget = this.pathLengthToHit / (this.game.ball.speed * G.fps);
-        // this.db(3, "ball: pathLength  ", this.pathLengthToHit.toFixed(2));
-        // this.db(3, "ball: timeToTarget", this.ballTimeToTarget.toFixed(2));
-        // this.ballTimeToTargetTimer.start();
-
-        this.ballTimeToHit = this.pathLengthToHit / (this.game.ball.speed * G.fps);
-        this.db(3, "ball: pathLength  ", this.pathLengthToHit.toFixed(2));
-        this.db(3, "ball: timeToHit", this.ballTimeToHit.toFixed(2));
-        if (this.targetIsInsideBoundary())
-        {
-            this.ballTimeToTarget = this.ballTimeToHit;
-            this.ballTimeToTargetTimer.start();
-        }
     }
 
 
@@ -960,6 +918,7 @@ export class AI
             paddleDistanceToTarget = this.paddle.position.z - this.targetPos;
         else
             paddleDistanceToTarget = this.paddle.position.x - this.targetPos;
+        paddleDistanceToTarget = this.adjustForOffset(paddleDistanceToTarget);
         if (paddleDistanceToTarget > this.speed)
             this.moveLeft = true;
         else if (paddleDistanceToTarget < -this.speed)
@@ -997,88 +956,104 @@ export class AI
         return (!this.active && ballTimeToTarget < timeToMoveQuarterPaddle);
     }
 
-    targetIsInsideBoundary()
+    ownGoalHit()
     {
-        return (this.ownGoalHit() && this.ballIntersectPos < this.movementBoundary && this.ballIntersectPos > -this.movementBoundary);
+        let goalPost;
+        if (this.settings.multiMode)
+            goalPost = this.game.arena.width / 2 - G.wallLength4Player;
+        else
+            goalPost = this.game.arena.width / 2 - G.wallThickness;
+        return (this.ownSideHit() && this.ballIntersectPos < goalPost && this.ballIntersectPos > -goalPost);
     }
 
     handleSpinInput()
     {
-        this.db(3, "ballIntersectPos", this.ballIntersectPos);
-        this.db(3, "pathLen", this.pathLengthToHit.toFixed(2));
-        this.db(3, "timeHit", this.ballTimeToTarget.toFixed(2));
-        if (this.ballTimeToTargetTimer.running && this.ballIsInchingIn() && this.targetIsInsideBoundary())
+        if (this.ballTimeToTargetTimer.running && this.ballIsInchingIn() && this.ownGoalHit())
         {
             // If ball is close to hitting goal, move in spinDirection.
-            this.db(3, "Spin", this.spinDirection);
             if (this.spinDirection == G.SpinLeft)
                 this.moveLeft = true;
             else if (this.spinDirection == G.SpinRight)
                 this.moveRight = true;
         }
         else
-        {
-            if (this.ballIsInchingIn() && !this.targetIsInsideBoundary()) this.db(3, "close: Y", "goal: N");
-            if (!this.ballIsInchingIn() && this.targetIsInsideBoundary()) this.db(3, "close: N", "goal: Y");
-            if (!this.ballIsInchingIn() && !this.targetIsInsideBoundary()) this.db(3, "close: N", "goal: N");
-            // If ball is far away and hitting goal, get into position (target)
-            // If ball is not hitting goal move towards center (target)
-            let paddleDistanceToTarget;
-            if (this.alignment == G.vertical)
-                paddleDistanceToTarget = this.paddle.position.z - this.targetPos;
-            else
-                paddleDistanceToTarget = this.paddle.position.x - this.targetPos;
-            paddleDistanceToTarget = this.adjustForOffset(paddleDistanceToTarget);
-            if (paddleDistanceToTarget > this.speed)
-                this.moveLeft = true;
-            else if (paddleDistanceToTarget < -this.speed)
-                this.moveRight = true;
-        }
+            this.handleInput();
+    }
 
-        // If we were the last to hit the ball, reset brain
-        if (this.active)
-        {
-            if (this.ballTimeToTargetTimer.running)
-            {
-                this.ballTimeToTargetTimer.stop();
-                this.boostPressed = false;
-                this.boostReleased = true;
-                this.updateBoost();
-                this.getSpinDirection();
-                this.setOffsetFromTargetPosition();
-            }
-        }
 
-        if (this.targetIsInsideBoundary())  // TODO: make AI stop boosting. Probably need to move it outside this if statement.
+    //--------------------------------------------------------------------------
+    //  BOOST INPUT
+    //--------------------------------------------------------------------------
+
+    handleBoostInput()
+    {
+        if (this.ownGoalHit() && this.shouldBoost)
         {
             let timeToHit = this.ballTimeToTarget - this.ballTimeToTargetTimer.getElapsedTime();
             if (timeToHit < G.boostFillingTime)
             {
+                // If we have less time than it takes to fully boost -> press boost
                 if (this.boostPressed == false)
                 {
                     this.boostPressed = true;
                     this.boostReleased = false;
                 }
             }
-            else if (timeToHit < 0)
+        }
+        else
+        {
+            if (this.boostPressed)
             {
-                if (this.boostPressed == true)
-                {
-                    this.spinDirection = 0;
-                    this.boostPressed = false;
-                    this.boostReleased = true;
-                }
-            }
-            else
-            {
-                if (this.boostPressed == true)
-                {
-                    this.boostPressed = false;
-                    this.boostReleased = true;
-                }
+                this.boostPressed = false;
+                this.boostReleased = true;
             }
         }
-        this.updateBoost();
+    }
+
+
+    //--------------------------------------------------------------------------
+    //  READ GAME
+    //--------------------------------------------------------------------------
+
+    readGame()
+    {
+        this.db(2, "READ", "----------------------------------------------------");
+        if (this.considerSpin && this.game.ball.spin != 0)
+            this.getTargetPositionWithSpin();
+        else
+        {
+            if (this.settings.multiMode)
+                this.getTargetPositionMultiMode();
+            else
+                this.getTargetPosition();
+        }
+
+        if (this.canSpin)
+        {
+            this.shouldBoost = true;
+            this.updateTimeToTarget();
+        }
+
+        if (!this.ownGoalHit())
+        {
+            this.targetPos = 0;
+            console.log(this.playerNum + ": READ: setting targetPos = " + this.targetPos);
+        }
+
+        console.log(this.playerNum + ": firstPoint.x = " + this.firstPoint.pos.x.toFixed(2));
+        console.log(this.playerNum + ": firstPoint.z = " + this.firstPoint.pos.y.toFixed(2));
+        console.log(this.playerNum + ": firstPoint.wall = " + this.firstPoint.wall);
+        console.log(this.playerNum + ": targetPos = " + this.targetPos.toFixed(2));
+    }
+
+    updateTimeToTarget()
+    {
+        this.ballTimeToHit = this.pathLengthToHit / (this.game.ball.speed * G.fps);
+        if (this.ownGoalHit())
+        {
+            this.ballTimeToTarget = this.ballTimeToHit;
+            this.ballTimeToTargetTimer.start();
+        }
     }
 
 
@@ -1086,28 +1061,23 @@ export class AI
     //  BASE FUNCTIONS
     //--------------------------------------------------------------------------
 
+    setActive()
+    {
+        console.log(this.playerNum + ": Active");
+        if (this.ballTimeToTargetTimer.running)
+            this.ballTimeToTargetTimer.stop();
+        this.shouldBoost = false;
+        this.getSpinDirection();
+        this.setOffsetFromTargetPosition();
+    }
+
     move(movement)
     {
         if (this.alignment == G.vertical)
-        {
             this.paddle.position.z += movement;
-            if (this.paddle.position.z < -this.movementBoundary)
-                this.paddle.position.z = -this.movementBoundary;
-            if (this.paddle.position.z > this.movementBoundary)
-                this.paddle.position.z = this.movementBoundary;
-            this.boostMeter.position.z = this.paddle.position.z;
-        }
         else
-        {
             this.paddle.position.x += movement;
-            if (this.paddle.position.x < -this.movementBoundary)
-                this.paddle.position.x = -this.movementBoundary;
-            if (this.paddle.position.x > this.movementBoundary)
-                this.paddle.position.x = this.movementBoundary;
-            this.boostMeter.position.x = this.paddle.position.x;
-        }
-        this.light.position.copy(this.paddle.position);
-        this.box.setFromObject(this.paddle);
+        this.stayWithinBoundaries();
     }
 
     reset()
@@ -1123,13 +1093,8 @@ export class AI
         this.spinDirection = 0;
     }
 
-    update()
+    handleStun()
     {
-        this.moveLeft = false;
-        this.moveRight = false;
-
-        if (this.effect)
-            this.updateLightEffect();
         if (this.stunned)
         {
             let elapsedTime = this.stunTimer.getElapsedTime();
@@ -1147,24 +1112,50 @@ export class AI
                 const randomX = Math.random() * maxShake;
                 const randomZ = Math.random() * maxShake;
                 this.paddle.position.set(this.stunPosition.x + randomX, this.stunPosition.y, this.stunPosition.z + randomZ);
-                return;
             }
         }
+    }
+
+    update()
+    {
+        this.moveLeft = false;
+        this.moveRight = false;
+
+        // Check and handle stunned condition.
+        this.handleStun();
+
+        // If AI is stunned, we don't want to update anything else.
+        if (this.stunned)
+            return;
+
+        // Flash if paddle's been hit.
+        if (this.effect)
+            this.updateLightEffect();
+        
+        // Read the game. Get all the necessary information to be able to make smart choices.
         if (this.gameReadTimer.getElapsedTime() >= this.readInterval)
         {
             this.readGame();
             this.gameReadTimer.start();
         }
+
+        // Update the AI input based on the game situation.
         if (this.canSpin)
+        {
             this.handleSpinInput();
+            this.handleBoostInput();
+        }
         else
             this.handleInput();
 
+        // Handle movement input.
         if (this.moveLeft)
             this.move(-this.speed);
         if (this.moveRight)
             this.move(this.speed);
-        
-        this.stayWithinBoundaries();
+
+        // Update the boost.
+        if (this.spin == true)
+            this.updateBoost();      
     }
 };

@@ -262,7 +262,7 @@ export class Game
 		this.powerupManager.update();
 		// this.updateCamera();
 
-		console.log("-----------------------------------------------------------");
+		// console.log("-----------------------------------------------------------");
 		for (let player in this.players)
 			this.players[player].update();
 		this.updateBallPosition();
@@ -294,7 +294,7 @@ export class Game
 				// Set player who touched the ball to active, rest to inactive.
 				for (let p in this.players)
 					this.players[p].active = false;
-				this.players[player].active = true;
+				this.players[player].setActive();
 				
 				this.players[player].lightEffect();
 				this.ball.adjustSpin(this.players[player]);

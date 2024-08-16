@@ -175,13 +175,17 @@ def send_friend_request(request):
         to_user = User.objects.get(id=to_user_id)
     except User.DoesNotExist:
         return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    
+    try:
+        friend_request_exist = FriendRequest.objects.get(from_user=to_user, to_user=request.user)
+        return Response({'detail': 'Already have a request from that user'}, status=status.HTTP_400_BAD_REQUEST)
+    except FriendRequest.DoesNotExist:
+        friend_request, created = FriendRequest.objects.get_or_create(from_user=request.user, to_user=to_user)
 
-    friend_request, created = FriendRequest.objects.get_or_create(from_user=request.user, to_user=to_user)
-
-    if created:
-        return Response({'status': 'friend request sent'}, status=status.HTTP_201_CREATED)
-    else:
-        return Response({'status': 'friend request already sent'}, status=status.HTTP_400_BAD_REQUEST)
+        if created:
+            return Response({'status': 'friend request sent'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'status': 'friend request already sent'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

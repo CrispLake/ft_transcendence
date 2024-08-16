@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Settings.js                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: joonasmykkanen <joonasmykkanen@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/25 15:41:42 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/27 10:34:54 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/16 12:26:06 by joonasmykka      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ export default class extends AbstractView {
       }
       catch(error) {
         console.log('imgHandler error: ', error);
-        Notification('notification-div', `<h3>No file chosen</h3>`, 1);
+        Notification('notification-div', `<h3>${error.response.data.detail}</h3>`, 1);
       }
     }
 

@@ -66,8 +66,9 @@ export default class extends AbstractView {
         return users.map(user => ({
             id: user.player_id,
             token: user.token,
-            username: user.title,
-            winrate: user.winrate
+            username: user.username,
+            display_name: user.alias ? user.alias : user.username,
+            winrate: user.winrate >= 0 ? user.winrate : 0,
         }));
     }
 
@@ -131,6 +132,7 @@ export default class extends AbstractView {
                 token: this.GetKey(),
                 id: this.entryIdCounter++,
                 title: response.data.user.username,
+                alias: null,
                 winrate: winrate,
                 image: `<img class="card-image" src="http://localhost:8000/account/${response.data.user.id}/image" alt="User icon" >`
             }]
@@ -140,7 +142,6 @@ export default class extends AbstractView {
             console.error('Error fetching profile data', error);
             this.addGuestEntryHandler();
         }
-        console.log(response)
     }
 
 
@@ -163,6 +164,7 @@ export default class extends AbstractView {
             id: this.entryIdCounter++,
             title: `AI`,
             image: `<img class="card-image" src="static/images/ai.avif" alt="AI icon" >`,
+            alias: null,
             // TODO: take winrate from form
             winrate: 50
         };
@@ -180,6 +182,8 @@ export default class extends AbstractView {
             console.log('Max player limit reached');
             return;
         }
+
+        // TODO: add alias input box
 
         const newEntry = {
             id: this.entryIdCounter++,
@@ -305,10 +309,6 @@ export default class extends AbstractView {
         else {
             launchButtonText.textContent = `PLAYERS ${this.playerCounter}/${this.maxPlayers}`;
         }
-
-
-
-
     }
 
     // Handles user authentication
@@ -567,3 +567,4 @@ export default class extends AbstractView {
         `;
     }
 }
+

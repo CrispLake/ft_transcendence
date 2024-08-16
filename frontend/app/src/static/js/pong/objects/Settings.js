@@ -1,13 +1,14 @@
+import * as COLOR from '../colors.js';
+
 export class Settings
 {
-    constructor({ playerCount, multiMode, tournament, powerups, diff })
+	constructor()
 	{
-		this.multiMode = multiMode;
-		this.players = playerCount;
-        this.tournament = tournament;
-        this.powerups = powerups;
-        this.diff = diff;
-
-		this.spin = true;//  is this necessary??
-    }
+		this.tournament = false;
+		this.multiMode = true;
+		this.players = 1;
+		this.spin = true;
+		this.powerups = true;
+		this.difficulty = 3;
+	}
 }

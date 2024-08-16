@@ -17,20 +17,8 @@ import { Text2D } from './Text2D.js';
 
 export class Game
 {
-	constructor(settings)
+	constructor()
 	{
-    this.finished = false;
-    console.log('Game finished: ', false);
-		console.log("Creating Game Object...");
-		this.settings = settings;
-		this.scene = new THREE.Scene();
-		this.players = [];
-		this.createPlayers();
-		this.ball = new Ball(this.scene, G.ballStartPos, this.settings.spin);
-		this.fontLoader = new FontLoader();
-		this.ui = null;
-		this.initializeUI();
-		this.camera = this.createCamera();
 		this.settings = new Settings();
 		this.results = new Results();
 		this.gameScene = new THREE.Scene();
@@ -88,7 +76,8 @@ export class Game
 	{
 		const renderer = new THREE.WebGLRenderer();
 		renderer.setSize(window.innerWidth, window.innerHeight);
-		return renderer;
+		document.body.appendChild(renderer.domElement);
+		return (renderer);
 	}
 
 	createArena()

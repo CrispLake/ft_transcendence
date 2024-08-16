@@ -963,7 +963,18 @@ export class AI
             goalPost = this.game.arena.width / 2 - G.wallLength4Player;
         else
             goalPost = this.game.arena.width / 2 - G.wallThickness;
-        return (this.ownSideHit() && this.ballIntersectPos < goalPost && this.ballIntersectPos > -goalPost);
+if (this.ownSideHit() == false)
+{
+console.log(this.playerNum + "not own side");
+return false;
+}
+if (this.ballIntersectPos < goalPost && this.ballIntersectPos > -goalPost)
+{
+console.log(this.playerNum + "not within goal posts");
+return false;
+}
+console.log(this.playerNum + "ownGoalHit");
+return true;
     }
 
     handleSpinInput()

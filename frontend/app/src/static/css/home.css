@@ -40,7 +40,7 @@
 .game-text-left h1 {
   padding: 0 !important;
   margin: 0 !important;
-
+  
 }
 .game-text-right h1 {
   padding: 0 !important;
@@ -54,11 +54,12 @@
 }
 
 .game-text-right:hover {
-  cursor: normal;
+  cursor: pointer;
   transform: translate(35px, 0);
 }
 
 .game-text-left:hover {
+  cursor: pointer;
   transform: translate(-35px, 0);
 }
 

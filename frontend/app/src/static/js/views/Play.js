@@ -6,7 +6,7 @@
 /*   By: joonasmykkanen <joonasmykkanen@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/14 19:09:23 by joonasmykka      ###   ########.fr       */
+/*   Updated: 2024/08/14 15:45:24 by joonasmykka      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,17 +62,11 @@ export default class extends AbstractView {
   }
 
   Gonp() {
-
+    
   }
 
   // Launch 4p tournament
-  async Tournament() {
-	const tournament = new Tournament();
-
-	await tournament.initialize(this.setupObj);
-    await tournament.matchmaking();
-    await tournament.displayTournament();
-	// tournament.init(this.setupObj);
+  Tournament() {
     // --- level 0 ---
     // create original pairs based on win rate
     // prompt first game

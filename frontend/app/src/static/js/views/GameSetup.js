@@ -38,7 +38,6 @@ export default class extends AbstractView {
         this.AddUserHandler = this.AddUserHandler.bind(this)
     }
 
-    // TODO: Notification for player limit reached
     MaxPlayerLimitReached() {
         if (this.entryIdCounter == this.maxPlayers)
             return true;
@@ -214,8 +213,6 @@ export default class extends AbstractView {
     }
 
     async addExistingUserEntryHandler(userData) {
-        console.log(userData.data);
-        let profileData;
         let profileURL = 'http://localhost:8000/account/' + userData.data.user_id;
 
         try {
@@ -223,33 +220,32 @@ export default class extends AbstractView {
                 profileURL,
                 { headers: {'Authorization': `Token ${userData.data.token}`} }
             );
-            profileData = response.data;
+            console.log(profileData);
+            const wins = response.data.user.wins;
+            const losses = response.data.user.losses;
+            const total = wins + losses;
+            let winrate;
+            if (total === 0) {
+                winrate = 0;
+            }
+            else {
+                winrate = ((wins / total) * 100);
+            }
+            const newEntry = {
+                player_id: userData.data.user_id,
+                token: userData.data.token,
+                id: this.entryIdCounter++,
+                title: userData.data.username,
+                winrate: winrate,
+                image: `<img class="card-image" src="http://localhost:8000/account/${userData.data.user_id}/image" alt="User icon">`
+            };
+            this.playerCounter++;
+            this.entries.push(newEntry);
+            this.renderEntries();
         } catch (error) {
             console.error('Error fetching profile data', error);
             this.profileData = { error: 'Failed to load profile data' };
         }
-        console.log(profileData);
-        const wins = response.data.user.wins;
-        const losses = response.data.user.losses;
-        const total = wins + losses;
-        let winrate;
-        if (total === 0) {
-          winrate = 0;
-        }
-        else {
-          winrate = ((wins / total) * 100);
-        }
-        const newEntry = {
-            player_id: userData.data.user_id,
-            token: userData.data.token,
-            id: this.entryIdCounter++,
-            title: userData.data.username,
-            winrate: winrate,
-            image: `<img class="card-image" src="http://localhost:8000/account/${userData.data.user_id}/image" alt="User icon">`
-        };
-        this.playerCounter++;
-        this.entries.push(newEntry);
-        this.renderEntries();
     }
 
     removeEntryHandler(entryId) {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Profile.js                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: joonasmykkanen <joonasmykkanen@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 09:22:19 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/29 06:28:19 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/16 13:06:37 by joonasmykka      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ export default class extends AbstractView {
       this.DeleteKey();
       Notification('notification-div', '<p class="font-text message">Logout success!</p>', 0);
       setTimeout(() => {
-        this.Redirect('/');
+        this.Redirect('/login');
       }, 3000);
     }
 

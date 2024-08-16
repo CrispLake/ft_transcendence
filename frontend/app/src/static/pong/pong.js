@@ -1,25 +1,12 @@
-import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
-// import { FontLoader } from 'three/addons/loaders/FontLoader.js';
-// import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
-// import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-// import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-// import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
-// import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
-// import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
-// import * as PongMath from './math.js';
-// import * as G from './globals.js';
-// import * as COLOR from './colors.js';
-// import { Text2D } from './objects/Text2D.js';
-// import { UserInterface } from './objects/UserInterface.js';
 import * as KEY from './keys.js';
 import { Game } from './objects/Game.js';
 
 
 RectAreaLightUniformsLib.init();
 const game = new Game();
-const controls = new OrbitControls(game.camera, game.renderer.domElement);
+const controls = new OrbitControls(game.gameCamera, game.renderer.domElement);
 
 
 // ----Event Listeners----
@@ -63,6 +50,12 @@ function handleKeyDown(event)
             break;
         case KEY.P4_BOOST:
             game.players["p4"].boostPressed = true;
+            break;
+        case "p":
+            game.toggleCameraRotation();
+            break;
+        case ".":
+            game.togglePause();
             break;
     }
 }
@@ -125,8 +118,14 @@ function onWindowResize( event )
     var width = window.innerWidth;
     var height = window.innerHeight;
     game.renderer.setSize(width, height);
-    game.camera.aspect = width / height;
-    game.camera.updateProjectionMatrix();
+    game.gameCamera.aspect = width / height;
+    game.gameCamera.updateProjectionMatrix();
+    game.uiCamera.left = -width / 2;
+    game.uiCamera.right = width / 2;
+    game.uiCamera.top = height / 2;
+    game.uiCamera.bottom = -height / 2;
+    game.uiCamera.updateProjectionMatrix();
+    game.ui.resize();
 }
 
 

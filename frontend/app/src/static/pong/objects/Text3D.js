@@ -43,12 +43,12 @@ export class Text3D
 				bevelSegments: 3
 			});
 			const textMaterial = new THREE.MeshBasicMaterial({color: this.color});
-			const mesh = new THREE.Mesh(textGeometry, textMaterial);
+			this.mesh = new THREE.Mesh(textGeometry, textMaterial);
 			textGeometry.computeBoundingBox();
 			const boundingBox = textGeometry.boundingBox;
 			const textWidth = boundingBox.max.x - boundingBox.min.x;
-			mesh.position.set(this.position.x - textWidth / 2, this.position.y, this.position.z);
-			this.scene.add(mesh);
+			this.mesh.position.set(this.position.x - textWidth / 2, this.position.y, this.position.z);
+			this.scene.add(this.mesh);
 
 			this.composer.addPass(new RenderPass(this.scene, this.camera));
 			
@@ -57,7 +57,7 @@ export class Text3D
 				new THREE.Vector2(window.innerWidth, window.innerHeight),
 				this.scene,
 				this.camera,
-				[mesh]);
+				[this.mesh]);
 			outlinePass.edgeStrength = 10; // Increase to make the edges glow more
 			outlinePass.edgeGlow = 1; // Increase to make the glow wider
 			outlinePass.visibleEdgeColor.set(COLOR.PONG_AURA);

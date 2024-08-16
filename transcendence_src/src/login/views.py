@@ -167,7 +167,7 @@ def request_list(request):
 def send_friend_request(request):
     to_user_id = request.data.get('to_user')
 
-    if to_user_id is request.user.id:
+    if to_user_id == request.user.id:
         return Response({'detail': 'Can not send friend request to itself'}, status=status.HTTP_400_BAD_REQUEST)
 
     if request.user.account.friends.filter(id=to_user_id).exists():

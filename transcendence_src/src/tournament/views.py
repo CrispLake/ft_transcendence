@@ -13,7 +13,7 @@ from .serializers import TournamentSerializer
 def update_score(player_id, my_score):
     if player_id is not None:
         player = Account.objects.get(id=player_id)
-        if my_score is not 0:
+        if my_score != 0:
             player.wins = F('wins') + 1
         else:
             player.losses = F('losses') + 1
@@ -45,27 +45,27 @@ def tournament(request, player_id=None):
         tokens = [token.strip() for token in request.headers.get('Authorization', '').replace('Token ', '').split(',')]
         valid_user_ids = [user.id for user in User.objects.filter(auth_token__key__in=tokens)]
 
-        if game1_player1 is not None and game1_player1 is not 1:
+        if game1_player1 is not None and game1_player1 != 1:
             if game1_player1 not in valid_user_ids:
                 return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
 
-        if game1_player2 is not None and game1_player2 is not 1:
+        if game1_player2 is not None and game1_player2 != 1:
             if game1_player2 not in valid_user_ids:
                 return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
 
-        if game2_player1 is not None and game2_player1 is not 1:
+        if game2_player1 is not None and game2_player1 != 1:
             if game2_player1 not in valid_user_ids:
                 return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
 
-        if game2_player2 is not None and game2_player2 is not 1:
+        if game2_player2 is not None and game2_player2 != 1:
             if game2_player2 not in valid_user_ids:
                 return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
 
-        if game3_player1 is not None and game3_player1 is not 1:
+        if game3_player1 is not None and game3_player1 != 1:
             if game3_player1 not in valid_user_ids:
                 return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
 
-        if game3_player2 is not None and game3_player2 is not 1:
+        if game3_player2 is not None and game3_player2 != 1:
             if game3_player2 not in valid_user_ids:
                 return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
 

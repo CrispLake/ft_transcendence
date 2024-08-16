@@ -39,7 +39,7 @@ def pong_2p(request, player_id=None):
         if player1_id is None:
             return Response({'detail': 'Player ID is required.'}, status=status.HTTP_400_BAD_REQUEST)
         
-        if player1_id is player2_id:
+        if player1_id == player2_id:
             return Response({'detail': 'Player IDs can not be same'}, status=status.HTTP_400_BAD_REQUEST)
 
         tokens = [token.strip() for token in request.headers.get('Authorization', '').replace('Token ', '').split(',')]
@@ -74,7 +74,7 @@ def update_4p_score(player_id, my_score):
     if player_id is not None:
         player = Account.objects.get(id=player_id)
         # checking if health is not 0 we won
-        if my_score is not 0:
+        if my_score != 0:
             player.wins = F('wins') + 1
         else:
             player.losses = F('losses') + 1
@@ -111,15 +111,15 @@ def pong_4p(request, player_id=None):
         if player1_id not in valid_user_ids:
             return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
 
-        if player2_id is not None and player2_id is not 1:
+        if player2_id is not None and player2_id != 1:
             if player2_id not in valid_user_ids:
                 return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
 
-        if player3_id is not None and player3_id is not 1:
+        if player3_id is not None and player3_id != 1:
             if player3_id not in valid_user_ids:
                 return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
 
-        if player4_id is not None and player4_id is not 1:
+        if player4_id is not None and player4_id != 1:
             if player4_id not in valid_user_ids:
                 return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
 

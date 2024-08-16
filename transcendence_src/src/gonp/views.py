@@ -13,7 +13,7 @@ from login.decorators import update_last_activity
 def update_score(player_id, my_score):
     if player_id is not None:
         player = Account.objects.get(id=player_id)
-        if my_score is not 0:
+        if my_score != 0:
             player.wins = F('wins') + 1
         else:
             player.losses = F('losses') + 1
@@ -67,7 +67,7 @@ def gonp_2p(request, player_id=None):
 
 def check_unique_ids(a, b, c, d):
     ids = [a, b, c, d]
-    non_none_ids = [id for id in ids if id is not None and id is not 1]
+    non_none_ids = [id for id in ids if id is not None and id != 1]
     return len(non_none_ids) == len(set(non_none_ids))
 
 @api_view(['GET', 'POST'])
@@ -101,15 +101,15 @@ def gonp_4p(request, player_id=None):
         if player1_id not in valid_user_ids:
             return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
 
-        if player2_id is not None and player2_id is not 1:
+        if player2_id is not None and player2_id != 1:
             if player2_id not in valid_user_ids:
                 return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
 
-        if player3_id is not None and player3_id is not 1:
+        if player3_id is not None and player3_id != 1:
             if player3_id not in valid_user_ids:
                 return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
 
-        if player4_id is not None and player4_id is not 1:
+        if player4_id is not None and player4_id != 1:
             if player4_id not in valid_user_ids:
                 return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
 

@@ -488,6 +488,30 @@ export class AI
         return false;
     }
 
+    ownGoalHit()
+    {
+        let goalPost;
+        if (this.settings.multiMode)
+            goalPost = this.game.arena.width / 2 - G.wallLength4Player;
+        else
+            goalPost = this.game.arena.width / 2 - G.wallThickness;
+
+        let intersection;
+        if (this.alignment == G.vertical)
+            intersection = this.firstPoint.pos.y;
+        else
+            intersection = this.firstPoint.pos.x;
+
+        return (this.ownSideHit() && intersection < goalPost && intersection > -goalPost);
+    }
+
+    ballIsInchingIn()
+    {
+        const timeToMoveQuarterPaddle = (this.paddleLength / 2) / (this.speed * G.fps);
+        const ballTimeToTarget = this.ballTimeToTarget - this.ballTimeToTargetTimer.getElapsedTime();
+        return (!this.active && ballTimeToTarget < timeToMoveQuarterPaddle);
+    }
+
     ballMovesTowards()
     {
         if (this.playerNum == 1)
@@ -947,23 +971,6 @@ export class AI
     adjustForOffset(distance)
     {
         return distance + this.offset;
-    }
-
-    ballIsInchingIn()
-    {
-        const timeToMoveQuarterPaddle = (this.paddleLength / 2) / (this.speed * G.fps);
-        const ballTimeToTarget = this.ballTimeToTarget - this.ballTimeToTargetTimer.getElapsedTime();
-        return (!this.active && ballTimeToTarget < timeToMoveQuarterPaddle);
-    }
-
-    ownGoalHit()
-    {
-        let goalPost;
-        if (this.settings.multiMode)
-            goalPost = this.game.arena.width / 2 - G.wallLength4Player;
-        else
-            goalPost = this.game.arena.width / 2 - G.wallThickness;
-        return (this.ownSideHit() && this.ballIntersectPos < goalPost && this.ballIntersectPos > -goalPost);
     }
 
     handleSpinInput()

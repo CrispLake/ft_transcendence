@@ -10,52 +10,71 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+import { Notification } from "../notification.js";
 import AbstractView from "./AbstractView.js";
+import Pong from "./Pong.js";
 
 export default class extends AbstractView {
   constructor(params) {
     super(params);
     this.setTitle('Tournament');
 
-    this.tournamentStats = {
+    this.level = 0;
+    this.app = null;
+    this.players = null;
+    this.settings = null;
+
+    this.stats = {
       // LEVEL 0 - GAME 1
-      "game1_player1": null,
-      "game1_player1_score": null,
-      "game1_player2": null,
-      "game1_player2_score": null,
+      "g1_p1": null,
+      "g1_p1_score": null,
+      "g1_p2": null,
+      "g1_p2_score": null,
       // LEVEL 0 - GAME 2
-      "game2_player1": null,
-      "game2_player1_score": null,
-      "game2_player2": null,
-      "game2_player2_score": null,
+      "g2_p1": null,
+      "g2_p1_score": null,
+      "g2_p2": null,
+      "g2_p2_score": null,
       // LEVEL 1 - GAME 3
-      "game3_player1": null,
-      "game3_player1_score": null,
-      "game3_player2": null,
-      "game3_player2_score": null
+      "g3_p1": null,
+      "g3_p1_score": null,
+      "g3_p2": null,
+      "g3_p2_score": null
     }
   }
 
-  /*
-    PARAMETERS
-    players: array of player objects
-    {
-      player1: {...},
-      player2: {...},
-      player3: {...},
-      player4: {...}
+  initialize(params) {
+    this.app = document.getElementById('app');
+    if (!this.app) {
+      return -1
     }
-    RETURNS:
-    pairs: array of player pairs
-    {
-      {p1, p2},
-      {p3, p4}
+    this.settings = params;
+    this.players = params.players;
+    if (!this.settings || !this.players) {
+      return -1;
     }
-  */
-  matchmaking(players) {
-    
+    this.matchmaking();
+  }
+
+  // Takes in a list of players and sorts them based on their winrate
+  // then bottom half and top half will play against each other resulting
+  // in a fairest possbile games between these four players
+  matchmaking() {
+    this.players = players.sort((a, b) => a.winrate, b.winrate);
+    this.stats.g1_p1 = players[0];
+    this.stats.g1_p2 = players[1];
+    this.stats.g2_p1 = players[2];
+    this.stats.g2_p2 = players[3];
   }
   
+  // grab winners of two previous games and make a final game out of those
+  createFinalGame() {
+    const g1_winner = this.stats.g1_p1_score > this.stats.g1_p2_score ? this.stats.g1_p1 : this.stats.g1_p2;
+    const g2_winner = this.stats.g2_p1_score > this.stats.g2_p2_score ? this.stats.g2_p1 : this.stats.g2_p2;
+    this.stats.g3_p1 = g1_winner;
+    this.stats.g3_p2 = g2_winner;
+  }
+
   // Displays current status of tournament
   displayTournament() {
     
@@ -65,4 +84,31 @@ export default class extends AbstractView {
   promptNextGame() {
     
   } 
+
+
+
+
+  WaitForUser() {
+    return new Promise((resolve) => {
+     // TODO: add a listener here for some event that the tournament is finnished 
+    });
+  }
+
+  async getUserInput() {
+  
+  }
+
+  AddListeners() {
+
+  }
+
+  RemoveListeners() {
+
+  }
+
+  async getHtml() {
+    return `
+
+    `;
+  }
 }

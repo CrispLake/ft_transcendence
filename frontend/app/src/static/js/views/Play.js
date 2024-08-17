@@ -61,29 +61,22 @@ export default class extends AbstractView {
     await resultsView.getUserInput(gameResults);
   }
 
-  Gonp() {
+  async Gonp() {
     
   }
 
   // Launch 4p tournament
-  Tournament() {
-    // --- level 0 ---
-    // create original pairs based on win rate
-    // prompt first game
-    // play the game 1
-    // display results and prompt next game
-    // game 2
-    // prompt results
+  async Tournament() {
+    const tournamentObject = new Tournament();
+    if (tournamentObject.initialize(this.setupObj) === -1) {
+      this.Redirect('/500');
+      return;
+    }
 
-    // --- level 1 ---
-    // create pair of two winners
-    // prompt game
-    // play game
 
-    // --- level 2 ---
-    // display tournament results
-    // post data
+
   }
+  
 
   // This function will be responsible running the whole process
   // from setup to displaying stats after the game
@@ -99,10 +92,10 @@ export default class extends AbstractView {
         await this.Pong();
         break;
       case this.modes.tournament: // 3
-        this.Tournament();
+        await this.Tournament();
         break;
       case this.modes.gonp:       // 4
-        this.Gonp();
+        await this.Gonp();
         break;
     }
   }

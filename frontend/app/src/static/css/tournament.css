@@ -9,13 +9,13 @@
 
   display: flex;
   flex-direction: column;
-  padding-top: 2rem;
+  padding-top: 4rem;
   gap: 6rem;
 }
 
 .level-0-div {
   width: 100%;
-  height: 15%;
+  height: 20%;
 
   display: flex;
   justify-content: space-around;
@@ -26,7 +26,7 @@
   display: flex;
   justify-content: center;
   width: 100%;
-  height: 15%;
+  height: 20%;
 
 }
 
@@ -34,43 +34,68 @@
   display: flex;
   justify-content: center;
   width: 100%;
-  height: 15%;
+  height: 20%;
 
 }
 
 .pair {
-  width: 35%;
-  height: 100%;
   gap: 4rem;
   display: flex;
   justify-content: space-between;
   transition: ease 0.2s;
-}
-
-.pair:hover {
-  transform: scale(1.1);
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
-.player-card {
-  width: 30%;
-  height: 100%;
-  gap: 4rem;
+.pair:hover {
+  transform: scale(1.025);
+  cursor: pointer;
 }
 
-.tournament-winner-card {
-  justify-content: center !important;
+.pair-holder {
+  width: 35%;
+  height: 100%;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.pair-holder h3 {
+  padding: 0;
+  margin: 0;
+}
+
+.pair-vs {
+  font-size: 86px !important;
+  padding: 0;
+  margin: 0;
+}
+
+.player-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 30%;
+  height: 100%;
+}
+
+.card-name-text {
+  font-size: 28px !important;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  padding: 0;
+}
+
+.tournament-winner-text {
+  padding: 0;
+  margin: 0;
 }
 
 .player-card-image {
-  height: 50px;
-  width: 50px;
+  width: 40%;
+  height: auto;
 }
-
-
-
-
-
 
 
 #confirm-div {
@@ -120,5 +145,40 @@
 #decline-button:hover {
   cursor: pointer;
 }
+
+
+
+
+@key-frames InfoTextAnimation {
+  0%, 100% {
+    transform: scale(1);
+  },
+  50% {
+    transform: scale(0.8);
+  }
+}
+
+.info-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  animation: infinite 1s InfoTextAnimation;
+}
+
+.info-text {
+  font-size: 48px;
+  margin: 0;
+  padding: 0;
+}
+
+.info-img {
+  width: 64px;
+  height: 64px;
+}
+
+
+
+
 
 

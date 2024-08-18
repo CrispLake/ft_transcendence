@@ -107,19 +107,19 @@ export default class extends AbstractView {
     else if (player.username === 'AI') {
       return `
         <img class="player-card-image" src="static/images/ai.avif" alt="player icon">
-        <h2 class="font-text">${player.username}</h2>
+        <h2 class="font-text card-name-text">${player.username}</h2>
       `;
     }
     else if (player.username === 'Guest Player') {
       return `
         <img class="player-card-image" src="static/images/guest.png" alt="player icon">
-        <h2 class="font-text">${player.username}</h2>
+        <h2 class="font-text card-name-text">${player.username}</h2>
       `;
     }
     else {
       return `
         <img class="player-card-image" src="http://localhost:8000/account/${player.id}/image" alt="player icon">
-        <h2 class="font-text">${player.username}</h2>
+        <h2 class="font-text card-name-text">${player.username}</h2>
       `;
     }
   }
@@ -130,26 +130,42 @@ export default class extends AbstractView {
     this.app.innerHTML = `
       <div class="tournament-page">
         <div class="level-0-div">
-          <div class="pair">
-            <div class="player-card">${this.fillPlayerCard(this.stats.g1_p1)}</div>
-            <div class="player-card">${this.fillPlayerCard(this.stats.g1_p2)}</div>
+          <div class="pair-holder">
+            <h3 class="font-text">GAME 1</h3>
+            <div class="pair">
+              <div class="player-card">${this.fillPlayerCard(this.stats.g1_p1)}</div>
+              <h1 class="font-sub pair-vs">VS</h1>
+              <div class="player-card">${this.fillPlayerCard(this.stats.g1_p2)}</div>
+            </div>
           </div>
-          <div class="pair">
-            <div class="player-card">${this.fillPlayerCard(this.stats.g2_p1)}</div>
-            <div class="player-card">${this.fillPlayerCard(this.stats.g2_p2)}</div>
+          <div class="pair-holder">
+            <h3 class="font-text">GAME 2</h3>
+            <div class="pair">
+              <div class="player-card">${this.fillPlayerCard(this.stats.g2_p1)}</div>
+              <h1 class="font-sub pair-vs">VS</h1>
+              <div class="player-card">${this.fillPlayerCard(this.stats.g2_p2)}</div>
+            </div>
           </div>
         </div>
         <div class="level-1-div">
-          <div class="pair">
-            <div class="player-card">${this.fillPlayerCard(this.stats.g3_p1)}</div>
-            <div class="player-card">${this.fillPlayerCard(this.stats.g3_p2)}</div>
+          <div class="pair-holder">
+            <h3 class="font-text">GAME 3</h3>
+            <div class="pair">
+              <div class="player-card">${this.fillPlayerCard(this.stats.g3_p1)}</div>
+              <h1 class="font-sub pair-vs">VS</h1>
+              <div class="player-card">${this.fillPlayerCard(this.stats.g3_p2)}</div>
+            </div>
           </div>
         </div>
         <div class="level-2-div">
-          <div class="pair tournament-winner-card">
-            <div class="player-card">${this.fillPlayerCard(this.stats.winner)}</div>
-          </div>
+          <h1 class="font-heading tournament-winner-text">WINNER</h1>
         </div>
+
+        <div class="info-div">
+          <h2 class="font-sub info-text">click to continue</h2>
+          <svg class="info-img" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="layer1"> <path d="M 7 1 C 5.3431455 1 4 2.3431458 4 4 L 4 13.5 C 4 16.537566 6.462434 19 9.5 19 C 12.537566 19 15 16.537566 15 13.5 L 15 4 C 15 2.3431458 13.656854 1 12 1 L 7 1 z M 7 2 L 9 2 L 9 8 L 10 8 L 10 2 L 12 2 C 13.104569 2 14 2.8954305 14 4 L 14 13.5 C 14 15.985281 11.985281 18 9.5 18 C 7.014719 18 5 15.985281 5 13.5 L 5 4 C 5 2.8954305 5.8954305 2 7 2 z " style="fill:#222222; fill-opacity:1; stroke:none; stroke-width:0px;"></path> </g> </g></svg>
+        </div>
+
       </div>
     `;
   }

@@ -66,7 +66,7 @@ export default class extends AbstractView {
             id: user.player_id,
             token: user.token,
             username: user.title,
-            winrate: user.winrate
+            winrate: user.wirate,
         }));
     }
 
@@ -119,7 +119,7 @@ export default class extends AbstractView {
             console.log('wins: ', wins, 'losses: ', losses);
 
             let winrate;
-            if (total === 0) {
+            if (total === 0 || total === NaN) {
               winrate = 0;
             }
             else {

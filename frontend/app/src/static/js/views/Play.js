@@ -68,13 +68,31 @@ export default class extends AbstractView {
   // Launch 4p tournament
   async Tournament() {
     const tournamentObject = new Tournament();
-    if (tournamentObject.initialize(this.setupObj) === -1) {
+    const appElem = document.getElementById('app');
+    if (!appElem) {
+      console.log('tournament appelem ret');
+      return;
+    }
+
+    appElem.innerHTML = await tournamentObject.getHtml();
+
+
+    if (await tournamentObject.initialize(this.setupObj) === -1) {
       this.Redirect('/500');
       return;
     }
 
-
-
+    // Loop trough all games in the tournament
+    for (let i = 0; i < 3; i++) {
+      // 1. Display tournament --> wait for input to start the game
+      await tournamentObject.displayTournament();
+      await tournamentObject.getUserInput();
+      console.log('on a round: ', i);
+      // 2. wait for the game to end
+      // 3. show winner --> wait for input to to show tournament and next game
+      // 4. if level == 2 show end screen and return to home page
+    }
+    tournamentObject.RemoveListeners();
   }
   
 

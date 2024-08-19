@@ -586,46 +586,6 @@ export class AI
         this.wallX = this.game.arena.length / 2;
     }
 
-    getTargetPosition()
-    {
-        this.pathLengthToHit = 0;
-        this.ballPos.set(this.game.ball.mesh.position.x, this.game.ball.mesh.position.z);
-        this.angle = this.game.ball.angle;
-        this.wallZ = this.game.arena.width / 2;
-        this.wallX = this.game.arena.length / 2;
-        let x = 0;
-        let z = this.getIntersectionZ(this.ballPos, this.wallX, this.angle);
-        let bounces = 0;
-        while (Math.abs(z) > this.movementBoundary + this.paddleLength / 2 && x < Math.abs(this.wallX) && bounces < this.maxBounces)
-        {
-            // We get here if the ball path would hit the goal outside the arena
-            if (z < 0)
-            {
-                x = this.getIntersectionX(this.ballPos, -this.wallZ, this.angle);
-                this.pathLengthToHit += PongMath.distanceBetweenPoints(this.ballPos.x, this.ballPos.y, -this.wallZ, x);
-                this.ballPos.set(x, -this.wallZ);
-                this.angle = PongMath.degToRad(360) - this.angle;
-            }
-            else
-            {
-                x = this.getIntersectionX(this.ballPos, this.wallZ, this.angle);
-                this.pathLengthToHit += PongMath.distanceBetweenPoints(this.ballPos.x, this.ballPos.y, this.wallZ, x);
-                this.ballPos.set(x, this.wallZ);
-                this.angle = PongMath.degToRad(360) - this.angle;
-            }
-            z = this.getIntersectionZ(this.ballPos, this.wallX, this.angle);
-            bounces++;
-        }
-        this.pathLengthToHit += PongMath.distanceBetweenPoints(this.ballPos.x, this.ballPos.y, z, this.wallX);
-        this.targetPos = z;
-        console.log(this.playerNum + "ST-S: setting targetPos = " + this.targetPos);
-    }
-
-
-    //--------------------------------------------------------------------------
-    //  STRAIGHT PATH MULTI MODE
-    //--------------------------------------------------------------------------
-
     getFirstIntersectionPoint()
     {
         let x, z;
@@ -683,7 +643,7 @@ export class AI
             this.firstPoint.set(-this.wallX, 0, "left");
     }
 
-    getTargetPositionMultiMode()
+    getTargetPosition()
     {
         this.pathLengthToHit = 0;
         this.ballPos.set(this.game.ball.mesh.position.x, this.game.ball.mesh.position.z);
@@ -1066,12 +1026,7 @@ export class AI
         if (this.considerSpin && this.game.ball.spin != 0)
             this.getTargetPositionWithSpin();
         else
-        {
-            if (this.settings.multiMode)
-                this.getTargetPositionMultiMode();
-            else
-                this.getTargetPosition();
-        }
+            this.getTargetPosition();
 
         if (this.canSpin)
         {

@@ -5,7 +5,7 @@ export class Settings
 	constructor()
 	{
 		this.tournament = false;
-		this.multiMode = true;
+		this.multiMode = false;
 		this.players = 1;
 		this.spin = true;
 		this.powerups = true;

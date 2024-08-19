@@ -21,6 +21,23 @@ export default class extends AbstractView {
 
         this.registerURL = 'http://localhost:8000/register';
         this.registerHandler = this.registerHandler.bind(this);
+        this.checkForbiddenNames = this.checkForbiddenNames.bind(this);
+    }
+
+    // returns TRUE if everything ok
+    // returns FALSE if has forbidden stuff
+    checkForbiddenNames(username) {
+        console.log(username, ' in check');
+        const name = username.toLowerCase();
+
+        if (name.includes('guest'))
+            return false;
+        if (name.includes('ai'))
+            return false;
+        if (name.includes('admin'))
+            return false;
+
+        return true;
     }
 
     async registerHandler(event) {
@@ -38,6 +55,19 @@ export default class extends AbstractView {
                 const payload = {
                     user: data
                 };
+                console.log(payload.user.username);
+                if (!this.checkForbiddenNames(payload.user.username)) {
+                    const err = new Error();
+                    err.response = {
+                        data: {
+                            user: {
+                                username: `Cannot contain '${payload.user.username}'`
+                            }
+                        }
+                    };
+                    throw err;
+                }
+                
                 const response = await axios.post(
                     this.registerURL,
                     payload
@@ -47,7 +77,7 @@ export default class extends AbstractView {
                     this.Redirect('/login');
                 }, 3000);
             } catch (error) {
-                console.error('Error registering: ', error.response.data.user.username);
+                console.log(error.response)
                 Notification('notification-div', `<h3>${error.response.data.user.username}</h3>`, 1);
             }
         }

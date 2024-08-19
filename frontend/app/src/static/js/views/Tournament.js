@@ -12,6 +12,7 @@
 
 import { Notification } from "../notification.js";
 import AbstractView from "./AbstractView.js";
+import Result from "./Result.js";
 import Pong from "./Pong.js";
 
 export default class extends AbstractView {
@@ -113,7 +114,7 @@ export default class extends AbstractView {
         <h2 class="font-text card-name-text">${player.username}</h2>
       `;
     }
-    else if (player.username === 'Guest Player') {
+    else if (player.username.includes('Guest')) {
       return `
         <img class="player-card-image" src="static/images/guest.png" alt="player icon">
         <h2 class="font-text card-name-text">${player.username}</h2>

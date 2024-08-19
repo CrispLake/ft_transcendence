@@ -70,7 +70,7 @@ export default class extends AbstractView {
     if (winner.username === "AI") {
         imageTag = `<img class="winner-img" src="static/images/ai.avif" alt="User icon"/>`
     }
-    else if (winner.username === "Guest Player") {
+    else if (winner.username.includes('Guest')) {
         imageTag = `<img class="winner-img" src="static/images/guest.png" alt="User icon"/>`
     }
     else {

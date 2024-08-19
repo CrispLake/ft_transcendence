@@ -12,6 +12,7 @@ export default class extends AbstractView {
 
         this.entries = [];
 
+        this.guestCounter = 0;
         this.entryIdCounter = 0;
         this.playerCounter = 0;
         this.maxPlayers = -1;
@@ -182,11 +183,12 @@ export default class extends AbstractView {
 
         const newEntry = {
             id: this.entryIdCounter++,
-            title: `Guest Player`,
+            title: `Guest ${this.guestCounter}`,
             image: `<img class="card-image" src="static/images/guest.png" alt="Guest icon">`,
             winrate: Math.floor(Math.random() * (60 - 20 + 1)) + 20
             // NOTE: guest has random winrate between 20% - 60%
         };
+        this.guestCounter++;
         this.playerCounter++;
         this.entries.push(newEntry);
         this.renderEntries();

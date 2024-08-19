@@ -194,7 +194,11 @@ export class AI
         this.ballTimeToTargetTimer = new THREE.Clock();
 
         this.spinDirection = 0;
+        this.setSpinDirection();
         this.offset = 0;
+        this.setOffsetFromTargetPosition();
+        this.paddleDistanceChecked = false;
+        this.paddleIsCloseEnough = false;
     }
 
 
@@ -524,6 +528,74 @@ export class AI
             return (this.game.ball.speedZ >= 0);
     }
 
+    // isPaddleCloseEnough()
+    // {
+    //     // Check if paddle can move away from the intersection, considering paddle time to not cover intersection (check spin direction) and ball time to intersection
+    //     // If we can move, set paddleDistanceChecked to true. That way, we can check every frame until we're good to go.
+    //     let paddleDistanceToTarget;
+
+    //     if (this.alignment == G.vertical)
+    //         paddleDistanceToTarget = Math.abs(this.paddle.position.z - this.firstPoint.pos.y);
+    //     else
+    //         paddleDistanceToTarget = Math.abs(this.paddle.position.x - this.firstPoint.pos.x);
+
+    //     if (paddleDistanceToTarget < this.offset)
+    //         this.paddleIsCloseEnough = true;
+    //     else
+    //         this.paddleIsCloseEnough = false;
+
+    //     this.paddleDistanceChecked = true;
+    //     console.log(this.playerNum + ": isPaddleCloseEnough(" + paddleDistanceToTarget.toFixed(2) + " < " + this.offset.toFixed(2) + ") = " + (paddleDistanceToTarget < this.offset));
+    // }
+
+    isPaddleCloseEnough()
+    {
+        // Check if paddle can move away from the intersection, considering paddle time to not cover intersection (check spin direction) and ball time to intersection
+        // If we can move, set paddleDistanceChecked to true. That way, we can check every frame until we're good to go.
+        let paddleDistanceToTarget;
+        if (this.alignment == G.vertical)
+            paddleDistanceToTarget = this.firstPoint.pos.y - this.paddle.position.z;
+        else
+            paddleDistanceToTarget = this.firstPoint.pos.x - this.paddle.position.x;
+
+ 
+
+        let distanceToMiss;
+        if (this.spinDirection == G.SpinLeft)
+            distanceToMiss = this.paddleLength / 2 - paddleDistanceToTarget;
+        else
+            distanceToMiss = this.paddleLength / 2 + paddleDistanceToTarget;
+
+        const ballTimeToIntersection = this.ballTimeToTarget - this.ballTimeToTargetTimer.getElapsedTime();
+
+        // const paddleTimeToMiss = distanceToMiss / this.speed;
+        
+        // // Close enough without margins
+        // if (paddleTimeToDanger > ballTimeToIntersection)
+        // {
+        //     this.paddleDistanceChecked = true;
+        //     this.paddleIsCloseEnough = true;
+        // }
+        // console.log(this.playerNum + ": isPaddleCloseEnough(" + paddleTimeToMiss.toFixed(2) + " > " + ballTimeToIntersection.toFixed(2) + ") = " + (paddleTimeToDanger > ballTimeToIntersection));
+
+        
+        // Variables for considering a margin of error
+        const dangerZone = this.paddleLength * G.AIMargin;
+        const paddleDistanceToDanger = distanceToMiss - dangerZone;
+        const paddleDistanceToSafeZone = paddleDistanceToDanger - (this.paddleLength - 2 * dangerZone);
+        const paddleTimeToDanger = paddleDistanceToDanger / this.speed;
+        const paddleTimeToSafeZone = paddleDistanceToSafeZone / this.speed; 
+
+        // Close enough with margins
+        if (paddleTimeToSafeZone < ballTimeToIntersection && paddleTimeToDanger > ballTimeToIntersection)
+        {
+            this.paddleDistanceChecked = true;
+            this.paddleIsCloseEnough = true;
+        }
+        console.log(this.playerNum + ": isPaddleCloseEnough(" + paddleDistanceToSafeZone.toFixed(2) + " < " + ballTimeToIntersection.toFixed(2) + " < " + paddleDistanceToDanger.toFixed(2) + " = " + (paddleDistanceToSafeZone < ballTimeToIntersection && paddleDistanceToDanger > ballTimeToIntersection));
+        console.log(this.playerNum + ": isPaddleCloseEnough(" + paddleTimeToSafeZone.toFixed(2) + " < " + ballTimeToIntersection.toFixed(2) + " < " + paddleTimeToDanger.toFixed(2) + " = " + (paddleTimeToSafeZone < ballTimeToIntersection && paddleTimeToDanger > ballTimeToIntersection));
+    }
+
 
     //--------------------------------------------------------------------------
     //  STRAIGHT PATH
@@ -664,15 +736,9 @@ export class AI
         if (this.ownSideHit())
         {
             if (this.alignment == G.vertical)
-            {
                 this.targetPos = this.firstPoint.pos.y;
-                console.log(this.playerNum + "ST-M: setting targetPos = " + this.targetPos);
-            }
             else
-            {
                 this.targetPos = this.firstPoint.pos.x;
-                console.log(this.playerNum + "ST-M: setting targetPos = " + this.targetPos);
-            }
         }
     }
 
@@ -904,20 +970,18 @@ export class AI
         }
 
         let ownGoal = this.ownGoalHit();
-        console.log(this.playerNum + ": ownGoalHit = " + ownGoal);
+        // console.log(this.playerNum + ": ownGoalHit = " + ownGoal);
 
         if (this.ownGoalHit())
         {
             if (this.alignment == G.vertical)
             {
                 this.targetPos = this.firstPoint.pos.y;
-                console.log(this.playerNum + "SPIN: setting targetPos = " + this.targetPos);
                 this.ballIntersectPos = this.firstPoint.pos.y;
             }
             else
             {
                 this.targetPos = this.firstPoint.pos.x;
-                console.log(this.playerNum + "SPIN: setting targetPos = " + this.targetPos);
                 this.ballIntersectPos = this.firstPoint.pos.x;
             }
         }
@@ -942,7 +1006,9 @@ export class AI
             paddleDistanceToTarget = this.paddle.position.z - this.targetPos;
         else
             paddleDistanceToTarget = this.paddle.position.x - this.targetPos;
-        paddleDistanceToTarget = this.adjustForOffset(paddleDistanceToTarget);
+        
+        paddleDistanceToTarget += this.offset;
+
         if (paddleDistanceToTarget > this.speed)
             this.moveLeft = true;
         else if (paddleDistanceToTarget < -this.speed)
@@ -954,7 +1020,7 @@ export class AI
     //  SPIN INPUT
     //--------------------------------------------------------------------------
 
-    getSpinDirection()
+    setSpinDirection()
     {
         if (Math.random() < 0.5)
             this.spinDirection = G.SpinLeft;
@@ -964,24 +1030,29 @@ export class AI
 
     setOffsetFromTargetPosition()
     {
-        // We set the offset to a random value between 0 and 10% of the paddle length
-        this.offset = Math.random() * (this.paddleLength / 2) * G.maxOffset;
-    }
-
-    adjustForOffset(distance)
-    {
-        return distance + this.offset;
+        // We set the offset to a random value between 0 and 20% of the paddle length
+        this.offset = Math.random() * this.paddleLength * G.maxOffset;
+        console.log(this.playerNum + ": setting offset = " + this.offset);
     }
 
     handleSpinInput()
-    {
+    {    
         if (this.ballTimeToTargetTimer.running && this.ballIsInchingIn() && this.ownGoalHit())
         {
-            // If ball is close to hitting goal, move in spinDirection.
-            if (this.spinDirection == G.SpinLeft)
-                this.moveLeft = true;
-            else if (this.spinDirection == G.SpinRight)
-                this.moveRight = true;
+            // Check if paddle is close enough to the ball intersection
+            if (this.paddleDistanceChecked == false)
+                this.isPaddleCloseEnough();
+
+            if (this.paddleIsCloseEnough)
+            {
+                console.log(this.playerNum + ": spinning -> " + this.spinDirection);
+                if (this.spinDirection == G.SpinLeft)
+                    this.moveLeft = true;
+                else if (this.spinDirection == G.SpinRight)
+                    this.moveRight = true;
+            }
+            else
+                this.handleInput();
         }
         else
             this.handleInput();
@@ -1024,7 +1095,7 @@ export class AI
 
     readGame()
     {
-        this.db(2, "READ", "----------------------------------------------------");
+        // this.db(2, "READ", "----------------------------------------------------");
         if (this.considerSpin && this.game.ball.spin != 0)
             this.getTargetPositionWithSpin();
         else
@@ -1044,13 +1115,13 @@ export class AI
         if (!this.ownGoalHit())
         {
             this.targetPos = 0;
-            console.log(this.playerNum + ": READ: setting targetPos = " + this.targetPos);
+            // console.log(this.playerNum + ": READ: setting targetPos = " + this.targetPos);
         }
 
-        console.log(this.playerNum + ": firstPoint.x = " + this.firstPoint.pos.x.toFixed(2));
-        console.log(this.playerNum + ": firstPoint.z = " + this.firstPoint.pos.y.toFixed(2));
-        console.log(this.playerNum + ": firstPoint.wall = " + this.firstPoint.wall);
-        console.log(this.playerNum + ": targetPos = " + this.targetPos.toFixed(2));
+        // console.log(this.playerNum + ": firstPoint.x = " + this.firstPoint.pos.x.toFixed(2));
+        // console.log(this.playerNum + ": firstPoint.z = " + this.firstPoint.pos.y.toFixed(2));
+        // console.log(this.playerNum + ": firstPoint.wall = " + this.firstPoint.wall);
+        // console.log(this.playerNum + ": targetPos = " + this.targetPos.toFixed(2));
     }
 
     updateTimeToTarget()
@@ -1074,7 +1145,8 @@ export class AI
         if (this.ballTimeToTargetTimer.running)
             this.ballTimeToTargetTimer.stop();
         this.shouldBoost = false;
-        this.getSpinDirection();
+        this.paddleDistanceChecked = false;
+        this.setSpinDirection();
         this.setOffsetFromTargetPosition();
     }
 
@@ -1097,7 +1169,9 @@ export class AI
         this.boostAmount = 0;
         this.updateBoostMeter();
         this.targetPos = 0;
-        this.spinDirection = 0;
+        this.setSpinDirection();
+        this.setOffsetFromTargetPosition();
+        this.paddleDistanceChecked = false;
     }
 
     handleStun()

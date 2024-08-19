@@ -124,6 +124,7 @@ export const AIreadInterval = 1;
 export const SpinLeft = -1;
 export const SpinRight = 1;
 export const maxOffset = 0.2;
+export const AIMargin = 0.1;
 
 
 //--------------------------------------------------------------------------

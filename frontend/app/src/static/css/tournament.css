@@ -39,6 +39,7 @@
 }
 
 .pair {
+  padding: 1rem;
   gap: 4rem;
   display: flex;
   justify-content: space-between;
@@ -70,6 +71,16 @@
   padding: 0;
   margin: 0;
 }
+
+
+.pair.winner-p1 {
+  background: linear-gradient(to right, var(--green) 50%, var(--pink) 50%);
+}
+
+.pair.winner-p2 {
+  background: linear-gradient(to right, var(--pink) 50%, var(--green) 50%);
+}
+
 
 .player-card {
   display: flex;
@@ -149,21 +160,25 @@
 
 
 
-@key-frames InfoTextAnimation {
+@keyframes InfoTextAnimation {
   0%, 100% {
-    transform: scale(1);
-  },
+     transform: translate(-50%, 0%) scale(1);
+  }
   50% {
-    transform: scale(0.8);
+    transform: translate(-50%, 0%) scale(0.975);
   }
 }
 
 .info-div {
+  position: absolute;
+  width: 700px;
+  bottom: 2rem;
+  left: 50%;
+  
+  animation: InfoTextAnimation 1s infinite;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  animation: infinite 1s InfoTextAnimation;
 }
 
 .info-text {

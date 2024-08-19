@@ -34,16 +34,19 @@ export default class extends AbstractView {
       "g1_p1_score": null,
       "g1_p2": null,
       "g1_p2_score": null,
+      "g1_winner": null,
       // LEVEL 0 - GAME 2
       "g2_p1": null,
       "g2_p1_score": null,
       "g2_p2": null,
       "g2_p2_score": null,
+      "g2_winner": null,
       // LEVEL 1 - GAME 3
       "g3_p1": null,
       "g3_p1_score": null,
       "g3_p2": null,
-      "g3_p2_score": null
+      "g3_p2_score": null,
+      "g3_winner": null,
     }
 
     this.initialize = this.initialize.bind(this);
@@ -92,10 +95,10 @@ export default class extends AbstractView {
   
   // grab winners of two previous games and make a final game out of those
   createFinalGame() {
-    const g1_winner = this.stats.g1_p1_score > this.stats.g1_p2_score ? this.stats.g1_p1 : this.stats.g1_p2;
-    const g2_winner = this.stats.g2_p1_score > this.stats.g2_p2_score ? this.stats.g2_p1 : this.stats.g2_p2;
-    this.stats.g3_p1 = g1_winner;
-    this.stats.g3_p2 = g2_winner;
+    this.g1_winner = this.stats.g1_p1_score > this.stats.g1_p2_score ? this.stats.g1_p1 : this.stats.g1_p2;
+    this.g2_winner = this.stats.g2_p1_score > this.stats.g2_p2_score ? this.stats.g2_p1 : this.stats.g2_p2;
+    this.stats.g3_p1 = this.g1_winner;
+    this.stats.g3_p2 = this.g2_winner;
   }
 
   fillPlayerCard(player) {
@@ -126,13 +129,21 @@ export default class extends AbstractView {
 
   // Displays current status of tournament
   displayTournament() {
-    console.log('players: ', this.players);
+    let g1 = '', g2 = '', g3 = '';
+
+    if (this.level >= 0)
+      g1 = this.stats.g1_winner === 1 ? 'winner-p1' : 'winner-2';
+    if (this.level >= 1)
+      g2 = this.stats.g2_winner === 1 ? 'winner-p1' : 'winner-2';
+    if (this.level >= 2)
+      g3 = this.stats.g3_winner === 1 ? 'winner-p1' : 'winner-2';
+
     this.app.innerHTML = `
       <div class="tournament-page">
         <div class="level-0-div">
           <div class="pair-holder">
             <h3 class="font-text">GAME 1</h3>
-            <div class="pair">
+            <div class="pair ${g1}">
               <div class="player-card">${this.fillPlayerCard(this.stats.g1_p1)}</div>
               <h1 class="font-sub pair-vs">VS</h1>
               <div class="player-card">${this.fillPlayerCard(this.stats.g1_p2)}</div>
@@ -140,7 +151,7 @@ export default class extends AbstractView {
           </div>
           <div class="pair-holder">
             <h3 class="font-text">GAME 2</h3>
-            <div class="pair">
+            <div class="pair ${g2}">
               <div class="player-card">${this.fillPlayerCard(this.stats.g2_p1)}</div>
               <h1 class="font-sub pair-vs">VS</h1>
               <div class="player-card">${this.fillPlayerCard(this.stats.g2_p2)}</div>
@@ -150,7 +161,7 @@ export default class extends AbstractView {
         <div class="level-1-div">
           <div class="pair-holder">
             <h3 class="font-text">GAME 3</h3>
-            <div class="pair">
+            <div class="pair ${g3}">
               <div class="player-card">${this.fillPlayerCard(this.stats.g3_p1)}</div>
               <h1 class="font-sub pair-vs">VS</h1>
               <div class="player-card">${this.fillPlayerCard(this.stats.g3_p2)}</div>
@@ -162,7 +173,7 @@ export default class extends AbstractView {
         </div>
 
         <div class="info-div">
-          <h2 class="font-sub info-text">click to continue</h2>
+          <h2 class="font-sub info-text">click anywhere to continue</h2>
           <svg class="info-img" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="layer1"> <path d="M 7 1 C 5.3431455 1 4 2.3431458 4 4 L 4 13.5 C 4 16.537566 6.462434 19 9.5 19 C 12.537566 19 15 16.537566 15 13.5 L 15 4 C 15 2.3431458 13.656854 1 12 1 L 7 1 z M 7 2 L 9 2 L 9 8 L 10 8 L 10 2 L 12 2 C 13.104569 2 14 2.8954305 14 4 L 14 13.5 C 14 15.985281 11.985281 18 9.5 18 C 7.014719 18 5 15.985281 5 13.5 L 5 4 C 5 2.8954305 5.8954305 2 7 2 z " style="fill:#222222; fill-opacity:1; stroke:none; stroke-width:0px;"></path> </g> </g></svg>
         </div>
 

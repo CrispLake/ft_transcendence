@@ -528,26 +528,6 @@ export class AI
             return (this.game.ball.speedZ >= 0);
     }
 
-    // isPaddleCloseEnough()
-    // {
-    //     // Check if paddle can move away from the intersection, considering paddle time to not cover intersection (check spin direction) and ball time to intersection
-    //     // If we can move, set paddleDistanceChecked to true. That way, we can check every frame until we're good to go.
-    //     let paddleDistanceToTarget;
-
-    //     if (this.alignment == G.vertical)
-    //         paddleDistanceToTarget = Math.abs(this.paddle.position.z - this.firstPoint.pos.y);
-    //     else
-    //         paddleDistanceToTarget = Math.abs(this.paddle.position.x - this.firstPoint.pos.x);
-
-    //     if (paddleDistanceToTarget < this.offset)
-    //         this.paddleIsCloseEnough = true;
-    //     else
-    //         this.paddleIsCloseEnough = false;
-
-    //     this.paddleDistanceChecked = true;
-    //     console.log(this.playerNum + ": isPaddleCloseEnough(" + paddleDistanceToTarget.toFixed(2) + " < " + this.offset.toFixed(2) + ") = " + (paddleDistanceToTarget < this.offset));
-    // }
-
     isPaddleCloseEnough()
     {
         // Check if paddle can move away from the intersection, considering paddle time to not cover intersection (check spin direction) and ball time to intersection
@@ -558,8 +538,6 @@ export class AI
         else
             paddleDistanceToTarget = this.firstPoint.pos.x - this.paddle.position.x;
 
- 
-
         let distanceToMiss;
         if (this.spinDirection == G.SpinLeft)
             distanceToMiss = this.paddleLength / 2 - paddleDistanceToTarget;
@@ -567,24 +545,13 @@ export class AI
             distanceToMiss = this.paddleLength / 2 + paddleDistanceToTarget;
 
         const ballTimeToIntersection = this.ballTimeToTarget - this.ballTimeToTargetTimer.getElapsedTime();
-
-        // const paddleTimeToMiss = distanceToMiss / this.speed;
-        
-        // // Close enough without margins
-        // if (paddleTimeToDanger > ballTimeToIntersection)
-        // {
-        //     this.paddleDistanceChecked = true;
-        //     this.paddleIsCloseEnough = true;
-        // }
-        // console.log(this.playerNum + ": isPaddleCloseEnough(" + paddleTimeToMiss.toFixed(2) + " > " + ballTimeToIntersection.toFixed(2) + ") = " + (paddleTimeToDanger > ballTimeToIntersection));
-
         
         // Variables for considering a margin of error
         const dangerZone = this.paddleLength * G.AIMargin;
         const paddleDistanceToDanger = distanceToMiss - dangerZone;
         const paddleDistanceToSafeZone = paddleDistanceToDanger - (this.paddleLength - 2 * dangerZone);
-        const paddleTimeToDanger = paddleDistanceToDanger / this.speed;
-        const paddleTimeToSafeZone = paddleDistanceToSafeZone / this.speed; 
+        const paddleTimeToDanger = paddleDistanceToDanger / (this.speed * G.fps);
+        const paddleTimeToSafeZone = paddleDistanceToSafeZone / (this.speed * G.fps); 
 
         // Close enough with margins
         if (paddleTimeToSafeZone < ballTimeToIntersection && paddleTimeToDanger > ballTimeToIntersection)
@@ -592,7 +559,7 @@ export class AI
             this.paddleDistanceChecked = true;
             this.paddleIsCloseEnough = true;
         }
-        console.log(this.playerNum + ": isPaddleCloseEnough(" + paddleDistanceToSafeZone.toFixed(2) + " < " + ballTimeToIntersection.toFixed(2) + " < " + paddleDistanceToDanger.toFixed(2) + " = " + (paddleDistanceToSafeZone < ballTimeToIntersection && paddleDistanceToDanger > ballTimeToIntersection));
+        console.log(this.playerNum + ": isPaddleCloseEnough(" + paddleDistanceToSafeZone.toFixed(2) + " < " + paddleDistanceToTarget.toFixed(2) + " < " + paddleDistanceToDanger.toFixed(2) + " = " + (paddleDistanceToSafeZone < paddleDistanceToTarget && paddleDistanceToDanger > paddleDistanceToTarget));
         console.log(this.playerNum + ": isPaddleCloseEnough(" + paddleTimeToSafeZone.toFixed(2) + " < " + ballTimeToIntersection.toFixed(2) + " < " + paddleTimeToDanger.toFixed(2) + " = " + (paddleTimeToSafeZone < ballTimeToIntersection && paddleTimeToDanger > ballTimeToIntersection));
     }
 
@@ -1146,6 +1113,7 @@ export class AI
             this.ballTimeToTargetTimer.stop();
         this.shouldBoost = false;
         this.paddleDistanceChecked = false;
+        this.paddleIsCloseEnough = false;
         this.setSpinDirection();
         this.setOffsetFromTargetPosition();
     }
@@ -1172,6 +1140,7 @@ export class AI
         this.setSpinDirection();
         this.setOffsetFromTargetPosition();
         this.paddleDistanceChecked = false;
+        this.paddleIsCloseEnough = false;
     }
 
     handleStun()

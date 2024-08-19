@@ -29,6 +29,8 @@ export default class extends AbstractView {
     this.listeners = true;
     this.childs = true;
 
+    this.players = null;
+
     this.controls = null;
 
     this.onWindowResize = this.onWindowResize.bind(this);
@@ -50,6 +52,7 @@ export default class extends AbstractView {
 
   // Handles single game with provided settings configuration
   async launchGame(gameSettings) {
+    this.players = gameSettings.players;
     // this.settings = gameSettings;
     this.game = new Game(gameSettings);
     const html = await document.getElementById('app');
@@ -62,23 +65,25 @@ export default class extends AbstractView {
   }
 
   async fakeGame(gameSettings) {
-    const results = this.CreateResultsObject(gameSettings);
+    this.players = gameSettings.players;
+    const results = this.CreateResultsObject();
 
     // WAITING LOGIC HERE
 
     return results;
   }
 
-    CreateResultsObject(gameSettings) {
-        const results = {
-            "winner": gameSettings.players[1],
-            "player1": 1,
-            "player1Score": 2,
-            "player2": 2,
-            "player2Score": 4
-        }
-        return results;
+  // TODO: create logic to really determine winner after including game logic and it's stats
+  CreateResultsObject() {
+    const results = {
+      "winner": this.players[1],
+      "player1": this.players[0],
+      "player1Score": 2,
+      "player2": this.players[1],
+      "player2Score": 4
     }
+    return results;
+  }
 
   handleKeyDown(event) {
     switch (event.key) {

@@ -13,7 +13,6 @@
 import { Notification } from "../notification.js";
 import AbstractView from "./AbstractView.js";
 import Result from "./Result.js";
-import Pong from "./Pong.js";
 
 export default class extends AbstractView {
   constructor(params) {
@@ -51,8 +50,9 @@ export default class extends AbstractView {
     }
 
     this.initialize = this.initialize.bind(this);
+    this.getNextPlayers = this.getNextPlayers.bind(this);
+    this.saveResults = this.saveResults.bind(this);
     this.matchmaking = this.matchmaking.bind(this);
-    this.createFinalGame = this.createFinalGame.bind(this);
     this.displayTournament = this.displayTournament.bind(this);
     this.WaitForUser = this.WaitForUser.bind(this);
     this.getUserInput = this.getUserInput.bind(this);
@@ -94,14 +94,6 @@ export default class extends AbstractView {
     this.stats.g2_p2 = this.players[3];
   }
   
-  // grab winners of two previous games and make a final game out of those
-  createFinalGame() {
-    this.g1_winner = this.stats.g1_p1_score > this.stats.g1_p2_score ? this.stats.g1_p1 : this.stats.g1_p2;
-    this.g2_winner = this.stats.g2_p1_score > this.stats.g2_p2_score ? this.stats.g2_p1 : this.stats.g2_p2;
-    this.stats.g3_p1 = this.g1_winner;
-    this.stats.g3_p2 = this.g2_winner;
-  }
-
   fillPlayerCard(player) {
     if (!player) {
       return `
@@ -181,6 +173,47 @@ export default class extends AbstractView {
       </div>
     `;
   }
+
+  saveResults(results) {
+    console.log(results);
+    
+    switch(this.level) {
+      case 0:
+        this.stats.g3_p1 = results.winner;
+        break;
+      
+      case 1:
+        this.stats.g3_p2 = results.winner;
+        break;
+
+      case 2:
+        this.stats.winner = results.winner;
+        break;
+    }
+  }
+
+  // Return a list of two players based on the level
+  getNextPlayers() {
+    const payload = [];
+
+    switch(this.level) {
+      case 0:
+        payload.push(this.stats.g1_p1);
+        payload.push(this.stats.g1_p2);
+        break;
+      
+      case 1:
+        payload.push(this.stats.g2_p1);
+        payload.push(this.stats.g2_p2);
+        break;
+
+      case 2:
+        payload.push(this.stats.g3_p1);
+        payload.push(this.stats.g3_p2);
+        break;
+    }
+    return payload;
+  } 
 
   clickHandler(event) {
     event.preventDefault();

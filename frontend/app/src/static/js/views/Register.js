@@ -27,7 +27,6 @@ export default class extends AbstractView {
     // returns TRUE if everything ok
     // returns FALSE if has forbidden stuff
     checkForbiddenNames(username) {
-        console.log(username, ' in check');
         const name = username.toLowerCase();
 
         if (name.includes('guest'))
@@ -55,7 +54,6 @@ export default class extends AbstractView {
                 const payload = {
                     user: data
                 };
-                console.log(payload.user.username);
                 if (!this.checkForbiddenNames(payload.user.username)) {
                     const err = new Error();
                     err.response = {
@@ -77,7 +75,6 @@ export default class extends AbstractView {
                     this.Redirect('/login');
                 }, 3000);
             } catch (error) {
-                console.log(error.response)
                 Notification('notification-div', `<h3>${error.response.data.user.username}</h3>`, 1);
             }
         }
@@ -88,7 +85,7 @@ export default class extends AbstractView {
         if (registerForm) {
             registerForm.addEventListener('submit', this.registerHandler);
         } else {
-            console.log('505 - Internal server error - could not find submit buttons');
+            console.log('500 - Internal server error - could not find submit buttons');
             this.Redirect('/500');
         }
     }
@@ -99,7 +96,7 @@ export default class extends AbstractView {
         if (registerForm) {
             registerForm.removeEventListener('submit', this.registerHandler);
         } else {
-            console.log('505 - Internal server error - could not find submit buttons');
+            console.log('500 - Internal server error - could not find submit buttons');
             this.Redirect('/500');
         }
     }

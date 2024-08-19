@@ -92,13 +92,13 @@ export default class extends AbstractView {
       // 2. wait for the game to end
       const players = tournamentObject.getNextPlayers();
       this.setupObj.players = players;
-      const game = new Game(this.setupObj); 
-      const results = await game.fakeGame();
+      console.log(players);
+      const game = new Pong(); 
+      const results = await game.fakeGame(this.setupObj);
       tournamentObject.saveResults(results);
 
-      // 3. show winner --> wait for input to to show tournament and next game
-
-      // 4. if level == 2 show end screen and return to home page
+      // 3. if level == 2 show end screen and return to home page
+     
 
       tournamentObject.level++;
     }

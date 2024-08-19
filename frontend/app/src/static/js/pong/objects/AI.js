@@ -1109,6 +1109,7 @@ export class AI
     setActive()
     {
         console.log(this.playerNum + ": Active");
+        this.active = true;
         if (this.ballTimeToTargetTimer.running)
             this.ballTimeToTargetTimer.stop();
         this.shouldBoost = false;

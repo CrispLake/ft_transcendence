@@ -21,6 +21,7 @@ export default class extends AbstractView {
 
     this.getHtml = this.getHtml.bind(this);
     this.getUserInput = this.getUserInput.bind(this);
+    this.initialize = this.initialize.bind(this);
   }
 
     handleContinue(resolve) {
@@ -54,6 +55,10 @@ export default class extends AbstractView {
 
         appDiv.innerHTML = await this.getHtml();
         await this.waitForUser();
+    }
+
+    initialize(results) {
+        this.results = results;
     }
 
   AddListeners() {

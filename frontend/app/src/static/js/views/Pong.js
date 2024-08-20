@@ -30,38 +30,44 @@ export default class extends AbstractView {
     this.childs = true;
 
     this.players = null;
-
+    this.resolve = null;
     this.controls = null;
 
     this.onWindowResize = this.onWindowResize.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
     this.getHtml = this.getHtml.bind(this);
-    // this.init = this.init.bind(this);
+    this.WaitForUser = this.WaitForUser.bind(this);
+    this.getUserInput = this.getUserInput.bind(this);
+    this.launchGame = this.launchGame.bind(this);
   }
 
-  // init() {
-  //   if (this.game === null) {
-  //     this.game = new Game();
-  //   }
-  //   if (this.controls === null) {
-  //     this.controls = new OrbitControls(this.game.camera, this. game.renderer.domElement);
-  //   }
-  //   RectAreaLightUniformsLib.init();
-  // }
+  WaitForUser() {
+    if (this.game.resolve === null) {
+      return new Promise((resolve) => {
+        this.game.resolve = resolve;
+      })
+    }
+  }
+
+  async getUserInput() {
+    await this.WaitForUser();
+  }
 
   // Handles single game with provided settings configuration
-  async launchGame(gameSettings) {
+  async launchGame(gameSettings, appDiv) {
     this.players = gameSettings.players;
-    // this.settings = gameSettings;
+    this.settings = gameSettings;
     this.game = new Game(gameSettings);
-    const html = await document.getElementById('app');
-    html.innerHTML = '';
-    const elemetn = await this.getHtml();
-    html.appendChild(elemetn);
-    console.log('before game');
-    // TODO: how to escape the game here
-    console.log('after game');
+
+    appDiv.innerHTML = '';
+    const element = await this.getHtml();
+    appDiv.appendChild(element);
+    await this.getUserInput();
+    appDiv.removeChild(element);
+
+    const results = this.CreateResultsObject();
+    return results;
   }
 
   async fakeGame(gameSettings) {

@@ -73,11 +73,11 @@
 }
 
 
-.pair.winner-p1 {
+.winner-p1 {
   background: linear-gradient(to right, var(--green) 50%, var(--pink) 50%);
 }
 
-.pair.winner-p2 {
+.winner-p2 {
   background: linear-gradient(to right, var(--pink) 50%, var(--green) 50%);
 }
 

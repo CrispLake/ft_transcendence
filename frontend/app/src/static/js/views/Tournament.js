@@ -120,16 +120,26 @@ export default class extends AbstractView {
     }
   }
 
+  async displayWinner() {
+    const results = new Result();
+    results.initialize(this.stats);
+    console.log(this.stats.winner);
+
+    this.app.innerHTML = await results.getHtml();
+  }
+
   // Displays current status of tournament
   displayTournament() {
     let g1 = '', g2 = '', g3 = '';
 
-    if (this.level >= 0)
-      g1 = this.stats.g1_winner === 1 ? 'winner-p1' : 'winner-2';
     if (this.level >= 1)
-      g2 = this.stats.g2_winner === 1 ? 'winner-p1' : 'winner-2';
+      g1 = this.stats.g1_winner === 1 ? 'winner-p1' : 'winner-p2';
     if (this.level >= 2)
-      g3 = this.stats.g3_winner === 1 ? 'winner-p1' : 'winner-2';
+      g2 = this.stats.g2_winner === 1 ? 'winner-p1' : 'winner-p2';
+    if (this.level >= 3)
+      g3 = this.stats.g3_winner === 1 ? 'winner-p1' : 'winner-p2';
+  
+    console.log('1: ', g1, ' 2: ', g2, ' g3: ', g3);
 
     this.app.innerHTML = `
       <div class="tournament-page">
@@ -161,7 +171,7 @@ export default class extends AbstractView {
             </div>
           </div>
         </div>
-        <div class="level-2-div">
+        <div id="winner-div" class="level-2-div">
           <h1 class="font-heading tournament-winner-text">WINNER</h1>
         </div>
 
@@ -180,14 +190,17 @@ export default class extends AbstractView {
     switch(this.level) {
       case 0:
         this.stats.g3_p1 = results.winner;
+        this.stats.g1_winner = results.winner;
         break;
       
       case 1:
         this.stats.g3_p2 = results.winner;
+        this.stats.g2_winner = results.winner;
         break;
 
       case 2:
         this.stats.winner = results.winner;
+        this.stats.g3_winner = results.winner;
         break;
     }
   }

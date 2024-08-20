@@ -19,6 +19,7 @@ export class Game
 {
 	constructor()
 	{
+		this.resolve = null;
 		this.settings = new Settings();
 		this.results = new Results();
 		this.gameScene = new THREE.Scene();
@@ -39,6 +40,9 @@ export class Game
 		this.animateStart = true;
 		this.gameEnded = false;
 		this.update();
+
+		this.endGame = this.endGame.bind(this);
+		this.update = this.update.bind(this);
 	}
 
 	
@@ -409,7 +413,10 @@ export class Game
 
 	endGame()
 	{
-		// TODO: Here we submit results to database, show results of the game, let user play again or go back to website, etc...
+		if (this.resolve)
+		{
+			this.resolve();
+		}
 	}
 
 	resetGame()

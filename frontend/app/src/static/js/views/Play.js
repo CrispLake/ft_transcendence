@@ -16,7 +16,7 @@ import AbstractView from './AbstractView.js';
 import Tournament from './Tournament.js';
 import GameSetup from './GameSetup.js';
 import GameMode from './GameMode.js';
-import Results from './Result.js';
+import Result from './Result.js';
 import Pong from './Pong.js';
 
 export default class extends AbstractView {
@@ -51,13 +51,18 @@ export default class extends AbstractView {
   }
 
   async Pong() {
+    const appElem = document.getElementById('app');
+    if (!appElem) {
+      this.Redirect('/500');
+      return;
+    }
     const pong = new Pong();
     await pong.AddListeners();
 
-    const gameResults = await pong.fakeGame(this.setupObj);
+    const gameResults = await pong.launchGame(this.setupObj, appElem);
 
     await pong.RemoveListeners();
-    const resultsView = new Results();
+    const resultsView = new Result();
     await resultsView.getUserInput(gameResults);
   }
 
@@ -70,35 +75,32 @@ export default class extends AbstractView {
     const tournamentObject = new Tournament();
     const appElem = document.getElementById('app');
     if (!appElem) {
-      console.log('tournament appelem ret');
       return;
     }
 
     appElem.innerHTML = await tournamentObject.getHtml();
-
 
     if (await tournamentObject.initialize(this.setupObj) === -1) {
       this.Redirect('/500');
       return;
     }
 
-    // Loop trough all games in the tournament
-    for (let i = 0; i < 3; i++) {
-      // 1. Display tournament --> wait for input to start the game
+    for (let i = 0; i <= 3; i++) {
       await tournamentObject.displayTournament();
       await tournamentObject.getUserInput();
-      console.log('on a round: ', i);
-      
-      // 2. wait for the game to end
+     
+      if (tournamentObject.level === 3) {
+        await tournamentObject.displayWinner();
+        break;
+      }
       const players = tournamentObject.getNextPlayers();
       this.setupObj.players = players;
       console.log(players);
       const game = new Pong(); 
+      // this.setupObj, tournamentObject.app
       const results = await game.fakeGame(this.setupObj);
       tournamentObject.saveResults(results);
 
-      // 3. if level == 2 show end screen and return to home page
-     
 
       tournamentObject.level++;
     }

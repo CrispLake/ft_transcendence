@@ -153,8 +153,7 @@ export class AI
         this.gameReadTimer = new THREE.Clock();
         this.gameReadTimer.start();
         this.readInterval = G.AIreadInterval / Math.pow(2, this.difficulty - 1);  // diffculty: 1 -> 1/1s, 2 -> 1/2s, 3 -> 1/4s, etc...
-        this.goToTarget = false;
-        this.targetPos = 0;
+        this.paddleTargetPos = 0;
         this.considerSpin = false;
         this.canSpin = false;
         this.maxBounces = 3;
@@ -188,7 +187,6 @@ export class AI
         this.intersectionPoints = [];
         this.firstPoint = new IntersectionPoint(0, 0, "none");
 
-        this.ballIntersectPos = 0;
         this.pathLengthToHit = 0;
         this.ballTimeToTarget = 0;
         this.ballTimeToTargetTimer = new THREE.Clock();
@@ -199,6 +197,10 @@ export class AI
         this.setOffsetFromTargetPosition();
         this.paddleDistanceChecked = false;
         this.paddleIsCloseEnough = false;
+
+        // Variables for handling aim
+        this.aimTarget = new THREE.Vector2(0, 0);
+        this.shouldAim = false;
     }
 
 
@@ -559,8 +561,6 @@ export class AI
             this.paddleDistanceChecked = true;
             this.paddleIsCloseEnough = true;
         }
-        console.log(this.playerNum + ": isPaddleCloseEnough(" + paddleDistanceToSafeZone.toFixed(2) + " < " + paddleDistanceToTarget.toFixed(2) + " < " + paddleDistanceToDanger.toFixed(2) + " = " + (paddleDistanceToSafeZone < paddleDistanceToTarget && paddleDistanceToDanger > paddleDistanceToTarget));
-        console.log(this.playerNum + ": isPaddleCloseEnough(" + paddleTimeToSafeZone.toFixed(2) + " < " + ballTimeToIntersection.toFixed(2) + " < " + paddleTimeToDanger.toFixed(2) + " = " + (paddleTimeToSafeZone < ballTimeToIntersection && paddleTimeToDanger > ballTimeToIntersection));
     }
 
 
@@ -643,7 +643,7 @@ export class AI
             this.firstPoint.set(-this.wallX, 0, "left");
     }
 
-    getTargetPosition()
+    getBallIntersectionPoint()
     {
         this.pathLengthToHit = 0;
         this.ballPos.set(this.game.ball.mesh.position.x, this.game.ball.mesh.position.z);
@@ -659,13 +659,6 @@ export class AI
             this.getFirstIntersectionPoint();
             this.pathLengthToHit += PongMath.distanceBetweenPoints(this.ballPos.x, this.ballPos.y, this.firstPoint.pos.x, this.firstPoint.pos.y);
             bounces++;
-        }
-        if (this.ownSideHit())
-        {
-            if (this.alignment == G.vertical)
-                this.targetPos = this.firstPoint.pos.y;
-            else
-                this.targetPos = this.firstPoint.pos.x;
         }
     }
 
@@ -860,7 +853,7 @@ export class AI
         }
     }
 
-    getTargetPositionWithSpin()
+    getBallIntersectionPointWithSpin()
     {
         this.ballPos.set(this.game.ball.mesh.position.x, this.game.ball.mesh.position.z);
         this.angle = this.game.ball.angle;
@@ -895,30 +888,6 @@ export class AI
                 this.getFirstIntersectionPointCounterClockwise();
             bounces++;
         }
-
-        let ownGoal = this.ownGoalHit();
-        // console.log(this.playerNum + ": ownGoalHit = " + ownGoal);
-
-        if (this.ownGoalHit())
-        {
-            if (this.alignment == G.vertical)
-            {
-                this.targetPos = this.firstPoint.pos.y;
-                this.ballIntersectPos = this.firstPoint.pos.y;
-            }
-            else
-            {
-                this.targetPos = this.firstPoint.pos.x;
-                this.ballIntersectPos = this.firstPoint.pos.x;
-            }
-        }
-    }
-
-    
-    db(n, msg, x)   // DEBUG
-    {
-        if (this.playerNum == n)
-            console.log(n + ": " + msg + " = " + x);
     }
 
 
@@ -930,9 +899,9 @@ export class AI
     {
         let paddleDistanceToTarget;
         if (this.alignment == G.vertical)
-            paddleDistanceToTarget = this.paddle.position.z - this.targetPos;
+            paddleDistanceToTarget = this.paddle.position.z - this.paddleTargetPos;
         else
-            paddleDistanceToTarget = this.paddle.position.x - this.targetPos;
+            paddleDistanceToTarget = this.paddle.position.x - this.paddleTargetPos;
         
         paddleDistanceToTarget += this.offset;
 
@@ -959,7 +928,6 @@ export class AI
     {
         // We set the offset to a random value between 0 and 20% of the paddle length
         this.offset = Math.random() * this.paddleLength * G.maxOffset;
-        console.log(this.playerNum + ": setting offset = " + this.offset);
     }
 
     handleSpinInput()
@@ -972,7 +940,6 @@ export class AI
 
             if (this.paddleIsCloseEnough)
             {
-                console.log(this.playerNum + ": spinning -> " + this.spinDirection);
                 if (this.spinDirection == G.SpinLeft)
                     this.moveLeft = true;
                 else if (this.spinDirection == G.SpinRight)
@@ -1022,28 +989,99 @@ export class AI
 
     readGame()
     {
-        // this.db(2, "READ", "----------------------------------------------------");
+        // First we check where the ball intersects
         if (this.considerSpin && this.game.ball.spin != 0)
-            this.getTargetPositionWithSpin();
+            this.getBallIntersectionPointWithSpin();
         else
-            this.getTargetPosition();
-
+            this.getBallIntersectionPoint();
+        
+        // Set the target position for the paddle
+        if (this.settings.multiMode && this.ballHitsNeighbouringGoal())
+            this.setPaddleTargetToCorner();
+        else if (this.ownGoalHit())
+        {
+            // if (this.goodPowerupExists())
+            //     this.setupAimForPowerup();
+            // else
+                this.setPaddleTargetToBallIntersection();
+        }
+        else
+            this.paddleTargetPos = 0;
+        
+        // Update the time to target
         if (this.canSpin)
         {
             this.shouldBoost = true;
             this.updateTimeToTarget();
         }
+    }
 
-        if (!this.ownGoalHit())
+    ballHitsNeighbouringGoal()
+    {
+        if ((this.playerNum == 1 || this.playerNum == 2)
+            && (this.firstPoint.wall == "top" || this.firstPoint.wall == "bottom"))
+            return true;
+        else if ((this.playerNum == 3 || this.playerNum == 4)
+            && (this.firstPoint.wall == "left" || this.firstPoint.wall == "right"))
+            return true;
+        return false;
+    }
+
+    setPaddleTargetToCorner()
+    {
+        const enemyGoalPost = this.game.arena.width / 2 - G.wallLength4Player;
+        
+        // Get the intersection point compared to the goal posts. Then we lerp the target position (between middle and corner) based on the intersection point.
+        if (this.playerNum == 1)
         {
-            this.targetPos = 0;
-            // console.log(this.playerNum + ": READ: setting targetPos = " + this.targetPos);
+            if (this.firstPoint.wall == "top")
+                this.paddleTargetPos = PongMath.lerp(this.firstPoint.pos.x, enemyGoalPost, -enemyGoalPost, 0, -this.movementBoundary);
+            else if (this.firstPoint.wall == "bottom")
+                this.paddleTargetPos = PongMath.lerp(this.firstPoint.pos.x, enemyGoalPost, -enemyGoalPost, 0, this.movementBoundary);
         }
+        else if (this.playerNum == 2)
+        {
+            if (this.firstPoint.wall == "top")
+                this.paddleTargetPos = PongMath.lerp(this.firstPoint.pos.x, -enemyGoalPost, enemyGoalPost, 0, -this.movementBoundary);
+            else if (this.firstPoint.wall == "bottom")
+                this.paddleTargetPos = PongMath.lerp(this.firstPoint.pos.x, -enemyGoalPost, enemyGoalPost, 0, this.movementBoundary);
+        }
+        else if (this.playerNum == 3)
+        {
+            if (this.firstPoint.wall == "left")
+                this.paddleTargetPos = PongMath.lerp(this.firstPoint.pos.y, enemyGoalPost, -enemyGoalPost, 0, -this.movementBoundary);
+            else if (this.firstPoint.wall == "right")
+                this.paddleTargetPos = PongMath.lerp(this.firstPoint.pos.y, enemyGoalPost, -enemyGoalPost, 0, this.movementBoundary);
+        }
+        else if (this.playerNum == 4)
+        {
+            if (this.firstPoint.wall == "left")
+                this.paddleTargetPos = PongMath.lerp(this.firstPoint.pos.y, -enemyGoalPost, enemyGoalPost, 0, -this.movementBoundary);
+            else if (this.firstPoint.wall == "right")
+                this.paddleTargetPos = PongMath.lerp(this.firstPoint.pos.y, -enemyGoalPost, enemyGoalPost, 0, this.movementBoundary);
+        }
+    }
 
-        // console.log(this.playerNum + ": firstPoint.x = " + this.firstPoint.pos.x.toFixed(2));
-        // console.log(this.playerNum + ": firstPoint.z = " + this.firstPoint.pos.y.toFixed(2));
-        // console.log(this.playerNum + ": firstPoint.wall = " + this.firstPoint.wall);
-        // console.log(this.playerNum + ": targetPos = " + this.targetPos.toFixed(2));
+    goodPowerupExists()
+    {
+        return (this.game.powerup && (this.game.powerup == G.POWER_PADDLE_LONG || this.game.powerup == G.POWER_LIFE_PLUS));
+    }
+
+    setupAimForPowerup()
+    {
+        this.aimTarget.set(this.game.powerup.mesh.position.x, this.game.powerup.mesh.position.z);
+        this.shouldAim = true;
+
+        // Consider angle, spin, ball intersection point and powerup position to calculate the target position. For simplicity, AI will go for a straight shot.
+
+    }
+
+    setPaddleTargetToBallIntersection()
+    {
+        if (this.alignment == G.vertical)
+            this.paddleTargetPos = this.firstPoint.pos.y;
+        else
+            this.paddleTargetPos = this.firstPoint.pos.x;
     }
 
     updateTimeToTarget()
@@ -1063,11 +1101,11 @@ export class AI
 
     setActive()
     {
-        console.log(this.playerNum + ": Active");
         this.active = true;
         if (this.ballTimeToTargetTimer.running)
             this.ballTimeToTargetTimer.stop();
         this.shouldBoost = false;
+        this.shouldAim = false;
         this.paddleDistanceChecked = false;
         this.paddleIsCloseEnough = false;
         this.setSpinDirection();
@@ -1092,11 +1130,12 @@ export class AI
         this.box.setFromObject(this.paddle);
         this.boostAmount = 0;
         this.updateBoostMeter();
-        this.targetPos = 0;
+        this.paddleTargetPos = 0;
         this.setSpinDirection();
         this.setOffsetFromTargetPosition();
         this.paddleDistanceChecked = false;
         this.paddleIsCloseEnough = false;
+        this.shouldAim = false;
     }
 
     handleStun()
@@ -1146,7 +1185,9 @@ export class AI
         }
 
         // Update the AI input based on the game situation.
-        if (this.canSpin)
+        if (this.shouldAim)
+            this.handleAimInput();
+        else if (this.canSpin)
         {
             this.handleSpinInput();
             this.handleBoostInput();

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Play.js                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joonasmykkanen <joonasmykkanen@student.    +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/14 15:45:24 by joonasmykka      ###   ########.fr       */
+/*   Updated: 2024/08/21 15:58:01 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ export default class extends AbstractView {
       'pong4': 3,
       'tournament': 4,
     }
+
+    this.url = 'http://localhost:8000'
   }
 
   // Choose how to play here
@@ -43,6 +45,78 @@ export default class extends AbstractView {
     this.gameMode = await gameModeObj.getUserInput();
   }
 
+  getAuthObject(players) {
+    const tokenString = players
+        .filter(obj => obj.token !== null)
+        .map(obj => `Token ${obj.token}`)
+        .join(', ')
+    console.log(`tokenString \n ${tokenString}`)
+    return {'Authorization': tokenString};
+  }
+
+//   this.result2p = {
+//     "player1": "",
+//     "player1Score": 0,
+//     "player2": "",
+//     "player2Score": 0
+// }
+// this.result4p = {
+//     "player1": "",
+//     "player1Score": 0,
+//     "player2": "",
+//     "player2Score": 0,
+//     "player3": "",
+//     "player3Score": 0,
+//     "player4": "",
+//     "player4Score": 0
+// }
+
+//   players = [
+//     {id: 1, token: 'abc'},
+//     {id: null, token: null},
+//     {id: 3, token: 'abc'},
+//     {id: 4, token: 'abc'}
+//   ]
+
+  getPayload(gameResults, players) {
+    const payload = {};
+
+    //TODO: Tournament payload different
+
+    //get all the user ids
+    for (const key in players) {
+        if (players[key] !== null) {
+            payload[key] = players[key];
+        }
+    }
+
+    // get all the scores
+    for (const key in gameResults) {
+        if (key.endsWith("Score")) {
+            payload[key] = gameResults[key];
+        }
+    }
+    return payload;
+}
+
+  async postGameResults(gameResults) {
+    const players = this.setupObj.players;
+
+    // check if any player is logged in. if not then no posting needs to be done
+    if (!players.some(obj => obj.id !== null && obj.id !== 1)) {
+        console.log("no posting done for game results");
+        return;
+    }
+
+    const authObject = this.getAuthObject(players);
+    const payload = this.getPayload(gameResults, players);
+
+    response = await axios.post(
+        this.url,
+        payload,
+        { headers: {authObject}}
+    )
+  }
   // Launch 2p Gonp
   async GameSetup() {
         const gameSetupObj = new GameSetup(this.gameMode);
@@ -59,8 +133,13 @@ export default class extends AbstractView {
     const pong = new Pong();
     await pong.AddListeners();
 
+    console.log("setuppi");
+    console.log(this.setupObj);
+    console.log("setuppi");
     const gameResults = await pong.launchGame(this.setupObj, appElem);
-    await pong.postResults(gameResults, this.gameMode);
+    console.log(gameResults);
+    await this.postGameResults(gameResults);
+    // await pong.postResults(gameResults, this.gameMode);
 
     await pong.RemoveListeners();
     const resultsView = new Result();
@@ -116,15 +195,19 @@ export default class extends AbstractView {
 
     switch (this.gameMode) {
       case this.modes.pong2:      // 2
+        this.url += '/gonp-2p'
         await this.Pong();
         break;
       case this.modes.pong4:      // 2
+        this.url += '/gonp-4p'
         await this.Pong();
         break;
       case this.modes.tournament: // 3
+        this.url += '/tournament'
         await this.Tournament();
         break;
       case this.modes.gonp:       // 4
+        this.url += '/gonp-2p'
         await this.Gonp();
         break;
     }

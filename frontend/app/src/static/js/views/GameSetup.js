@@ -160,6 +160,8 @@ export default class extends AbstractView {
         }
 
         const newEntry = {
+            player_id: 1,
+            token: null,
             id: this.entryIdCounter++,
             title: `AI`,
             image: `<img class="card-image" src="static/images/ai.avif" alt="AI icon" >`,
@@ -182,6 +184,8 @@ export default class extends AbstractView {
         }
 
         const newEntry = {
+            player_id: null,
+            token: null,
             id: this.entryIdCounter++,
             title: `Guest ${this.guestCounter}`,
             image: `<img class="card-image" src="static/images/guest.png" alt="Guest icon">`,

@@ -17,10 +17,10 @@ import { Text2D } from './Text2D.js';
 
 export class Game
 {
-	constructor()
+	constructor(params)
 	{
 		this.resolve = null;
-		this.settings = new Settings();
+		this.settings = new Settings(params);
 		this.results = new Results();
 		this.gameScene = new THREE.Scene();
 		this.fontLoader = new FontLoader();
@@ -110,8 +110,8 @@ export class Game
 		for (let i = 0; i < maxPlayers; i++)
 		{
 			const playerId = "p" + (i + 1);
-
-			if (i < this.settings.players)
+			
+			if (this.settings.players[i].username !== 'AI')
 				this.players[playerId] = new Player(this, this.gameScene, this.settings, i + 1, "Player" + (i + 1));
 			else
 				this.players[playerId] = new AI(this, i + 1, "AI" + (i + 1));
@@ -413,10 +413,9 @@ export class Game
 
 	endGame()
 	{
-		if (this.resolve)
-		{
-			this.resolve();
-		}
+		if (!this.resolve)
+			return;
+		this.resolve(this.results);
 	}
 
 	resetGame()
@@ -455,14 +454,21 @@ export class Game
 
 	saveResults()
 	{
+		let results = [];
+		for (let player in this.players) {
+			const entry = this.players[player];
+			const payload = {
+				name: entry.name,
+				score: entry.lives
+			}
+			results.push(payload);
+		}
+		this.playerList = results.sort((a, b) => a.score - b.score);
+	
 		if (this.settings.multiMode)
 			this.results.setResult4p(this.players["p1"], this.players["p2"], this.players["p3"], this.players["p4"]);
 		else
 			this.results.setResult2p(this.players["p1"], this.players["p2"]);
 
-		// DEBUG
-		console.log("RESULTS:");
-		console.log(this.results.getResult2p());
-		console.log(this.results.getResult4p());
 	}
 }

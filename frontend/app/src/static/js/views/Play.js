@@ -60,6 +60,7 @@ export default class extends AbstractView {
     await pong.AddListeners();
 
     const gameResults = await pong.launchGame(this.setupObj, appElem);
+    await pong.postResults(gameResults, this.gameMode);
 
     await pong.RemoveListeners();
     const resultsView = new Result();
@@ -67,7 +68,7 @@ export default class extends AbstractView {
   }
 
   async Gonp() {
-    
+    // gonp also posts it's results as pong will 
   }
 
   // Launch 4p tournament
@@ -95,15 +96,14 @@ export default class extends AbstractView {
       }
       const players = tournamentObject.getNextPlayers();
       this.setupObj.players = players;
-      console.log(players);
       const game = new Pong(); 
-      // this.setupObj, tournamentObject.app
       const results = await game.fakeGame(this.setupObj);
       tournamentObject.saveResults(results);
 
-
       tournamentObject.level++;
     }
+    await tournamentObject.postResults();
+    // tournament also posts it's results as pong will 
     tournamentObject.RemoveListeners();
   }
   

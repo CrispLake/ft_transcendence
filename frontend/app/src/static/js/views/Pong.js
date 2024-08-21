@@ -40,8 +40,30 @@ export default class extends AbstractView {
     this.WaitForUser = this.WaitForUser.bind(this);
     this.getUserInput = this.getUserInput.bind(this);
     this.launchGame = this.launchGame.bind(this);
+    this.postResults = this.postResults.bind(this);
   }
 
+  // NOTE: Should be usable for GONP too
+  async postResults(payload, mode) {
+    try {
+      let url = 'http://localhost:8000';
+
+      if (this.settings.multiMode)
+        url += '/gonp-4p';
+      else
+        url += '/gonp-2p';
+
+      axios.post(url, payload);
+    }
+    catch(error) {
+      console.log(error);
+      this.Redirect('/500');
+    }
+  }
+
+  // This resolve is being passed to the Game() object that will use it's
+  // getter function for results within the game and then resolve with that data
+  // thus returning that same result data here
   WaitForUser() {
     if (this.game.resolve === null) {
       return new Promise((resolve) => {
@@ -65,30 +87,12 @@ export default class extends AbstractView {
     appDiv.appendChild(element);
     await this.getUserInput();
     appDiv.removeChild(element);
+   
+    if (this.settings.multiMode)
+      return this.game.results.getResult4p();
+    else
+      return this.game.results.getResult2p();
 
-    const results = this.CreateResultsObject();
-    return results;
-  }
-
-  async fakeGame(gameSettings) {
-    this.players = gameSettings.players;
-    const results = this.CreateResultsObject();
-
-    // WAITING LOGIC HERE
-
-    return results;
-  }
-
-  // TODO: create logic to really determine winner after including game logic and it's stats
-  CreateResultsObject() {
-    const results = {
-      "winner": this.players[1],
-      "player1": this.players[0],
-      "player1Score": 2,
-      "player2": this.players[1],
-      "player2Score": 4
-    }
-    return results;
   }
 
   handleKeyDown(event) {

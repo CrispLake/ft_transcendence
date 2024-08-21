@@ -70,28 +70,16 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
-    const winner = this.results.winner;
-    let imageTag;
-    if (winner.username === "AI") {
-        imageTag = `<img class="winner-img" src="static/images/ai.avif" alt="User icon"/>`
-    }
-    else if (winner.username.includes('Guest')) {
-        imageTag = `<img class="winner-img" src="static/images/guest.png" alt="User icon"/>`
-    }
-    else {
-        imageTag = `<img class="winner-img" src="http://localhost:8000/account/${winner.id}/image" alt="User icon"/>`
-    }
+    console.log(this.results);
 
     return `
-        <div id="confettiContainer"></div>
         <div class="result-div">
             <div class="winner-text-div" >
                 <h1 class="font-sub winner-text">WINNER</h1>
             </div>
 
             <div class="winner-card">
-                ${imageTag}
-                <h3 class="font-text winner-username">${winner.username}</h3>
+                <h3 class="font-text winner-username">ASDAASD</h3>
             </div>
 
             <a href="/" id="continueButton" class="continue-div">

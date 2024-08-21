@@ -90,7 +90,7 @@ export default class extends AbstractView {
     response = await axios.post(
         this.url,
         payload,
-        { headers: {authObject}}
+        { headers: authObject}
     )
   }
   // Launch 2p Gonp

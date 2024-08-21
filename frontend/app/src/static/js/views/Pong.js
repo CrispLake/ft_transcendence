@@ -40,7 +40,6 @@ export default class extends AbstractView {
     this.WaitForUser = this.WaitForUser.bind(this);
     this.getUserInput = this.getUserInput.bind(this);
     this.launchGame = this.launchGame.bind(this);
-    this.postResults = this.postResults.bind(this);
   }
 
   // This resolve is being passed to the Game() object that will use it's

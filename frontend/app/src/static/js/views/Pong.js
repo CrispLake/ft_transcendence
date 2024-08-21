@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Pong.js                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/02 13:53:04 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/21 16:35:25 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,24 +41,6 @@ export default class extends AbstractView {
     this.getUserInput = this.getUserInput.bind(this);
     this.launchGame = this.launchGame.bind(this);
     this.postResults = this.postResults.bind(this);
-  }
-
-  // NOTE: Should be usable for GONP too
-  async postResults(payload, mode) {
-    try {
-      let url = 'http://localhost:8000';
-
-      if (this.settings.multiMode)
-        url += '/gonp-4p';
-      else
-        url += '/gonp-2p';
-
-      axios.post(url, payload);
-    }
-    catch(error) {
-      console.log(error);
-      this.Redirect('/500');
-    }
   }
 
   // This resolve is being passed to the Game() object that will use it's

@@ -62,6 +62,7 @@ export default class extends AbstractView {
   async launchGame(gameSettings, appDiv) {
     this.players = gameSettings.players;
     this.settings = gameSettings;
+    console.log('in launchgame: ', gameSettings);
     this.game = new Game(gameSettings);
 
     appDiv.innerHTML = '';

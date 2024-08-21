@@ -6,7 +6,7 @@
 /*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/21 16:47:30 by emajuri          ###   ########.fr       */
+/*   Updated: 2024/08/21 17:07:21 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,6 @@ export default class extends AbstractView {
     console.log(this.setupObj);
     console.log("setuppi");
     const gameResults = await pong.launchGame(this.setupObj, appElem);
-    console.log(gameResults);
     await this.postGameResults(gameResults);
 
     await pong.RemoveListeners();

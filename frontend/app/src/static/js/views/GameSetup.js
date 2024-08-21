@@ -22,12 +22,12 @@ export default class extends AbstractView {
 
         this.powerups = false;
         this.ai_difficulty = 1;
-        console.log(params);
         this.gameMode = params;
 
         this.getFirstEntry();
         this.waitForUser = this.waitForUser.bind(this);
         this.HandlePopupExit = this.HandlePopupExit.bind(this);
+        this.PowerUpToggle = this.PowerUpToggle.bind(this);
         this.HandlePrev = this.HandlePrev.bind(this);
         this.HandleNext = this.HandleNext.bind(this);
         this.addGuestEntryHandler = this.addGuestEntryHandler.bind(this);
@@ -37,6 +37,7 @@ export default class extends AbstractView {
         this.AiDifficultySlider = this.AiDifficultySlider.bind(this);
         this.MaxPlayerLimitReached = this.MaxPlayerLimitReached.bind(this);
         this.AddUserHandler = this.AddUserHandler.bind(this)
+        this.CreateSettingsObject = this.CreateSettingsObject.bind(this);
     }
 
     MaxPlayerLimitReached() {
@@ -73,14 +74,15 @@ export default class extends AbstractView {
 
     CreateSettingsObject() {
         const settingsObj = new Settings({
-            multimode: this.params < 3 ? false : true,
-            diff: this.ai_difficulty,
+            multiMode: this.params < 3 ? false : true,
+            difficulty: this.ai_difficulty,
             powerups: this.powerups,
             players: this.playerCounter,
 
             //todo might remove
             spin: true,
         });
+        console.log('create settings in setup: ', settingsObj);
         return settingsObj;
     }
 
@@ -335,7 +337,6 @@ export default class extends AbstractView {
         const formData = new FormData(formElement);
         const payload = Object.fromEntries(formData);
 
-        //TODO: Notification for user already in match
         if (this.entries.some(entry => entry.title === payload.username)) {
             console.log('User already in the match');
             this.HideLoginPopUp();
@@ -370,12 +371,13 @@ export default class extends AbstractView {
     PowerUpToggle(event) {
         event.preventDefault();
 
+        console.log('in toggle');
         const PowerUpToggle = document.getElementById('toggle-content');
         if (!PowerUpToggle) {
             console.log('505 - Internal server error - could not find toggle');
             this.Redirect('/500');
         }
-        if (!this.powerups) {
+        if (this.powerups === false) {
             this.powerups = true;
             PowerUpToggle.checked = true;
         }
@@ -443,6 +445,7 @@ export default class extends AbstractView {
         addButton.addEventListener('click', this.addGuestEntryHandler);
         addAiButton.addEventListener('click', this.addAiEntryHandler);
         loginForm.addEventListener('submit', this.LoginHandler);
+        powerUpToggle.addEventListener('click', this.PowerUpToggle);
         if (rangeSlider) {
             rangeSlider.addEventListener('input', this.AiDifficultySlider);
         }

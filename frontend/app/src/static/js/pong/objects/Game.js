@@ -20,7 +20,8 @@ export class Game
 	constructor(params)
 	{
 		this.resolve = null;
-		this.settings = new Settings(params);
+		this.playerList = params.players;
+		this.settings = new Settings(params.settings);
 		this.results = new Results();
 		this.gameScene = new THREE.Scene();
 		this.fontLoader = new FontLoader();
@@ -43,6 +44,7 @@ export class Game
 
 		this.endGame = this.endGame.bind(this);
 		this.update = this.update.bind(this);
+		this.createPlayers = this.createPlayers.bind(this);
 	}
 
 	
@@ -111,8 +113,8 @@ export class Game
 		{
 			const playerId = "p" + (i + 1);
 			
-			if (this.settings.players[i].username !== 'AI')
-				this.players[playerId] = new Player(this, this.gameScene, this.settings, i + 1, "Player" + (i + 1));
+			if (this.playerList[i].username !== 'AI')
+				this.players[playerId] = new Player(this, this.gameScene, this.settings, i + 1, this.playerList[i].username, this.playerList[i].id);
 			else
 				this.players[playerId] = new AI(this, i + 1, "AI" + (i + 1));
 		}
@@ -454,17 +456,6 @@ export class Game
 
 	saveResults()
 	{
-		let results = [];
-		for (let player in this.players) {
-			const entry = this.players[player];
-			const payload = {
-				name: entry.name,
-				score: entry.lives
-			}
-			results.push(payload);
-		}
-		this.playerList = results.sort((a, b) => a.score - b.score);
-	
 		if (this.settings.multiMode)
 			this.results.setResult4p(this.players["p1"], this.players["p2"], this.players["p3"], this.players["p4"]);
 		else

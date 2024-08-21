@@ -6,7 +6,7 @@
 /*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/21 16:35:25 by emajuri          ###   ########.fr       */
+/*   Updated: 2024/08/21 17:24:42 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ export default class extends AbstractView {
     this.WaitForUser = this.WaitForUser.bind(this);
     this.getUserInput = this.getUserInput.bind(this);
     this.launchGame = this.launchGame.bind(this);
-    this.postResults = this.postResults.bind(this);
   }
 
   // This resolve is being passed to the Game() object that will use it's

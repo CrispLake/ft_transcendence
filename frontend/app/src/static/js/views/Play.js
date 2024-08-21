@@ -6,7 +6,7 @@
 /*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/21 16:35:39 by emajuri          ###   ########.fr       */
+/*   Updated: 2024/08/21 16:47:30 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,30 +53,6 @@ export default class extends AbstractView {
     console.log(`tokenString \n ${tokenString}`)
     return {'Authorization': tokenString};
   }
-
-//   this.result2p = {
-//     "player1": "",
-//     "player1Score": 0,
-//     "player2": "",
-//     "player2Score": 0
-// }
-// this.result4p = {
-//     "player1": "",
-//     "player1Score": 0,
-//     "player2": "",
-//     "player2Score": 0,
-//     "player3": "",
-//     "player3Score": 0,
-//     "player4": "",
-//     "player4Score": 0
-// }
-
-//   players = [
-//     {id: 1, token: 'abc'},
-//     {id: null, token: null},
-//     {id: 3, token: 'abc'},
-//     {id: 4, token: 'abc'}
-//   ]
 
   getPayload(gameResults, players) {
     const payload = {};

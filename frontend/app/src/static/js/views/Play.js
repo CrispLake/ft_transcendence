@@ -6,7 +6,7 @@
 /*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/21 18:00:13 by emajuri          ###   ########.fr       */
+/*   Updated: 2024/08/21 18:09:07 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,7 @@ export default class extends AbstractView {
     return payload;
 }
 
-  async postGameResults(gameResults) {
-    const players = this.setupObj.players;
-
+  async postGameResults(gameResults, players) {
     // check if any player is logged in. if not then no posting needs to be done
     if (!players.some(obj => obj.id !== null && obj.id !== 1)) {
         console.log("no posting done for game results");
@@ -115,11 +113,8 @@ export default class extends AbstractView {
     const pong = new Pong();
     await pong.AddListeners();
 
-    console.log("setuppi");
-    console.log(this.setupObj);
-    console.log("setuppi");
     const gameResults = await pong.launchGame(this.setupObj, appElem);
-    await this.postGameResults(gameResults);
+    await this.postGameResults(gameResults, this.setupObj.players);
 
     await pong.RemoveListeners();
     const resultsView = new Result();

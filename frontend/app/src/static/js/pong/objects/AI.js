@@ -634,17 +634,28 @@ export class AI
                 this.firstPoint.set(x, this.wallZ, "bottom");
         }
         else if (this.angle == PongMath.degToRad(0))
-            this.firstPoint.set(0, this.wallZ, "bottom");
+            this.firstPoint.set(this.ballPos.x, this.wallZ, "bottom");
         else if (this.angle == PongMath.degToRad(90))
-            this.firstPoint.set(this.wallX, 0, "right");
+            this.firstPoint.set(this.wallX, this.ballPos.y, "right");
         else if (this.angle == PongMath.degToRad(180))
-            this.firstPoint.set(0, -this.wallZ, "top");
+            this.firstPoint.set(this.ballPos.x, -this.wallZ, "top");
         else if (this.angle == PongMath.degToRad(270))
-            this.firstPoint.set(-this.wallX, 0, "left");
+            this.firstPoint.set(-this.wallX, this.ballPos.y, "left");
     }
+
+    calculateNewAngleWithoutSpin()
+    {
+        if (this.firstPoint.wall == "top" || this.firstPoint.wall == "bottom")
+            this.angle = PongMath.degToRad(180) - this.angle;
+        else if (this.firstPoint.wall == "left" || this.firstPoint.wall == "right")
+            this.angle = PongMath.degToRad(360) - this.angle;
+        this.angle = PongMath.within2Pi(this.angle);
+    }
+
 
     getBallIntersectionPoint()
     {
+        console.log("getBallIntersectionPoint");
         this.pathLengthToHit = 0;
         this.ballPos.set(this.game.ball.mesh.position.x, this.game.ball.mesh.position.z);
         this.angle = this.game.ball.angle;
@@ -655,7 +666,7 @@ export class AI
         while (this.wallHit(this.firstPoint.pos) && bounces < this.maxBounces)
         {
             this.ballPos.set(this.firstPoint.pos.x, this.firstPoint.pos.y);
-            this.angle = PongMath.degToRad(360) - this.angle;
+            this.calculateNewAngleWithoutSpin();
             this.getFirstIntersectionPoint();
             this.pathLengthToHit += PongMath.distanceBetweenPoints(this.ballPos.x, this.ballPos.y, this.firstPoint.pos.x, this.firstPoint.pos.y);
             bounces++;
@@ -855,6 +866,7 @@ export class AI
 
     getBallIntersectionPointWithSpin()
     {
+        console.log("getBallIntersectionPointWithSpin");
         this.ballPos.set(this.game.ball.mesh.position.x, this.game.ball.mesh.position.z);
         this.angle = this.game.ball.angle;
         this.angleDelta = this.game.ball.spin;
@@ -989,20 +1001,28 @@ export class AI
 
     readGame()
     {
+        console.log("----Read Game----------------------------------------------");
+        console.log("Actual ball angle: " + PongMath.radToDeg(this.game.ball.angle).toFixed(2));
         // First we check where the ball intersects
         if (this.considerSpin && this.game.ball.spin != 0)
             this.getBallIntersectionPointWithSpin();
         else
             this.getBallIntersectionPoint();
+
+        if (this.playerNum == 2)
+        {
+            console.log("firstPoint: " + this.firstPoint.pos.x.toFixed(2) + ", " + this.firstPoint.pos.y.toFixed(2));
+            console.log("angle:      " + PongMath.radToDeg(this.angle).toFixed(2));
+        }
         
         // Set the target position for the paddle
         if (this.settings.multiMode && this.ballHitsNeighbouringGoal())
             this.setPaddleTargetToCorner();
         else if (this.ownGoalHit())
         {
-            // if (this.goodPowerupExists())
-            //     this.setupAimForPowerup();
-            // else
+            if (this.goodPowerupExists())
+                this.setupAimForPowerup();
+            else
                 this.setPaddleTargetToBallIntersection();
         }
         else
@@ -1073,6 +1093,19 @@ export class AI
         this.shouldAim = true;
 
         // Consider angle, spin, ball intersection point and powerup position to calculate the target position. For simplicity, AI will go for a straight shot.
+        if (this.considerSpin && this.game.ball.spin != 0)
+            this.calculateNeededAngleForSpin();
+        else
+            this.calculateNeededAngleForNoSpin();
+    }
+
+    calculateNeededAngleForSpin()
+    {
+
+    }
+
+    calculateNeededAngleForNoSpin()
+    {
 
     }
 

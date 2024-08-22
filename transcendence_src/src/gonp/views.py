@@ -47,7 +47,7 @@ def gonp_2p(request, player_id=None):
 
         if player1_id not in valid_user_ids:
             return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
-        if player2_id is not None:
+        if player2_id is not None and player2_id != 1:
             if player2_id not in valid_user_ids:
                 return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
 

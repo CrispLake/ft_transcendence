@@ -122,8 +122,6 @@ export default class extends AbstractView {
     const test = new Result();
     await test.getUserInput(payload, this.setupObj.players);
     return;
-    
-
 
     const pong = new Pong();
     await pong.AddListeners();

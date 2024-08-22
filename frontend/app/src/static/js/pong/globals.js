@@ -125,6 +125,8 @@ export const SpinLeft = -1;
 export const SpinRight = 1;
 export const maxOffset = 0.2;
 export const AIMargin = 0.1;
+export const opponentCornerProximityThreshold = 0.8;
+export const cornerProximityAim = 0.9;
 
 
 //--------------------------------------------------------------------------
@@ -163,6 +165,7 @@ export const POWER_LIFE_PLUS = 2;
 export const POWER_LIFE_MINUS = 3;
 export const POWER_SPEED_PLUS = 4;
 export const POWER_SPEED_MINUS = 5;
+export const POWER_WAVY_WALLS = 6;
 
 export const powerupIntervalSec = 1;
 export const powerupMaxTimeSec = 8;

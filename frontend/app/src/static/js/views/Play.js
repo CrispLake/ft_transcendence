@@ -18,6 +18,7 @@ import GameSetup from './GameSetup.js';
 import GameMode from './GameMode.js';
 import Result from './Result.js';
 import Pong from './Pong.js';
+import Gonp from './Gonp.js'
 
 export default class extends AbstractView {
   constructor(params) {
@@ -121,7 +122,22 @@ export default class extends AbstractView {
   }
 
   async Gonp() {
-    // gonp also posts it's results as pong will 
+    const appElem = document.getElementById('app');
+    if (!appElem) {
+      this.Redirect('/500');
+      return;
+    }
+
+    const gonp = new Gonp();
+    await gonp.AddListeners();
+
+    const gameResults = await gonp.launchGame(this.setupObj, appElem);
+    await this.postGameResults(gameResults, this.setupObj.players);
+
+    await gonp.RemoveListeners();
+    const resultsView = new Result();
+    await resultsView.getUserInput(gameResults, this.setupObj.players);
+    
   }
 
   // Launch 4p tournament

@@ -39,7 +39,9 @@ def serve_profile_image(request, id=None):
         file_path = os.path.join(settings.MEDIA_ROOT, account.pfp.name)
 
         if os.path.exists(file_path):
-            return FileResponse(open(file_path, 'rb'))
+            response = FileResponse(open(file_path, 'rb'))
+            response['Cache-Control'] = 'no-store'
+            return response
         else:
             return Response({'detail': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
     except Account.DoesNotExist:

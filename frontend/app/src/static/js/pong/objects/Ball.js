@@ -124,6 +124,7 @@ export class Ball
             impactPoint = this.mesh.position.z - player.paddle.position.z;
         else
             impactPoint = this.mesh.position.x - player.paddle.position.x;
+        
         let normalizedImpact = impactPoint / (G.paddleLength / 2);
         if (player.playerNum == 1)
             this.angle = PongMath.lerp(normalizedImpact, -1, 1, PongMath.degToRad(180) - G.minAngle, G.minAngle);
@@ -135,9 +136,7 @@ export class Ball
             this.angle = PongMath.within2Pi(this.angle);
         }
         else if (player.playerNum == 4)
-        {
             this.angle = PongMath.lerp(normalizedImpact, -1, 1, PongMath.degToRad(270) - G.minAngle, PongMath.degToRad(90) + G.minAngle);
-        }
     }
 
     wallUp(wall)

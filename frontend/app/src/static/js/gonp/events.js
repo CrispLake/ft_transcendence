@@ -1,10 +1,12 @@
 
-import { player1, player2, camera, renderer } from './gonp.js'
 import * as KEY from './keys.js';
+import { game } from './gonp.js'
 
 export function handleKeyDown(event)
 {
-	if (event.repeat && event.key != KEY.P1_BOOST && event.key != KEY.P2_BOOST && event.key != KEY.P1_BOOST_PAUSE && event.key != KEY.P2_BOOST_PAUSE)
+	let player1 = game.player1;
+	let player2 = game.player2;
+		if (event.repeat && event.key != KEY.P1_BOOST && event.key != KEY.P2_BOOST && event.key != KEY.P1_BOOST_PAUSE && event.key != KEY.P2_BOOST_PAUSE)
 	{
 		handleKeyUp(event);
 		return ;
@@ -43,7 +45,9 @@ export function handleKeyDown(event)
 
 export function handleKeyUp(event)
 {
-	switch (event.key)
+	let player1 = game.player1;
+	let player2 = game.player2;
+		switch (event.key)
 	{
 		case KEY.P1_LEFT:
 			player1.moveLeft = false;
@@ -79,8 +83,11 @@ export function handleKeyUp(event)
 // ----Window resize----
 export function onWindowResize( event )
 {
+	let renderer = game.renderer;
+	let camera = game.camera;
 	var width = window.innerWidth;
 	var height = window.innerHeight;
+
 	renderer.setSize(width, height);
 	camera.aspect = width / height;
 	camera.updateProjectionMatrix();

@@ -6,7 +6,7 @@ import { Powerup } from './Powerup.js';
 
 export class Arena
 {
-	constructor(scene)
+	constructor(scene, powerupsOn)
 	{
 		this.laneLeftX = G.laneOriginX - (G.laneLength / 2);
 		this.laneRightX = G.laneOriginX + (G.laneLength / 2);
@@ -16,6 +16,8 @@ export class Arena
 		this.lanes.push(new Lane(G.lanePositions[1]));
 		this.lanes.push(new Lane(G.lanePositions[2]));
 		this.ambientLight = new THREE.AmbientLight(COLOR.WHITE, 0.05);
+		this.powerupsOn = powerupsOn;
+		this.powerup = 0;
 		this.powerupSpawning = false;
 		this.checkPowerupSpawn();
 		this.addToScene();
@@ -34,7 +36,7 @@ export class Arena
 	checkPowerupSpawn() {
 		const minTime = 5000;
 		const maxTime = 10000;
-		if (G.powerups == false) {
+		if (this.powerupsOn == false) {
 			return ;
 		}
 		if (!this.powerup && !this.powerupSpawning) {

@@ -1,22 +1,22 @@
 
 import * as THREE from 'three';
 import * as G from './globals.js';
-import { game } from './gonp.js'
+import View from '../views/Gonp.js'
 
-// let player1 = game.player1;
-// let player2 = game.player2;
-// let scene = game.scene;
-// let arena = game.arena;
+// let player1 = View.game.player1;
+// let player2 = View.game.player2;
+// let scene = View.game.scene;
+// let arena = View.game.arena;
 
 export function setPushersColliding(colliding)
 {
-	for (let i = 0; i < game.player1.pushers.length; i++) {
-		game.player1.pushers[i].colliding = colliding;
-		// game.player1.pushers[i].collisionNumber = -1;
+	for (let i = 0; i < View.game.player1.pushers.length; i++) {
+		View.game.player1.pushers[i].colliding = colliding;
+		// View.game.player1.pushers[i].collisionNumber = -1;
 	}
-	for (let i = 0; i < game.player2.pushers.length; i++) {
-		game.player2.pushers[i].colliding = colliding;
-		// game.player2.pushers[i].collisionNumber = -1;
+	for (let i = 0; i < View.game.player2.pushers.length; i++) {
+		View.game.player2.pushers[i].colliding = colliding;
+		// View.game.player2.pushers[i].collisionNumber = -1;
 	}
 }
 
@@ -25,21 +25,21 @@ export function checkPowerupCollision() {
 	let balance = Math.random();
 	let player;
 	let players = [
-		game.player1,
-		game.player2
+		View.game.player1,
+		View.game.player2
 	];
 	if (balance < 0.5) {
-		players[0] = game.player2;
-		players[1] = game.player1;
+		players[0] = View.game.player2;
+		players[1] = View.game.player1;
 	}
 	for (let i = 0; i < players.length; i++) {
 		player = players[i];
 		for (let j = 0; j < player.pushers.length; j++) {
-			if (game.arena.powerup) {
-				if (player.pushers[j].box.intersectsBox(game.arena.powerup.box)) {
-					game.scene.remove(game.arena.powerup.mesh)
-					game.arena.powerup.remove();
-					game.arena.powerup = null;
+			if (View.game.arena.powerup) {
+				if (player.pushers[j].box.intersectsBox(View.game.arena.powerup.box)) {
+					View.game.scene.remove(View.game.arena.powerup.mesh)
+					View.game.arena.powerup.remove();
+					View.game.arena.powerup = null;
 					speedup = player.pushers[j].size > G.pusherMaxSize * 0.9;
 					player.pushers[j].upSize(G.pusherMaxSize);
 					if (speedup) {
@@ -54,13 +54,13 @@ export function checkPowerupCollision() {
 function checkPushersCollision() {
 	let collisionNumber = 0;
 
-	for (let i = 0; i < game.player1.pushers.length; i++) {
-		const pusher1 = game.player1.pushers[i];
+	for (let i = 0; i < View.game.player1.pushers.length; i++) {
+		const pusher1 = View.game.player1.pushers[i];
 		const box1 = pusher1.box;
 		pusher1.collisionNumber = -1;
 
-		for (let j = 0; j < game.player2.pushers.length; j++) {
-			const pusher2 = game.player2.pushers[j];
+		for (let j = 0; j < View.game.player2.pushers.length; j++) {
+			const pusher2 = View.game.player2.pushers[j];
 			const box2 = pusher2.box;
 			pusher2.collisionNumber = -1;
 
@@ -96,30 +96,30 @@ function checkPushersCollision() {
 // 	let i;
 
 
-// 	for (i = 0; i < game.player1.pushers.length; i++) {
-// 		collisionNumber = game.player1.pushers[i].collisionNumber;
+// 	for (i = 0; i < View.game.player1.pushers.length; i++) {
+// 		collisionNumber = View.game.player1.pushers[i].collisionNumber;
 // 		if (collisionNumber >= 0) {
 // 			if (velocity[collisionNumber] === undefined) {
 // 				velocity[collisionNumber] = 0;
 // 			}
-// 			velocity[collisionNumber] -= game.player1.pushers[i].speed;
+// 			velocity[collisionNumber] -= View.game.player1.pushers[i].speed;
 // 			if (mass[collisionNumber] === undefined) {
 // 				mass[collisionNumber] = 0;
 // 			}
-// 			mass[collisionNumber] -= game.player1.pushers[i].size;
+// 			mass[collisionNumber] -= View.game.player1.pushers[i].size;
 // 		}
 // 	}
-// 	for (i = 0; i < game.player2.pushers.length; i++) {
-// 		collisionNumber = game.player2.pushers[i].collisionNumber;
+// 	for (i = 0; i < View.game.player2.pushers.length; i++) {
+// 		collisionNumber = View.game.player2.pushers[i].collisionNumber;
 // 		if (collisionNumber >= 0) {
 // 			if (velocity[collisionNumber] === undefined) {
 // 				velocity[collisionNumber] = 0;
 // 			}
-// 			velocity[collisionNumber] += game.player2.pushers[i].speed;
+// 			velocity[collisionNumber] += View.game.player2.pushers[i].speed;
 // 			if (mass[collisionNumber] === undefined) {
 // 				mass[collisionNumber] = 0;
 // 			}
-// 			mass[collisionNumber] += game.player2.pushers[i].size;
+// 			mass[collisionNumber] += View.game.player2.pushers[i].size;
 // 		}
 // 	}
 // 	for (i = 0; i < mass.length; i++) {
@@ -128,14 +128,14 @@ function checkPushersCollision() {
 // 	for (i = 0; i < velocity.length; i++) {
 // 		momentum[i] -= mass[i] * (momentum[i] > 0 ? 1 : -1);
 // 	}
-// 	for (i = 0; i < game.player1.pushers.length; i++) {
-// 		if (game.player1.pushers[i].collisionNumber >= 0) {
-// 			game.player1.pushers[i].moveX(momentum[game.player1.pushers[i].collisionNumber]);
+// 	for (i = 0; i < View.game.player1.pushers.length; i++) {
+// 		if (View.game.player1.pushers[i].collisionNumber >= 0) {
+// 			View.game.player1.pushers[i].moveX(momentum[View.game.player1.pushers[i].collisionNumber]);
 // 		}
 // 	}
-// 	for (i = 0; i < game.player2.pushers.length; i++) {
-// 		if (game.player2.pushers[i].collisionNumber >= 0) {
-// 			game.player2.pushers[i].moveX(momentum[game.player2.pushers[i].collisionNumber]);
+// 	for (i = 0; i < View.game.player2.pushers.length; i++) {
+// 		if (View.game.player2.pushers[i].collisionNumber >= 0) {
+// 			View.game.player2.pushers[i].moveX(momentum[View.game.player2.pushers[i].collisionNumber]);
 // 		}
 // 	}
 // 	// console.log(velocity, mass, momentum);
@@ -152,59 +152,59 @@ export function pushersLogic() {
 export function movePushers() {
 	let pusher;
 
-	// console.log(game.player1.pushers)
-	for (let i = 0; i < game.player1.pushers.length; i++) {
-		pusher = game.player1.pushers[i];
-		game.player1.movePusher(pusher);
+	// console.log(View.game.player1.pushers)
+	for (let i = 0; i < View.game.player1.pushers.length; i++) {
+		pusher = View.game.player1.pushers[i];
+		View.game.player1.movePusher(pusher);
 		if (pusher.furtestX > G.laneEnd) {
-			game.arena.lanes[pusher.lane].player1scored(pusher.size - (G.pusherMinSize / 2));
-			game.player1.removePusher(pusher);
+			View.game.arena.lanes[pusher.lane].player1scored(pusher.size - (G.pusherMinSize / 2));
+			View.game.player1.removePusher(pusher);
 		}
-		else if (pusher.furtestX < game.arena.getOpposingSectionPositionByPusher(pusher)) {
-			game.arena.lanes[pusher.lane].player1scored(G.passiveScore);
+		else if (pusher.furtestX < View.game.arena.getOpposingSectionPositionByPusher(pusher)) {
+			View.game.arena.lanes[pusher.lane].player1scored(G.passiveScore);
 			pusher.downSize(G.passiveScore);
 		}
 	}
-	for (let i = 0; i < game.player2.pushers.length; i++) {
-		pusher = game.player2.pushers[i];
-		game.player2.movePusher(pusher)
+	for (let i = 0; i < View.game.player2.pushers.length; i++) {
+		pusher = View.game.player2.pushers[i];
+		View.game.player2.movePusher(pusher)
 		if (pusher.furtestX < -G.laneEnd) {
-			game.arena.lanes[pusher.lane].player2scored(pusher.size - (G.pusherMinSize / 2));
-			game.player2.removePusher(pusher);
+			View.game.arena.lanes[pusher.lane].player2scored(pusher.size - (G.pusherMinSize / 2));
+			View.game.player2.removePusher(pusher);
 		}
 		// else if (pusher.furtestX > G.laneEnd ) {
-		// 	game.arena.lanes[pusher.lane].player2scored(pusher.size - (G.pusherMinSize / 2));
-		// 	game.player2.removePusher(pusher);
+		// 	View.game.arena.lanes[pusher.lane].player2scored(pusher.size - (G.pusherMinSize / 2));
+		// 	View.game.player2.removePusher(pusher);
 		// }
-		else if (pusher.furtestX > game.arena.getOpposingSectionPositionByPusher(pusher)) {
-			game.arena.lanes[pusher.lane].player2scored(G.passiveScore);
+		else if (pusher.furtestX > View.game.arena.getOpposingSectionPositionByPusher(pusher)) {
+			View.game.arena.lanes[pusher.lane].player2scored(G.passiveScore);
 			pusher.downSize(G.passiveScore);
 		}
 	}
 }
 
 export function playersLogic() {
-	game.player1.logicLoop();
-	game.player2.logicLoop();
+	View.game.player1.logicLoop();
+	View.game.player2.logicLoop();
 }
 
 export function updatePlayerPosition() {
-	game.player1.move();
-	game.player2.move();
+	View.game.player1.move();
+	View.game.player2.move();
 
 }
 
 export function updateBoost() {
-	if (game.player1.boostPressed) {
-		game.player1.increaseBoost();
+	if (View.game.player1.boostPressed) {
+		View.game.player1.increaseBoost();
 	}
 	else {
-		game.player1.resetBoost();
+		View.game.player1.resetBoost();
 	}
-	if (game.player2.boostPressed) {
-		game.player2.increaseBoost();
+	if (View.game.player2.boostPressed) {
+		View.game.player2.increaseBoost();
 	}
 	else {
-		game.player2.resetBoost();
+		View.game.player2.resetBoost();
 	}
 }

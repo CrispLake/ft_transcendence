@@ -18,6 +18,7 @@ import GameSetup from './GameSetup.js';
 import GameMode from './GameMode.js';
 import Result from './Result.js';
 import Pong from './Pong.js';
+import Gonp from './Gonp.js'
 
 export default class extends AbstractView {
   constructor(params) {
@@ -119,10 +120,6 @@ export default class extends AbstractView {
       player4Score: 0,
     }
 
-    const test = new Result();
-    await test.getUserInput(payload, this.setupObj.players);
-    return;
-    
 
 
     const pong = new Pong();
@@ -137,7 +134,34 @@ export default class extends AbstractView {
   }
 
   async Gonp() {
-    // gonp also posts it's results as pong will 
+    const appElem = document.getElementById('app');
+    if (!appElem) {
+      this.Redirect('/500');
+      return;
+    }
+    const payload = {
+      player1: "Test11",
+      player1Score: 1,
+      player2: "Guest 1",
+      player2Score: 3,
+      player3: "Guest 2",
+      player3Score: 2,
+      player4: "AI",
+      player4Score: 0,
+    }
+
+  
+
+    const gonp = new Gonp();
+    await gonp.AddListeners();
+
+    const gameResults = await gonp.launchGame(this.setupObj, appElem);
+    await this.postGameResults(gameResults, this.setupObj.players);
+
+    await gonp.RemoveListeners();
+    const resultsView = new Result();
+    await resultsView.getUserInput(gameResults, this.setupObj.players);
+    
   }
 
   // Launch 4p tournament

@@ -1,6 +1,6 @@
 
 import * as KEY from './keys.js';
-import { game } from './gonp.js'
+import game from '../views/Gonp.js'
 
 export function handleKeyDown(event)
 {

@@ -29,6 +29,8 @@ export const cameraOrbitTimeSec = 120;
 export const arenaWidth4Player = 25;
 export const wallLength4Player = 3;
 
+export const goalOffset = 0.2;
+
 
 //--------------------------------------------------------------------------
 //  PLAYER

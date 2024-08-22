@@ -5,10 +5,10 @@ export class Settings
 	constructor()
 	{
 		this.tournament = false;
-		this.multiMode = false;
+		this.multiMode = true;
 		this.players = 1;
 		this.spin = true;
-		this.powerups = false;
+		this.powerups = true;
 		this.difficulty = 2;
 	}
 }

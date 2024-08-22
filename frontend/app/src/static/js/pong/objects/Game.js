@@ -366,14 +366,13 @@ export class Game
 
 	goal()
 	{
-		let goalOffSet = 1;
-		if (this.ball.mesh.position.x <= this.players["p1"].paddle.position.x - goalOffSet)
+		if (this.ball.mesh.position.x <= this.players["p1"].paddle.position.x - G.goalOffset)
 		{
 			this.players["p1"].loseLife(1);
 			this.ui.playerCards[this.players["p1"].name].decreaseLife(1);
 			return (true);
 		}
-		else if (this.ball.mesh.position.x >= this.players["p2"].paddle.position.x + goalOffSet)
+		else if (this.ball.mesh.position.x >= this.players["p2"].paddle.position.x + G.goalOffset)
 		{
 			this.players["p2"].loseLife(1);
 			this.ui.playerCards[this.players["p2"].name].decreaseLife(1);
@@ -381,13 +380,13 @@ export class Game
 		}
 		if (this.settings.multiMode)
 		{
-			if (this.ball.mesh.position.z <= this.players["p3"].paddle.position.z - goalOffSet)
+			if (this.ball.mesh.position.z <= this.players["p3"].paddle.position.z - G.goalOffset)
 			{
 				this.players["p3"].loseLife(1);
 				this.ui.playerCards[this.players["p3"].name].decreaseLife(1);
 				return (true);
 			}
-			else if (this.ball.mesh.position.z >= this.players["p4"].paddle.position.z + goalOffSet)
+			else if (this.ball.mesh.position.z >= this.players["p4"].paddle.position.z + G.goalOffset)
 			{
 				this.players["p4"].loseLife(1);
 				this.ui.playerCards[this.players["p4"].name].decreaseLife(1);

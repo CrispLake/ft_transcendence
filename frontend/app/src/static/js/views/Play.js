@@ -6,7 +6,7 @@
 /*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/21 17:07:21 by emajuri          ###   ########.fr       */
+/*   Updated: 2024/08/21 18:11:55 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,20 +50,19 @@ export default class extends AbstractView {
         .filter(obj => obj.token !== null)
         .map(obj => `Token ${obj.token}`)
         .join(', ')
-    console.log(`tokenString \n ${tokenString}`)
-    return {'Authorization': tokenString};
+    return { 'Authorization': `${tokenString}` };
   }
 
   getPayload(gameResults, players) {
     const payload = {};
 
-    //TODO: Tournament payload different
-
     //get all the user ids
+    let num = 1;
     for (const key in players) {
         if (players[key] !== null) {
-            payload[key] = players[key];
+            payload[`player${num}`] = players[key].id;
         }
+        num += 1;
     }
 
     // get all the scores
@@ -75,9 +74,7 @@ export default class extends AbstractView {
     return payload;
 }
 
-  async postGameResults(gameResults) {
-    const players = this.setupObj.players;
-
+  async postGameResults(gameResults, players) {
     // check if any player is logged in. if not then no posting needs to be done
     if (!players.some(obj => obj.id !== null && obj.id !== 1)) {
         console.log("no posting done for game results");
@@ -87,11 +84,16 @@ export default class extends AbstractView {
     const authObject = this.getAuthObject(players);
     const payload = this.getPayload(gameResults, players);
 
-    response = await axios.post(
-        this.url,
-        payload,
-        { headers: authObject}
-    )
+    try {
+        const response = await axios.post(
+            this.url,
+            payload,
+            { headers: authObject }
+        )
+    }
+    catch(error) {
+        console.log(error.response.data.detail);
+    }
   }
   // Launch 2p Gonp
   async GameSetup() {
@@ -109,11 +111,8 @@ export default class extends AbstractView {
     const pong = new Pong();
     await pong.AddListeners();
 
-    console.log("setuppi");
-    console.log(this.setupObj);
-    console.log("setuppi");
     const gameResults = await pong.launchGame(this.setupObj, appElem);
-    await this.postGameResults(gameResults);
+    await this.postGameResults(gameResults, this.setupObj.players);
 
     await pong.RemoveListeners();
     const resultsView = new Result();

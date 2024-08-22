@@ -26,6 +26,7 @@ export class Game
 		this.gameScene = new THREE.Scene();
 		this.fontLoader = new FontLoader();
 		this.gameCamera = this.createCamera();
+		// RENDERER --> getHTML()
 		this.renderer = this.createRenderer();
 		this.composer = new EffectComposer(this.renderer);
 		this.createArena();
@@ -42,6 +43,7 @@ export class Game
 		this.gameEnded = false;
 		this.update();
 
+		// END GAME FUNCTIO --> CALL WHEN GAME ENDS
 		this.endGame = this.endGame.bind(this);
 		this.update = this.update.bind(this);
 		this.createPlayers = this.createPlayers.bind(this);

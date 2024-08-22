@@ -2,30 +2,30 @@
 
 ###
 
-GET http://localhost:8000/pong-2p/
-Authorization: Token 91975a4745dcf9a9a858a04cea79674c8444fb85
+GET http://localhost:8000/pong-2p
+Authorization: Token 23889478f9d7ea0412781b2c996e6072c30ba029
 
 ###
 
 GET http://localhost:8000/account/AI
-Authorization: Token bd9df7a68c7d240a167297e6a6a5bf4bc6ac7333
+Authorization: Token 23889478f9d7ea0412781b2c996e6072c30ba029
 
 ###
 
 GET http://localhost:8000/account
-Authorization: Token 91975a4745dcf9a9a858a04cea79674c8444fb85
+Authorization: Token 23889478f9d7ea0412781b2c996e6072c30ba029
 
 # Friends
 
 ###
 
 GET http://localhost:8000/account/1/image
-Authorization: Token ab8c2ca26dc7c9f051815101a01a0bee91f2dbea
+Authorization: Token 23889478f9d7ea0412781b2c996e6072c30ba029
 
 ###
 
 POST http://localhost:8000/friend-request/send
-Authorization: Token cf4fb0e3bdf451e24806def244a1ce5e77dbeb1b
+Authorization: Token 23889478f9d7ea0412781b2c996e6072c30ba029
 Content-Type: application/json
 
 {
@@ -35,7 +35,7 @@ Content-Type: application/json
 ###
 
 GET http://localhost:8000/friend-request/list
-Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
+Authorization: Token 23889478f9d7ea0412781b2c996e6072c30ba029
 
 ###
 
@@ -46,7 +46,7 @@ Authorization: Token 1a3d6fe4659ff8d6c8c40c244f4404f0d7079990
 ###
 
 POST http://localhost:8000/friend-request/respond/1
-Authorization: Token d7666b33106ca023ac17cd750f2074b86605bab2
+Authorization: Token 23889478f9d7ea0412781b2c996e6072c30ba029
 Content-Type: application/json
 
 {
@@ -56,12 +56,12 @@ Content-Type: application/json
 ###
 
 POST http://localhost:8000/friend-remove/1
-Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
+Authorization: Token 23889478f9d7ea0412781b2c996e6072c30ba029
 
 ###
 
 GET http://localhost:8000/register HTTP/1.1
-Authorization: Token 14c4426c3fe27289d66ef70adc15766a6914be8d
+Authorization: Token 23889478f9d7ea0412781b2c996e6072c30ba029
 
 ###
 
@@ -70,7 +70,7 @@ Authorization: Token 14c4426c3fe27289d66ef70adc15766a6914be8d
 ###
 
 PUT http://localhost:8000/account/update
-Authorization: Token d7666b33106ca023ac17cd750f2074b86605bab2
+Authorization: Token 23889478f9d7ea0412781b2c996e6072c30ba029
 Content-Type: multipart/form-data; boundary=boundary
 
 --boundary
@@ -83,17 +83,17 @@ Content-Type: image/jpeg
 ###
 
 GET http://localhost:8000/account/1/image
-Authorization: Token bd9df7a68c7d240a167297e6a6a5bf4bc6ac7333
+Authorization: Token 23889478f9d7ea0412781b2c996e6072c30ba029
 
 ###
 
 GET http://localhost:8000/account/1/image
-Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
+Authorization: Token 23889478f9d7ea0412781b2c996e6072c30ba029
 
 ###
 
 PUT http://localhost:8000/account/change-username HTTP/1.1
-Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
+Authorization: Token 23889478f9d7ea0412781b2c996e6072c30ba029
 Content-Type: application/json
 
 {
@@ -103,11 +103,11 @@ Content-Type: application/json
 ###
 
 PUT http://localhost:8000/account/change-password HTTP/1.1
-Authorization: Token 026f7008cd7cd287a4c934e0896316ae6bca3efa
+Authorization: Token d93892640657540dbe278efbc4b618cedd5203d0
 Content-Type: application/json
 
 {
-    "password": "testPassword"
+    "password": "test"
 }
 
 ###
@@ -128,36 +128,6 @@ Content-Type: application/json
 {
     "username": "testUser2",
     "password": "testPassword"
-}
-
-###
-
-# Matches tournament
-
-###
-
-GET http://localhost:8000/tournament HTTP/1.1
-Authorization: Token 9a1e8d3a8eddb2276bfd657863e0773afb12f16b
-
-###
-
-POST http://localhost:8000/tournament HTTP/1.1
-Authorization: Token 9a1e8d3a8eddb2276bfd657863e0773afb12f16b
-Content-Type: application/json
-
-{
-    "game1_player1": 2,
-    "game1_player1_score": 3,
-    "game1_player2": 1,
-    "game1_player2_score": 0,
-    "game2_player1": 1,
-    "game2_player1_score": 3,
-    "game2_player2": 1,
-    "game2_player2_score": 0,
-    "game3_player1": 2,
-    "game3_player1_score": 3,
-    "game3_player2": 1,
-    "game3_player2_score": 0
 }
 
 ###
@@ -167,13 +137,13 @@ Content-Type: application/json
 ###
 
 GET http://localhost:8000/pong-2p HTTP/1.1
-Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
+Authorization: Token dfe76012f69dcc820faaecd60fa48d3667415801
 
 
 ###
 
 POST http://localhost:8000/pong-2p HTTP/1.1
-Authorization: Token ab8c2ca26dc7c9f051815101a01a0bee91f2dbea
+Authorization: Token dfe76012f69dcc820faaecd60fa48d3667415801
 Content-Type: application/json
 
 {
@@ -185,7 +155,7 @@ Content-Type: application/json
 ###
 
 POST http://localhost:8000/pong-2p HTTP/1.1
-Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b, Token d7666b33106ca023ac17cd750f2074b86605bab2
+Authorization: Token dfe76012f69dcc820faaecd60fa48d3667415801, Token d7666b33106ca023ac17cd750f2074b86605bab2
 Content-Type: application/json
 
 {
@@ -198,7 +168,7 @@ Content-Type: application/json
 ###
 
 GET http://localhost:8000/pong-2p/2 HTTP/1.1
-Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
+Authorization: Token dfe76012f69dcc820faaecd60fa48d3667415801
 
 ###
 
@@ -207,12 +177,12 @@ Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
 ###
 
 GET http://localhost:8000/pong-4p HTTP/1.1
-Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
+Authorization: Token dfe76012f69dcc820faaecd60fa48d3667415801
 
 ###
 
 POST http://localhost:8000/pong-4p HTTP/1.1
-Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
+Authorization: Token dfe76012f69dcc820faaecd60fa48d3667415801
 Content-Type: application/json
 
 {
@@ -224,7 +194,7 @@ Content-Type: application/json
 ###
 
 POST http://localhost:8000/pong-4p HTTP/1.1
-Authorization: Token bd9df7a68c7d240a167297e6a6a5bf4bc6ac7333
+Authorization: Token dfe76012f69dcc820faaecd60fa48d3667415801
 Content-Type: application/json
 
 {
@@ -239,7 +209,7 @@ Content-Type: application/json
 ###
 
 GET http://localhost:8000/pong-4p/1 HTTP/1.1
-Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
+Authorization: Token dfe76012f69dcc820faaecd60fa48d3667415801
 
 ###
 
@@ -248,13 +218,13 @@ Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
 ###
 
 GET http://localhost:8000/gonp-2p HTTP/1.1
-Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
+Authorization: Token dfe76012f69dcc820faaecd60fa48d3667415801
 
 
 ###
 
 POST http://localhost:8000/gonp-2p HTTP/1.1
-Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
+Authorization: Token dfe76012f69dcc820faaecd60fa48d3667415801
 Content-Type: application/json
 
 {
@@ -266,7 +236,7 @@ Content-Type: application/json
 ###
 
 POST http://localhost:8000/gonp-2p HTTP/1.1
-Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b, Token d7666b33106ca023ac17cd750f2074b86605bab2
+Authorization: Token dfe76012f69dcc820faaecd60fa48d3667415801, Token d7666b33106ca023ac17cd750f2074b86605bab2
 Content-Type: application/json
 
 {
@@ -279,49 +249,7 @@ Content-Type: application/json
 ###
 
 GET http://localhost:8000/gonp-2p/2 HTTP/1.1
-Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
-
-###
-
-# Matches gonp 4p
-
-###
-
-GET http://localhost:8000/gonp-4p HTTP/1.1
-Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b
-
-###
-
-POST http://localhost:8000/gonp-4p HTTP/1.1
-Authorization: Token bd9df7a68c7d240a167297e6a6a5bf4bc6ac7333
-Content-Type: application/json
-
-{
-    "player1": 2,
-    "player1Score": 3,
-    "player2": 1,
-    "player2Score": 2,
-    "player3": 1,
-    "player3Score": 2
-}
-
-###
-
-POST http://localhost:8000/gonp-4p HTTP/1.1
-Authorization: Token 4168475d341bac25c36ca815adec7550fa5c0e5b, Token d7666b33106ca023ac17cd750f2074b86605bab2
-Content-Type: application/json
-
-{
-    "player1": 1,
-    "player1Score": 3,
-    "player2": 2,
-    "player2Score": 2
-}
-
-###
-
-GET http://localhost:8000/gonp-4p/1 HTTP/1.1
-Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
+Authorization: Token dfe76012f69dcc820faaecd60fa48d3667415801
 
 ###
 
@@ -338,7 +266,7 @@ GET http://localhost:8000/csrf-token HTTP/1.1
 ###
 
 GET http://localhost:8000/register HTTP/1.1
-Authorization: Token 5a835616857d3fe58ea7c7967279724af5507a58
+Authorization: Token dfe76012f69dcc820faaecd60fa48d3667415801
 
 ###
 
@@ -387,7 +315,7 @@ Content-Type: application/json
 
 {
     "username": "testUser1",
-    "password": "testPassword"
+    "password": "test"
 }
 
 ###

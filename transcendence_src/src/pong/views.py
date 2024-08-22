@@ -87,7 +87,7 @@ def update_4p_score(player_id, my_score):
 def pong_4p(request, player_id=None):
     if request.method == 'GET':
         if player_id is None:
-            player_id = request.player.id
+            player_id = request.user.id
         matches = Pong_4p.objects.filter(player1_id=player_id) | Pong_4p.objects.filter(player2_id=player_id) | Pong_4p.objects.filter(player3_id=player_id) | Pong_4p.objects.filter(player4_id=player_id)
 
         serializer = Pong4PSerializer(matches, many=True)

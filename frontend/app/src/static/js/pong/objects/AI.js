@@ -1124,8 +1124,10 @@ export class AI
     anyPlayerNearCorner()
     {
         // Check every player
-        for (let player of this.game.players)
+        for (let playerIndex in this.game.players)
         {
+            let player = this.game.players[playerIndex];
+
             // Skip checking yourself
             if (player.playerNum == this.playerNum)
                 continue;
@@ -1142,12 +1144,13 @@ export class AI
         // If player is close enough to the corner, return true
         if (player.alignment == G.vertical)
         {
-            if (Math.abs(player.paddle.z) > player.movementBoundary * G.opponentCornerProximityThreshold)
+            console.log(Math.abs(player.paddle.position.z).toFixed(2) + " > " + (player.movementBoundary * G.opponentCornerProximityThreshold).toFixed(2) + " = " + (Math.abs(player.paddle.position.z) > player.movementBoundary * G.opponentCornerProximityThreshold));
+            if (Math.abs(player.paddle.position.z) > player.movementBoundary * G.opponentCornerProximityThreshold)
                 return true;
         }
         else
         {
-            if (Math.abs(player.paddle.x) > player.movementBoundary * G.opponentCornerProximityThreshold)
+            if (Math.abs(player.paddle.position.x) > player.movementBoundary * G.opponentCornerProximityThreshold)
                 return true;
         }
         return false;
@@ -1158,8 +1161,10 @@ export class AI
         let playersInCorner = [];
         let targetPlayer = null;
 
-        for (let player in this.game.players)
+        for (let playerIndex in this.game.players)
         {
+            let player = this.game.players[playerIndex];
+
             // Skip checking yourself
             if (player.playerNum == this.playerNum)
                 continue;
@@ -1186,21 +1191,20 @@ export class AI
 
             if (targetPlayer.alignment == G.vertical)
             {
-                if (targetPlayer.paddle.z > 0)
-                    this.aimTarget.set(targetPlayer.paddle.x, -goalPost * G.cornerProximityAim);
+                if (targetPlayer.paddle.position.z > 0)
+                    this.aimTarget.set(targetPlayer.paddle.position.x, -goalPost * G.cornerProximityAim);
                 else
-                    this.aimTarget.set(targetPlayer.paddle.x, goalPost * G.cornerProximityAim);
+                    this.aimTarget.set(targetPlayer.paddle.position.x, goalPost * G.cornerProximityAim);
             }
             else
             {
-                if (targetPlayer.paddle.x > 0)
-                    this.aimTarget.set(-goalPost * G.cornerProximityAim, targetPlayer.paddle.z);
+                if (targetPlayer.paddle.position.x > 0)
+                    this.aimTarget.set(-goalPost * G.cornerProximityAim, targetPlayer.paddle.position.z);
                 else
-                    this.aimTarget.set(goalPost * G.cornerProximityAim, targetPlayer.paddle.z);
+                    this.aimTarget.set(goalPost * G.cornerProximityAim, targetPlayer.paddle.position.z);
             }
-            
-            if (this.playerNum == 2) console.log("Aiming at corner:  " + this.aimTarget.x.toFixed(2) + ", " + this.aimTarget.y.toFixed(2));
-            shouldAim = true;
+
+            this.shouldAim = true;
         }
         this.aim();
     }
@@ -1245,6 +1249,9 @@ export class AI
         let base = this.distancePerFrame / 2;
         let radius = Math.abs(base * Math.tan((PongMath.degToRad(180) - this.angleDelta) / 2));
 
+        if (this.playerNum == 2) console.log("base = " + base);
+        if (this.playerNum == 2) console.log("radius = " + radius);
+
         // The following calculations are based on using two simultaneous equations in order to get the coordinates for the center point. In the below code, we have already translated center.x to center.y and created a quadratic formula to solve center.y.
 
         // We use these constants to prevent from repeating the same calculations. Makes the code more readable. We'd need to have the halfway-point of the ballpath, during a single frame, as a starting point. That's where the radius would intersect the ballpath. Unfortunately, since we don't know the angle of the ball yet, we need to use the position at the start of the frame as one of the points on the circumference.
@@ -1252,11 +1259,18 @@ export class AI
         const yDifference = this.firstPoint.pos.y - this.aimTarget.y;
         const squaredCoordinates = Math.pow(this.firstPoint.pos.x, 2) + Math.pow(this.firstPoint.pos.y, 2) - Math.pow(this.aimTarget.x, 2) - Math.pow(this.aimTarget.y, 2);
 
+        if (this.playerNum == 2) console.log("xDifference = " + xDifference);
+        if (this.playerNum == 2) console.log("yDifference = " + yDifference);
+        if (this.playerNum == 2) console.log("squaredCoordinates = " + squaredCoordinates);
+
         // Here we set the variables for the quadratic formula.
         let a = 1 + 4 * Math.pow(yDifference, 2);
         let b = 2 * (yDifference) * squaredCoordinates + 2 * this.aimTarget.x * (squaredCoordinates - 2 * yDifference) / (2 * xDifference) + 2 * this.firstPoint.pos.y;
-        let c = Math.pow(squaredCoordinates, 2) - (Math.pow(radius, 2) * Math.pow(this.aimTarget.x, 2) - Math.pow(this.firstPoint.y, 2) * 4 * Math.pow(xDifference, 2));
+        let c = Math.pow(squaredCoordinates, 2) - (Math.pow(radius, 2) * Math.pow(this.aimTarget.x, 2) - Math.pow(this.firstPoint.pos.y, 2) * 4 * Math.pow(xDifference, 2));
 
+        if (this.playerNum == 2) console.log("a = " + a);
+        if (this.playerNum == 2) console.log("b = " + b);
+        if (this.playerNum == 2) console.log("c = " + c);
 
         let x, y;
         if (this.angleDelta < 0)
@@ -1265,6 +1279,9 @@ export class AI
             y = PongMath.quadraticFormulaPositive(a, b, c);
         x = (squaredCoordinates - 2 * y * yDifference) / (2 * xDifference);
 
+        if (this.playerNum == 2) console.log("x = " + x);
+        if (this.playerNum == 2) console.log("y = " + y);
+
         let center = new THREE.Vector2(x, y);
 
         let angleToTarget;
@@ -1272,6 +1289,8 @@ export class AI
             angleToTarget = this.angleBetweenVectors(center, this.firstPoint.pos) - PongMath.degToRad(90);
         else
             angleToTarget = this.angleBetweenVectors(center, this.firstPoint.pos) + PongMath.degToRad(90);
+
+        if (this.playerNum == 2) console.log("angleToTarget = " + angleToTarget);
         
         return angleToTarget;
     }

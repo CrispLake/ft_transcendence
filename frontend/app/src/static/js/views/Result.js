@@ -131,16 +131,16 @@ export default class extends AbstractView {
                 <div class="winner-text-div" >
                     <h1 class="font-sub winner-text">WINNERS</h1>
                 </div>
-                <div winner-div-4p>
-                    <div class="winner-card">
-                        ${this.getImage(this.winner1)}
+                <div class="winner-div-4p">
+                    <div class="card winner-card-2">
+                        ${this.getImage(this.winner2)}
                         <h3 class="font-text winner-username">${this.winner1.name}</h3>
                     </div>
-                    <div class="winner-card">
-                        ${this.getImage(this.winner2)}
+                    <div class="card winner-card-1">
+                        ${this.getImage(this.winner1)}
                         <h3 class="font-text winner-username">${this.winner2.name}</h3>
                     </div>
-                    <div class="winner-card">
+                    <div class="card winner-card-3">
                         ${this.getImage(this.winner3)}
                         <h3 class="font-text winner-username">${this.winner3.name}</h3>
                     </div>

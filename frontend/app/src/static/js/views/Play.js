@@ -108,6 +108,23 @@ export default class extends AbstractView {
       this.Redirect('/500');
       return;
     }
+    const payload = {
+      player1: "Test11",
+      player1Score: 1,
+      player2: "Guest 1",
+      player2Score: 3,
+      player3: "Guest 2",
+      player3Score: 2,
+      player4: "AI",
+      player4Score: 0,
+    }
+
+    const test = new Result();
+    await test.getUserInput(payload, this.setupObj.players);
+    return;
+    
+
+
     const pong = new Pong();
     await pong.AddListeners();
 

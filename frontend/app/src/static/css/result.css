@@ -8,31 +8,39 @@
     flex-direction: column;
 }
 
-.results-div-4p {
+.result-div-4p {
     width: 100%;
     height: 100%;
 
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    justify-contnet: center;
+    align-items: center;
 }
 
 .winner-div-4p {
+    position: relative;
     display: flex;
     flex-direction: row;
     align-items: center;
+    height: 50%;
+    width: 100%;
+    gap: 2rem;
 }
 
 .loser-div {
     display: flex;
     align-items: center;
     justify-content: center;
+    height: 30%;
+    width: 100%;
 }
 
 
 @keyframes scaleAnimation {
-        0%, 100% {
+    0%, 100% {
             transform: scale(1); /* Normal size at the start and end */
-        }
+    }
     50% {
         transform: scale(1.05); /* Scaled up to 1.5 times at the middle */
     }
@@ -50,8 +58,8 @@
 
 
 .loser-card {
-    height: 350px;
-    width: 250px;
+    height: 250px;
+    width: 150px;
     background-color: var(--pink);
     display: flex;
     flex-direction: column;
@@ -61,7 +69,7 @@
 }
 
 .loser-card h3 {
-    font-size: 64px !important;
+    font-size: 32px !important;
 }
 
 
@@ -75,6 +83,31 @@
     justify-content: space-between;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
+
+.card {
+    height: 350px;
+    width: 250px;
+    background-color: var(--green);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.winner-card-1 {
+    z-index: 5;
+}
+
+.winner-card-2 {
+    z-index: 4;
+}
+
+.winner-card-3 {
+    z-index: 3;
+}
+
+
+
 
 .winner-img {
     width: 100%;

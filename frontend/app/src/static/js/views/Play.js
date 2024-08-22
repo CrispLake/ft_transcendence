@@ -82,7 +82,6 @@ export default class extends AbstractView {
     }
 
     const authObject = this.getAuthObject(players);
-    console.log(authObject);
     const payload = this.getPayload(gameResults, players);
 
     try {
@@ -117,7 +116,7 @@ export default class extends AbstractView {
 
     await pong.RemoveListeners();
     const resultsView = new Result();
-    await resultsView.getUserInput(gameResults);
+    await resultsView.getUserInput(gameResults, this.setupObj.players);
   }
 
   async Gonp() {

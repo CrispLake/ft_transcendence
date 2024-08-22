@@ -21,7 +21,8 @@ export default class extends AbstractView {
 
     this.getHtml = this.getHtml.bind(this);
     this.getUserInput = this.getUserInput.bind(this);
-    this.initialize = this.initialize.bind(this);
+    this.getImage = this.getImage.bind(this);
+    this.ParseResults = this.ParseResults.bind(this);
   }
 
     handleContinue(resolve) {
@@ -40,8 +41,9 @@ export default class extends AbstractView {
         });
     }
 
-    async getUserInput(results) {
+    async getUserInput(results, players) {
         this.results = results;
+        this.players = players;
         if (this.results === null) {
             this.Redirect('/500');
             return;
@@ -57,36 +59,107 @@ export default class extends AbstractView {
         await this.waitForUser();
     }
 
-    initialize(results) {
-        this.results = results;
+    
+    ParseResults() {
+        let stats = [];
+        this.players.forEach((player, index) => {
+            stats.push({
+                id: player.id,
+                name: player.username,
+                score: this.results[`player${index + 1}Score`]
+            });
+        });
+        stats.sort((a, b) => a.score - b.score);
+        console.log(stats);
+
+        if (this.players.length === 2) {
+           this.winner = stats[1];  
+        }
+        else {
+            this.winner1 = stats[3];
+            this.winner2 = stats[2];
+            this.winner3 = stats[1];
+            this.loser = stats[0];
+        }
     }
 
-  AddListeners() {
+    AddListeners() {
 
-  }
+    }
 
-  RemoveListeners() {
+    RemoveListeners() {
 
-  }
+    }
+
+    getImage(player) {
+        let imageTag;
+        if (player.username === "AI") {
+            imageTag = `<img class="winner-img" src="static/images/ai.avif" alt="User icon"/>`
+        }
+        else if (player.name.includes('Guest')) {
+            imageTag = `<img class="winner-img" src="static/images/guest.png" alt="User icon"/>`
+        }
+        else {
+            imageTag = `<img class="winner-img" src="http://localhost:8000/account/${player.id}/image" alt="User icon"/>`
+        }
+        return imageTag;
+    }
 
   async getHtml() {
-    console.log(this.results);
+    this.ParseResults();
+    if (this.players.length === 2) {
+        return `
+            <div class="result-div">
+                <div class="winner-text-div" >
+                    <h1 class="font-sub winner-text">WINNER</h1>
+                </div>
 
-    return `
-        <div class="result-div">
-            <div class="winner-text-div" >
-                <h1 class="font-sub winner-text">WINNER</h1>
+                <div class="winner-card">
+                    ${this.getImage(this.winner)}
+                    <h3 class="font-text winner-username">${this.winner.name}</h3>
+                </div>
+
+                <a href="/" id="continueButton" class="continue-div">
+                    <h2 class="font-heading continue-text">CONTINUE</h2>
+                </a>
             </div>
+        `;
+    }
+    else {
+        return `
+            <div class="result-div-4p">
+                <div class="winner-text-div" >
+                    <h1 class="font-sub winner-text">WINNERS</h1>
+                </div>
+                <div winner-div-4p>
+                    <div class="winner-card">
+                        ${this.getImage(this.winner1)}
+                        <h3 class="font-text winner-username">${this.winner1.name}</h3>
+                    </div>
+                    <div class="winner-card">
+                        ${this.getImage(this.winner2)}
+                        <h3 class="font-text winner-username">${this.winner2.name}</h3>
+                    </div>
+                    <div class="winner-card">
+                        ${this.getImage(this.winner3)}
+                        <h3 class="font-text winner-username">${this.winner3.name}</h3>
+                    </div>
+                </div>
+                
+                <div class="loser-div">
+                    <div class="loser-card">
+                        ${this.getImage(this.loser)}
+                        <h3 class="font-text winner-username">${this.loser.name}</h3>
+                    </div>
+                </div>
 
-            <div class="winner-card">
-                <h3 class="font-text winner-username">ASDAASD</h3>
+                <a href="/" id="continueButton" class="continue-div">
+                    <h2 class="font-heading continue-text">CONTINUE</h2>
+                </a>
             </div>
+        `;
+    }
 
-            <a href="/" id="continueButton" class="continue-div">
-                <h2 class="font-heading continue-text">CONTINUE</h2>
-            </button>
-        </a>
-    `;
   }
 
 }

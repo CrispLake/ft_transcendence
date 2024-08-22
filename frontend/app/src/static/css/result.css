@@ -8,6 +8,25 @@
     flex-direction: column;
 }
 
+.results-div-4p {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: row;
+}
+
+.winner-div-4p {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.loser-div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 
 @keyframes scaleAnimation {
@@ -30,12 +49,26 @@
 
 
 
+.loser-card {
+    height: 350px;
+    width: 250px;
+    background-color: var(--pink);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.loser-card h3 {
+    font-size: 64px !important;
+}
 
 
 .winner-card {
     height: 450px;
     width: 350px;
-    background-color: var(--blue);
+    background-color: var(--green);
     display: flex;
     flex-direction: column;
     align-items: center;

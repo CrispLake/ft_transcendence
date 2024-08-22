@@ -35,22 +35,9 @@ body {
   margin: 0;
 }
 
-/* MAIN HEADINGS --> drukbold */
-@font-face {
-  font-family: 'drukbold';
-  src: url('https://github.com/benshrimpton/shulamit/raw/master/wp-content/.themes/shulamit/css/fonts/DrukText-Bold.ttf');
-  font-weight: bold;
-  font-style: normal;
-}
-
 @font-face {
   font-family: "Coluna-CondensedBold";
-  src: url("https://db.onlinewebfonts.com/t/0e39a4b06a027c967cdf68c149ed586f.eot");
-  src: url("https://db.onlinewebfonts.com/t/0e39a4b06a027c967cdf68c149ed586f.eot?#iefix")format("embedded-opentype"),
-  url("https://db.onlinewebfonts.com/t/0e39a4b06a027c967cdf68c149ed586f.woff2")format("woff2"),
-  url("https://db.onlinewebfonts.com/t/0e39a4b06a027c967cdf68c149ed586f.woff")format("woff"),
-  url("https://db.onlinewebfonts.com/t/0e39a4b06a027c967cdf68c149ed586f.ttf")format("truetype"),
-  url("https://db.onlinewebfonts.com/t/0e39a4b06a027c967cdf68c149ed586f.svg#Coluna-CondensedBold")format("svg");
+  src: url("../fonts/coluna.woff2");
 }
 
 .font-heading {

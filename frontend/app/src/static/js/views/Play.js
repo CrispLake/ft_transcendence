@@ -85,12 +85,13 @@ export default class extends AbstractView {
     }
 
     const authObject = this.getAuthObject(players);
+    console.log(authObject);
     const payload = this.getPayload(gameResults, players);
 
     response = await axios.post(
         this.url,
         payload,
-        { headers: authObject}
+        { headers: authObject }
     )
   }
   // Launch 2p Gonp

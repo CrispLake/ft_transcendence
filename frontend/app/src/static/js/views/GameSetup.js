@@ -443,12 +443,12 @@ export default class extends AbstractView {
         addUserButton.addEventListener('click',this.AddUserHandler);
         popupExit.addEventListener('click', this.HandlePopupExit);
         addButton.addEventListener('click', this.addGuestEntryHandler);
-        addAiButton.addEventListener('click', this.addAiEntryHandler);
+        if (this.gameMode !== 2)
+            addAiButton.addEventListener('click', this.addAiEntryHandler);
         loginForm.addEventListener('submit', this.LoginHandler);
         powerUpToggle.addEventListener('click', this.PowerUpToggle);
-        if (rangeSlider) {
+        if (rangeSlider)
             rangeSlider.addEventListener('input', this.AiDifficultySlider);
-        }
 
 
         document.querySelector(".next").addEventListener("click", this.HandleNext);
@@ -468,7 +468,8 @@ export default class extends AbstractView {
             addUserButton.removeEventListener('click',this.AddUserHandler);
             addButton.removeEventListener('click', this.addGuestEntryHandler);
             popupExit.removeEventListener('click', this.HandlePopupExit);
-            addAiButton.removeEventListener('click', this.addAiEntryHandler);
+            if (this.gameMode !== 2)
+                addAiButton.removeEventListener('click', this.addAiEntryHandler);
             loginForm.removeEventListener('submit', this.LoginHandler);
             powerUpToggle.removeEventListener('click', this.PowerUpToggle);
             if (rangeSlider) {
@@ -492,11 +493,19 @@ export default class extends AbstractView {
                   </div>
                 </button>
 
+                ${
+                this.gameMode === 2
+                ?
+                ''
+                :
+                `
                 <button class="font-sub add-button blue" id="add-ai-button">
                   <div class="text-holder">
                       <span>Add AI</span>
                   </div>
                 </button>
+                `
+                }
 
                 <button class="font-sub add-button blue" id="add-user-button">
                   <div class="text-holder">
@@ -525,7 +534,11 @@ export default class extends AbstractView {
                 ${
                 this.gameMode === 2
                 ?
-                    ''
+                    `<div class="slider-container">
+                        <label class="font-text powerup-text" for="range-slider">Time:</label>
+                        <input type="range" id="range-slider" min="1" max="5" value="3" step="1">
+                        <span class="font-text powerup-text" id="slider-value">1</span>
+                    </div>`
                 :
 
                     `<div class="slider-container">

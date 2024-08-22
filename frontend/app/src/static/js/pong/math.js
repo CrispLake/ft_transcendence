@@ -90,3 +90,13 @@ export function arcLength(radius, angle)
 {
     return ((radius * 2 * Math.PI) * (angle / (Math.PI * 2)));
 }
+
+export function quadraticFormulaPositive(a, b, c)
+{
+    return ((-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a));
+}
+
+export function quadraticFormulaNegative(a, b, c)
+{
+    return ((-b - Math.sqrt(b * b - 4 * a * c)) / (2 * a));
+}

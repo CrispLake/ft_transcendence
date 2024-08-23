@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Pong.js                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/02 13:53:04 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/21 17:24:42 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,59 +30,52 @@ export default class extends AbstractView {
     this.childs = true;
 
     this.players = null;
-
+    this.resolve = null;
     this.controls = null;
 
     this.onWindowResize = this.onWindowResize.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
     this.getHtml = this.getHtml.bind(this);
-    // this.init = this.init.bind(this);
+    this.WaitForUser = this.WaitForUser.bind(this);
+    this.getUserInput = this.getUserInput.bind(this);
+    this.launchGame = this.launchGame.bind(this);
   }
 
-  // init() {
-  //   if (this.game === null) {
-  //     this.game = new Game();
-  //   }
-  //   if (this.controls === null) {
-  //     this.controls = new OrbitControls(this.game.camera, this. game.renderer.domElement);
-  //   }
-  //   RectAreaLightUniformsLib.init();
-  // }
+  // This resolve is being passed to the Game() object that will use it's
+  // getter function for results within the game and then resolve with that data
+  // thus returning that same result data here
+  WaitForUser() {
+    if (this.game.resolve === null) {
+      return new Promise((resolve) => {
+        this.game.resolve = resolve;
+      })
+    }
+  }
+
+  async getUserInput() {
+    await this.WaitForUser();
+  }
 
   // Handles single game with provided settings configuration
-  async launchGame(gameSettings) {
+  async launchGame(gameSettings, appDiv) {
     this.players = gameSettings.players;
-    // this.settings = gameSettings;
+    this.settings = gameSettings;
+    console.log('from launch: ', gameSettings);
     this.game = new Game(gameSettings);
-    const html = await document.getElementById('app');
-    html.innerHTML = '';
-    const elemetn = await this.getHtml();
-    html.appendChild(elemetn);
-    console.log('before game');
-    // TODO: how to escape the game here
-    console.log('after game');
-  }
 
-  async fakeGame(gameSettings) {
-    this.players = gameSettings.players;
-    const results = this.CreateResultsObject();
+    appDiv.innerHTML = '';
+    const element = await this.getHtml();
+    appDiv.appendChild(element);
+    await this.getUserInput();
+    //await appDiv.removeChild(element);
+    //appDiv.innerHTML = '';
+   
+    if (this.settings.multiMode)
+      return this.game.results.getResult4p();
+    else
+      return this.game.results.getResult2p();
 
-    // WAITING LOGIC HERE
-
-    return results;
-  }
-
-  // TODO: create logic to really determine winner after including game logic and it's stats
-  CreateResultsObject() {
-    const results = {
-      "winner": this.players[1],
-      "player1": this.players[0],
-      "player1Score": 2,
-      "player2": this.players[1],
-      "player2Score": 4
-    }
-    return results;
   }
 
   handleKeyDown(event) {

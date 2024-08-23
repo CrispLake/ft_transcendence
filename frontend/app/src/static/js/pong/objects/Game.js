@@ -17,13 +17,16 @@ import { Text2D } from './Text2D.js';
 
 export class Game
 {
-	constructor()
+	constructor(params)
 	{
-		this.settings = new Settings();
+		this.resolve = null;
+		this.playerList = params.players;
+		this.settings = new Settings(params.settings);
 		this.results = new Results();
 		this.gameScene = new THREE.Scene();
 		this.fontLoader = new FontLoader();
 		this.gameCamera = this.createCamera();
+		// RENDERER --> getHTML()
 		this.renderer = this.createRenderer();
 		this.composer = new EffectComposer(this.renderer);
 		this.createArena();
@@ -39,6 +42,11 @@ export class Game
 		this.animateStart = true;
 		this.gameEnded = false;
 		this.update();
+
+		// END GAME FUNCTIO --> CALL WHEN GAME ENDS
+		this.endGame = this.endGame.bind(this);
+		this.update = this.update.bind(this);
+		this.createPlayers = this.createPlayers.bind(this);
 	}
 
 	
@@ -106,9 +114,10 @@ export class Game
 		for (let i = 0; i < maxPlayers; i++)
 		{
 			const playerId = "p" + (i + 1);
-
-			if (i < this.settings.players)
-				this.players[playerId] = new Player(this, this.gameScene, this.settings, i + 1, "Player" + (i + 1));
+			
+      console.log('max players: ', maxPlayers);
+			if (i < this.playerList.length && this.playerList[i].username !== 'AI')
+				this.players[playerId] = new Player(this, this.gameScene, this.settings, i + 1, this.playerList[i].username, this.playerList[i].id);
 			else
 				this.players[playerId] = new AI(this, i + 1, "AI" + (i + 1));
 		}
@@ -408,7 +417,9 @@ export class Game
 
 	endGame()
 	{
-		// TODO: Here we submit results to database, show results of the game, let user play again or go back to website, etc...
+		if (!this.resolve)
+			return;
+		this.resolve(this.results);
 	}
 
 	resetGame()
@@ -452,9 +463,5 @@ export class Game
 		else
 			this.results.setResult2p(this.players["p1"], this.players["p2"]);
 
-		// DEBUG
-		console.log("RESULTS:");
-		console.log(this.results.getResult2p());
-		console.log(this.results.getResult4p());
 	}
 }

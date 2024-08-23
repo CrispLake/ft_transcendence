@@ -22,13 +22,12 @@ export class Text3D
 		this.renderer = renderer;
 		this.composer = composer;
 		this.camera = camera;
-		
 		this.create3DTextMesh();
     }
 
 	create3DTextMesh()
 	{
-		this.fontLoader.load('./resources/font.json', (font) => {
+		this.fontLoader.load('/static/fonts/font.json', (font) => {
 			const textGeometry = new TextGeometry(this.text, 
 			{
 				font: font,

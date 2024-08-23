@@ -6,7 +6,7 @@ import * as PongMath from '../math.js';
 
 export class Player
 {
-    constructor(game, scene, settings, playerNum, name)
+    constructor(game, scene, settings, playerNum, name, id)
     {
         this.game = game;
         this.scene = scene;

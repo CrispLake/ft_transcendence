@@ -19,7 +19,6 @@ export class Results
 			"player4Score": 0
 		}
 	}
-
 	getResult2p() {return this.result2p;}
 	getResult4p() {return this.result4p;}
 

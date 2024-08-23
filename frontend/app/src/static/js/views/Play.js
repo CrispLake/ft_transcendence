@@ -6,7 +6,7 @@
 /*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/21 18:11:55 by emajuri          ###   ########.fr       */
+/*   Updated: 2024/08/23 14:35:04 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,7 +198,7 @@ export default class extends AbstractView {
         await this.Pong();
         break;
       case this.modes.tournament: // 3
-        this.url += '/tournament'
+        this.url += '/pong-2p'
         await this.Tournament();
         break;
       case this.modes.gonp:       // 4

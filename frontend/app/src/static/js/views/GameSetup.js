@@ -68,7 +68,7 @@ export default class extends AbstractView {
             id: user.player_id,
             token: user.token,
             username: user.title,
-            winrate: user.wirate,
+            winrate: user.winrate,
         }));
     }
 
@@ -200,14 +200,6 @@ export default class extends AbstractView {
         this.entries.push(newEntry);
         this.renderEntries();
     }
-
-
-    MaxPlayerLimitReached() {
-        if (this.entryIdCounter == this.maxPlayers)
-            return true;
-        return false;
-    }
-
 
     AddUserHandler(event) {
         event.preventDefault();

@@ -12,6 +12,7 @@ export default class extends AbstractView {
 
         this.entries = [];
 
+        this.guestCounter = 0;
         this.entryIdCounter = 0;
         this.playerCounter = 0;
         this.maxPlayers = -1;
@@ -21,11 +22,12 @@ export default class extends AbstractView {
 
         this.powerups = false;
         this.ai_difficulty = 1;
-
+        this.gameMode = params;
 
         this.getFirstEntry();
         this.waitForUser = this.waitForUser.bind(this);
         this.HandlePopupExit = this.HandlePopupExit.bind(this);
+        this.PowerUpToggle = this.PowerUpToggle.bind(this);
         this.HandlePrev = this.HandlePrev.bind(this);
         this.HandleNext = this.HandleNext.bind(this);
         this.addGuestEntryHandler = this.addGuestEntryHandler.bind(this);
@@ -33,8 +35,16 @@ export default class extends AbstractView {
         this.addExistingUserEntryHandler = this.addExistingUserEntryHandler.bind(this);
         this.LoginHandler = this.LoginHandler.bind(this);
         this.AiDifficultySlider = this.AiDifficultySlider.bind(this);
+        this.MaxPlayerLimitReached = this.MaxPlayerLimitReached.bind(this);
+        this.AddUserHandler = this.AddUserHandler.bind(this)
+        this.CreateSettingsObject = this.CreateSettingsObject.bind(this);
     }
 
+    MaxPlayerLimitReached() {
+        if (this.entryIdCounter == this.maxPlayers)
+            return true;
+        return false;
+    }
     waitForUser() {
         this.AddListeners();
         return new Promise((resolve) => {
@@ -58,27 +68,29 @@ export default class extends AbstractView {
             id: user.player_id,
             token: user.token,
             username: user.title,
-            winrate: user.winrate
+            winrate: user.winrate,
         }));
     }
 
     CreateSettingsObject() {
         const settingsObj = new Settings({
-            multimode: this.params < 3 ? false : true,
-            diff: this.ai_difficulty,
+            multiMode: this.params < 3 ? false : true,
+            difficulty: this.ai_difficulty,
             powerups: this.powerups,
             players: this.playerCounter,
-
-            //todo might remove
             spin: true,
         });
+        // Manual check for tournament since games are played as 2v2 even tho there are 4 players
+        // 4 --> tournament mode
+        if (this.gameMode == 4)
+          settingsObj.multiMode = false;
         return settingsObj;
     }
 
     // Returns object containing list of players and settings object
     // to be provided for the game
     async getUserInput() {
-        const appDiv = await document.getElementById('app');
+        const appDiv = document.getElementById('app');
         if (!appDiv) {
             this.Redirect('/500');
             return;
@@ -111,7 +123,7 @@ export default class extends AbstractView {
             console.log('wins: ', wins, 'losses: ', losses);
 
             let winrate;
-            if (total === 0) {
+            if (total === 0 || total === NaN) {
               winrate = 0;
             }
             else {
@@ -134,24 +146,25 @@ export default class extends AbstractView {
         console.log(response)
     }
 
-    // TODO: Notification for player limit reached
-    MaxPlayerLimitReached() {
-        if (this.entryIdCounter == this.maxPlayers)
-            return true;
-        return false;
-    }
 
     addAiEntryHandler(event) {
-        if (event) {
-            event.preventDefault();
-        }
+        event.preventDefault();
 
         if (this.MaxPlayerLimitReached()) {
             console.log('Max player limit reached');
             return;
         }
 
+        // 2 == GONP in gamemode list
+        // and gonp does not have AI
+        if (this.gameMode == 2) {
+            Notification('notification-div', '<h3>AI does not know how to play GONP</h3>', 1);
+            return;
+        }
+
         const newEntry = {
+            player_id: 1,
+            token: null,
             id: this.entryIdCounter++,
             title: `AI`,
             image: `<img class="card-image" src="static/images/ai.avif" alt="AI icon" >`,
@@ -174,20 +187,33 @@ export default class extends AbstractView {
         }
 
         const newEntry = {
+            player_id: null,
+            token: null,
             id: this.entryIdCounter++,
-            title: `Guest Player`,
+            title: `Guest ${this.guestCounter}`,
             image: `<img class="card-image" src="static/images/guest.png" alt="Guest icon">`,
             winrate: Math.floor(Math.random() * (60 - 20 + 1)) + 20
             // NOTE: guest has random winrate between 20% - 60%
         };
+        this.guestCounter++;
         this.playerCounter++;
         this.entries.push(newEntry);
         this.renderEntries();
     }
 
+    AddUserHandler(event) {
+        event.preventDefault();
+
+        if (this.MaxPlayerLimitReached()) {
+            console.log('Max player limit reached');
+            return;
+        }
+
+        const button = document.getElementById('pop-up-login');
+        button.style.display = 'block';
+    }
+
     async addExistingUserEntryHandler(userData) {
-        console.log(userData.data);
-        let profileData;
         let profileURL = 'http://localhost:8000/account/' + userData.data.user_id;
 
         try {
@@ -195,42 +221,39 @@ export default class extends AbstractView {
                 profileURL,
                 { headers: {'Authorization': `Token ${userData.data.token}`} }
             );
-            profileData = response.data;
+            console.log(profileData);
+            const wins = response.data.user.wins;
+            const losses = response.data.user.losses;
+            const total = wins + losses;
+            let winrate;
+            if (total === 0) {
+                winrate = 0;
+            }
+            else {
+                winrate = ((wins / total) * 100);
+            }
+            const newEntry = {
+                player_id: userData.data.user_id,
+                token: userData.data.token,
+                id: this.entryIdCounter++,
+                title: userData.data.username,
+                winrate: winrate,
+                image: `<img class="card-image" src="http://localhost:8000/account/${userData.data.user_id}/image" alt="User icon">`
+            };
+            this.playerCounter++;
+            this.entries.push(newEntry);
+            this.renderEntries();
         } catch (error) {
             console.error('Error fetching profile data', error);
             this.profileData = { error: 'Failed to load profile data' };
         }
-        console.log(profileData);
-        const wins = response.data.user.wins;
-        const losses = response.data.user.losses;
-        const total = wins + losses;
-        let winrate;
-        if (total === 0) {
-          winrate = 0;
-        }
-        else {
-          winrate = ((wins / total) * 100);
-        }
-        const newEntry = {
-            player_id: userData.data.user_id,
-            token: userData.data.token,
-            id: this.entryIdCounter++,
-            title: userData.data.username,
-            winrate: winrate,
-            image: `<img class="card-image" src="http://localhost:8000/account/${userData.data.user_id}/image" alt="User icon">`
-        };
-        this.playerCounter++;
-        this.entries.push(newEntry);
-        this.renderEntries();
     }
 
     removeEntryHandler(entryId) {
         if (entryId == 0) {
             return ;
         }
-        if (this.entries[entryId].title != "AI") {
-            this.playerCounter--;
-        }
+        this.playerCounter--;
         this.entries = this.entries.filter(entry => entry.id !== entryId);
         this.entries.forEach((entry, index) => {
             entry.id = index;
@@ -305,7 +328,6 @@ export default class extends AbstractView {
         const formData = new FormData(formElement);
         const payload = Object.fromEntries(formData);
 
-        //TODO: Notification for user already in match
         if (this.entries.some(entry => entry.title === payload.username)) {
             console.log('User already in the match');
             this.HideLoginPopUp();
@@ -340,12 +362,13 @@ export default class extends AbstractView {
     PowerUpToggle(event) {
         event.preventDefault();
 
+        console.log('in toggle');
         const PowerUpToggle = document.getElementById('toggle-content');
         if (!PowerUpToggle) {
             console.log('505 - Internal server error - could not find toggle');
             this.Redirect('/500');
         }
-        if (!this.powerups) {
+        if (this.powerups === false) {
             this.powerups = true;
             PowerUpToggle.checked = true;
         }
@@ -395,6 +418,7 @@ export default class extends AbstractView {
 
     HandlePopupExit(event) {
         event.preventDefault();
+        console.log('handlePopupExit');
         this.HideLoginPopUp();
     }
 
@@ -407,11 +431,15 @@ export default class extends AbstractView {
         const rangeSlider = document.getElementById('range-slider');
         const popupExit = document.getElementById('popup-exit-button');
 
+        addUserButton.addEventListener('click',this.AddUserHandler);
         popupExit.addEventListener('click', this.HandlePopupExit);
         addButton.addEventListener('click', this.addGuestEntryHandler);
-        addAiButton.addEventListener('click', this.addAiEntryHandler);
+        if (this.gameMode !== 2)
+            addAiButton.addEventListener('click', this.addAiEntryHandler);
         loginForm.addEventListener('submit', this.LoginHandler);
-        rangeSlider.addEventListener('input', this.AiDifficultySlider);
+        powerUpToggle.addEventListener('click', this.PowerUpToggle);
+        if (rangeSlider)
+            rangeSlider.addEventListener('input', this.AiDifficultySlider);
 
 
         document.querySelector(".next").addEventListener("click", this.HandleNext);
@@ -428,12 +456,16 @@ export default class extends AbstractView {
         const popupExit = document.getElementById('popup-exit-button');
 
         try {
+            addUserButton.removeEventListener('click',this.AddUserHandler);
             addButton.removeEventListener('click', this.addGuestEntryHandler);
             popupExit.removeEventListener('click', this.HandlePopupExit);
-            addAiButton.removeEventListener('click', this.addAiEntryHandler);
+            if (this.gameMode !== 2)
+                addAiButton.removeEventListener('click', this.addAiEntryHandler);
             loginForm.removeEventListener('submit', this.LoginHandler);
             powerUpToggle.removeEventListener('click', this.PowerUpToggle);
-            rangeSlider.addEventListener('input', this.AiDifficultySlider);
+            if (rangeSlider) {
+                rangeSlider.addEventListener('input', this.AiDifficultySlider);
+            }
         } catch (error) {
             console.log('505 - Internal server error - could not find LoginSubmitButton');
             this.Redirect('/500');
@@ -452,11 +484,19 @@ export default class extends AbstractView {
                   </div>
                 </button>
 
+                ${
+                this.gameMode === 2
+                ?
+                ''
+                :
+                `
                 <button class="font-sub add-button blue" id="add-ai-button">
                   <div class="text-holder">
                       <span>Add AI</span>
                   </div>
                 </button>
+                `
+                }
 
                 <button class="font-sub add-button blue" id="add-user-button">
                   <div class="text-holder">
@@ -482,11 +522,22 @@ export default class extends AbstractView {
                     </label>
                 </span>
 
-                <div class="slider-container">
-                    <label class="font-text powerup-text" for="range-slider">AI Diff:</label>
-                    <input type="range" id="range-slider" min="1" max="3" value="1" step="1">
-                    <span class="font-text powerup-text" id="slider-value">1</span>
-                </div>
+                ${
+                this.gameMode === 2
+                ?
+                    `<div class="slider-container">
+                        <label class="font-text powerup-text" for="range-slider">Time:</label>
+                        <input type="range" id="range-slider" min="1" max="5" value="3" step="1">
+                        <span class="font-text powerup-text" id="slider-value">3</span>
+                    </div>`
+                :
+
+                    `<div class="slider-container">
+                        <label class="font-text powerup-text" for="range-slider">AI Diff:</label>
+                        <input type="range" id="range-slider" min="1" max="3" value="1" step="1">
+                        <span class="font-text powerup-text" id="slider-value">1</span>
+                    </div>`
+                }
 
             </div>
 

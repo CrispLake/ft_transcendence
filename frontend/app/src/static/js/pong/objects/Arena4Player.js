@@ -14,12 +14,14 @@ export class Arena4Player
         this.renderer = renderer;
         this.composer = composer;
         this.camera = camera;
+        this.width = G.arenaWidth4Player;
+        this.length = G.arenaWidth4Player;
 
         // ----PONG Text----
         this.pongText = new Text3D(
             this.scene,
             'PONG',
-            new THREE.Vector3(0, 0, -(G.arenaWidth4Player / 2 + 3)),
+            new THREE.Vector3(0, 0, -(this.width / 2 + 3)),
             6,
             COLOR.PONG,
             this.fontLoader,
@@ -28,14 +30,14 @@ export class Arena4Player
             this.camera);
         
         // ----Floor----
-        this.floorGeometry = new THREE.BoxGeometry(G.arenaWidth4Player, G.floorThickness, G.arenaWidth4Player);
+        this.floorGeometry = new THREE.BoxGeometry(this.width, G.floorThickness, this.width);
         this.floorMeshMaterial = new THREE.MeshStandardMaterial({color: 0xffffff, emissive: COLOR.FLOOR, wireframe: false});
         this.floor = new THREE.Mesh(this.floorGeometry, this.floorMeshMaterial);
         this.floor.position.set(0, -(G.wallHeight / 2 + G.floorThickness / 2), 0);
 
         // ----Side Walls----
-        const distFromCenter = G.arenaWidth4Player / 2 - G.wallThickness / 2;
-        const wallOffset = G.arenaWidth4Player / 2 - G.wallLength4Player / 2;
+        const distFromCenter = this.width / 2 - G.wallThickness / 2;
+        const wallOffset = this.width / 2 - G.wallLength4Player / 2;
         this.walls = [];
         this.walls["wallLeftUp"] = new Wall(G.vertical, G.wallLength4Player, G.wallHeight, G.wallThickness, -distFromCenter, 0, -wallOffset);
         this.walls["wallLeftDown"] = new Wall(G.vertical, G.wallLength4Player, G.wallHeight, G.wallThickness, -distFromCenter, 0, wallOffset);
@@ -55,7 +57,6 @@ export class Arena4Player
 
     addToScene()
     {
-        // this.scene.add(this.backWall); // TODO --> remove
         this.scene.add(this.floor);
         for (let wall in this.walls)
         {

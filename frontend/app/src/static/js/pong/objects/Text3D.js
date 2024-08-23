@@ -22,58 +22,52 @@ export class Text3D
 		this.renderer = renderer;
 		this.composer = composer;
 		this.camera = camera;
-		
 		this.create3DTextMesh();
     }
 
 	create3DTextMesh()
 	{
-    try {
-      this.fontLoader.load('/static/fonts/font.json', (font) => {
-        const textGeometry = new TextGeometry(this.text, 
-        {
-          font: font,
-          size: 6,
-          height: 1,
-          depth: 0.1,
-          curveSegments: 12,
-          bevelEnabled: true,
-          bevelThickness: 0.5,
-          bevelSize: 0.2,
-          bevelOffset: 0,
-          bevelSegments: 3
-        });
-        const textMaterial = new THREE.MeshBasicMaterial({color: this.color});
-        const mesh = new THREE.Mesh(textGeometry, textMaterial);
-        textGeometry.computeBoundingBox();
-        const boundingBox = textGeometry.boundingBox;
-        const textWidth = boundingBox.max.x - boundingBox.min.x;
-        mesh.position.set(this.position.x - textWidth / 2, this.position.y, this.position.z);
-        this.scene.add(mesh);
-  
-        this.composer.addPass(new RenderPass(this.scene, this.camera));
-        
-        // Create the OutlinePass
-        const outlinePass = new OutlinePass(
-          new THREE.Vector2(window.innerWidth, window.innerHeight),
-          this.scene,
-          this.camera,
-          [mesh]);
-        outlinePass.edgeStrength = 10; // Increase to make the edges glow more
-        outlinePass.edgeGlow = 1; // Increase to make the glow wider
-        outlinePass.visibleEdgeColor.set(COLOR.PONG_AURA);
-        outlinePass.hiddenEdgeColor.set(COLOR.PONG_AURA);
-        this.composer.addPass(outlinePass);
-        
-        // Add FXAA for better smoothing of edges
-        const effectFXAA = new ShaderPass(FXAAShader);
-        effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
-        this.composer.addPass(effectFXAA);
-      });
-    }
-    catch(error) {
-      console.log(`Error: ${error}`)
-    }
+		this.fontLoader.load('/static/fonts/font.json', (font) => {
+			const textGeometry = new TextGeometry(this.text, 
+			{
+				font: font,
+				size: 6,
+				height: 1,
+				depth: 0.1,
+				curveSegments: 12,
+				bevelEnabled: true,
+				bevelThickness: 0.5,
+				bevelSize: 0.2,
+				bevelOffset: 0,
+				bevelSegments: 3
+			});
+			const textMaterial = new THREE.MeshBasicMaterial({color: this.color});
+			this.mesh = new THREE.Mesh(textGeometry, textMaterial);
+			textGeometry.computeBoundingBox();
+			const boundingBox = textGeometry.boundingBox;
+			const textWidth = boundingBox.max.x - boundingBox.min.x;
+			this.mesh.position.set(this.position.x - textWidth / 2, this.position.y, this.position.z);
+			this.scene.add(this.mesh);
+
+			this.composer.addPass(new RenderPass(this.scene, this.camera));
+			
+			// Create the OutlinePass
+			const outlinePass = new OutlinePass(
+				new THREE.Vector2(window.innerWidth, window.innerHeight),
+				this.scene,
+				this.camera,
+				[this.mesh]);
+			outlinePass.edgeStrength = 10; // Increase to make the edges glow more
+			outlinePass.edgeGlow = 1; // Increase to make the glow wider
+			outlinePass.visibleEdgeColor.set(COLOR.PONG_AURA);
+			outlinePass.hiddenEdgeColor.set(COLOR.PONG_AURA);
+			this.composer.addPass(outlinePass);
+			
+			// Add FXAA for better smoothing of edges
+			const effectFXAA = new ShaderPass(FXAAShader);
+			effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
+			this.composer.addPass(effectFXAA);
+		});
 	}
 
 	render()

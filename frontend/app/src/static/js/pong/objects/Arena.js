@@ -14,6 +14,9 @@ export class Arena
         this.composer = composer;
         this.camera = camera;
 
+        this.width = G.floorWidth;
+        this.length = G.arenaLength;
+
         // ----PONG Text----
         this.pongText = new Text3D(
             this.scene,
@@ -25,23 +28,17 @@ export class Arena
             this.renderer,
             this.composer,
             this.camera);
-
-        // ----Back Wall----
-        this.backWallGeometry = new THREE.BoxGeometry(25, 15, 2);
-        this.backWallMeshMaterial = new THREE.MeshStandardMaterial({color: 0xffffff, emissive: COLOR.BACKWALL});
-        this.backWall = new THREE.Mesh(this.backWallGeometry, this.backWallMeshMaterial);
-        this.backWall.position.set(0, 0, -10.5);
         
         // ----Floor----
-        this.floorGeometry = new THREE.BoxGeometry(G.arenaLength, G.floorThickness, G.floorWidth);
+        this.floorGeometry = new THREE.BoxGeometry(this.length, G.floorThickness, this.width);
         this.floorMeshMaterial = new THREE.MeshStandardMaterial({color: 0xffffff, emissive: COLOR.FLOOR, wireframe: false});
         this.floor = new THREE.Mesh(this.floorGeometry, this.floorMeshMaterial);
         this.floor.position.set(0, -(G.wallHeight / 2 + G.floorThickness / 2), 0);
 
         // ----Side Walls----
         this.walls = [];
-        this.walls["leftWall"] = new Wall(G.horizontal, G.arenaLength, G.wallHeight, G.wallThickness, 0, 0, -(G.arenaWidth / 2 + G.wallThickness / 2));
-        this.walls["rightWall"] = new Wall(G.horizontal, G.arenaLength, G.wallHeight, G.wallThickness, 0, 0, (G.arenaWidth / 2 + G.wallThickness / 2));
+        this.walls["leftWall"] = new Wall(G.horizontal, this.length, G.wallHeight, G.wallThickness, 0, 0, -(G.arenaWidth / 2 + G.wallThickness / 2));
+        this.walls["rightWall"] = new Wall(G.horizontal, this.length, G.wallHeight, G.wallThickness, 0, 0, (G.arenaWidth / 2 + G.wallThickness / 2));
         
         // ----General Light----
         this.ambientLight = new THREE.AmbientLight(COLOR.WHITE, 0.05);
@@ -52,7 +49,6 @@ export class Arena
 
     addToScene()
     {
-        this.scene.add(this.backWall);
         this.scene.add(this.floor);
         this.scene.add(this.ambientLight);
         for (let wall in this.walls)
@@ -69,5 +65,20 @@ export class Arena
             if (this.walls[wall].effect)
                 this.walls[wall].updateLightEffect();
         }
+    }
+
+    setWidth(width)
+    {
+        const newFloorGeometry = new THREE.BoxGeometry(this.length, G.floorThickness, width);
+        this.floor.geometry.dispose();
+        this.floor.geometry = newFloorGeometry;
+        this.width = width;
+
+        this.walls["leftWall"].mesh.position.z = -(this.width / 2 - G.wallThickness / 2);
+        this.walls["leftWall"].light.position.z = -(this.width / 2 - G.wallThickness / 2);
+        this.walls["leftWall"].box.setFromObject(this.walls["leftWall"].mesh);
+        this.walls["rightWall"].mesh.position.z = this.width / 2 - G.wallThickness / 2;
+        this.walls["rightWall"].light.position.z = this.width / 2 - G.wallThickness / 2;
+        this.walls["rightWall"].box.setFromObject(this.walls["rightWall"].mesh);
     }
 }

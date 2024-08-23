@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   play.js                                            :+:      :+:    :+:   */
+/*   Play.js                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/02 14:38:00 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/23 14:35:04 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,9 @@ import AbstractView from './AbstractView.js';
 import Tournament from './Tournament.js';
 import GameSetup from './GameSetup.js';
 import GameMode from './GameMode.js';
-import Results from './Result.js';
+import Result from './Result.js';
 import Pong from './Pong.js';
+import Gonp from './Gonp.js'
 
 export default class extends AbstractView {
   constructor(params) {
@@ -35,6 +36,8 @@ export default class extends AbstractView {
       'pong4': 3,
       'tournament': 4,
     }
+
+    this.url = 'http://localhost:8000'
   }
 
   // Choose how to play here
@@ -43,6 +46,56 @@ export default class extends AbstractView {
     this.gameMode = await gameModeObj.getUserInput();
   }
 
+  getAuthObject(players) {
+    const tokenString = players
+        .filter(obj => obj.token !== null)
+        .map(obj => `Token ${obj.token}`)
+        .join(', ')
+    return { 'Authorization': `${tokenString}` };
+  }
+
+  getPayload(gameResults, players) {
+    const payload = {};
+
+    //get all the user ids
+    let num = 1;
+    for (const key in players) {
+        if (players[key] !== null) {
+            payload[`player${num}`] = players[key].id;
+        }
+        num += 1;
+    }
+
+    // get all the scores
+    for (const key in gameResults) {
+        if (key.endsWith("Score")) {
+            payload[key] = gameResults[key];
+        }
+    }
+    return payload;
+}
+
+  async postGameResults(gameResults, players) {
+    // check if any player is logged in. if not then no posting needs to be done
+    if (!players.some(obj => obj.id !== null && obj.id !== 1)) {
+        console.log("no posting done for game results");
+        return;
+    }
+
+    const authObject = this.getAuthObject(players);
+    const payload = this.getPayload(gameResults, players);
+
+    try {
+        const response = await axios.post(
+            this.url,
+            payload,
+            { headers: authObject }
+        )
+    }
+    catch(error) {
+        console.log(error.response.data.detail);
+    }
+  }
   // Launch 2p Gonp
   async GameSetup() {
         const gameSetupObj = new GameSetup(this.gameMode);
@@ -51,39 +104,83 @@ export default class extends AbstractView {
   }
 
   async Pong() {
+    const appElem = document.getElementById('app');
+    if (!appElem) {
+      this.Redirect('/500');
+      return;
+    }
+
     const pong = new Pong();
     await pong.AddListeners();
 
-    const gameResults = await pong.fakeGame(this.setupObj);
+    const gameResults = await pong.launchGame(this.setupObj, appElem);
+    await this.postGameResults(gameResults, this.setupObj.players);
 
     await pong.RemoveListeners();
-    const resultsView = new Results();
-    await resultsView.getUserInput(gameResults);
+    const resultsView = new Result();
+    await resultsView.getUserInput(gameResults, this.setupObj.players);
   }
 
-  Gonp() {
+  async Gonp() {
+    const appElem = document.getElementById('app');
+    if (!appElem) {
+      this.Redirect('/500');
+      return;
+    }
+
+    const gonp = new Gonp();
+    await gonp.AddListeners();
+    const gameResults = await gonp.launchGame(this.setupObj, appElem);
+    await this.postGameResults(gameResults, this.setupObj.players);
+
+    await gonp.RemoveListeners();
+    const resultsView = new Result();
+    await resultsView.getUserInput(gameResults, this.setupObj.players);
     
   }
 
   // Launch 4p tournament
-  Tournament() {
-    // --- level 0 ---
-    // create original pairs based on win rate
-    // prompt first game
-    // play the game 1
-    // display results and prompt next game
-    // game 2
-    // prompt results
+  async Tournament() {
+    const tournamentObject = new Tournament();
+    const appElem = document.getElementById('app');
+    if (!appElem) {
+      return;
+    }
 
-    // --- level 1 ---
-    // create pair of two winners
-    // prompt game
-    // play game
+    appElem.innerHTML = await tournamentObject.getHtml();
 
-    // --- level 2 ---
-    // display tournament results
-    // post data
+    if (await tournamentObject.initialize(this.setupObj) === -1) {
+      this.Redirect('/500');
+      return;
+    }
+
+    for (let i = 0; i < 3; i++) {
+      tournamentObject.AddListeners();
+      tournamentObject.displayTournament();
+      await tournamentObject.getUserInput();
+     
+      const players = tournamentObject.getNextPlayers();
+      this.setupObj.players = players;
+      const game = new Pong(); 
+      game.AddListeners();
+      tournamentObject.RemoveListeners();
+      
+      const gameResults = await game.launchGame(this.setupObj, tournamentObject.app);
+      await this.postGameResults(gameResults, this.setupObj.players);
+      
+      
+      game.RemoveListeners();
+      tournamentObject.saveResults(gameResults, players);
+      tournamentObject.level++;
+    }
+    tournamentObject.AddListeners();
+    tournamentObject.displayTournament();
+    await tournamentObject.getUserInput();
+    // tournament also posts it's results as pong will 
+    tournamentObject.RemoveListeners();
+    this.Redirect('/');
   }
+  
 
   // This function will be responsible running the whole process
   // from setup to displaying stats after the game
@@ -93,16 +190,20 @@ export default class extends AbstractView {
 
     switch (this.gameMode) {
       case this.modes.pong2:      // 2
+        this.url += '/pong-2p'
         await this.Pong();
         break;
       case this.modes.pong4:      // 2
+        this.url += '/pong-4p'
         await this.Pong();
         break;
       case this.modes.tournament: // 3
-        this.Tournament();
+        this.url += '/pong-2p'
+        await this.Tournament();
         break;
       case this.modes.gonp:       // 4
-        this.Gonp();
+        this.url += '/gonp-2p'
+        await this.Gonp();
         break;
     }
   }

@@ -1,0 +1,224 @@
+#game-app {
+  width: 100%;
+  height: 100%;
+}
+
+.tournament-page {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  padding-top: 4rem;
+  gap: 6rem;
+}
+
+.level-0-div {
+  width: 100%;
+  height: 144px;
+
+  display: flex;
+  justify-content: space-around;
+}
+
+
+.level-1-div {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 144px;
+
+}
+
+.level-2-div {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 144px;
+
+}
+
+.pair {
+  padding: 1rem;
+  gap: 4rem;
+  display: flex;
+  justify-content: space-between;
+  transition: ease 0.2s;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.pair:hover,
+.winner-holder:hover {
+  transform: scale(1.025);
+  cursor: pointer;
+}
+
+.pair-holder {
+  width: 35%;
+  height: 100%;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.pair-holder h3 {
+  padding: 0;
+  margin: 0;
+}
+
+.pair-vs {
+  font-size: 86px !important;
+  padding: 0;
+  margin: 0;
+}
+
+
+.winner-p1 {
+  background: linear-gradient(to right, var(--green) 50%, var(--pink) 50%);
+}
+
+.winner-p2 {
+  background: linear-gradient(to right, var(--pink) 50%, var(--green) 50%);
+}
+
+
+.player-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 30%;
+  height: 100%;
+}
+
+
+.player-card-winner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 200px;
+  height: auto;
+}
+
+.winner-holder {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  background: var(--green);
+  width: 300px;
+  height: 200px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-name-text {
+  font-size: 28px !important;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  padding: 0;
+}
+
+.tournament-winner-text {
+  padding: 0;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 48px;
+}
+
+.player-card-image {
+  width: 40%;
+  height: auto;
+}
+
+
+#confirm-div {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  background: var(--black);
+  color: var(--white);
+
+  width: 400px;
+  height: 200px;
+}
+
+#confirm-div h2 {
+  margin: 0;
+  padding: 0;
+}
+
+.confirm-buttons {
+  display: flex;
+  justify-content: start;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  gap: 2rem;
+  font-size: 48px !important;
+}
+
+#confirm-button {
+  border: none;
+  background: var(--green);
+  width: 150px;
+}
+
+#decline-button {
+  border: none;
+  background: var(--pink);
+  width: 150px;
+}
+
+#confirm-button:hover,
+#decline-button:hover {
+  cursor: pointer;
+}
+
+
+
+
+@keyframes InfoTextAnimation {
+  0%, 100% {
+     transform: translate(-50%, 0%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, 0%) scale(0.975);
+  }
+}
+
+.info-div {
+  position: absolute;
+  width: 700px;
+  bottom: 2rem;
+  left: 50%;
+  
+  animation: InfoTextAnimation 1s infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.info-text {
+  font-size: 48px;
+  margin: 0;
+  padding: 0;
+}
+
+.info-img {
+  width: 64px;
+  height: 64px;
+}
+
+
+
+
+
+

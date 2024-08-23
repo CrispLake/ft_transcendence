@@ -17,7 +17,7 @@ export default class extends AbstractView {
   constructor(params) {
     super(params);
     this.setTitle('Search For Friends');
-    this.auth = false;
+    this.auth = true;
     this.listeners = true;
     this.addFriendListener = false; // Indicates if addFriendHandler has been attached to document
     this.resultMemory = null;
@@ -48,7 +48,7 @@ export default class extends AbstractView {
     catch(error) {
       if (error.response.status === 400)
         resultDiv.innerHTML = `
-          <h3 class="font-text response-fail-text">Sending friend request failed succesfully: TODO</h3>
+          <h3 class="font-text response-fail-text">Sending friend request failed succesfully: ${error.response.data.detail}</h3>
         `;
       else {
         console.log(error);
@@ -130,8 +130,6 @@ export default class extends AbstractView {
         profileLink.textContent = data.user.username;
 
         const addButton = document.createElement('button');
-        addButton.addEventListener('click', this.addFriendHandler);
-        this.addFriendHandler = true;
         addButton.classList.add('add-friend-button');
         addButton.innerHTML = `
           <div class="result-svg">
@@ -142,6 +140,10 @@ export default class extends AbstractView {
         searchResult.appendChild(profileLink);
         searchResult.appendChild(addButton);
         resultDiv.appendChild(searchResult);
+        if (!this.addFriendListener) {
+          addButton.addEventListener('click', this.addFriendHandler);
+          this.addFriendListener = true;
+        }
       }
       else {
         console.log(error);

@@ -45,13 +45,14 @@ export default class extends AbstractView {
           }
         });
         Notification('notification-div', '<h3>Upload succesful!</h3>', 0);
+        setTimeout(() => location.reload(true), 3000);
       }
       catch(error) {
         console.log('imgHandler error: ', error);
-        Notification('notification-div', `<h3>${error.response.data.username}</h3>`, 1);
+        Notification('notification-div', `<h3>No file chosen</h3>`, 1);
       }
     }
-    
+
     async UsernameHandler(event) {
         event.preventDefault();
 
@@ -143,7 +144,7 @@ export default class extends AbstractView {
 
                         <div class="change-form">
                             <h2 class="font-heading setting-heading">Change Username:</h2>
-                            
+
                             <form id="change-username-form" action="" method="">
 
                               <div class="input-div">
@@ -154,7 +155,7 @@ export default class extends AbstractView {
                                   </div>
                               </button>
                               </div>
-                            
+
                             </form>
                         </div>
 

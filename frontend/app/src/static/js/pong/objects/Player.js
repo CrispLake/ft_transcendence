@@ -6,8 +6,9 @@ import * as PongMath from '../math.js';
 
 export class Player
 {
-    constructor(scene, settings, playerNum, name)
+    constructor(game, scene, settings, playerNum, name, id)
     {
+        this.game = game;
         this.scene = scene;
         this.settings = settings;
         this.spin = this.settings.spin;
@@ -20,13 +21,13 @@ export class Player
         this.geometry = new THREE.BoxGeometry(G.paddleThickness, G.wallHeight, G.paddleLength);
         this.material = new THREE.MeshStandardMaterial({color: this.color, emissive: this.color});
         this.paddle = new THREE.Mesh(this.geometry, this.material);
-        this.box = new THREE.Box3();
         this.light = new THREE.RectAreaLight(this.color, G.paddleLightIntensity, G.paddleLength, G.paddleHeight);
         this.boostGeometry = new THREE.BoxGeometry(G.boostMeterWidth, G.boostMeterThickness, 0);
         this.boostMaterial = new THREE.MeshStandardMaterial({color: COLOR.BOOSTMETER, emissive: COLOR.BOOSTMETER})
         this.boostMeter = new THREE.Mesh(this.boostGeometry, this.boostMaterial);
+        this.box = new THREE.Box3();
         this.paddleLength = G.paddleLength;
-        this.score = 0;
+        this.lives = G.lives;
         this.moveLeft = false;
         this.moveRight = false;
         this.setMovingBoundaries();
@@ -42,11 +43,18 @@ export class Player
         this.clockBoostMeter = new THREE.Clock();
         this.effect = false;
         this.boostMeterAnimation = false;
+        this.stunTimer = new THREE.Clock();
+        this.stunned = false;
+        this.stunPosition = new THREE.Vector3();
+        this.active = false;
         this.bounce = false;
-        
+        this.box.setFromObject(this.paddle);
     }
     
-    // ----Initialization Functions----
+
+    //--------------------------------------------------------------------------
+    //  INITIALIZE
+    //--------------------------------------------------------------------------
     
     addToScene()
     {
@@ -81,6 +89,7 @@ export class Player
         this.paddle.position.set(x, y, z);
         this.light.position.copy(this.paddle.position);
         this.boostMeter.position.set(x + this.boostOffset, y, z);
+        this.box.setFromObject(this.paddle);
     }
 
     setAlignment()
@@ -115,20 +124,10 @@ export class Player
         }
     }
 
-    setMovingBoundaries()
-    {
-        if (this.settings.multiMode)
-        {
-            this.movementBoundary = G.arenaWidth4Player / 2 - G.wallLength4Player - this.paddleLength / 2;
-        }
-        else
-        {
-            this.movementBoundary = G.arenaWidth / 2 - G.paddleLength / 2;
-        }
-    }
 
-
-    // ----Boost Meter----
+    //--------------------------------------------------------------------------
+    //  BOOST METER
+    //--------------------------------------------------------------------------
 
     removeBoostMeter()
     {
@@ -146,15 +145,20 @@ export class Player
             if (this.playerNum < 3)
                 this.boostMeter.position.set(this.paddle.position.x + this.boostOffset, this.paddle.position.y, this.paddle.position.z);
             else
+            {
                 this.boostMeter.position.set(this.paddle.position.x, this.paddle.position.y, this.paddle.position.z + this.boostOffset);
+                this.boostMeter.rotation.y += Math.PI / 2;
+            }
             this.scene.add(this.boostMeter);
         }
     }
 
     resetBoostAnimation()
     {
-        console.log("Resetting boost animation");
-        this.boostMeter.position.set(this.paddle.position.x + this.boostOffset, this.paddle.position.y, this.paddle.position.z);
+        if (this.alignment == G.vertical)
+            this.boostMeter.position.set(this.paddle.position.x + this.boostOffset, this.paddle.position.y, this.paddle.position.z);
+        else
+            this.boostMeter.position.set(this.paddle.position.x, this.paddle.position.y + this.boostOffset, this.paddle.position.z);
         this.boostMeter.material.emissive.set(COLOR.BOOSTMETER);
         this.boostMeterAnimation = false;
         this.boostAmount = 0;
@@ -163,7 +167,6 @@ export class Player
 
     startBoostMeterAnimation()
     {
-        console.log("Starting boost animation");
         this.boostMeterAnimation = true;
         this.clockBoostMeter.start();
     }
@@ -174,17 +177,32 @@ export class Player
         let color = PongMath.colorLerp(elapsedTime, 0, G.boostMeterAnimationTime, COLOR.BOOSTMETER, COLOR.BOOSTMETER_FULL);
         this.boostMeter.material.emissive.set(color);
         let movementMultiplier = PongMath.lerp(elapsedTime, 0, G.boostMeterAnimationTime, 0, G.boostAnimationMaxMovement);
-        this.boostMeter.position.x = (this.paddle.position.x + this.boostOffset) + Math.random() * movementMultiplier;
-        this.boostMeter.position.z = this.paddle.position.z + Math.random() * movementMultiplier;
+        if (this.alignment == G.vertical)
+        {
+            this.boostMeter.position.x = (this.paddle.position.x + this.boostOffset) + Math.random() * movementMultiplier;
+            this.boostMeter.position.z = this.paddle.position.z + Math.random() * movementMultiplier;
+        }
+        else
+        {
+            this.boostMeter.position.z = (this.paddle.position.z + this.boostOffset) + Math.random() * movementMultiplier;
+            this.boostMeter.position.x = this.paddle.position.x + Math.random() * movementMultiplier;
+        }
 
         if (elapsedTime >= G.boostMeterAnimationTime)
         {
             this.resetBoostAnimation();
+            this.stunPosition = this.paddle.position.clone();
+            this.paddle.material.emissive.set(COLOR.STUNNED);
+            this.light.color.set(COLOR.STUNNED);
+            this.stunned = true;
+            this.stunTimer.start();
         }
     }
 
 
-    // ----Boost----
+    //--------------------------------------------------------------------------
+    //  BOOST
+    //--------------------------------------------------------------------------
 
     increaseBoost()
     {
@@ -221,7 +239,9 @@ export class Player
     }
 
 
-    // ----Light----
+    //--------------------------------------------------------------------------
+    //  LIGHT
+    //--------------------------------------------------------------------------
 
     resetLightEffect()
     {
@@ -250,13 +270,61 @@ export class Player
     }
 
 
-    // ----Player----
+    //--------------------------------------------------------------------------
+    //  LIFE
+    //--------------------------------------------------------------------------
 
-    move(movement)
+    loseLife(lifeAmount)
+    {
+        this.lives -= lifeAmount;
+        if (this.lives < 0)
+            this.lives == 0;
+    }
+
+    setLife(lives)
+    {
+        this.lives = lives;
+        this.game.ui.playerCards[this.name].setLife(this.lives);
+    }
+
+    resetLife()
+    {
+        this.lives = G.lives;
+    }
+
+
+    //--------------------------------------------------------------------------
+    //  PADDLE
+    //--------------------------------------------------------------------------
+
+    resize(length)
+    {
+        this.paddleLength = length;
+        const newGeometry = new THREE.BoxGeometry(G.paddleThickness, G.wallHeight, length);
+        this.paddle.geometry.dispose();
+        this.paddle.geometry = newGeometry;
+        this.light.width = length;
+        this.setMovingBoundaries();
+        this.move(0);   // We use this function to correct possible resizing ouutside boundaries. Here we also set boostMeter, light and box position.
+    }
+
+
+    //--------------------------------------------------------------------------
+    //  BOUNDARIES
+    //--------------------------------------------------------------------------
+
+    setMovingBoundaries()
+    {
+        if (this.settings.multiMode)
+            this.movementBoundary = this.game.arena.width / 2 - G.wallLength4Player - this.paddleLength / 2;
+        else
+            this.movementBoundary = this.game.arena.width / 2 - G.wallThickness - this.paddleLength / 2;
+    }
+
+    stayWithinBoundaries()
     {
         if (this.alignment == G.vertical)
         {
-            this.paddle.position.z += movement;
             if (this.paddle.position.z < -this.movementBoundary)
                 this.paddle.position.z = -this.movementBoundary;
             if (this.paddle.position.z > this.movementBoundary)
@@ -265,7 +333,6 @@ export class Player
         }
         else
         {
-            this.paddle.position.x += movement;
             if (this.paddle.position.x < -this.movementBoundary)
                 this.paddle.position.x = -this.movementBoundary;
             if (this.paddle.position.x > this.movementBoundary)
@@ -273,19 +340,62 @@ export class Player
             this.boostMeter.position.x = this.paddle.position.x;
         }
         this.light.position.copy(this.paddle.position);
+        this.box.setFromObject(this.paddle);
+    }
+
+
+    //--------------------------------------------------------------------------
+    //  PLAYER FUNCTIONS
+    //--------------------------------------------------------------------------
+
+    setActive()
+    {
+        this.active = true;
+    }
+
+    move(movement)
+    {
+        if (this.alignment == G.vertical)
+            this.paddle.position.z += movement;
+        else
+            this.paddle.position.x += movement;
+        this.stayWithinBoundaries();
     }
 
     reset()
     {
+        if (this.paddleLength != G.paddleLength)
+            this.resize(G.paddleLength);
         this.setPos(this.startPos.x, this.startPos.y, this.startPos.z);
         this.boostAmount = 0;
         this.updateBoostMeter();
+        // this.box.setFromObject(this.paddle);
     }
 
     update()
     {
         if (this.effect)
             this.updateLightEffect();
+        if (this.stunned)
+        {
+            let elapsedTime = this.stunTimer.getElapsedTime();
+            if (elapsedTime >= G.stunTime)
+            {
+                this.paddle.position.copy(this.stunPosition);
+                this.paddle.material.emissive.set(this.color);
+                this.light.color.set(this.color);
+                this.stunned = false;
+                this.stunTimer.stop();
+            }
+            else
+            {
+                const maxShake = G.maxStunShake * ((G.stunTime - elapsedTime) / G.stunTime);
+                const randomX = Math.random() * maxShake;
+                const randomZ = Math.random() * maxShake;
+                this.paddle.position.set(this.stunPosition.x + randomX, this.stunPosition.y, this.stunPosition.z + randomZ);
+                return;
+            }
+        }
         if (this.moveLeft)
             this.move(-this.speed);
         if (this.moveRight)

@@ -21,6 +21,22 @@ export default class extends AbstractView {
 
         this.registerURL = 'http://localhost:8000/register';
         this.registerHandler = this.registerHandler.bind(this);
+        this.checkForbiddenNames = this.checkForbiddenNames.bind(this);
+    }
+
+    // returns TRUE if everything ok
+    // returns FALSE if has forbidden stuff
+    checkForbiddenNames(username) {
+        const name = username.toLowerCase();
+
+        if (name.includes('guest'))
+            return false;
+        if (name.includes('ai'))
+            return false;
+        if (name.includes('admin'))
+            return false;
+
+        return true;
     }
 
     async registerHandler(event) {
@@ -38,13 +54,27 @@ export default class extends AbstractView {
                 const payload = {
                     user: data
                 };
+                if (!this.checkForbiddenNames(payload.user.username)) {
+                    const err = new Error();
+                    err.response = {
+                        data: {
+                            user: {
+                                username: `Cannot contain '${payload.user.username}'`
+                            }
+                        }
+                    };
+                    throw err;
+                }
+                
                 const response = await axios.post(
                     this.registerURL,
                     payload
                 );
-                this.Redirect('/login');
+                Notification('notification-div', `<h3>Register succesfull, redirecting to login!</h3>`, 0);
+                setTimeout(() => {
+                    this.Redirect('/login');
+                }, 3000);
             } catch (error) {
-                console.error('Error registering: ', error.response.data.user.username);
                 Notification('notification-div', `<h3>${error.response.data.user.username}</h3>`, 1);
             }
         }
@@ -55,7 +85,7 @@ export default class extends AbstractView {
         if (registerForm) {
             registerForm.addEventListener('submit', this.registerHandler);
         } else {
-            console.log('505 - Internal server error - could not find submit buttons');
+            console.log('500 - Internal server error - could not find submit buttons');
             this.Redirect('/500');
         }
     }
@@ -66,7 +96,7 @@ export default class extends AbstractView {
         if (registerForm) {
             registerForm.removeEventListener('submit', this.registerHandler);
         } else {
-            console.log('505 - Internal server error - could not find submit buttons');
+            console.log('500 - Internal server error - could not find submit buttons');
             this.Redirect('/500');
         }
     }

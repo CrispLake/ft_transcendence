@@ -75,3 +75,28 @@ export function setMaxAngle(degrees)
 {
     return (Math.PI - degToRad(degrees));
 }
+
+export function widthPercentage(percentage)
+{
+    return (window.innerWidth * percentage / 100);
+}
+
+export function distanceBetweenPoints(x0, y0, x1, y1)
+{
+    return (Math.sqrt(Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2)));
+}
+
+export function arcLength(radius, angle)
+{
+    return ((radius * 2 * Math.PI) * (angle / (Math.PI * 2)));
+}
+
+export function quadraticFormulaPositive(a, b, c)
+{
+    return ((-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a));
+}
+
+export function quadraticFormulaNegative(a, b, c)
+{
+    return ((-b - Math.sqrt(b * b - 4 * a * c)) / (2 * a));
+}

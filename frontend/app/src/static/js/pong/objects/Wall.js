@@ -14,8 +14,6 @@ export class Wall
         this.material = new THREE.MeshStandardMaterial({color: COLOR.WALL, emissive: COLOR.WALL});
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.mesh.position.set(x, y, z);
-        this.box = new THREE.Box3();
-
         if (this.alignment == G.vertical)
             this.geometry.rotateY(Math.PI / 2);
 
@@ -23,6 +21,10 @@ export class Wall
         this.light = new THREE.RectAreaLight(COLOR.WALL, G.wallLightIntensity, length, height);
         this.light.position.copy(this.mesh.position);
         this.setLightDirection();
+
+        // Hitbox
+        this.box = new THREE.Box3();
+        this.box.setFromObject(this.mesh);
 
         // Time
         this.clock = new THREE.Clock();

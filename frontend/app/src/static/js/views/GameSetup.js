@@ -221,7 +221,6 @@ export default class extends AbstractView {
                 profileURL,
                 { headers: {'Authorization': `Token ${userData.data.token}`} }
             );
-            console.log(profileData);
             const wins = response.data.user.wins;
             const losses = response.data.user.losses;
             const total = wins + losses;

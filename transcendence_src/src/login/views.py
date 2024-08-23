@@ -12,6 +12,8 @@ from django.conf import settings
 from .decorators import update_last_activity
 from django.http import FileResponse
 import os
+from django.db.models import F, FloatField, ExpressionWrapper
+from django.db.models.functions import Abs
 
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
@@ -167,7 +169,7 @@ def request_list(request):
 def send_friend_request(request):
     to_user_id = request.data.get('to_user')
 
-    if to_user_id is request.user.id:
+    if to_user_id == request.user.id:
         return Response({'detail': 'Can not send friend request to itself'}, status=status.HTTP_400_BAD_REQUEST)
 
     if request.user.account.friends.filter(id=to_user_id).exists():
@@ -177,8 +179,12 @@ def send_friend_request(request):
         to_user = User.objects.get(id=to_user_id)
     except User.DoesNotExist:
         return Response({'detail': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
-
-    friend_request, created = FriendRequest.objects.get_or_create(from_user=request.user, to_user=to_user)
+    
+    try:
+        friend_request_exist = FriendRequest.objects.get(from_user=to_user, to_user=request.user)
+        return Response({'detail': 'Already have a request from that user'}, status=status.HTTP_400_BAD_REQUEST)
+    except FriendRequest.DoesNotExist:
+        friend_request, created = FriendRequest.objects.get_or_create(from_user=request.user, to_user=to_user)
 
     if created:
         return Response({'detail': 'friend request sent'}, status=status.HTTP_201_CREATED)
@@ -225,3 +231,36 @@ def remove_friend(request, remove_id):
     to_remove_account.friends.remove(user_account)
 
     return Response({'detail': 'friend removed'}, status=status.HTTP_200_OK)
+
+def find_closest_match_winrate(target_win_rate):
+    accounts = Account.objects.annotate(
+        total_games=F('wins') + F('losses'),
+        win_rate=ExpressionWrapper(
+            F('wins') * 100.0 / (F('wins') + F('losses')),
+            output_field=FloatField()
+        )
+    ).filter(total_games__gt=0).annotate(
+        difference=Abs(F('win_rate') - target_win_rate)
+    ).order_by('difference')
+
+    closest_account = accounts.first()
+    return closest_account
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+@update_last_activity
+def matchmaking(request):
+    wins = request.user.account.wins
+    losses = request.user.account.losses
+    total = (wins + losses)
+
+    if total == 0:
+        winrate = 0
+    else:
+        winrate = ((wins / total) * 100);
+
+    closest_account = find_closest_match_winrate(winrate)
+    if closest_account:
+        serializer = AccountSerializer(closest_account)
+        return Response(serializer.data)
+    return Response({'detail': 'No other users found'}, status=status.HTTP_404_NOT_FOUND)

@@ -57,7 +57,6 @@ INSTALLED_APPS = [
     'pong',
     'gonp',
     'corsheaders',
-    'tournament',
 ]
 
 MIDDLEWARE = [

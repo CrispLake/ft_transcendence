@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Search.js                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 08:17:31 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/22 16:15:29 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/23 15:08:34 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,13 +137,13 @@ export default class extends AbstractView {
           </div>
         `;
 
+
+        addButton.addEventListener('click', this.addFriendHandler);
+        this.addFriendListener = true;
+
         searchResult.appendChild(profileLink);
         searchResult.appendChild(addButton);
         resultDiv.appendChild(searchResult);
-        if (!this.addFriendListener) {
-          addButton.addEventListener('click', this.addFriendHandler);
-          this.addFriendListener = true;
-        }
       }
       else {
         console.log(error);

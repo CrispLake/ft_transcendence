@@ -61,13 +61,15 @@ export default class extends AbstractView {
   async launchGame(gameSettings, appDiv) {
     this.players = gameSettings.players;
     this.settings = gameSettings;
+    console.log('from launch: ', gameSettings);
     this.game = new Game(gameSettings);
 
     appDiv.innerHTML = '';
     const element = await this.getHtml();
     appDiv.appendChild(element);
     await this.getUserInput();
-    appDiv.removeChild(element);
+    //await appDiv.removeChild(element);
+    //appDiv.innerHTML = '';
    
     if (this.settings.multiMode)
       return this.game.results.getResult4p();

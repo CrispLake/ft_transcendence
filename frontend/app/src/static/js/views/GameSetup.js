@@ -78,18 +78,19 @@ export default class extends AbstractView {
             difficulty: this.ai_difficulty,
             powerups: this.powerups,
             players: this.playerCounter,
-
-            //todo might remove
             spin: true,
         });
-        console.log('create settings in setup: ', settingsObj);
+        // Manual check for tournament since games are played as 2v2 even tho there are 4 players
+        // 4 --> tournament mode
+        if (this.gameMode == 4)
+          settingsObj.multiMode = false;
         return settingsObj;
     }
 
     // Returns object containing list of players and settings object
     // to be provided for the game
     async getUserInput() {
-        const appDiv = await document.getElementById('app');
+        const appDiv = document.getElementById('app');
         if (!appDiv) {
             this.Redirect('/500');
             return;
@@ -260,9 +261,7 @@ export default class extends AbstractView {
         if (entryId == 0) {
             return ;
         }
-        if (this.entries[entryId].title != "AI") {
-            this.playerCounter--;
-        }
+        this.playerCounter--;
         this.entries = this.entries.filter(entry => entry.id !== entryId);
         this.entries.forEach((entry, index) => {
             entry.id = index;

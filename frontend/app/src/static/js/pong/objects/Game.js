@@ -115,7 +115,8 @@ export class Game
 		{
 			const playerId = "p" + (i + 1);
 			
-			if (this.playerList[i].username !== 'AI')
+      console.log('max players: ', maxPlayers);
+			if (i < this.playerList.length && this.playerList[i].username !== 'AI')
 				this.players[playerId] = new Player(this, this.gameScene, this.settings, i + 1, this.playerList[i].username, this.playerList[i].id);
 			else
 				this.players[playerId] = new AI(this, i + 1, "AI" + (i + 1));

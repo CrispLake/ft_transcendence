@@ -130,7 +130,6 @@ export default class extends AbstractView {
 
     const gonp = new Gonp();
     await gonp.AddListeners();
-
     const gameResults = await gonp.launchGame(this.setupObj, appElem);
     await this.postGameResults(gameResults, this.setupObj.players);
 
@@ -155,25 +154,31 @@ export default class extends AbstractView {
       return;
     }
 
-    for (let i = 0; i <= 3; i++) {
-      await tournamentObject.displayTournament();
+    for (let i = 0; i < 3; i++) {
+      tournamentObject.AddListeners();
+      tournamentObject.displayTournament();
       await tournamentObject.getUserInput();
      
-      if (tournamentObject.level === 3) {
-        await tournamentObject.displayWinner();
-        break;
-      }
       const players = tournamentObject.getNextPlayers();
       this.setupObj.players = players;
       const game = new Pong(); 
-      const results = await game.fakeGame(this.setupObj);
-      tournamentObject.saveResults(results);
-
+      game.AddListeners();
+      tournamentObject.RemoveListeners();
+      
+      const gameResults = await game.launchGame(this.setupObj, tournamentObject.app);
+      await this.postGameResults(gameResults, this.setupObj.players);
+      
+      
+      game.RemoveListeners();
+      tournamentObject.saveResults(gameResults, players);
       tournamentObject.level++;
     }
-    await tournamentObject.postResults();
+    tournamentObject.AddListeners();
+    tournamentObject.displayTournament();
+    await tournamentObject.getUserInput();
     // tournament also posts it's results as pong will 
     tournamentObject.RemoveListeners();
+    this.Redirect('/');
   }
   
 

@@ -119,7 +119,7 @@ export default class extends AbstractView {
                     <h3 class="font-text winner-username">${this.winner.name}</h3>
                 </div>
 
-                <a href="/" id="continueButton" class="continue-div">
+                <a href="/" id="continueButton" class="continue-div-2p">
                     <h2 class="font-heading continue-text">CONTINUE</h2>
                 </a>
             </div>

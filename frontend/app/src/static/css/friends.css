@@ -64,7 +64,6 @@
 .friends-drop {
   background-color: var(--black);
   color: var(--white);
-  position: relative;
 
   width: 12rem;
   height: 550px;
@@ -100,11 +99,13 @@ path {
 }
 
 .friend-list {
-  position: relative;
+  overflow-y: auto;
+  max-height: 435px;
   padding: 0 !important;
-  margin: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 2rem !important;
+
   list-style: none;
-  overflow: hidden;
   gap: 0;
   line-height: 24px !important;
 }

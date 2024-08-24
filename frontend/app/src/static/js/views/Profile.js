@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Profile.js                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joonasmykkanen <joonasmykkanen@student.    +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 09:22:19 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/16 13:06:37 by joonasmykka      ###   ########.fr       */
+/*   Updated: 2024/08/24 14:33:44 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,11 @@ export default class extends AbstractView {
     logoutHandler(event) {
       event.preventDefault();
       this.DeleteKey();
+      const friendListDiv = document.getElementById('friendList');
+      if (friendListDiv) {
+        console.log('emptying friendlist');
+        friendList.innerHTML = '';
+      }
       Notification('notification-div', '<p class="font-text message">Logout success!</p>', 0);
       setTimeout(() => {
         this.Redirect('/login');

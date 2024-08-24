@@ -241,6 +241,7 @@ def find_closest_match_winrate(target_win_rate, current_account_id):
         )
     ).filter(total_games__gt=0
     ).exclude(id=current_account_id
+    ).exclude(id=1
     ).annotate(difference=Abs(F('win_rate') - target_win_rate)
     ).order_by('difference')
 

@@ -70,7 +70,7 @@ export default class extends AbstractView {
                     this.registerURL,
                     payload
                 );
-                Notification('notification-div', `<h3>Register succesfull, redirecting to login!</h3>`, 0);
+                Notification('notification-div', `<h3>Register succesful, redirecting to login!</h3>`, 0);
                 setTimeout(() => {
                     this.Redirect('/login');
                 }, 3000);

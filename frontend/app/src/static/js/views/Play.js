@@ -111,12 +111,12 @@ export default class extends AbstractView {
     }
 
     const pong = new Pong();
-    await pong.AddListeners();
+    pong.AddListeners();
 
     const gameResults = await pong.launchGame(this.setupObj, appElem);
     await this.postGameResults(gameResults, this.setupObj.players);
 
-    await pong.RemoveListeners();
+    pong.RemoveListeners();
     const resultsView = new Result();
     await resultsView.getUserInput(gameResults, this.setupObj.players);
   }

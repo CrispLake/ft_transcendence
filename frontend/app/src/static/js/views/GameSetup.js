@@ -206,7 +206,6 @@ export default class extends AbstractView {
         event.preventDefault();
 
         if (this.MaxPlayerLimitReached()) {
-            console.log('Max player limit reached');
             return;
         }
 
@@ -244,8 +243,8 @@ export default class extends AbstractView {
             this.entries.push(newEntry);
             this.renderEntries();
         } catch (error) {
-            console.error('Error fetching profile data', error);
             this.profileData = { error: 'Failed to load profile data' };
+            Notification('notification-div', `<h3 class="font-text">Failed to login</h3>`, 1);
         }
     }
 
@@ -317,44 +316,27 @@ export default class extends AbstractView {
         }
 
         const formElement = document.getElementById('login-form');
-        const usernameInput = document.getElementById('username');
-        const errorMessageDiv = document.getElementById('error-message');
 
         if (!formElement) {
             this.Redirect('/500');
             return;
         }
 
-        const formData = new FormData(formElement);
-        const payload = Object.fromEntries(formData);
-
-        if (this.entries.some(entry => entry.title === payload.username)) {
-            console.log('User already in the match');
-            this.HideLoginPopUp();
-            return;
-        }
 
         try {
-            const response = await axios.post(this.loginURL, payload);
-            this.addExistingUserEntryHandler(response);
-            usernameInput.classList.remove('input-error');
-            if (errorMessageDiv) {
-                errorMessageDiv.textContent = '';
-            }
+          const formData = new FormData(formElement);
+          const payload = Object.fromEntries(formData);
 
-        } catch (error) {
-            console.log('Invalid credentials!!');
-            if (errorMessageDiv) {
-                errorMessageDiv.textContent = 'Invalid credentials. Please try again.';
-            }
-            usernameInput.classList.add('input-error');
-            formElement.reset();
-            usernameInput.addEventListener('focus', () => {
-                usernameInput.classList.remove('input-error');
-                if (errorMessageDiv) {
-                    errorMessageDiv.textContent = '';
-                }
-            }, { once: true });
+          if (this.entries.some(entry => entry.title === payload.username)) {
+            Notification('notification-div', `<h3 class="font-text">User already in match</h3>`, 1);
+            return;
+          }
+          const response = await axios.post(this.loginURL, payload);
+          this.addExistingUserEntryHandler(response);
+        }
+        catch(error) {
+            Notification('notification-div', `<h3 class="font-text">You succesfully failed to write your password</h3>`, 1);
+            return; 
         }
         this.HideLoginPopUp();
     }

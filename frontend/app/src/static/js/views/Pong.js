@@ -64,18 +64,17 @@ export default class extends AbstractView {
     console.log('from launch: ', gameSettings);
     this.game = new Game(gameSettings);
 
+    appDiv.style.background = 'var(--black)';
     appDiv.innerHTML = '';
     const element = await this.getHtml();
     appDiv.appendChild(element);
     await this.getUserInput();
-    //await appDiv.removeChild(element);
-    //appDiv.innerHTML = '';
    
-    if (this.settings.multiMode)
+    appDiv.style.background = 'var(--white)';
+    if (this.settings.settings.multiMode)
       return this.game.results.getResult4p();
-    else
+    else 
       return this.game.results.getResult2p();
-
   }
 
   handleKeyDown(event) {

@@ -38,6 +38,7 @@ export default class extends AbstractView {
         this.MaxPlayerLimitReached = this.MaxPlayerLimitReached.bind(this);
         this.AddUserHandler = this.AddUserHandler.bind(this)
         this.CreateSettingsObject = this.CreateSettingsObject.bind(this);
+        this.HandleMatchmaking = this.HandleMatchmaking.bind(this);
     }
 
     MaxPlayerLimitReached() {
@@ -415,10 +416,58 @@ export default class extends AbstractView {
         carousel.style.transform = `rotateY(${this.currentDeg}deg)`;
     }
 
+    HideSuggestion(event) {
+      event.preventDefault();
+      console.log('hello from hide');  
+    const button = document.getElementById('matchmake-results');
+      if (!button) return;
+      button.style.display = 'none';
+    }
+
     HandlePopupExit(event) {
         event.preventDefault();
-        console.log('handlePopupExit');
         this.HideLoginPopUp();
+    }
+
+    async HandleMatchmaking(event) {
+      event.preventDefault();
+
+
+      if (! await this.Authenticate()) {
+        Notification('notification-div', `<h3 class="font-text">You need to login to use matchamaking</h3>`, 1);
+        return;
+      }
+      
+      try {
+        const res = await axios.get(
+          'http://localhost:8000/matchmaking', 
+          { headers: {'Authorization': `Token ${this.GetKey()}`} }
+        );
+        const content = document.getElementById('suggestion-content'); 
+        const elem = document.getElementById('matchmake-results');
+        
+        if (!content || !elem) {
+          console.log('500 -- elem not found');
+          this.Redirect('/500');
+          return;
+        }
+        elem.style.display = 'flex';
+        content.innerHTML = `
+          <div class="suggestion-div">
+            <h2 class="font-sub">We suggest you play with: </h2>
+            <div class="winner-card suggestion-card">
+              <img src="http://localhost:8000/account/${res.data.user.id}/image" class="suggestion-image" alt="user image"/>
+              <h3 class="font-text winner-username suggestion-username">${res.data.user.username}</h3>
+              <p class="font-text suggestion-winrate-text">winrate: ${Math.round((res.data.wins / (res.data.wins + res.data.losses)) * 100, 2)}%</p>
+            </div>
+            <p class="font-text">Go find them on campus and ask nicely! :)</p>
+          </div>
+        `;
+      }
+      catch(error) {
+        console.log(error);
+        this.Redirect('/500');
+      }
     }
 
     AddListeners() {
@@ -429,12 +478,19 @@ export default class extends AbstractView {
         const powerUpToggle = document.getElementById('toggle-container');
         const rangeSlider = document.getElementById('range-slider');
         const popupExit = document.getElementById('popup-exit-button');
+        const matchmakeButton = document.getElementById('find-opponent');
+        const suggestionButton = document.getElementById('suggestion-exit-button');
 
         addUserButton.addEventListener('click',this.AddUserHandler);
         popupExit.addEventListener('click', this.HandlePopupExit);
         addButton.addEventListener('click', this.addGuestEntryHandler);
-        if (this.gameMode !== 2)
+        if (this.gameMode === 2) {
+          suggestionButton.addEventListener('click', this.HideSuggestion);
+          matchmakeButton.addEventListener('click', this.HandleMatchmaking);
+        }
+        if (this.gameMode !== 2) {
             addAiButton.addEventListener('click', this.addAiEntryHandler);
+        }
         loginForm.addEventListener('submit', this.LoginHandler);
         powerUpToggle.addEventListener('click', this.PowerUpToggle);
         if (rangeSlider)
@@ -447,23 +503,30 @@ export default class extends AbstractView {
 
     RemoveListeners() {
         const addButton = document.getElementById('add-button');
+        const matchmakeButton = document.getElementById('find-opponent');
         const addAiButton = document.getElementById('add-ai-button');
         const loginForm = document.getElementById('login-form');
         const addUserButton = document.getElementById('add-user-button');
         const powerUpToggle = document.getElementById('toggle-container');
         const rangeSlider = document.getElementById('range-slider');
         const popupExit = document.getElementById('popup-exit-button');
+        const suggestionButton = document.getElementById('suggestion-exit-button');
 
         try {
             addUserButton.removeEventListener('click',this.AddUserHandler);
             addButton.removeEventListener('click', this.addGuestEntryHandler);
             popupExit.removeEventListener('click', this.HandlePopupExit);
-            if (this.gameMode !== 2)
+            if (this.gameMode === 2) {
+              suggestionButton.removeEventListener('click', this.HandleSuggestionExit);
+              matchmakeButton.removeEventListener('click', this.HandleMatchmaking);
+            }
+            if (this.gameMode !== 2) {
                 addAiButton.removeEventListener('click', this.addAiEntryHandler);
+            }
             loginForm.removeEventListener('submit', this.LoginHandler);
             powerUpToggle.removeEventListener('click', this.PowerUpToggle);
             if (rangeSlider) {
-                rangeSlider.addEventListener('input', this.AiDifficultySlider);
+                rangeSlider.removeEventListener('input', this.AiDifficultySlider);
             }
         } catch (error) {
             console.log('505 - Internal server error - could not find LoginSubmitButton');
@@ -474,15 +537,12 @@ export default class extends AbstractView {
     async getHtml() {
         return `
           <div class="game-settings-page">
-
               <div class="add-buttons-div">
-
                 <button id="add-button" class="font-sub add-button blue" >
                   <div class="text-holder">
                       <span>Add Guest</span>
                   </div>
                 </button>
-
                 ${
                 this.gameMode === 2
                 ?
@@ -496,14 +556,31 @@ export default class extends AbstractView {
                 </button>
                 `
                 }
-
                 <button class="font-sub add-button blue" id="add-user-button">
                   <div class="text-holder">
                       <span>Add User</span>
                   </div>
                 </button>
+                ${
+                this.gameMode == 2
+                ?
+                  `  
+                    <button class="font-sub add-button blue" id="find-opponent">
+                      <div class="text-holder">
+                        <span>Matchmake</span>
+                      </div>
+                    </button>
+                    <div id="matchmake-results" class="hide">
+                      <div id="suggestion-content"></div>
+                      <div id="suggestion-exit-button" class="font-sub popup-exit-button">
+                        <p class=" popup-exit-button-text suggestion-exit">X</p>
+                      </div>
+                    </div>
+                  `
+                :
+                  ''
+                }
             </div>
-
             <div class="carousel-holder font-text powerup-text">
                 <div class="prev">Prev</div>
                  <div id="carousel-container">
@@ -511,16 +588,13 @@ export default class extends AbstractView {
                 </div>
                 <div class="next">Next</div>
             </div>
-
             <div class="toggles-div">
-
                 <span id="toggle-container" class="font-text powerup-text">Powerups:
                     <label class="switch">
                         <input id="toggle-content" type="checkbox">
                         <span class="slider round"></span>
                     </label>
                 </span>
-
                 ${
                 this.gameMode === 2
                 ?
@@ -530,27 +604,16 @@ export default class extends AbstractView {
                         <span class="font-text powerup-text" id="slider-value">3</span>
                     </div>`
                 :
-
                     `<div class="slider-container">
                         <label class="font-text powerup-text" for="range-slider">AI Diff:</label>
                         <input type="range" id="range-slider" min="1" max="3" value="1" step="1">
                         <span class="font-text powerup-text" id="slider-value">1</span>
                     </div>`
                 }
-
             </div>
-
             <div id="start-game-button" class="start-container">
                 <span id="start-game-text" class="font-heading start-text">Launch Game</span>
             </div>
-
-
-
-
-
-
-
-
           </div>
 
             <div class="pop-up-login login-page" id="pop-up-login">

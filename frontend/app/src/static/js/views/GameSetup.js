@@ -537,6 +537,7 @@ export default class extends AbstractView {
     async getHtml() {
         return `
           <div class="game-settings-page">
+              <div class="tophalf-gap">
               <div class="add-buttons-div">
                 <button id="add-button" class="font-sub add-button blue" >
                   <div class="text-holder">
@@ -588,6 +589,8 @@ export default class extends AbstractView {
                 </div>
                 <div class="next">Next</div>
             </div>
+            </div>
+            <div>
             <div class="toggles-div">
                 <span id="toggle-container" class="font-text powerup-text">Powerups:
                     <label class="switch">
@@ -615,7 +618,7 @@ export default class extends AbstractView {
                 <span id="start-game-text" class="font-heading start-text">Launch Game</span>
             </div>
           </div>
-
+          </div>
             <div class="pop-up-login login-page" id="pop-up-login">
                 <div class="login-form popup-login-form">
                     <div id="popup-exit-button" class="font-sub popup-exit-button">

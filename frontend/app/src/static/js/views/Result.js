@@ -71,7 +71,7 @@ export default class extends AbstractView {
         });
         stats.sort((a, b) => a.score - b.score);
         console.log(stats);
-
+        
         if (this.players.length === 2) {
            this.winner = stats[1];  
         }

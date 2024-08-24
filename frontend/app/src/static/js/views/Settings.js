@@ -45,7 +45,6 @@ export default class extends AbstractView {
           }
         });
         Notification('notification-div', '<h3>Upload succesful!</h3>', 0);
-        setTimeout(() => location.reload(true), 3000);
       }
       catch(error) {
         console.log('imgHandler error: ', error);

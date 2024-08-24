@@ -59,7 +59,9 @@ const navigateTo = (url) => {
 
 // All links or buttons that change content HAS to have 'data-link' attribute
 const navigationEventHandler = (event) => {
-  document.getElementById('app').styles.background = 'var(--white)';
+  const app = document.getElementById('app'); 
+  if (app)
+    app.style.background = 'var(--white)';
   if (event.type === 'navigate') {
     event.preventDefault();
     navigateTo(event.detail.href);

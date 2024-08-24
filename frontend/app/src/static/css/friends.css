@@ -153,10 +153,12 @@ path {
   width: 100%;
   bottom: 50px;
   font-size: 32px !important;
+  z-index: 5;
   justify-content:space-between;
   align-items: center;
   display: flex;
 
+  text-decoration: none !important;
   color: var(--white);
   background-color: var(--black);
   border-top: solid 1px;
@@ -166,6 +168,7 @@ path {
 .search-bar:hover {
   background-color: var(--black);
   cursor: pointer;
+  color: var(--yellow);
 }
 
 .search-text {
@@ -175,10 +178,12 @@ path {
   transition: ease 0.15s;
   text-decoration: none;
   color: var(--white);
+  z-index: 1;
+  pointer-events: none;
 }
 
-.search-bar:hover a {
-  color: var(--yellow);
+.search-bar:hover p {
+  color: var(--yellow) !important;
 }
 
 .search-icon {

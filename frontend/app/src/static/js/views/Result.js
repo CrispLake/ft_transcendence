@@ -92,8 +92,9 @@ export default class extends AbstractView {
     }
 
     getImage(player) {
+        console.log('player: ', player);
         let imageTag;
-        if (player.username === "AI") {
+        if (player.name.includes('AI')) {
             imageTag = `<img class="winner-img" src="static/images/ai.avif" alt="User icon"/>`
         }
         else if (player.name.includes('Guest')) {

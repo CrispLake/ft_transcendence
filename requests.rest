@@ -13,7 +13,7 @@ Authorization: Token 23889478f9d7ea0412781b2c996e6072c30ba029
 ###
 
 GET http://localhost:8000/account
-Authorization: Token 23889478f9d7ea0412781b2c996e6072c30ba029
+Authorization: Token 58ecdb02b337cb800e9827172595c368b752c8ea
 
 # Friends
 
@@ -25,11 +25,11 @@ Authorization: Token 23889478f9d7ea0412781b2c996e6072c30ba029
 ###
 
 POST http://localhost:8000/friend-request/send
-Authorization: Token 23889478f9d7ea0412781b2c996e6072c30ba029
+Authorization: Token 58ecdb02b337cb800e9827172595c368b752c8ea
 Content-Type: application/json
 
 {
-    "to_user": 1
+    "to_user": 29
 }
 
 ###
@@ -275,8 +275,8 @@ Content-Type: application/json
 
 {
     "user": {
-        "username": "AI",
-        "password": "test"
+        "username": "1515",
+        "password": "1515"
     }
 }
 
@@ -334,8 +334,8 @@ POST http://localhost:8000/login HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "testUser1",
-    "password": "testPassword"
+    "username": "newacc",
+    "password": "newacc"
 }
 
 ###

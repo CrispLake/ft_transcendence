@@ -141,7 +141,7 @@ export default class extends AbstractView {
         
         <div class="login-form">
           <h2 class="font-sub login-heading">&lt;Login&gt;</h2>
-          <a class="font-text sign-up" href="/register" data-link>Dont have an account? Sign up!</a>
+          <a class="font-text sign-up" href="/register" data-link>Don't have an account? Sign up!</a>
             <form id="login-form" action="" method="">
             
               <label class="font-text" for="username">username:</label>

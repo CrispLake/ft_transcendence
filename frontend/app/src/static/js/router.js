@@ -64,6 +64,7 @@ const navigationEventHandler = (event) => {
     navigateTo(event.detail.href);
   }
   else if (event.target.closest('[data-link]')) {
+    console.log('here ', event.target.href)
     event.preventDefault();
     navigateTo(event.target.href);
   }

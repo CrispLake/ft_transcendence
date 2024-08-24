@@ -228,7 +228,8 @@ export default class extends AbstractView {
         </div>
 
         <div class="search-right">
-          <img src="//images.ctfassets.net/7oor54l3o0n4/7sxnjP784M2eO8II8UQomO/b026670af1d1d77c4e300381c152f99e/hive-open-community-2.png" class="story-image">
+         <img src="/static/images/people.png" class="story-image">
+
         </div>
       </div>
     `;

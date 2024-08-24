@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   friends.js                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 06:52:04 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/27 16:14:28 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/24 14:45:25 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,16 +198,6 @@ const fillFriendList = () => {
   friendList.innerHTML = friendData;
 }
 
-// Will clear friendlist before updating
-const clearFriendList = () => {
-  const friendListDiv = document.getElementById('friendList');
-  if (!friendListDiv) {
-    return;
-  }
-  friendListDiv.innererHTML = '';
-}
-
-
 // Will send a response to an friend request
 // response = true / false
 const sendResponseToRequest = async (answer, id) => {
@@ -218,7 +208,6 @@ const sendResponseToRequest = async (answer, id) => {
       payload,
       { headers: {'Authorization': `Token ${view.GetKey()}`} }
     );
-    clearFriendList();
     loginDataFetch(new Event('friendRequest'));
   }
   catch(error) {

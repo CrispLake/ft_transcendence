@@ -232,15 +232,17 @@ def remove_friend(request, remove_id):
 
     return Response({'detail': 'friend removed'}, status=status.HTTP_200_OK)
 
-def find_closest_match_winrate(target_win_rate):
+def find_closest_match_winrate(target_win_rate, current_account_id):
     accounts = Account.objects.annotate(
         total_games=F('wins') + F('losses'),
         win_rate=ExpressionWrapper(
             F('wins') * 100.0 / (F('wins') + F('losses')),
             output_field=FloatField()
         )
-    ).filter(total_games__gt=0).annotate(
-        difference=Abs(F('win_rate') - target_win_rate)
+    ).filter(total_games__gt=0
+    ).exclude(id=current_account_id
+    ).exclude(id=1
+    ).annotate(difference=Abs(F('win_rate') - target_win_rate)
     ).order_by('difference')
 
     closest_account = accounts.first()
@@ -259,7 +261,7 @@ def matchmaking(request):
     else:
         winrate = ((wins / total) * 100);
 
-    closest_account = find_closest_match_winrate(winrate)
+    closest_account = find_closest_match_winrate(winrate, request.user.account.id)
     if closest_account:
         serializer = AccountSerializer(closest_account)
         return Response(serializer.data)

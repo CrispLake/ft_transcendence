@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   About.js                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 09:22:19 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/17 09:11:26 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/25 21:47:22 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,21 +64,16 @@ export default class extends AbstractView {
           </div>
 
           <div class="authors-row">
-              <span class="author">emajuri</span> <span>\u00A0-\u00A0</span> <span class="author">backend</span>
+              <span class="author">emajuri</span> <span>\u00A0-\u00A0</span> <span class="author">backend & frontend</span>
           </div>
 
           <div class="authors-row">
-              <span class="author">nona</span> <span>\u00A0-\u00A0</span> <span class="author">graphics</span>
+              <span class="author">nona</span> <span>\u00A0-\u00A0</span> <span class="author">pong</span>
           </div>
 
           <div class="authors-row">
-              <span class="author">ekinnune</span> <span>\u00A0-\u00A0</span> <span class="author">gameplay</span>
+              <span class="author">ekinnune</span> <span>\u00A0-\u00A0</span> <span class="author">gonp</span>
           </div>
-
-          <div class="authors-row">
-              <span class="author">jon</span> <span>\u00A0-\u00A0</span> <span class="author">gameplay</span>
-          </div>
-          
         </div>
 
       </div>

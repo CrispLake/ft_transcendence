@@ -63,7 +63,7 @@ export default class extends AbstractView {
     let player2 = this.game.player2;
       if (event.repeat && event.key != KEY.P1_BOOST && event.key != KEY.P2_BOOST && event.key != KEY.P1_BOOST_PAUSE && event.key != KEY.P2_BOOST_PAUSE)
     {
-      handleKeyUp(event);
+      this.handleKeyUp(event);
       return ;
     }
     switch (event.key)

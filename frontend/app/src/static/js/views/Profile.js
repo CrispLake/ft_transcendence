@@ -6,7 +6,7 @@
 /*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 09:22:19 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/24 14:33:44 by emajuri          ###   ########.fr       */
+/*   Updated: 2024/08/25 13:00:05 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ export default class extends AbstractView {
         this.listeners = true;
         this.params = params;
         this.profileData = null;
-        this.profileURL = 'http://localhost:8000/account';
+        this.profileURL = 'https://localhost:8000/account';
 
         this.logoutHandler = this.logoutHandler.bind(this);
     }
@@ -115,7 +115,7 @@ export default class extends AbstractView {
         const winrate = ((wins / total) * 100);
         const winrateF = isNaN(winrate) ? '0' : winrate.toFixed(2);
 
-        const imageUrl = `http://localhost:8000/account/${this.profileData.id}/image`;
+        const imageUrl = `https://localhost:8000/account/${this.profileData.id}/image`;
         const pfp = `<img class="profile-picture" src="${imageUrl}" alt="Profile picture">`;
         const matchHistory = `/history/${this.profileData.id}`;
 

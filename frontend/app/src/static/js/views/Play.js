@@ -6,7 +6,7 @@
 /*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/23 14:35:04 by emajuri          ###   ########.fr       */
+/*   Updated: 2024/08/25 13:00:05 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ export default class extends AbstractView {
       'tournament': 4,
     }
 
-    this.url = 'http://localhost:8000'
+    this.url = 'https://localhost:8000'
   }
 
   // Choose how to play here

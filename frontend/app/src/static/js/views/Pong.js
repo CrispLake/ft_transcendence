@@ -78,99 +78,129 @@ export default class extends AbstractView {
 
   }
 
-  handleKeyDown(event) {
-    switch (event.key) {
-      case KEY.P1_LEFT:
-        this.game.players["p1"].moveLeft = true;
-        break;
-      case KEY.P1_RIGHT:
-        this.game.players["p1"].moveRight = true;
-        break;
-      case KEY.P1_BOOST:
-        this.game.players["p1"].boostPressed = true;
-        break;
-      case KEY.P2_LEFT:
-        this.game.players["p2"].moveLeft = true;
-        break;
-      case KEY.P2_RIGHT:
-        this.game.players["p2"].moveRight = true;
-        break;
-      case KEY.P2_BOOST:
-        this.game.players["p2"].boostPressed = true;
-        break;
-      case KEY.P3_LEFT:
-        this.game.players["p3"].moveLeft = true;
-        break;
-      case KEY.P3_RIGHT:
-        this.game.players["p3"].moveRight = true;
-        break;
-      case KEY.P3_BOOST:
-        this.game.players["p3"].boostPressed = true;
-        break;
-      case KEY.P4_LEFT:
-        this.game.players["p4"].moveLeft = true;
-        break;
-      case KEY.P4_RIGHT:
-        this.game.players["p4"].moveRight = true;
-        break;
-      case KEY.P4_BOOST:
-        this.game.players["p4"].boostPressed = true;
-        break;
+handleKeyDown(event)
+{
+    console.log("KEY: player amount: ", this.game.playerAmount);
+    switch (event.key)
+    {
+        case KEY.P1_LEFT:
+            if (this.game.playerAmount > 0) this.game.players["p1"].moveLeft = true;
+            break;
+        case KEY.P1_RIGHT:
+            if (this.game.playerAmount > 0) this.game.players["p1"].moveRight = true;
+            break;
+        case KEY.P1_BOOST:
+            if (this.game.playerAmount > 0) this.game.players["p1"].boostPressed = true;
+            break;
+        case KEY.P2_LEFT:
+            if (this.game.playerAmount > 1) this.game.players["p2"].moveLeft = true;
+            break;
+        case KEY.P2_RIGHT:
+            if (this.game.playerAmount > 1) this.game.players["p2"].moveRight = true;
+            break;
+        case KEY.P2_BOOST:
+            if (this.game.playerAmount > 1) this.game.players["p2"].boostPressed = true;
+            break;
+        case KEY.P3_LEFT:
+            if (this.game.playerAmount > 2 && this.game.multiMode) this.game.players["p3"].moveLeft = true;
+            break;
+        case KEY.P3_RIGHT:
+            if (this.game.playerAmount > 2 && this.game.multiMode) this.game.players["p3"].moveRight = true;
+            break;
+        case KEY.P3_BOOST:
+            if (this.game.playerAmount > 2 && this.game.multiMode) this.game.players["p3"].boostPressed = true;
+            break;
+        case KEY.P4_LEFT:
+            if (this.game.playerAmount > 3 && this.game.multiMode) this.game.players["p4"].moveLeft = true;
+            break;
+        case KEY.P4_RIGHT:
+            if (this.game.playerAmount > 3 && this.game.multiMode) this.game.players["p4"].moveRight = true;
+            break;
+        case KEY.P4_BOOST:
+            if (this.game.playerAmount > 3 && this.game.multiMode) this.game.players["p4"].boostPressed = true;
+            break;
+        // case "p":
+        //     this.game.toggleCameraRotation();
+        //     break;
+        // case ".":
+        //     this.game.togglePause();
+        //     break;
     }
-  }
+}
 
-  handleKeyUp(event) {
-    switch (event.key) {
-      case KEY.P1_LEFT:
-        this.game.players["p1"].moveLeft = false;
-        break;
-      case KEY.P1_RIGHT:
-        this.game.players["p1"].moveRight = false;
-        break;
-      case KEY.P1_BOOST:
-        this.game.players["p1"].boostPressed = false;
-        this.game.players["p1"].boostReleased = true;
-        break;
-      case KEY.P2_LEFT:
-        this.game.players["p2"].moveLeft = false;
-        break;
-      case KEY.P2_RIGHT:
-        this.game.players["p2"].moveRight = false;
-        break;
-      case KEY.P2_BOOST:
-        this.game.players["p2"].boostPressed = false;
-        this.game.players["p2"].boostReleased = true;
-        break;
-      case KEY.P3_LEFT:
-        this.game.players["p3"].moveLeft = false;
-        break;
-      case KEY.P3_RIGHT:
-        this.game.players["p3"].moveRight = false;
-        break;
-      case KEY.P3_BOOST:
-        this.game.players["p3"].boostPressed = false;
-        this.game.players["p3"].boostReleased = true;
-        break;
-      case KEY.P4_LEFT:
-        this.game.players["p4"].moveLeft = false;
-        break;
-      case KEY.P4_RIGHT:
-        this.game.players["p4"].moveRight = false;
-        break;
-      case KEY.P4_BOOST:
-        this.game.players["p4"].boostPressed = false;
-        this.game.players["p4"].boostReleased = true;
-        break;
+handleKeyUp(event)
+{
+    switch (event.key)
+    {
+        case KEY.P1_LEFT:
+            if (this.game.playerAmount > 0) this.game.players["p1"].moveLeft = false;
+            break;
+        case KEY.P1_RIGHT:
+            if (this.game.playerAmount > 0) this.game.players["p1"].moveRight = false;
+            break;
+        case KEY.P1_BOOST:
+            if (this.game.playerAmount > 0)
+            {
+                this.game.players["p1"].boostPressed = false;
+                this.game.players["p1"].boostReleased = true;
+            }
+            break;
+        case KEY.P2_LEFT:
+            if (this.game.playerAmount > 1) this.game.players["p2"].moveLeft = false;
+            break;
+        case KEY.P2_RIGHT:
+            if (this.game.playerAmount > 1) this.game.players["p2"].moveRight = false;
+            break;
+        case KEY.P2_BOOST:
+            if (this.game.playerAmount > 1)
+            {
+                this.game.players["p2"].boostPressed = false;
+                this.game.players["p2"].boostReleased = true;
+            }
+            break;
+        case KEY.P3_LEFT:
+            if (this.game.playerAmount > 2) this.game.players["p3"].moveLeft = false;
+            break;
+        case KEY.P3_RIGHT:
+            if (this.game.playerAmount > 2) this.game.players["p3"].moveRight = false;
+            break;
+        case KEY.P3_BOOST:
+            if (this.game.playerAmount > 2)
+            {
+                this.game.players["p3"].boostPressed = false;
+                this.game.players["p3"].boostReleased = true;
+            }
+            break;
+        case KEY.P4_LEFT:
+            if (this.game.playerAmount > 3) this.game.players["p4"].moveLeft = false;
+            break;
+        case KEY.P4_RIGHT:
+            if (this.game.playerAmount > 3) this.game.players["p4"].moveRight = false;
+            break;
+        case KEY.P4_BOOST:
+            if (this.game.playerAmount > 3)
+            {
+                this.game.players["p4"].boostPressed = false;
+                this.game.players["p4"].boostReleased = true;
+            }
+            break;
     }
-  }
+}
 
-  onWindowResize( ) {
+onWindowResize()
+{
     var width = window.innerWidth;
     var height = window.innerHeight;
     this.game.renderer.setSize(width, height);
-    this.game.camera.aspect = width / height;
-    this.game.camera.updateProjectionMatrix();
-  }
+    this.game.gameCamera.aspect = width / height;
+    this.game.gameCamera.updateProjectionMatrix();
+    this.game.uiCamera.left = -width / 2;
+    this.game.uiCamera.right = width / 2;
+    this.game.uiCamera.top = height / 2;
+    this.game.uiCamera.bottom = -height / 2;
+    this.game.uiCamera.updateProjectionMatrix();
+    this.game.ui.resize();
+}
 
   AddListeners() {
     window.addEventListener('resize', this.onWindowResize, false);

@@ -22,6 +22,7 @@ export class Game
 		this.resolve = null;
 		this.playerList = params.players;
 		this.settings = new Settings(params.settings);
+		// this.settings = new Settings();
 		this.results = new Results();
 		this.gameScene = new THREE.Scene();
 		this.fontLoader = new FontLoader();
@@ -74,8 +75,6 @@ export class Game
 	{
 		const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
 		camera.position.set(-22, 25, 23);
-		// camera.position.set(0, 80, 0);
-		// camera.position.set(0, 30, 0);
 		camera.lookAt(0, 0, 0);
 		return (camera);
 	}
@@ -110,20 +109,40 @@ export class Game
 	{
 		this.players = [];
 		const maxPlayers = this.settings.multiMode ? 4 : 2;
+		this.playerAmount = 0;
 
 		for (let i = 0; i < maxPlayers; i++)
 		{
 			const playerId = "p" + (i + 1);
 			
-      console.log('max players: ', maxPlayers);
 			if (i < this.playerList.length && this.playerList[i].username !== 'AI')
+			{
 				this.players[playerId] = new Player(this, this.gameScene, this.settings, i + 1, this.playerList[i].username, this.playerList[i].id);
+				this.playerAmount++;
+			}
 			else
 				this.players[playerId] = new AI(this, i + 1, "AI" + (i + 1));
 		}
 		if (this.settings.multiMode)
 			this.rotatePlayers();
 	}
+
+	// createPlayers()
+	// {
+	// 	this.players = [];
+	// 	const maxPlayers = this.settings.multiMode ? 4 : 2;
+	// 	for (let i = 0; i < maxPlayers; i++)
+	// 	{
+	// 		const playerId = "p" + (i + 1);
+
+	// 		if (i < this.settings.players)
+	// 			this.players[playerId] = new Player(this, this.gameScene, this.settings, i + 1, "Player" + (i + 1));
+	// 		else
+	// 			this.players[playerId] = new AI(this, i + 1, "AI" + (i + 1));
+	// 	}
+	// 	if (this.settings.multiMode)
+	// 		this.rotatePlayers();
+	// }
 
 	rotatePlayers()
 	{

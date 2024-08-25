@@ -6,7 +6,7 @@
 /*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/21 17:24:42 by emajuri          ###   ########.fr       */
+/*   Updated: 2024/08/25 22:04:26 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,22 +100,22 @@ handleKeyDown(event)
             if (!this.game.players["p2"].name.includes('AI')) this.game.players["p2"].boostPressed = true;
             break;
         case KEY.P3_LEFT:
-            if (!this.game.players["p3"].name.includes('AI') && this.game.multiMode) this.game.players["p3"].moveLeft = true;
+            if (!this.game.players["p3"].name.includes('AI') && this.game.settings.multiMode) this.game.players["p3"].moveLeft = true;
             break;
         case KEY.P3_RIGHT:
-            if (!this.game.players["p3"].name.includes('AI') && this.game.multiMode) this.game.players["p3"].moveRight = true;
+            if (!this.game.players["p3"].name.includes('AI') && this.game.settings.multiMode) this.game.players["p3"].moveRight = true;
             break;
         case KEY.P3_BOOST:
-            if (!this.game.players["p3"].name.includes('AI') && this.game.multiMode) this.game.players["p3"].boostPressed = true;
+            if (!this.game.players["p3"].name.includes('AI') && this.game.settings.multiMode) this.game.players["p3"].boostPressed = true;
             break;
         case KEY.P4_LEFT:
-            if (!this.game.players["p4"].name.includes('AI') && this.game.multiMode) this.game.players["p4"].moveLeft = true;
+            if (!this.game.players["p4"].name.includes('AI') && this.game.settings.multiMode) this.game.players["p4"].moveLeft = true;
             break;
         case KEY.P4_RIGHT:
-            if (!this.game.players["p4"].name.includes('AI') && this.game.multiMode) this.game.players["p4"].moveRight = true;
+            if (!this.game.players["p4"].name.includes('AI') && this.game.settings.multiMode) this.game.players["p4"].moveRight = true;
             break;
         case KEY.P4_BOOST:
-            if (!this.game.players["p4"].name.includes('AI') && this.game.multiMode) this.game.players["p4"].boostPressed = true;
+            if (!this.game.players["p4"].name.includes('AI') && this.game.settings.multiMode) this.game.players["p4"].boostPressed = true;
             break;
         case "p":
             this.game.toggleCameraRotation();

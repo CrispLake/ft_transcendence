@@ -116,12 +116,12 @@ export default class extends AbstractView {
     pong.AddListeners();
 
     const gameResults = await pong.launchGame(this.setupObj, appElem);
+    pong.RemoveListeners();
     if (this.gamestatus === false) {
         return;
     }
     await this.postGameResults(gameResults, this.setupObj.players);
 
-    pong.RemoveListeners();
     const resultsView = new Result();
     await resultsView.getUserInput(gameResults, this.setupObj.players);
   }
@@ -136,9 +136,12 @@ export default class extends AbstractView {
     const gonp = new Gonp();
     await gonp.AddListeners();
     const gameResults = await gonp.launchGame(this.setupObj, appElem);
+    await gonp.RemoveListeners();
+    if (this.gamestatus === false) {
+        return;
+    }
     await this.postGameResults(gameResults, this.setupObj.players);
 
-    await gonp.RemoveListeners();
     const resultsView = new Result();
     await resultsView.getUserInput(gameResults, this.setupObj.players);
     
@@ -171,10 +174,13 @@ export default class extends AbstractView {
       tournamentObject.RemoveListeners();
       
       const gameResults = await game.launchGame(this.setupObj, tournamentObject.app);
+      game.RemoveListeners();
+      if (this.gamestatus === false) {
+        return;
+      }
       await this.postGameResults(gameResults, this.setupObj.players);
       
       
-      game.RemoveListeners();
       tournamentObject.saveResults(gameResults, players);
       tournamentObject.level++;
     }

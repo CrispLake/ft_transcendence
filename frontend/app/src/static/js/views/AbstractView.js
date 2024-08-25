@@ -6,7 +6,7 @@
 /*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:08:11 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/25 18:29:09 by emajuri          ###   ########.fr       */
+/*   Updated: 2024/08/25 18:58:44 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,16 +95,16 @@ export default class {
     return localStorage.getItem('auth_token');
   }
 
-  CreateMatch(token) {
-    localStorage.setItem('match_status', true);
+  CreateMatch() {
+    sessionStorage.setItem('match_status', 'true');
   }
 
   DeleteMatch() {
-    localStorage.setItem('match_status', false);
+    sessionStorage.removeItem('match_status');
   }
 
   GetMatch() {
-    return localStorage.getItem('match_status');
+    return sessionStorage.getItem('match_status');
   }
 
   Redirect(newRoute, params = {}) {

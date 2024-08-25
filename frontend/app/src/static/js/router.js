@@ -6,7 +6,7 @@
 /*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 13:31:25 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/25 18:30:49 by emajuri          ###   ########.fr       */
+/*   Updated: 2024/08/25 19:03:09 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,14 +59,17 @@ const navigateTo = (url) => {
 
 // All links or buttons that change content HAS to have 'data-link' attribute
 const navigationEventHandler = (event) => {
-  if (event.type === 'navigate') {
     event.preventDefault();
+  if (sessionStorage.getItem('match_status') === 'true') {
+    return;
+  }
+  if (event.type === 'navigate') {
     navigateTo(event.detail.href);
   }
   else if (event.target.closest('[data-link]')) {
     const app = document.getElementById('app');
     app.style.background = 'var(--white)';
-    event.preventDefault();
+    // event.preventDefault();
     navigateTo(event.target.href);
   }
 };
@@ -126,10 +129,6 @@ const router = async () => {
   // Creating new instance of the view class
   let view = new match.route.view(getParams(match));
 
-  if (view.GetMatch() === true) {
-    console.log("Match in progress!!_!!");
-    return;
-  }
   // Handle authentication if needed
   // redirects to login if not authenticated
   if (view.auth) {

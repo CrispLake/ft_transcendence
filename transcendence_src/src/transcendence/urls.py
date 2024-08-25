@@ -20,7 +20,6 @@ from django.conf import settings
 
 #TODO Disable admin page from final product
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', include('login.urls')),
     path('', include('pong.urls')),
     path('', include('gonp.urls')),

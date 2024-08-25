@@ -6,13 +6,12 @@
 /*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/30 08:03:51 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/25 12:25:33 by emajuri          ###   ########.fr       */
+/*   Updated: 2024/08/25 14:22:05 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 var cors = require('cors');
 var fs = require('fs');
-// var http = require('http');
 var https = require('https');
 const path = require('path');
 var privateKey  = fs.readFileSync('app/certs/key.pem', 'utf8');

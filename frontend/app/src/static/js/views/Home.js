@@ -67,7 +67,7 @@ export default class extends AbstractView {
         <div class="home-middle"></div>
 
         <div class="home-right">
-          <h1 id="gonp-button" class="font-heading game-text-right"> GONG</h1>
+          <h1 id="gonp-button" class="font-heading game-text-right"> GONP</h1>
         </div>
 
       </div>

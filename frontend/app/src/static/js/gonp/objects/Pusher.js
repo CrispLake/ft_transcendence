@@ -25,7 +25,6 @@ export class Pusher {
 			player.mesh.position.z
 		);
 		this.speed = G.pusherSpeed + (G.pusherSpeed - G.pusherSpeed * (player.boostAmount / 2));
-		console.log(this.speed);
 		this.mesh.rotation.set(0, (Math.PI / 2), 0);
 		this.colliding = false;
 		this.box = new THREE.Box3().setFromObject(this.mesh);

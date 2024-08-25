@@ -98,7 +98,6 @@ export class Game {
 		}
 		result["player1Score"] = player1Score;
 		result["player2Score"] = player2Score;
-		console.log(result);
 		this.results = result;
 		this.resolve(result);
 	}

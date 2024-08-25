@@ -5,3 +5,5 @@ transcendence_src/src/media/login/profile_pics
 .vscode/
 selfsigned.crt
 selfsigned.key
+./nginx/certs
+./frontend/app/certs

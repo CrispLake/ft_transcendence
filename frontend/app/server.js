@@ -3,17 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   server.js                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/30 08:03:51 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/06/15 13:32:27 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/25 12:25:33 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-const express = require('express');
+var fs = require('fs');
+// var http = require('http');
+var https = require('https');
 const path = require('path');
+var privateKey  = fs.readFileSync('app/certs/selfsigned.key', 'utf8');
+var certificate = fs.readFileSync('app/certs/selfsigned.crt', 'utf8');
 
-const app = express();
+var credentials = {key: privateKey, cert: certificate};
+var express = require('express');
+var app = express();
 
 app.use('/static', express.static(path.resolve(__dirname, 'src', 'static')));
 
@@ -21,7 +27,13 @@ app.get('/*', (request, response) => {
   response.sendFile(path.resolve(__dirname, 'src', 'index.html'));
 });
 
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`Frontend running on http://127.0.0.1:${PORT}`);
-});
+// var httpApp = express();
+// httpApp.use((req, res, next) => {
+//   res.redirect('https://' + req.headers.host + req.url);
+// });
+
+// var httpServer = http.createServer(httpApp);
+var httpsServer = https.createServer(credentials, app);
+
+// httpServer.listen(8080);
+httpsServer.listen(3000);

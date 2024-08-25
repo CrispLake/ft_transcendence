@@ -6,7 +6,7 @@
 /*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/25 13:00:05 by emajuri          ###   ########.fr       */
+/*   Updated: 2024/08/25 18:29:26 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,6 +188,7 @@ export default class extends AbstractView {
     await this.ChooseGameMode();
     await this.GameSetup();
 
+    this.CreateMatch();
     switch (this.gameMode) {
       case this.modes.pong2:      // 2
         this.url += '/pong-2p'
@@ -206,6 +207,7 @@ export default class extends AbstractView {
         await this.Gonp();
         break;
     }
+    this.DeleteMatch();
   }
 
   // Used as init function here as router will call AddListeners()

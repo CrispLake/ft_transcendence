@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   router.js                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 13:31:25 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/01 15:03:11 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/25 18:30:49 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,10 @@ const router = async () => {
   // Creating new instance of the view class
   let view = new match.route.view(getParams(match));
 
+  if (view.GetMatch() === true) {
+    console.log("Match in progress!!_!!");
+    return;
+  }
   // Handle authentication if needed
   // redirects to login if not authenticated
   if (view.auth) {

@@ -61,7 +61,7 @@ const navigateTo = (url) => {
 const navigationEventHandler = (event) => {
   const app = document.getElementById('app'); 
   if (app)
-    app.style.background = 'var(--white)';
+    app.classList.add('white');
   if (event.type === 'navigate') {
     event.preventDefault();
     navigateTo(event.detail.href);

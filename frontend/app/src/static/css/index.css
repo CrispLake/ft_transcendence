@@ -10,6 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+.black {
+  background: black;
+}
+
+.white {
+  background: white;
+}
+
 body {
   flex-direction: column;
   display: flex;

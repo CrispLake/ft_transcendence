@@ -63,8 +63,8 @@ export default class extends AbstractView {
     this.settings = gameSettings;
     console.log('from launch: ', gameSettings);
     this.game = new Game(gameSettings);
-
-    appDiv.style.background = 'var(--black)';
+  
+    appDiv.style.background = 'var(--black)';Pong
     appDiv.innerHTML = '';
     const element = await this.getHtml();
     appDiv.appendChild(element);

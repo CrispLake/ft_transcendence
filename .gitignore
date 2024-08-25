@@ -7,3 +7,4 @@ selfsigned.crt
 selfsigned.key
 ./nginx/certs
 ./frontend/app/certs
+./transcendence_src/src/certs

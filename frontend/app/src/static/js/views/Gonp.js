@@ -18,7 +18,7 @@ export default class extends AbstractView {
     this.listeners = true;
     this.childs = true;
 
-    this.players = null;
+    this.players = ["player1", "player2"];
     this.resolve = null;
     this.controls = null;
     // this.game.update = this.game.update.bind(this);
@@ -48,18 +48,14 @@ export default class extends AbstractView {
 
   // Handles single game with provided settings configuration
   async launchGame(gameSettings, appDiv) {
-    this.game = new Game(3, true);
-    while (!this.game);
-    this.game.update();
-    console.log("GAME: ");
-    console.log(this.game);
+    this.game = new Game(gameSettings);
     appDiv.innerHTML = '';
     const element = await this.getHtml();
     appDiv.appendChild(element);
     await this.getUserInput();
     appDiv.removeChild(element);
-   
-    return 0;
+
+    return this.game.results;
   }
 
   handleKeyDown(event) {

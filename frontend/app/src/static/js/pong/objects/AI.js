@@ -1450,8 +1450,6 @@ export class AI
         if (this.paddleLength != G.paddleLength)
             this.resize(G.paddleLength);
         this.setPos(this.startPos.x, this.startPos.y, this.startPos.z);
-        this.light.position.copy(this.paddle.position);
-        this.box.setFromObject(this.paddle);
         this.boostAmount = 0;
         this.updateBoostMeter();
         this.paddleTargetPos = 0;
@@ -1460,6 +1458,10 @@ export class AI
         this.paddleDistanceChecked = false;
         this.paddleIsCloseEnough = false;
         this.shouldAim = false;
+        this.stunned = false;
+        this.stunTimer.stop();
+        this.paddle.material.emissive.set(this.color);
+        this.light.color.set(this.color);
     }
 
     handleStun()

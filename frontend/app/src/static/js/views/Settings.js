@@ -44,11 +44,11 @@ export default class extends AbstractView {
             'Content-Type': 'multipart/form-data'
           }
         });
-        Notification('notification-div', '<h3>Upload succesful!</h3>', 0);
+        Notification('notification-div', '<h3 class="font-text">Upload succesful!</h3>', 0);
       }
       catch(error) {
         console.log('imgHandler error: ', error);
-        Notification('notification-div', `<h3>No file chosen</h3>`, 1);
+        Notification('notification-div', `<h3 class="font-text">No file chosen</h3>`, 1);
       }
     }
 
@@ -71,9 +71,9 @@ export default class extends AbstractView {
                 payload, {
                 headers: {'Authorization': `Token ${token}`}
             });
-            Notification('notification-div', '<h3>Username changed</h3>', 0);
+            Notification('notification-div', '<h3 class="font-text">Username changed</h3>', 0);
         } catch (error) {
-            Notification('notification-div', `<h3>${error.response.data.username}</h3>`, 1);
+            Notification('notification-div', `<h3 class="font-text">${error.response.data.username}</h3>`, 1);
         }
     }
 
@@ -99,10 +99,10 @@ export default class extends AbstractView {
                 });
             this.DeleteKey();
             this.CreateKey(response.data.token);
-            Notification('notification-div', '<h3>Password changed</h3>', 0);
+            Notification('notification-div', '<h3 class="font-text">Password changed</h3>', 0);
         } catch (error) {
             console.error('Error changing password', error.response);
-            Notification('notification-div', `<h3>${error.response.data.username}</h3>`, 1);
+            Notification('notification-div', `<h3 class="font-text">${error.response.data.username}</h3>`, 1);
         }
     }
 

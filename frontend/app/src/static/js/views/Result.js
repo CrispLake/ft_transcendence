@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Result.js                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/22 13:36:52 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/01 17:43:22 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/25 13:00:05 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ export default class extends AbstractView {
             imageTag = `<img class="winner-img" src="static/images/guest.png" alt="User icon"/>`
         }
         else {
-            imageTag = `<img class="winner-img" src="http://localhost:8000/account/${player.id}/image" alt="User icon"/>`
+            imageTag = `<img class="winner-img" src="https://localhost:8000/account/${player.id}/image" alt="User icon"/>`
         }
         return imageTag;
     }

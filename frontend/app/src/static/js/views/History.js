@@ -7,8 +7,8 @@ export default class extends AbstractView {
         this.auth = true;
         this.params = params;
         this.listeners = true;
-        this.pong2pURL = 'http://localhost:8000/pong-2p';
-        this.gonp2pURL = 'http://localhost:8000/gonp-2p';
+        this.pong2pURL = 'https://localhost:8000/pong-2p';
+        this.gonp2pURL = 'https://localhost:8000/gonp-2p';
 
 
         this.init();

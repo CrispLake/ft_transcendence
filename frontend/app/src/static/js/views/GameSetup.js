@@ -16,7 +16,7 @@ export default class extends AbstractView {
         this.entryIdCounter = 0;
         this.playerCounter = 0;
         this.maxPlayers = -1;
-        this.loginURL = 'http://localhost:8000/login';
+        this.loginURL = 'https://localhost:8000/login';
         this.currentDeg = 0;
         this.currentCard = 1;
 
@@ -113,7 +113,7 @@ export default class extends AbstractView {
         let response;
         try {
             response = await axios.get(
-                'http://localhost:8000/account',
+                'https://localhost:8000/account',
                 { headers: {'Authorization': `Token ${this.GetKey()}`} }
             );
             console.log("Response: " + response.data);
@@ -136,7 +136,7 @@ export default class extends AbstractView {
                 id: this.entryIdCounter++,
                 title: response.data.user.username,
                 winrate: winrate,
-                image: `<img class="card-image" src="http://localhost:8000/account/${response.data.user.id}/image" alt="User icon" >`
+                image: `<img class="card-image" src="https://localhost:8000/account/${response.data.user.id}/image" alt="User icon" >`
             }]
             this.playerCounter++;
             this.renderEntries();
@@ -214,7 +214,7 @@ export default class extends AbstractView {
     }
 
     async addExistingUserEntryHandler(userData) {
-        let profileURL = 'http://localhost:8000/account/' + userData.data.user_id;
+        let profileURL = 'https://localhost:8000/account/' + userData.data.user_id;
 
         try {
             const response = await axios.get(
@@ -237,7 +237,7 @@ export default class extends AbstractView {
                 id: this.entryIdCounter++,
                 title: userData.data.username,
                 winrate: winrate,
-                image: `<img class="card-image" src="http://localhost:8000/account/${userData.data.user_id}/image" alt="User icon">`
+                image: `<img class="card-image" src="https://localhost:8000/account/${userData.data.user_id}/image" alt="User icon">`
             };
             this.playerCounter++;
             this.entries.push(newEntry);
@@ -422,7 +422,7 @@ export default class extends AbstractView {
       
       try {
         const res = await axios.get(
-          'http://localhost:8000/matchmaking', 
+          'https://localhost:8000/matchmaking', 
           { headers: {'Authorization': `Token ${this.GetKey()}`} }
         );
         const content = document.getElementById('suggestion-content'); 
@@ -438,7 +438,7 @@ export default class extends AbstractView {
           <div class="suggestion-div">
             <h2 class="font-sub">We suggest you play with: </h2>
             <div class="winner-card suggestion-card">
-              <img src="http://localhost:8000/account/${res.data.user.id}/image" class="suggestion-image" alt="user image"/>
+              <img src="https://localhost:8000/account/${res.data.user.id}/image" class="suggestion-image" alt="user image"/>
               <h3 class="font-text winner-username suggestion-username">${res.data.user.username}</h3>
               <p class="font-text suggestion-winrate-text">winrate: ${Math.round((res.data.wins / (res.data.wins + res.data.losses)) * 100, 2)}%</p>
             </div>

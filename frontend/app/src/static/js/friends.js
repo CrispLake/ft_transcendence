@@ -6,7 +6,7 @@
 /*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 06:52:04 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/24 14:45:25 by emajuri          ###   ########.fr       */
+/*   Updated: 2024/08/25 13:00:05 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ window.onclick = (event) => {
 const fetchMyID = async () => {
   try {
     const response = await axios.get(
-      'http://localhost:8000/account', {
+      'https://localhost:8000/account', {
         headers: { 'Authorization': `Token ${view.GetKey()}` }
       });
     return response.data.id;
@@ -70,14 +70,14 @@ const fetchMyID = async () => {
 
 
 // Pull friends data from backend
-// http://localhost:8000/friend-request/list
+// https://localhost:8000/friend-request/list
 const fetchFriendData = async () => {
   try {
     if (!view.Authenticate()) {
       console.log('No token found in loginDataFetch, exit!');
       return;
     }
-    const response = await axios.get('http://localhost:8000/account', {
+    const response = await axios.get('https://localhost:8000/account', {
       headers: { 'Authorization': `Token ${view.GetKey()}` }
     });
     return response.data;
@@ -130,7 +130,7 @@ const fetchRequestData = async () => {
     if (!view.Authenticate()) {
       return null;
     }
-    const response = await axios.get('http://localhost:8000/friend-request/list', {
+    const response = await axios.get('https://localhost:8000/friend-request/list', {
       headers: { 'Authorization': `Token ${view.GetKey()}` }
     });
     return response.data;
@@ -204,7 +204,7 @@ const sendResponseToRequest = async (answer, id) => {
   try {
     const payload = { "accept": answer }
     const response = await axios.post(
-      `http://localhost:8000/friend-request/respond/${id}`,
+      `https://localhost:8000/friend-request/respond/${id}`,
       payload,
       { headers: {'Authorization': `Token ${view.GetKey()}`} }
     );

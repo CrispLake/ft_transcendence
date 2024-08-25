@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Tournament.js                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 13:48:55 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/02 14:34:07 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/25 13:00:05 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ export default class extends AbstractView {
     }
     else {
       return `
-        <img class="player-card-image" src="http://localhost:8000/account/${player.id}/image" alt="player icon">
+        <img class="player-card-image" src="https://localhost:8000/account/${player.id}/image" alt="player icon">
         <h2 class="font-text card-name-text">${player.username}</h2>
       `;
     }

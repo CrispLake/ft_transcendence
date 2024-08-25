@@ -13,6 +13,19 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 
+SECURE_SSL_REDIRECT = True  # Redirect all HTTP to HTTPS
+SESSION_COOKIE_SECURE = True  # Send cookies only over HTTPS
+CSRF_COOKIE_SECURE = True  # Send CSRF cookies only over HTTPS
+
+# Optionally, you can enforce HSTS (HTTP Strict Transport Security)
+SECURE_HSTS_SECONDS = 3600  # Adjust as needed
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# Only allow secure requests
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -140,7 +153,9 @@ USE_L10N = True
 USE_TZ = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
+    "https://localhost:3000",
+    "https://127.0.0.1",
+    "https://localhost",
 ]
 
 

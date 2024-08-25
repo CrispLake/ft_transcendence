@@ -91,13 +91,13 @@ handleKeyDown(event)
             if (this.game.players["p1"].name !== 'AI') this.game.players["p1"].boostPressed = true;
             break;
         case KEY.P2_LEFT:
-            if (this.game.players["p1"].name !== 'AI') this.game.players["p2"].moveLeft = true;
+            if (this.game.players["p2"].name !== 'AI') this.game.players["p2"].moveLeft = true;
             break;
         case KEY.P2_RIGHT:
             if (this.game.players["p2"].name !== 'AI') this.game.players["p2"].moveRight = true;
             break;
         case KEY.P2_BOOST:
-            if (this.game.players["p3"].name !== 'AI') this.game.players["p2"].boostPressed = true;
+            if (this.game.players["p2"].name !== 'AI') this.game.players["p2"].boostPressed = true;
             break;
         case KEY.P3_LEFT:
             if (this.game.players["p3"].name !== 'AI' && this.game.multiMode) this.game.players["p3"].moveLeft = true;

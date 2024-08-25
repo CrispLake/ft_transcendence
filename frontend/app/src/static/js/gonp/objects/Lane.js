@@ -47,7 +47,7 @@ export class Lane extends THREE.Object3D {
 			const middleGeometry = new THREE.BoxGeometry(middleLength, G.laneHeight, G.laneThickness);
 			const middleMaterial = new THREE.MeshStandardMaterial({color: 0xffffff, emissive: this.colors[1], wireframe: false});
 			const middleMesh = new THREE.Mesh(middleGeometry, middleMaterial);
-			const middlePositionX = (leftPos + rightPos) / 2; // Corrected middle position
+			const middlePositionX = (leftPos + rightPos) / 2;
 			middleMesh.position.set(middlePositionX, G.laneY, this.mesh.position.z);
 			this.add(middleMesh);
 		}
@@ -84,5 +84,15 @@ export class Lane extends THREE.Object3D {
 		} else {
 			this.setSectionPos(this.sectionPositions[0] + amount, this.sectionPositions[1]);
 		}
+	}
+
+	getPlayer1Score() {
+		const startingRightPos = G.laneOriginX + G.laneLength / 2;
+		return Math.abs(startingRightPos - this.sectionPositions[1]);
+	}
+
+	getPlayer2Score() {
+		const startingLeftPos = G.laneOriginX - G.laneLength / 2;
+		return Math.abs(this.sectionPositions[0] - startingLeftPos);
 	}
 }

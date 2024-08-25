@@ -54,7 +54,7 @@ export default class extends AbstractView {
   }
 
   async getUserInput() {
-    await this.WaitForUser();
+      await this.WaitForUser();
   }
 
   // Handles single game with provided settings configuration

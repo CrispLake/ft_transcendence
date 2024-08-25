@@ -178,10 +178,6 @@ export class Ball
         let direction = this.getDirection(wall);
 
         // Change direction based on wall alignment
-        // if (wall.alignment == G.vertical)
-        //     this.speedX = -this.speedX;
-        // else
-        //     this.speedZ = -this.speedZ;
         if (direction == 1 && this.speedX < 0)
             this.speedX = -this.speedX;
         else if (direction == 2 && this.speedX > 0)

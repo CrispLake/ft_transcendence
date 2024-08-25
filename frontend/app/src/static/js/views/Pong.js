@@ -80,7 +80,6 @@ export default class extends AbstractView {
 
 handleKeyDown(event)
 {
-    console.log("KEY: player amount: ", this.game.playerAmount);
     switch (event.key)
     {
         case KEY.P1_LEFT:
@@ -119,12 +118,12 @@ handleKeyDown(event)
         case KEY.P4_BOOST:
             if (this.game.playerAmount > 3 && this.game.multiMode) this.game.players["p4"].boostPressed = true;
             break;
-        // case "p":
-        //     this.game.toggleCameraRotation();
-        //     break;
-        // case ".":
-        //     this.game.togglePause();
-        //     break;
+        case "p":
+            this.game.toggleCameraRotation();
+            break;
+        case ".":
+            this.game.togglePause();
+            break;
     }
 }
 

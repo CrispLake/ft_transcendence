@@ -47,7 +47,7 @@ export class Player
         this.stunned = false;
         this.stunPosition = new THREE.Vector3();
         this.active = false;
-        this.bounce = false;
+        // this.bounce = false;
         this.box.setFromObject(this.paddle);
     }
     

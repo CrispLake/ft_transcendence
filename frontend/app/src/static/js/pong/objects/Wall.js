@@ -30,7 +30,7 @@ export class Wall
         this.clock = new THREE.Clock();
         this.effect = false;
 
-        this.bounce = false;
+        // this.bounce = false;
     }
 
     setLightDirection()

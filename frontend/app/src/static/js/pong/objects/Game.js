@@ -297,6 +297,7 @@ export class Game
 		this.arena.update();
 		if (this.goal())
 		{
+			// console.log("Goal!----------------------------------------------");
 			if (this.endingConditionFilled())
 			{
 				this.gameEnded = true;
@@ -316,8 +317,8 @@ export class Game
 		{
 			if (this.ball.box.intersectsBox(this.players[player].box))
 			{
-				if (this.players[player].bounce == true)
-					continue ;
+				// if (this.players[player].bounce == true)
+				// 	continue ;
 
 				// Set player who touched the ball to active, rest to inactive.
 				for (let p in this.players)
@@ -329,31 +330,35 @@ export class Game
 				this.players[player].resetBoost();
 				this.ball.bounceFromPlayer(this.players[player]);
 				this.ball.speedUp();
-				this.players[player].bounce = true;
+				// this.players[player].bounce = true;
 				this.ball.affectBySpin();
 				this.ball.move();
 				return ;
 			}
-			else
-				this.players[player].bounce = false;
+			// else
+			// 	this.players[player].bounce = false;
 		}
 		for (let wall in this.arena.walls)
 		{
 			if (this.ball.box.intersectsBox(this.arena.walls[wall].box))
 			{
-				if (this.arena.walls[wall].bounce == true)
-					continue ;
+				// if (this.arena.walls[wall].bounce == true)
+				// {
+				// 	console.log("Wall " + wall + " already bounced the ball!");
+				// 	continue ;
+				// }
 
+				// console.log("Wall " + wall + " bouncing the ball!");
 				this.arena.walls[wall].lightEffect();
 				this.ball.reduceSpin();
 				this.ball.bounceFromWall(this.arena.walls[wall]);
-				this.arena.walls[wall].bounce = true;
+				// this.arena.walls[wall].bounce = true;
 				this.ball.affectBySpin();
 				this.ball.move();
 				return ;
 			}
-			else
-				this.arena.walls[wall].bounce = false;
+			// else
+			// 	this.arena.walls[wall].bounce = false;
 
 		}
 		if (this.powerupManager.powerup != null)
@@ -455,17 +460,17 @@ export class Game
 		for (let player in this.players)
 			this.players[player].reset();
 		this.ball.reset();
-		this.resetBounces();
+		// this.resetBounces();
 		this.sleepMillis(1000);
 	}
 
-	resetBounces()
-	{
-		for (let wall in this.arena.walls)
-			this.arena.walls[wall].bounce = false;
-		for (let player in this.players)
-			this.players[player].bounce = false;
-	}
+	// resetBounces()
+	// {
+	// 	for (let wall in this.arena.walls)
+	// 		this.arena.walls[wall].bounce = false;
+	// 	for (let player in this.players)
+	// 		this.players[player].bounce = false;
+	// }
 
 	sleepMillis(millis)
 	{

@@ -447,8 +447,8 @@ export default class extends AbstractView {
         `;
       }
       catch(error) {
-        console.log(error);
-        this.Redirect('/500');
+        console.log(error)
+        Notification('notification-div', `<h3 class="font-text">${error.response.data.detail}</h3>`, 1);
       }
     }
 
@@ -585,8 +585,8 @@ export default class extends AbstractView {
                 ?
                     `<div class="slider-container">
                         <label class="font-text powerup-text" for="range-slider">Time:</label>
-                        <input type="range" id="range-slider" min="1" max="5" value="3" step="1">
-                        <span class="font-text powerup-text" id="slider-value">3</span>
+                        <input type="range" id="range-slider" min="1" max="5" value="1" "step="1">
+                        <span class="font-text powerup-text" id="slider-value">1</span>
                     </div>`
                 :
                     `<div class="slider-container">

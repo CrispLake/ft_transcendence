@@ -18,7 +18,7 @@ export default class extends AbstractView {
     this.listeners = true;
     this.childs = true;
 
-    this.players = null;
+    this.players = ["player1", "player2"];
     this.resolve = null;
     this.controls = null;
     // this.game.update = this.game.update.bind(this);
@@ -48,18 +48,16 @@ export default class extends AbstractView {
 
   // Handles single game with provided settings configuration
   async launchGame(gameSettings, appDiv) {
-    this.game = new Game(3, true);
-    while (!this.game);
-    this.game.update();
-    console.log("GAME: ");
-    console.log(this.game);
+    this.game = new Game(gameSettings);
+    appDiv.style.background = 'var(--black)';
     appDiv.innerHTML = '';
     const element = await this.getHtml();
     appDiv.appendChild(element);
     await this.getUserInput();
+    appDiv.style.background = 'var(--white)';
     appDiv.removeChild(element);
-   
-    return 0;
+
+    return this.game.results;
   }
 
   handleKeyDown(event) {
@@ -67,7 +65,7 @@ export default class extends AbstractView {
     let player2 = this.game.player2;
       if (event.repeat && event.key != KEY.P1_BOOST && event.key != KEY.P2_BOOST && event.key != KEY.P1_BOOST_PAUSE && event.key != KEY.P2_BOOST_PAUSE)
     {
-      handleKeyUp(event);
+      this.handleKeyUp(event);
       return ;
     }
     switch (event.key)

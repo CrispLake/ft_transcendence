@@ -122,9 +122,9 @@ export class Player {
 				this.feedPusher(pusher, secondPusher)
 				const overlapX = Math.min(pusher.box.max.x, secondPusher.box.max.x) - Math.max(pusher.box.min.x, secondPusher.box.min.x);
 				let mtv = new THREE.Vector3(overlapX, 0, 0);
-				pusher.moveX((mtv.x - 0.005) * this.sign);
-				pusher.updateBoundingBox();
-				pusher.collisionNumber = secondPusher.collisionNumber;
+				// pusher.moveX(-((mtv.x - 0.005) * this.sign));
+				// pusher.updateBoundingBox();
+				// pusher.collisionNumber = secondPusher.collisionNumber;
 				return ;
 			}
 		}
@@ -144,9 +144,14 @@ export class Player {
 				pusher.downSize(downSizeAmount);
 			}
 		}
-		if (typeof pusher.moveX === 'function') {
-			pusher.moveX((pusher.speed * speedModifier) * this.sign);
-		}
+		// pusher.moveX((pusher.speed * speedModifier) * this.sign);
+
+		pusher.mesh.position.x += (pusher.speed * speedModifier) * this.sign;
+		pusher.setFurtestX();
+		pusher.mesh.position.y = G.laneY + (pusher.box.max.y / 2) + (G.laneThickness / 2);
+		pusher.light.position.copy(pusher.mesh.position);
+		pusher.light.lookAt(pusher.mesh.position.x , pusher.mesh.position.y - 1, pusher.mesh.position.z);
+        pusher.updateBoundingBox();
 	}
 
 	feedPusher(feeder, reciever) {

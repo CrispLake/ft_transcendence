@@ -27,14 +27,15 @@ import { playersLogic, pushersLogic } from './logicFunctions.js'
 
 
 export class Game {
-	constructor (time, powerups) {
+	constructor (params) {
 		RectAreaLightUniformsLib.init();
-		
+
+		this.gameEnded = false;
 		this.scene = new THREE.Scene();
-		this.arena = new Arena(this.scene, powerups);
+		this.arena = new Arena(this.scene, params.settings.powerups);
 		this.player1 = new Player(this.scene, G.p1StartPos, 'BLU', COLOR.PLAYER1, this.arena);
 		this.player2 = new Player(this.scene, G.p2StartPos, 'RED', COLOR.PLAYER2, this.arena);
-		
+		this.playerList = params.players;
 		// ----Camera Setup----
 		this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
 		this.camera.lookAt(0, 0, 0);
@@ -48,22 +49,22 @@ export class Game {
 		
 		// ----Orbit Controls----
 		this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-		
+	
 		this.composer = new EffectComposer(this.renderer);
 		this.composer.addPass(new RenderPass(this.scene, this.camera));
-		
 		const effectFXAA = new ShaderPass(FXAAShader);
 		effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
 		this.composer.addPass(effectFXAA);
-		
+	
 		this.text = new TextManager(this.scene, this.composer, this.renderer, this.camera, '/static/fonts/font.json', "GONP", 0XFFFFFF, 0X000000);
-		
+	
 		this.timer = new Timer();
-		
-		this.timer.start(time * 60);
-		this.powerups = powerups;
+		this.timer.start(params.settings.difficulty * 60);
+		this.players = params.players;
+		this.powerups = params.settings.powerups;
 		this.resolve = null;
 		this.update = this.update.bind(this);
+		this.update();
 		this.endGame = this.endGame.bind(this);
 	}
 	
@@ -73,18 +74,47 @@ export class Game {
 	
 	endGame()
 	{
+		let player1Score = 0;
+		let player2Score = 0;
+		let result = { 
+			"player1" : this.players[0].username,
+			"player2" : this.players[1].username,
+			"player1Score" : 0,
+			"player2Score" : 0
+		};
 		if (!this.resolve)
-			return;
-		this.resolve([]);
+			return ;
+		for (let i = 0; i < this.arena.lanes.length; i++) {
+			player1Score += this.arena.lanes[i].getPlayer1Score()
+			player2Score += this.arena.lanes[i].getPlayer2Score()
+		}
+		if (player1Score > player2Score) {
+			player1Score = 1;
+			player2Score = 0;
+		}
+		else {
+			player1Score = 0;
+			player2Score = 1;
+		}
+		result["player1Score"] = player1Score;
+		result["player2Score"] = player2Score;
+		this.results = result;
+		this.resolve(result);
 	}
+
 	update() {
-		setTimeout(() => { requestAnimationFrame(this.update); }, 1000 / G.fps);
-		console.log("updating");
+		if (!this.gameEnded) {
+			setTimeout(() => { requestAnimationFrame(this.update); }, 1000 / G.fps);
+		}
 		this.playersLogic();
 		this.pushersLogic();
 		this.arena.checkPowerupSpawn();
 		this.text.updateText(this.timer.toString());
 		this.composer.render();
+		if (this.timer.getRemainingTime() <= 0) {
+			this.gameEnded = true;
+			this.endGame();
+		}
 	}
 	setPushersColliding(colliding)
 	{
@@ -230,7 +260,6 @@ export class Game {
 	movePushers() {
 		let pusher;
 	
-		// console.log(this.player1.pushers)
 		for (let i = 0; i < this.player1.pushers.length; i++) {
 			pusher = this.player1.pushers[i];
 			this.player1.movePusher(pusher);
@@ -250,10 +279,6 @@ export class Game {
 				this.arena.lanes[pusher.lane].player2scored(pusher.size - (G.pusherMinSize / 2));
 				this.player2.removePusher(pusher);
 			}
-			// else if (pusher.furtestX > G.laneEnd ) {
-			// 	this.arena.lanes[pusher.lane].player2scored(pusher.size - (G.pusherMinSize / 2));
-			// 	this.player2.removePusher(pusher);
-			// }
 			else if (pusher.furtestX > this.arena.getOpposingSectionPositionByPusher(pusher)) {
 				this.arena.lanes[pusher.lane].player2scored(G.passiveScore);
 				pusher.downSize(G.passiveScore);
@@ -288,6 +313,3 @@ export class Game {
 	}
 	
 }
-
-	// export let game = new Game(3, true);
-	// game.update();

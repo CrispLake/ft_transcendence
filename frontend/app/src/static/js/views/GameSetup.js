@@ -447,7 +447,8 @@ export default class extends AbstractView {
         `;
       }
       catch(error) {
-        Notification('notification-div', `<h3 class="font-text>${error.response.detail}</h3>`, 1);
+        console.log(error)
+        Notification('notification-div', `<h3 class="font-text">${error.response.data.detail}</h3>`, 1);
       }
     }
 

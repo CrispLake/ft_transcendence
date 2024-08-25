@@ -67,7 +67,8 @@ export class AI
         this.stunPosition = new THREE.Vector3();
         this.active = false;
         this.bounce = false;
-        this.initializeBrain();        
+        this.initializeBrain();
+        this.setMinMaxAngles();
     }
     
     //--------------------------------------------------------------------------
@@ -139,6 +140,32 @@ export class AI
         {
             this.color = COLOR.PADDLE4;
             this.colorLight = COLOR.PADDLE4_LIGHT;
+        }
+    }
+
+    setMinMaxAngles()
+    {
+        // Min angle is the angle towards paddle's negative direction.
+        // Max angle is the angle towards paddle's positive direction.
+        if (this.playerNum == 1)
+        {
+            this.minAngle = PongMath.degToRad(180) - G.minAngle;
+            this.maxAngle = G.minAngle;
+        }
+        else if (this.playerNum == 2)
+        {
+            this.minAngle = PongMath.degToRad(180) + G.minAngle;
+            this.maxAngle = PongMath.degToRad(360) - G.minAngle;
+        }
+        else if (this.playerNum == 3)
+        {
+            this.minAngle = PongMath.degToRad(270) + G.minAngle;
+            this.maxAngle = PongMath.degToRad(90) - G.minAngle;
+        }
+        else if (this.playerNum == 4)
+        {
+            this.minAngle = PongMath.degToRad(270) - G.minAngle;
+            this.maxAngle = PongMath.degToRad(90) + G.minAngle;
         }
     }
 
@@ -773,7 +800,7 @@ export class AI
 
     getValidIntersectionPoints()
     {
-        // Frist we empty the array
+        // Frist we empty the arrayd
         this.intersectionPoints = [];
 
         // Then we fill it with all the intersection points
@@ -1018,44 +1045,46 @@ export class AI
 
     readGame()
     {
-        if (this.playerNum == 2) console.log("----Read Game----------------------------------------------");
-        // if (this.playerNum == 2) console.log("Actual ball angle: " + PongMath.radToDeg(this.game.ball.angle).toFixed(2));
+        console.log(this.playerNum +": ----Read Game----------------------------------------------");
+        // if (this.playerNum == 3) console.log("Actual ball angle: " + PongMath.radToDeg(this.game.ball.angle).toFixed(2));
         // First we check where the ball intersects
         if (this.considerSpin && this.game.ball.spin != 0)
             this.getBallIntersectionPointWithSpin();
         else
             this.getBallIntersectionPoint();
 
-        // if (this.playerNum == 2) console.log("firstPoint: " + this.firstPoint.pos.x.toFixed(2) + ", " + this.firstPoint.pos.y.toFixed(2));
-        // if (this.playerNum == 2) console.log("angle:      " + PongMath.radToDeg(this.angle).toFixed(2));
+        // if (this.playerNum == 3) console.log("firstPoint: " + this.firstPoint.pos.x.toFixed(2) + ", " + this.firstPoint.pos.y.toFixed(2));
+        // if (this.playerNum == 3) console.log("angle:      " + PongMath.radToDeg(this.angle).toFixed(2));
         
         // Set the target position for the paddle
         if (this.settings.multiMode && this.ballHitsNeighbouringGoal())
             this.setPaddleTargetToCorner();
         else if (this.ownGoalHit())
         {
-            if (this.playerNum == 2) console.log("Gonna hit my goal");
+            console.log(this.playerNum +": Gonna hit my goal");
             if (this.goodPowerupExists())
             {
-                if (this.playerNum == 2) console.log("Ooh, there's a powerup!");   
-                this.setupAimForPowerup();
+                console.log(this.playerNum +": Ooh, there's a powerup!");   
+                this.setPowerupAimTarget();
             }
             else if (this.anyPlayerNearCorner())
             {
-                if (this.playerNum == 2) console.log("Ooh, there's an empty corner!");
-                this.setupAimForCorner();
+                console.log(this.playerNum +": Ooh, there's an empty corner!");
+                this.setCornerAimTarget();
             }
-            else
+            
+            // If aim target is in a bad angle, we don't aim for anything.
+            if (!this.shouldAim)
             {
-                if (this.playerNum == 2) console.log("I'll hit randomly.");
+                console.log(this.playerNum +": I'll hit randomly.");
                 this.setPaddleTargetToBallIntersection();
             }
         }
         else
             this.paddleTargetPos = 0;
         
-        // Update the time to target
-        if (this.canSpin)
+        // Update the time to target, only if we can spin and aren't aiming
+        if (this.canSpin && !this.shouldAim)
         {
             this.shouldBoost = true;
             this.updateTimeToTarget();
@@ -1106,7 +1135,7 @@ export class AI
             else if (this.firstPoint.wall == "right")
                 this.paddleTargetPos = PongMath.lerp(this.firstPoint.pos.y, -enemyGoalPost, enemyGoalPost, 0, this.movementBoundary);
         }
-        if (this.playerNum == 2) console.log("Gotta go to corner...");
+        console.log(this.playerNum +": Gotta go to corner...");
     }
 
     goodPowerupExists()
@@ -1114,10 +1143,9 @@ export class AI
         return (this.game.powerupManager.powerup != null && (this.game.powerupManager.powerup.power == G.POWER_PADDLE_LONG || this.game.powerupManager.powerup.power == G.POWER_LIFE_PLUS));
     }
 
-    setupAimForPowerup()
+    setPowerupAimTarget()
     {
         this.aimTarget.set(this.game.powerupManager.powerup.mesh.position.x, this.game.powerupManager.powerup.mesh.position.z);
-        this.shouldAim = true;
         this.aim();
     }
 
@@ -1156,7 +1184,7 @@ export class AI
         return false;
     }
 
-    setupAimForCorner()
+    setCornerAimTarget()
     {
         let playersInCorner = [];
         let targetPlayer = null;
@@ -1204,7 +1232,7 @@ export class AI
                     this.aimTarget.set(goalPost * G.cornerProximityAim, targetPlayer.paddle.position.z);
             }
 
-            this.shouldAim = true;
+            console.log(this.playerNum +": Empty corner at " + this.aimTarget.x.toFixed(2) + ", " + this.aimTarget.y.toFixed(2));
         }
         this.aim();
     }
@@ -1214,43 +1242,112 @@ export class AI
         let angleToTarget;
 
         // Consider angle, spin, ball intersection point and powerup position to calculate the target position. For simplicity, AI will go for a straight shot.
-        if (this.considerSpin && this.game.ball.spin != 0)
-            angleToTarget = this.calculateNeededAngleForSpin();
-        else
-            angleToTarget = this.calculateNeededAngleForNoSpin();
+        // if (this.considerSpin && this.game.ball.spin != 0)
+        //     angleToTarget = this.calculateNeededAngleForSpin();
+        // else
+        //     angleToTarget = this.calculateNeededAngleForNoSpin();
+        angleToTarget = this.calculateNeededAngleForNoSpin();
 
-        if (this.playerNum == 2) console.log("Aim, angleToTarget = " + PongMath.radToDeg(angleToTarget).toFixed(2));
+        console.log(this.playerNum +": Aim, angleToTarget = " + PongMath.radToDeg(angleToTarget).toFixed(2));
         
-
         // Set the target position for the paddle
-        let normalizedImpact;
+        let normalizedImpact = this.calculateNormalizedImpact(angleToTarget, -1, 1, this.minAngle, this.maxAngle);
+        console.log(this.playerNum +": Aim, normalizedImpact = " + normalizedImpact.toFixed(2));
         if (this.playerNum == 1)
-            this.paddleTargetPos = this.calculateTargetPosFromAngle(this.firstPoint.pos.y, angleToTarget, PongMath.degToRad(180) - G.minAngle, G.minAngle);
+        {
+            if (this.maxAngle <= angleToTarget && angleToTarget <= this.minAngle)
+            {
+                this.paddleTargetPos = this.firstPoint.pos.y - normalizedImpact * (this.paddleLength / 2);
+                console.log(this.playerNum +": Aim, paddleTargetPos = " + this.paddleTargetPos.toFixed(2));
+                this.shouldAim = true
+            }
+            else
+            {
+                this.shouldAim = false;
+                console.log(this.playerNum +": I should not aim.");
+            }
+        }
         else if (this.playerNum == 2)
-            this.paddleTargetPos = this.calculateTargetPosFromAngle(this.firstPoint.pos.y, angleToTarget, PongMath.degToRad(180) + G.minAngle, PongMath.degToRad(360) - G.minAngle);
+        {
+            if (this.minAngle <= angleToTarget && angleToTarget <= this.maxAngle)
+            {
+                this.paddleTargetPos = this.firstPoint.pos.y + normalizedImpact * (this.paddleLength / 2);
+                console.log(this.playerNum +": Aim, paddleTargetPos = " + this.paddleTargetPos.toFixed(2));
+                this.shouldAim = true
+            }
+            else
+            {
+                this.shouldAim = false;
+                console.log(this.playerNum +": I should not aim.");
+            }
+        }
         else if (this.playerNum == 3)
-            this.paddleTargetPos = this.calculateTargetPosFromAngle(this.firstPoint.pos.x, angleToTarget, PongMath.degToRad(270) + G.minAngle, PongMath.degToRad(450) - G.minAngle);
+        {
+            if ((this.minAngle <= angleToTarget && angleToTarget <= PongMath.degToRad(360)) || (PongMath.degToRad(0) <= angleToTarget && angleToTarget <= this.maxAngle))
+            {
+                this.paddleTargetPos = this.firstPoint.pos.x + normalizedImpact * (this.paddleLength / 2);
+                console.log(this.playerNum +": Aim, paddleTargetPos = " + this.paddleTargetPos.toFixed(2));
+                this.shouldAim = true
+            }
+            else
+            {
+                this.shouldAim = false;
+                console.log(this.playerNum +": I should not aim.");
+            }
+        }
         else if (this.playerNum == 4)
-            this.paddleTargetPos = this.calculateTargetPosFromAngle(this.firstPoint.pos.x, angleToTarget, PongMath.degToRad(270) - G.minAngle, PongMath.degToRad(90) + G.minAngle);
+        {
+            if (this.maxAngle <= angleToTarget && angleToTarget <= this.minAngle)
+            {
+                this.paddleTargetPos = this.firstPoint.pos.x - normalizedImpact * (this.paddleLength / 2);
+                console.log(this.playerNum +": Aim, paddleTargetPos = " + this.paddleTargetPos.toFixed(2));
+                this.shouldAim = true
+            }
+            else
+            {
+                this.shouldAim = false;
+                console.log(this.playerNum +": I should not aim.");
+            }
+        }
         
-        if (this.playerNum == 2) console.log("Aim, paddleTargetPos = " + this.paddleTargetPos.toFixed(2));
+        console.log(this.playerNum +": Ball interects at " + this.firstPoint.pos.x.toFixed(2) + ", " + this.firstPoint.pos.y.toFixed(2) + ", " + this.firstPoint.wall);
+        console.log(this.playerNum +": I should aim at " + this.aimTarget.x.toFixed(2) + ", " + this.aimTarget.y.toFixed(2));
+        console.log(this.playerNum +": Aim, paddleTargetPos = " + this.paddleTargetPos.toFixed(2));
     }
 
-    calculateTargetPosFromAngle(ballPos, newAngle, minAngle, maxAngle)
+    calculateNormalizedImpact(angle, minNorm, maxNorm, minAngle, maxAngle)
     {
-        // This formula is basically inverting lerp() and the calculations for normalized impact.
-        return (ballPos - ((2 * (newAngle - minAngle)) / (maxAngle - minAngle) - 1) * (this.paddleLength / 2));
+        let normalizedImpact;
+        let angleDifference = angle - minAngle;
+        let angleRange = maxAngle - minAngle;
+        let normDifference = maxNorm - minNorm;
+
+        // Since the min and max angles for player 3 go over the 360/0 degree mark, we need to adjust the angle difference and range.
+        if (this.playerNum == 3)
+        {
+            angleDifference = PongMath.within2Pi(angleDifference);
+            angleRange = PongMath.within2Pi(angleRange);
+        }
+
+        normalizedImpact = (angleDifference / angleRange) * normDifference + minNorm;
+
+        return normalizedImpact;
+    }
+
+    calculatePosFromNormalizedImpact(ballPos, normalizedImpact, paddleLength)
+    {
+        return (ballPos - normalizedImpact * paddleLength);
     }
     
     calculateNeededAngleForSpin()
     {
-        if (this.playerNum == 2) console.log("calculateNeededAngleForSpin");
+        console.log(this.playerNum + ": calculateNeededAngleForSpin");
         // Here we calculate the radius of the circle, which we can derive from ball speed and ball spin.
         let base = this.distancePerFrame / 2;
         let radius = Math.abs(base * Math.tan((PongMath.degToRad(180) - this.angleDelta) / 2));
 
-        if (this.playerNum == 2) console.log("base = " + base);
-        if (this.playerNum == 2) console.log("radius = " + radius);
+        console.log(this.playerNum + ": base = " + base);
+        console.log(this.playerNum + ": radius = " + radius);
 
         // The following calculations are based on using two simultaneous equations in order to get the coordinates for the center point. In the below code, we have already translated center.x to center.y and created a quadratic formula to solve center.y.
 
@@ -1259,18 +1356,18 @@ export class AI
         const yDifference = this.firstPoint.pos.y - this.aimTarget.y;
         const squaredCoordinates = Math.pow(this.firstPoint.pos.x, 2) + Math.pow(this.firstPoint.pos.y, 2) - Math.pow(this.aimTarget.x, 2) - Math.pow(this.aimTarget.y, 2);
 
-        if (this.playerNum == 2) console.log("xDifference = " + xDifference);
-        if (this.playerNum == 2) console.log("yDifference = " + yDifference);
-        if (this.playerNum == 2) console.log("squaredCoordinates = " + squaredCoordinates);
+        console.log(this.playerNum + ": xDifference = " + xDifference);
+        console.log(this.playerNum + ": yDifference = " + yDifference);
+        console.log(this.playerNum + ": squaredCoordinates = " + squaredCoordinates);
 
         // Here we set the variables for the quadratic formula.
         let a = 1 + 4 * Math.pow(yDifference, 2);
         let b = 2 * (yDifference) * squaredCoordinates + 2 * this.aimTarget.x * (squaredCoordinates - 2 * yDifference) / (2 * xDifference) + 2 * this.firstPoint.pos.y;
         let c = Math.pow(squaredCoordinates, 2) - (Math.pow(radius, 2) * Math.pow(this.aimTarget.x, 2) - Math.pow(this.firstPoint.pos.y, 2) * 4 * Math.pow(xDifference, 2));
 
-        if (this.playerNum == 2) console.log("a = " + a);
-        if (this.playerNum == 2) console.log("b = " + b);
-        if (this.playerNum == 2) console.log("c = " + c);
+        console.log(this.playerNum + ": a = " + a);
+        console.log(this.playerNum + ": b = " + b);
+        console.log(this.playerNum + ": c = " + c);
 
         let x, y;
         if (this.angleDelta < 0)
@@ -1279,8 +1376,8 @@ export class AI
             y = PongMath.quadraticFormulaPositive(a, b, c);
         x = (squaredCoordinates - 2 * y * yDifference) / (2 * xDifference);
 
-        if (this.playerNum == 2) console.log("x = " + x);
-        if (this.playerNum == 2) console.log("y = " + y);
+        console.log(this.playerNum + ": x = " + x);
+        console.log(this.playerNum + ": y = " + y);
 
         let center = new THREE.Vector2(x, y);
 
@@ -1290,14 +1387,14 @@ export class AI
         else
             angleToTarget = this.angleBetweenVectors(center, this.firstPoint.pos) + PongMath.degToRad(90);
 
-        if (this.playerNum == 2) console.log("angleToTarget = " + angleToTarget);
+        console.log(this.playerNum + ": angleToTarget = " + angleToTarget);
         
         return angleToTarget;
     }
 
     calculateNeededAngleForNoSpin()
     {
-        if (this.playerNum == 2) console.log("calculateNeededAngleForNoSpin");
+        console.log(this.playerNum + ": calculateNeededAngleForNoSpin");
         let angleToTarget = this.angleBetweenVectors(this.firstPoint.pos, this.aimTarget);
         angleToTarget = PongMath.within2Pi(angleToTarget);
         return angleToTarget;

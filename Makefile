@@ -2,9 +2,19 @@ NAME = transcendence
 
 COMPOSE = ./compose.yaml
 
+.PHONY: all clean fclean re certificates restart prune sh down
+
 all: $(NAME)
 
-$(NAME):
+certificates:
+	mkdir -p frontend/app/certs
+	mkdir -p nginx/certs
+	mkdir -p transcendence_src/src/certs
+	cp certs/* frontend/app/certs
+	cp certs/* nginx/certs
+	cp certs/* transcendence_src/src/certs
+
+$(NAME): certificates
 	docker compose -f $(COMPOSE) up -d
 
 clean:

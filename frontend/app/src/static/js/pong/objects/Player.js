@@ -47,7 +47,7 @@ export class Player
         this.stunned = false;
         this.stunPosition = new THREE.Vector3();
         this.active = false;
-        this.bounce = false;
+        // this.bounce = false;
         this.box.setFromObject(this.paddle);
     }
     
@@ -369,7 +369,10 @@ export class Player
         this.setPos(this.startPos.x, this.startPos.y, this.startPos.z);
         this.boostAmount = 0;
         this.updateBoostMeter();
-        // this.box.setFromObject(this.paddle);
+        this.stunned = false;
+        this.stunTimer.stop();
+        this.paddle.material.emissive.set(this.color);
+        this.light.color.set(this.color);
     }
 
     update()

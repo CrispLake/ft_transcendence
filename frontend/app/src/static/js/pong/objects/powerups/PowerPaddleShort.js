@@ -8,7 +8,7 @@ export class PowerPaddleShort
     constructor(game)
     {
         this.game = game;
-        this.power = G.POWER_PADDLE_LONG;
+        this.power = G.POWER_PADDLE_SHORT;
         this.message = "Shrink paddle";
         
         // ----Arrows----

@@ -26,7 +26,6 @@ export class Game
 		this.gameScene = new THREE.Scene();
 		this.fontLoader = new FontLoader();
 		this.gameCamera = this.createCamera();
-		// RENDERER --> getHTML()
 		this.renderer = this.createRenderer();
 		this.composer = new EffectComposer(this.renderer);
 		this.createArena();
@@ -43,7 +42,6 @@ export class Game
 		this.gameEnded = false;
 		this.update();
 
-		// END GAME FUNCTIO --> CALL WHEN GAME ENDS
 		this.endGame = this.endGame.bind(this);
 		this.update = this.update.bind(this);
 		this.createPlayers = this.createPlayers.bind(this);
@@ -74,8 +72,6 @@ export class Game
 	{
 		const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
 		camera.position.set(-22, 25, 23);
-		// camera.position.set(0, 80, 0);
-		// camera.position.set(0, 30, 0);
 		camera.lookAt(0, 0, 0);
 		return (camera);
 	}
@@ -110,14 +106,17 @@ export class Game
 	{
 		this.players = [];
 		const maxPlayers = this.settings.multiMode ? 4 : 2;
+		this.playerAmount = 0;
 
 		for (let i = 0; i < maxPlayers; i++)
 		{
 			const playerId = "p" + (i + 1);
 			
-      console.log('max players: ', maxPlayers);
 			if (i < this.playerList.length && this.playerList[i].username !== 'AI')
+			{
 				this.players[playerId] = new Player(this, this.gameScene, this.settings, i + 1, this.playerList[i].username, this.playerList[i].id);
+				this.playerAmount++;
+			}
 			else
 				this.players[playerId] = new AI(this, i + 1, "AI" + (i + 1));
 		}
@@ -269,9 +268,6 @@ export class Game
 		if (this.pause)
 			return;
 		this.powerupManager.update();
-		// this.updateCamera();
-
-		// console.log("-----------------------------------------------------------");
 		for (let player in this.players)
 			this.players[player].update();
 		this.updateBallPosition();
@@ -297,10 +293,6 @@ export class Game
 		{
 			if (this.ball.box.intersectsBox(this.players[player].box))
 			{
-				if (this.players[player].bounce == true)
-					continue ;
-
-				// Set player who touched the ball to active, rest to inactive.
 				for (let p in this.players)
 					this.players[p].active = false;
 				this.players[player].setActive();
@@ -310,32 +302,22 @@ export class Game
 				this.players[player].resetBoost();
 				this.ball.bounceFromPlayer(this.players[player]);
 				this.ball.speedUp();
-				this.players[player].bounce = true;
 				this.ball.affectBySpin();
 				this.ball.move();
 				return ;
 			}
-			else
-				this.players[player].bounce = false;
 		}
 		for (let wall in this.arena.walls)
 		{
 			if (this.ball.box.intersectsBox(this.arena.walls[wall].box))
 			{
-				if (this.arena.walls[wall].bounce == true)
-					continue ;
-
 				this.arena.walls[wall].lightEffect();
 				this.ball.reduceSpin();
 				this.ball.bounceFromWall(this.arena.walls[wall]);
-				this.arena.walls[wall].bounce = true;
 				this.ball.affectBySpin();
 				this.ball.move();
 				return ;
 			}
-			else
-				this.arena.walls[wall].bounce = false;
-
 		}
 		if (this.powerupManager.powerup != null)
 		{
@@ -375,14 +357,13 @@ export class Game
 
 	goal()
 	{
-		let goalOffSet = 1;
-		if (this.ball.mesh.position.x <= this.players["p1"].paddle.position.x - goalOffSet)
+		if (this.ball.mesh.position.x <= this.players["p1"].paddle.position.x - G.goalOffset)
 		{
 			this.players["p1"].loseLife(1);
 			this.ui.playerCards[this.players["p1"].name].decreaseLife(1);
 			return (true);
 		}
-		else if (this.ball.mesh.position.x >= this.players["p2"].paddle.position.x + goalOffSet)
+		else if (this.ball.mesh.position.x >= this.players["p2"].paddle.position.x + G.goalOffset)
 		{
 			this.players["p2"].loseLife(1);
 			this.ui.playerCards[this.players["p2"].name].decreaseLife(1);
@@ -390,13 +371,13 @@ export class Game
 		}
 		if (this.settings.multiMode)
 		{
-			if (this.ball.mesh.position.z <= this.players["p3"].paddle.position.z - goalOffSet)
+			if (this.ball.mesh.position.z <= this.players["p3"].paddle.position.z - G.goalOffset)
 			{
 				this.players["p3"].loseLife(1);
 				this.ui.playerCards[this.players["p3"].name].decreaseLife(1);
 				return (true);
 			}
-			else if (this.ball.mesh.position.z >= this.players["p4"].paddle.position.z + goalOffSet)
+			else if (this.ball.mesh.position.z >= this.players["p4"].paddle.position.z + G.goalOffset)
 			{
 				this.players["p4"].loseLife(1);
 				this.ui.playerCards[this.players["p4"].name].decreaseLife(1);
@@ -437,17 +418,10 @@ export class Game
 		for (let player in this.players)
 			this.players[player].reset();
 		this.ball.reset();
-		this.resetBounces();
+		// this.resetBounces();
 		this.sleepMillis(1000);
 	}
 
-	resetBounces()
-	{
-		for (let wall in this.arena.walls)
-			this.arena.walls[wall].bounce = false;
-		for (let player in this.players)
-			this.players[player].bounce = false;
-	}
 
 	sleepMillis(millis)
 	{

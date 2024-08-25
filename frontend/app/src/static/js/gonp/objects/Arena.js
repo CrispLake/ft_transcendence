@@ -16,7 +16,7 @@ export class Arena
 		this.lanes.push(new Lane(G.lanePositions[1]));
 		this.lanes.push(new Lane(G.lanePositions[2]));
 		this.ambientLight = new THREE.AmbientLight(COLOR.WHITE, 0.05);
-		this.powerupsOn = powerupsOn;
+		this.powerupsOn = powerupsOn == "true" ? true : false;
 		this.powerup = 0;
 		this.powerupSpawning = false;
 		this.checkPowerupSpawn();

@@ -22,12 +22,10 @@ export class Game
 		this.resolve = null;
 		this.playerList = params.players;
 		this.settings = new Settings(params.settings);
-		// this.settings = new Settings();
 		this.results = new Results();
 		this.gameScene = new THREE.Scene();
 		this.fontLoader = new FontLoader();
 		this.gameCamera = this.createCamera();
-		// RENDERER --> getHTML()
 		this.renderer = this.createRenderer();
 		this.composer = new EffectComposer(this.renderer);
 		this.createArena();
@@ -44,7 +42,6 @@ export class Game
 		this.gameEnded = false;
 		this.update();
 
-		// END GAME FUNCTIO --> CALL WHEN GAME ENDS
 		this.endGame = this.endGame.bind(this);
 		this.update = this.update.bind(this);
 		this.createPlayers = this.createPlayers.bind(this);
@@ -126,23 +123,6 @@ export class Game
 		if (this.settings.multiMode)
 			this.rotatePlayers();
 	}
-
-	// createPlayers()
-	// {
-	// 	this.players = [];
-	// 	const maxPlayers = this.settings.multiMode ? 4 : 2;
-	// 	for (let i = 0; i < maxPlayers; i++)
-	// 	{
-	// 		const playerId = "p" + (i + 1);
-
-	// 		if (i < this.settings.players)
-	// 			this.players[playerId] = new Player(this, this.gameScene, this.settings, i + 1, "Player" + (i + 1));
-	// 		else
-	// 			this.players[playerId] = new AI(this, i + 1, "AI" + (i + 1));
-	// 	}
-	// 	if (this.settings.multiMode)
-	// 		this.rotatePlayers();
-	// }
 
 	rotatePlayers()
 	{
@@ -288,16 +268,12 @@ export class Game
 		if (this.pause)
 			return;
 		this.powerupManager.update();
-		// this.updateCamera();
-
-		// console.log("-----------------------------------------------------------");
 		for (let player in this.players)
 			this.players[player].update();
 		this.updateBallPosition();
 		this.arena.update();
 		if (this.goal())
 		{
-			// console.log("Goal!----------------------------------------------");
 			if (this.endingConditionFilled())
 			{
 				this.gameEnded = true;
@@ -317,10 +293,6 @@ export class Game
 		{
 			if (this.ball.box.intersectsBox(this.players[player].box))
 			{
-				// if (this.players[player].bounce == true)
-				// 	continue ;
-
-				// Set player who touched the ball to active, rest to inactive.
 				for (let p in this.players)
 					this.players[p].active = false;
 				this.players[player].setActive();
@@ -330,35 +302,22 @@ export class Game
 				this.players[player].resetBoost();
 				this.ball.bounceFromPlayer(this.players[player]);
 				this.ball.speedUp();
-				// this.players[player].bounce = true;
 				this.ball.affectBySpin();
 				this.ball.move();
 				return ;
 			}
-			// else
-			// 	this.players[player].bounce = false;
 		}
 		for (let wall in this.arena.walls)
 		{
 			if (this.ball.box.intersectsBox(this.arena.walls[wall].box))
 			{
-				// if (this.arena.walls[wall].bounce == true)
-				// {
-				// 	console.log("Wall " + wall + " already bounced the ball!");
-				// 	continue ;
-				// }
-
-				// console.log("Wall " + wall + " bouncing the ball!");
 				this.arena.walls[wall].lightEffect();
 				this.ball.reduceSpin();
 				this.ball.bounceFromWall(this.arena.walls[wall]);
-				// this.arena.walls[wall].bounce = true;
 				this.ball.affectBySpin();
 				this.ball.move();
 				return ;
 			}
-			// else
-			// 	this.arena.walls[wall].bounce = false;
 		}
 		if (this.powerupManager.powerup != null)
 		{
@@ -463,13 +422,6 @@ export class Game
 		this.sleepMillis(1000);
 	}
 
-	// resetBounces()
-	// {
-	// 	for (let wall in this.arena.walls)
-	// 		this.arena.walls[wall].bounce = false;
-	// 	for (let player in this.players)
-	// 		this.players[player].bounce = false;
-	// }
 
 	sleepMillis(millis)
 	{

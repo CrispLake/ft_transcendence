@@ -359,7 +359,6 @@ export class Game
 			}
 			// else
 			// 	this.arena.walls[wall].bounce = false;
-
 		}
 		if (this.powerupManager.powerup != null)
 		{

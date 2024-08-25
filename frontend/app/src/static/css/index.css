@@ -123,4 +123,6 @@ body {
   width: 65%;
 }
 
- 
+canvas {
+  height: calc(100% - 8rem) !important;
+}

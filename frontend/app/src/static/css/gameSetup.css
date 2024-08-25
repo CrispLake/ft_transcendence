@@ -18,6 +18,7 @@
     height: 4rem;
 
     margin-top: 2rem;
+    margin-bottom: 4rem;
 
     gap: 1rem;
     display: flex;
@@ -173,6 +174,7 @@ input:checked + .slider:before {
 
 .card-image {
     width: 150px;
+    max-height: 200px;
     margin-top: 2rem;
 
 }
@@ -222,6 +224,7 @@ input:checked + .slider:before {
     background-color: var(--black);
     color: var(--white);
     margin-top: 1rem;
+    margin-bottom: 4rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -251,7 +254,7 @@ input:checked + .slider:before {
     background-color: var(--pink);
 
     display: flex;
-    justify-content: start;
+    justify-content: space-between;
     flex-direction: column;
     align-items: center;
 }
@@ -330,12 +333,6 @@ input:checked + .slider:before {
     border-top: none;
 }
 
-.slider-container {
-
-}
-
-input[type="range"] {
-}
 
 
 #slider-value {
@@ -359,5 +356,66 @@ input[type="range"] {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+}
+
+
+#matchmake-results {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+
+  width: 100%;
+  height: 100%;
+    
+  display: none;
+  justify-content: center;
+  align-items: center;
+
+  color: var(--white);
+  background: var(--black);
+  z-index: 100;
+}
+
+.suggestion-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.suggestion-card {
+  color: var(--black);
+  background: var(--blue) !important;
+}
+
+.suggestion-exit {
+  color: var(--white);
+}
+
+#suggestion-exit-button {
+  z-index: 150 !important;
+}
+
+#suggestion-content {
+  box-shadow: 0 4px 8px 0 rgba(255, 255, 255, 0.2), 0 6px 20px 0 rgba(255, 255, 255, 0.19);
+  width: 100%;
+  height: 100%;
+}
+
+.suggestion-image {
+  margin-top: 2rem;
+  height: 250px;
+  width: auto;
+}
+
+.suggestion-winrate-text {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.suggestion-username {
+  margin: 0 !important;
+  padding: 0 !important;
 }
 

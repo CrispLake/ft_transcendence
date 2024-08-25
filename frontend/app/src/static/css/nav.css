@@ -39,6 +39,7 @@
   height: 100%;
   display: flex;
   align-items: center;
+  text-decoration: none !important;
 }
 
 .nav_button {
@@ -76,7 +77,7 @@
   background-color: var(--orange);
   width: 12rem;
   height: 4rem;
-
+  text-decoration: none;
   transition: 0.3s;
 }
 .icon-holder path {
@@ -86,6 +87,12 @@
   cursor: pointer;
   background-color: var(--black);
 }
+
+.play-button a, p {
+    text-decoration: none !important;
+}
+
+.play-button:hover p,
 .play-button:hover a,
 .play-button:hover path {
   color: var(--white);

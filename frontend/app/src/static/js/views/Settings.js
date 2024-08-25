@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Settings.js                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/25 15:41:42 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/27 10:34:54 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/25 13:00:05 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ export default class extends AbstractView {
         this.params = params;
         this.listeners = true;
 
-        this.usernameURL = 'http://localhost:8000/account/change-username';
-        this.passwordURL = 'http://localhost:8000/account/change-password';
-        this.imgURL = 'http://localhost:8000/account/update';
+        this.usernameURL = 'https://localhost:8000/account/change-username';
+        this.passwordURL = 'https://localhost:8000/account/change-password';
+        this.imgURL = 'https://localhost:8000/account/update';
 
         this.imgHandler = this.imgHandler.bind(this);
         this.UsernameHandler = this.UsernameHandler.bind(this);
@@ -38,14 +38,13 @@ export default class extends AbstractView {
         const file = fileInput.files[0];
         const formData = new FormData();
         formData.append('pfp', file);
-        const response = await axios.put('http://localhost:8000/account/update', formData, {
+        const response = await axios.put('https://localhost:8000/account/update', formData, {
           headers: {
             'Authorization': `Token ${this.GetKey()}`,
             'Content-Type': 'multipart/form-data'
           }
         });
         Notification('notification-div', '<h3>Upload succesful!</h3>', 0);
-        setTimeout(() => location.reload(true), 3000);
       }
       catch(error) {
         console.log('imgHandler error: ', error);

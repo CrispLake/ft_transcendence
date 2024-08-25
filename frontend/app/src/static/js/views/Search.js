@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Search.js                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 08:17:31 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/22 16:15:29 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/25 13:00:05 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ export default class extends AbstractView {
     try {
       const payload = { "to_user": this.resultMemory }
       const response = await axios.post(
-        'http://localhost:8000/friend-request/send',
+        'https://localhost:8000/friend-request/send',
         payload,
         { headers: {'Authorization': `Token ${this.GetKey()}` } }
       );
@@ -61,7 +61,7 @@ export default class extends AbstractView {
   // to this user or if it is already your friend
   async checkFriendAlreadyAdded(search) {
     try {
-      const url = 'http://localhost:8000/friend-request/list'
+      const url = 'https://localhost:8000/friend-request/list'
       const response = await axios.get(
         url,
         { headers: {'Authorization': `Token ${this.GetKey()}` }
@@ -110,7 +110,7 @@ export default class extends AbstractView {
         throw new CustomError('Friend already added', 400);
       }
 
-      const url = `http://localhost:8000/account/${form.value}`
+      const url = `https://localhost:8000/account/${form.value}`
       const response = await axios.get(url, {
         headers: {'Authorization': `Token ${this.GetKey()}`}
       });
@@ -137,13 +137,13 @@ export default class extends AbstractView {
           </div>
         `;
 
+
+        addButton.addEventListener('click', this.addFriendHandler);
+        this.addFriendListener = true;
+
         searchResult.appendChild(profileLink);
         searchResult.appendChild(addButton);
         resultDiv.appendChild(searchResult);
-        if (!this.addFriendListener) {
-          addButton.addEventListener('click', this.addFriendHandler);
-          this.addFriendListener = true;
-        }
       }
       else {
         console.log(error);
@@ -228,7 +228,8 @@ export default class extends AbstractView {
         </div>
 
         <div class="search-right">
-          <img src="//images.ctfassets.net/7oor54l3o0n4/7sxnjP784M2eO8II8UQomO/b026670af1d1d77c4e300381c152f99e/hive-open-community-2.png" class="story-image">
+         <img src="/static/images/people.png" class="story-image">
+
         </div>
       </div>
     `;

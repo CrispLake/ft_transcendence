@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   friends.js                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/12 06:52:04 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/27 16:14:28 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/25 13:00:05 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ window.onclick = (event) => {
 const fetchMyID = async () => {
   try {
     const response = await axios.get(
-      'http://localhost:8000/account', {
+      'https://localhost:8000/account', {
         headers: { 'Authorization': `Token ${view.GetKey()}` }
       });
     return response.data.id;
@@ -70,14 +70,14 @@ const fetchMyID = async () => {
 
 
 // Pull friends data from backend
-// http://localhost:8000/friend-request/list
+// https://localhost:8000/friend-request/list
 const fetchFriendData = async () => {
   try {
     if (!view.Authenticate()) {
       console.log('No token found in loginDataFetch, exit!');
       return;
     }
-    const response = await axios.get('http://localhost:8000/account', {
+    const response = await axios.get('https://localhost:8000/account', {
       headers: { 'Authorization': `Token ${view.GetKey()}` }
     });
     return response.data;
@@ -130,7 +130,7 @@ const fetchRequestData = async () => {
     if (!view.Authenticate()) {
       return null;
     }
-    const response = await axios.get('http://localhost:8000/friend-request/list', {
+    const response = await axios.get('https://localhost:8000/friend-request/list', {
       headers: { 'Authorization': `Token ${view.GetKey()}` }
     });
     return response.data;
@@ -198,27 +198,16 @@ const fillFriendList = () => {
   friendList.innerHTML = friendData;
 }
 
-// Will clear friendlist before updating
-const clearFriendList = () => {
-  const friendListDiv = document.getElementById('friendList');
-  if (!friendListDiv) {
-    return;
-  }
-  friendListDiv.innererHTML = '';
-}
-
-
 // Will send a response to an friend request
 // response = true / false
 const sendResponseToRequest = async (answer, id) => {
   try {
     const payload = { "accept": answer }
     const response = await axios.post(
-      `http://localhost:8000/friend-request/respond/${id}`,
+      `https://localhost:8000/friend-request/respond/${id}`,
       payload,
       { headers: {'Authorization': `Token ${view.GetKey()}`} }
     );
-    clearFriendList();
     loginDataFetch(new Event('friendRequest'));
   }
   catch(error) {

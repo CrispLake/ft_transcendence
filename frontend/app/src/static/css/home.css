@@ -1,5 +1,4 @@
 .home-div {
-  pointer-events: none;
   top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -34,23 +33,25 @@
 .game-text-right {
   pointer-events: all;
   transition: ease-in-out 0.1s;
-  z-index: 0;
+  z-index: 0 !important;
 }
 
-.game-text-left h1 {
+.game-text-left a {
   padding: 0 !important;
   margin: 0 !important;
+  z-index: 0 !important;
   
 }
-.game-text-right h1 {
+.game-text-right a {
   padding: 0 !important;
   margin: 0 !important;
+  z-index: 0 !important;
 }
 
 .game-text-left {
   pointer-events: all;
   transition: ease-in-out 0.1s;
-  z-index: 0;
+  z-index: 0 !important;
 }
 
 .game-text-right:hover {
@@ -77,4 +78,3 @@
 
   clip-path: polygon(74% 0, 76% 0, 29% 100%, 27% 100%);
 }
-

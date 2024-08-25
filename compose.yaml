@@ -13,6 +13,19 @@ networks:
     driver: bridge
 
 services:
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - transcendence_network
+    depends_on:
+      - frontend
+    volumes:
+      - ./nginx/certs:/etc/nginx/certs:ro  # Mount your SSL certificates
+    restart: unless-stopped
+
   transcendence:
     container_name: transcendence
     networks:

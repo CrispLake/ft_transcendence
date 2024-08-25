@@ -3,14 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   Result.js                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/22 13:36:52 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/01 17:43:22 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/25 13:00:05 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import { Notification } from "../notification.js";
 import AbstractView from "./AbstractView.js";
 
 export default class extends AbstractView {
@@ -61,8 +60,11 @@ export default class extends AbstractView {
 
     
     ParseResults() {
+        console.log('players: ', this.players);
+        console.log('results: ', this.results);
         let stats = [];
         this.players.forEach((player, index) => {
+            console.log('with: ', this.results[`player${index+1}Score`], ' --> ', `player${index+1}Score`);
             stats.push({
                 id: player.id,
                 name: player.username,
@@ -71,7 +73,7 @@ export default class extends AbstractView {
         });
         stats.sort((a, b) => a.score - b.score);
         console.log(stats);
-
+        
         if (this.players.length === 2) {
            this.winner = stats[1];  
         }
@@ -93,14 +95,14 @@ export default class extends AbstractView {
 
     getImage(player) {
         let imageTag;
-        if (player.username === "AI") {
+        if (player.name.includes('AI')) {
             imageTag = `<img class="winner-img" src="static/images/ai.avif" alt="User icon"/>`
         }
         else if (player.name.includes('Guest')) {
             imageTag = `<img class="winner-img" src="static/images/guest.png" alt="User icon"/>`
         }
         else {
-            imageTag = `<img class="winner-img" src="http://localhost:8000/account/${player.id}/image" alt="User icon"/>`
+            imageTag = `<img class="winner-img" src="https://localhost:8000/account/${player.id}/image" alt="User icon"/>`
         }
         return imageTag;
     }
@@ -140,12 +142,12 @@ export default class extends AbstractView {
                     <div class="card winner-card-1">
                         ${this.getImage(this.winner1)}
                         <h3 class="font-text winner-username-4p">${this.winner1.name}</h3>
-                        <p class="font-sub winner-score-4p">score: ${this.winner2.score}</p>
+                        <p class="font-sub winner-score-4p">score: ${this.winner1.score}</p>
                     </div>
                     <div class="card winner-card-3">
                         ${this.getImage(this.winner3)}
                         <h3 class="font-text winner-username-4p">${this.winner3.name}</h3>
-                        <p class="font-sub winner-score-4p">score: ${this.winner2.score}</p>
+                        <p class="font-sub winner-score-4p">score: ${this.winner3.score}</p>
                     </div>
                 </div>
                 

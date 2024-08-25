@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Login.js                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/22 13:36:52 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/25 15:43:45 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/25 13:00:05 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ export default class extends AbstractView {
     this.suffle_time = 30;
     this.cycles = 2;
 
-    this.loginURL = 'http://localhost:8000/login';
+    this.loginURL = 'https://localhost:8000/login';
 
     this.LoginHandler = this.LoginHandler.bind(this);
     this.StartScramble = this.StartScramble.bind(this);
@@ -141,7 +141,7 @@ export default class extends AbstractView {
         
         <div class="login-form">
           <h2 class="font-sub login-heading">&lt;Login&gt;</h2>
-          <a class="font-text sign-up" href="/register" data-link>Dont have an account? Sign up!</a>
+          <a class="font-text sign-up" href="/register" data-link>Don't have an account? Sign up!</a>
             <form id="login-form" action="" method="">
             
               <label class="font-text" for="username">username:</label>

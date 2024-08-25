@@ -64,7 +64,6 @@
 .friends-drop {
   background-color: var(--black);
   color: var(--white);
-  position: relative;
 
   width: 12rem;
   height: 550px;
@@ -100,11 +99,13 @@ path {
 }
 
 .friend-list {
-  position: relative;
+  overflow-y: auto;
+  max-height: 435px;
   padding: 0 !important;
-  margin: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 2rem !important;
+
   list-style: none;
-  overflow: hidden;
   gap: 0;
   line-height: 24px !important;
 }
@@ -152,10 +153,12 @@ path {
   width: 100%;
   bottom: 50px;
   font-size: 32px !important;
+  z-index: 5;
   justify-content:space-between;
   align-items: center;
   display: flex;
 
+  text-decoration: none !important;
   color: var(--white);
   background-color: var(--black);
   border-top: solid 1px;
@@ -165,6 +168,7 @@ path {
 .search-bar:hover {
   background-color: var(--black);
   cursor: pointer;
+  color: var(--yellow);
 }
 
 .search-text {
@@ -174,10 +178,12 @@ path {
   transition: ease 0.15s;
   text-decoration: none;
   color: var(--white);
+  z-index: 1;
+  pointer-events: none;
 }
 
-.search-bar:hover a {
-  color: var(--yellow);
+.search-bar:hover p {
+  color: var(--yellow) !important;
 }
 
 .search-icon {

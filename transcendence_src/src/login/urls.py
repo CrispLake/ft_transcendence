@@ -18,4 +18,6 @@ urlpatterns  = [
     path('friend-request/respond/<int:request_id>', views.respond_to_friend_request, name='respond-to-friend-request'),
     path('friend-request/list', views.request_list),
     path('friend-remove/<int:remove_id>', views.remove_friend),
+
+    path('matchmaking', views.matchmaking),
 ]

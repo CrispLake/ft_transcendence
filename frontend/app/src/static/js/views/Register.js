@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Register.js                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/22 13:36:52 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/27 10:48:16 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/25 13:00:05 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ export default class extends AbstractView {
         this.setTitle('Register');
         this.listeners = true;
 
-        this.registerURL = 'http://localhost:8000/register';
+        this.registerURL = 'https://localhost:8000/register';
         this.registerHandler = this.registerHandler.bind(this);
         this.checkForbiddenNames = this.checkForbiddenNames.bind(this);
     }
@@ -70,7 +70,7 @@ export default class extends AbstractView {
                     this.registerURL,
                     payload
                 );
-                Notification('notification-div', `<h3>Register succesfull, redirecting to login!</h3>`, 0);
+                Notification('notification-div', `<h3>Register succesful, redirecting to login!</h3>`, 0);
                 setTimeout(() => {
                     this.Redirect('/login');
                 }, 3000);

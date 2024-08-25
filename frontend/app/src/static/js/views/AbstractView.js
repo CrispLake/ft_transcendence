@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AbstractView.js                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:08:11 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/31 15:40:39 by jmykkane         ###   ########.fr       */
+/*   Updated: 2024/08/25 13:00:05 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ export default class {
   async fetchMyID() {
     try {
       const response = await axios.get(
-        'http://localhost:8000/account', {
+        'https://localhost:8000/account', {
           headers: { 'Authorization': `Token ${this.GetKey()}` }
         });
       const id = response.data.id;
@@ -52,7 +52,7 @@ export default class {
   async fetchMyName() {
     try {
       const response = await axios.get(
-        'http://localhost:8000/account', {
+        'https://localhost:8000/account', {
           headers: { 'Authorization': `Token ${this.GetKey()}` }
         });
       const name = response.data.user.username;
@@ -67,7 +67,7 @@ export default class {
     async Authenticate() {
       try {
           const response = await axios.get(
-              'http://localhost:8000/account',
+              'https://localhost:8000/account',
               { headers: {'Authorization': `Token ${this.GetKey()}`} }
           );
           if (response.status === 401) {

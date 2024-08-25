@@ -6,7 +6,7 @@
 /*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/21 18:11:55 by emajuri          ###   ########.fr       */
+/*   Updated: 2024/08/25 13:00:05 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ export default class extends AbstractView {
       'tournament': 4,
     }
 
-    this.url = 'http://localhost:8000'
+    this.url = 'https://localhost:8000'
   }
 
   // Choose how to play here
@@ -111,12 +111,12 @@ export default class extends AbstractView {
     }
 
     const pong = new Pong();
-    await pong.AddListeners();
+    pong.AddListeners();
 
     const gameResults = await pong.launchGame(this.setupObj, appElem);
     await this.postGameResults(gameResults, this.setupObj.players);
 
-    await pong.RemoveListeners();
+    pong.RemoveListeners();
     const resultsView = new Result();
     await resultsView.getUserInput(gameResults, this.setupObj.players);
   }
@@ -198,7 +198,7 @@ export default class extends AbstractView {
         await this.Pong();
         break;
       case this.modes.tournament: // 3
-        this.url += '/tournament'
+        this.url += '/pong-2p'
         await this.Tournament();
         break;
       case this.modes.gonp:       // 4

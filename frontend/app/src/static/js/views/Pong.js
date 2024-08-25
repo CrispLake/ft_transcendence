@@ -54,7 +54,7 @@ export default class extends AbstractView {
   }
 
   async getUserInput() {
-    await this.WaitForUser();
+      await this.WaitForUser();
   }
 
   // Handles single game with provided settings configuration
@@ -63,7 +63,7 @@ export default class extends AbstractView {
     this.settings = gameSettings;
     console.log('from launch: ', gameSettings);
     this.game = new Game(gameSettings);
-
+  
     appDiv.style.background = 'var(--black)';
     appDiv.innerHTML = '';
     const element = await this.getHtml();

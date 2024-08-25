@@ -6,7 +6,7 @@
 /*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/25 13:00:05 by emajuri          ###   ########.fr       */
+/*   Updated: 2024/08/25 19:56:55 by emajuri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ export default class extends AbstractView {
     this.setupObj = null;
     this.gameMode = null;
     this.results = null;
+
+    this.gamestatus = null;
 
     this.modes = {
       'pong2': 1,
@@ -114,6 +116,9 @@ export default class extends AbstractView {
     pong.AddListeners();
 
     const gameResults = await pong.launchGame(this.setupObj, appElem);
+    if (this.gamestatus === false) {
+        return;
+    }
     await this.postGameResults(gameResults, this.setupObj.players);
 
     pong.RemoveListeners();
@@ -213,5 +218,9 @@ export default class extends AbstractView {
   AddListeners() {
     this.gameDiv = document.getElementById('app');
     this.app();
+  }
+
+  RemoveListeners() {
+    this.gamestatus = false;
   }
 }

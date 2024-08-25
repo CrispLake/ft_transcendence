@@ -49,10 +49,12 @@ export default class extends AbstractView {
   // Handles single game with provided settings configuration
   async launchGame(gameSettings, appDiv) {
     this.game = new Game(gameSettings);
+    appDiv.style.background = 'var(--black)';
     appDiv.innerHTML = '';
     const element = await this.getHtml();
     appDiv.appendChild(element);
     await this.getUserInput();
+    appDiv.style.background = 'var(--white)';
     appDiv.removeChild(element);
 
     return this.game.results;

@@ -585,7 +585,7 @@ export default class extends AbstractView {
                 ?
                     `<div class="slider-container">
                         <label class="font-text powerup-text" for="range-slider">Time:</label>
-                        <input type="range" id="range-slider" min="1" max="5" value="3" step="1">
+                        <input type="range" id="range-slider" min="1" max="5" value="3" "step="1">
                         <span class="font-text powerup-text" id="slider-value">3</span>
                     </div>`
                 :

@@ -26,14 +26,12 @@ export class TextManager {
 	loadFontAndSetup() {
 		this.fontLoader.load(this.fontUrl, (font) => {
 			if (!font) {
-				console.error("Font failed to load.");
 				return;
 			}
 			this.font = font;
 			this.textMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
 			this.createTextMesh(this.text);
 			if (!this.textMesh) {
-				console.error("Text mesh creation failed.");
 				return ;
 			}
 			this.outlinePass = new OutlinePass(
@@ -50,7 +48,6 @@ export class TextManager {
 			
 			this.composer.addPass(this.outlinePass);
 		}, undefined, (error) => {
-			console.error("Error loading font: ", error);
 		});
 	}
 
@@ -70,7 +67,6 @@ export class TextManager {
 			bevelSegments: 3
 		});
 		if (!this.textGeometry) {
-			console.error("Text geometry creation failed.");
 			return;
 		}
 		this.textMesh = new THREE.Mesh(this.textGeometry, this.textMaterial);

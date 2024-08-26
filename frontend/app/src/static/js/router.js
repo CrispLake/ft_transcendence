@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   router.js                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/15 13:31:25 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/01 15:03:11 by jmykkane         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 // Error pages
 import InternalError from './views/500.js';
 import NotFoundError from './views/404.js';
@@ -92,7 +80,6 @@ const router = async () => {
 
   // If there are listeners, remove them
   if (views_memory.length > 0) {
-    console.log('removing listeners');
     for (let i = views_memory.length - 1; i >= 0; i--) {
       const view = views_memory[i];
       view.RemoveListeners();
@@ -101,9 +88,7 @@ const router = async () => {
   }
 
   const parseRoute = (route) => {
-    console.log(route);
     const newRoute = route.split(':8000');
-    console.log(newRoute);
     return newRoute;
   }
 

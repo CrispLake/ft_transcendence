@@ -54,7 +54,6 @@ export class PowerPaddleShort
 
     activate(player)
     {
-        console.log(this.message);
         if (player.paddleLength > G.minPaddleLength)
         {
             let newPaddleLength = player.paddleLength - G.paddleSizeIncrement;

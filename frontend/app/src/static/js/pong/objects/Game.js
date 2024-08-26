@@ -26,7 +26,6 @@ export class Game
 		this.gameScene = new THREE.Scene();
 		this.fontLoader = new FontLoader();
 		this.gameCamera = this.createCamera();
-		// RENDERER --> getHTML()
 		this.renderer = this.createRenderer();
 		this.composer = new EffectComposer(this.renderer);
 		this.createArena();
@@ -43,7 +42,6 @@ export class Game
 		this.gameEnded = false;
 		this.update();
 
-		// END GAME FUNCTIO --> CALL WHEN GAME ENDS
 		this.endGame = this.endGame.bind(this);
 		this.update = this.update.bind(this);
 		this.createPlayers = this.createPlayers.bind(this);
@@ -74,8 +72,6 @@ export class Game
 	{
 		const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
 		camera.position.set(-22, 25, 23);
-		// camera.position.set(0, 80, 0);
-		// camera.position.set(0, 30, 0);
 		camera.lookAt(0, 0, 0);
 		return (camera);
 	}
@@ -115,7 +111,6 @@ export class Game
 		{
 			const playerId = "p" + (i + 1);
 			
-      console.log('max players: ', maxPlayers);
 			if (i < this.playerList.length && this.playerList[i].username !== 'AI')
 				this.players[playerId] = new Player(this, this.gameScene, this.settings, i + 1, this.playerList[i].username, this.playerList[i].id);
 			else
@@ -269,9 +264,7 @@ export class Game
 		if (this.pause)
 			return;
 		this.powerupManager.update();
-		// this.updateCamera();
 
-		// console.log("-----------------------------------------------------------");
 		for (let player in this.players)
 			this.players[player].update();
 		this.updateBallPosition();

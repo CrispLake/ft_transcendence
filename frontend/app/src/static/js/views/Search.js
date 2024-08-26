@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Search.js                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/13 08:17:31 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/25 13:00:05 by emajuri          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 import { CustomError } from "../CustomError.js";
 import AbstractView from "./AbstractView.js";
 
@@ -51,7 +39,6 @@ export default class extends AbstractView {
           <h3 class="font-text response-fail-text">Sending friend request failed succesfully: ${error.response.data.detail}</h3>
         `;
       else {
-        console.log(error);
         this.Redirect('/500');
       }
     }
@@ -73,7 +60,6 @@ export default class extends AbstractView {
       return !!foundUser;
     }
     catch(error) {
-      console.log(error);
       this.Redirect('/500');
     }
   }
@@ -106,7 +92,6 @@ export default class extends AbstractView {
     try {
       const alreadyAdded = await this.checkFriendAlreadyAdded(form.value);
       if (alreadyAdded) {
-        console.log('already added');
         throw new CustomError('Friend already added', 400);
       }
 
@@ -146,13 +131,11 @@ export default class extends AbstractView {
         resultDiv.appendChild(searchResult);
       }
       else {
-        console.log(error);
         this.Redirect('/500');
       }
     }
     catch(error) {
       if (error.status === 400) {
-        console.log('error detected');
         resultDiv.innerHTML = `
           <span class="font-text response-fail-text">Friend request already sent, wait for them to accept.</span>
         `;
@@ -163,7 +146,6 @@ export default class extends AbstractView {
         `;
       }
       else {
-        console.log(error);
         this.Redirect('/500');
       }
     }

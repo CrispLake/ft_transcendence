@@ -29,7 +29,6 @@ export class PowerWavyWalls
 
     activate(player)
     {
-        console.log(this.message);
         this.game.powerupManager.wavyWalls = true;
         this.game.powerupManager.wavyWallsTimer.start();
     }

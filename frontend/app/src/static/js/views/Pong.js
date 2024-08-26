@@ -1,26 +1,8 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Pong.js                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/21 17:24:42 by emajuri          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Game } from '../pong/objects/Game.js';
 import * as KEY from '../pong/keys.js';
 
 import AbstractView from "./AbstractView.js";
 
-// {
-//  params[]
-//  settingsObject
-// }
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -61,7 +43,6 @@ export default class extends AbstractView {
   async launchGame(gameSettings, appDiv) {
     this.players = gameSettings.players;
     this.settings = gameSettings;
-    console.log('from launch: ', gameSettings);
     this.game = new Game(gameSettings);
   
     appDiv.style.background = 'var(--black)';
@@ -164,11 +145,19 @@ export default class extends AbstractView {
   }
 
   onWindowResize( ) {
+
+
     var width = window.innerWidth;
     var height = window.innerHeight;
-    this.game.renderer.setSize(width, height);
-    this.game.camera.aspect = width / height;
-    this.game.camera.updateProjectionMatrix();
+    game.renderer.setSize(width, height);
+    game.gameCamera.aspect = width / height;
+    game.gameCamera.updateProjectionMatrix();
+    game.uiCamera.left = -width / 2;
+    game.uiCamera.right = width / 2;
+    game.uiCamera.top = height / 2;
+    game.uiCamera.bottom = -height / 2;
+    game.uiCamera.updateProjectionMatrix();
+    game.ui.resize();
   }
 
   AddListeners() {

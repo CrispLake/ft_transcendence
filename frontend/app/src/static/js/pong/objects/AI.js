@@ -866,7 +866,6 @@ export class AI
 
     getBallIntersectionPointWithSpin()
     {
-        console.log("getBallIntersectionPointWithSpin");
         this.ballPos.set(this.game.ball.mesh.position.x, this.game.ball.mesh.position.z);
         this.angle = this.game.ball.angle;
         this.angleDelta = this.game.ball.spin;
@@ -1001,19 +1000,12 @@ export class AI
 
     readGame()
     {
-        console.log("----Read Game----------------------------------------------");
-        console.log("Actual ball angle: " + PongMath.radToDeg(this.game.ball.angle).toFixed(2));
         // First we check where the ball intersects
         if (this.considerSpin && this.game.ball.spin != 0)
             this.getBallIntersectionPointWithSpin();
         else
             this.getBallIntersectionPoint();
 
-        if (this.playerNum == 2)
-        {
-            console.log("firstPoint: " + this.firstPoint.pos.x.toFixed(2) + ", " + this.firstPoint.pos.y.toFixed(2));
-            console.log("angle:      " + PongMath.radToDeg(this.angle).toFixed(2));
-        }
         
         // Set the target position for the paddle
         if (this.settings.multiMode && this.ballHitsNeighbouringGoal())
@@ -1292,9 +1284,7 @@ export class AI
         }
 
         // Update the AI input based on the game situation.
-        if (this.shouldAim)
-            this.handleAimInput();
-        else if (this.canSpin)
+        if (this.canSpin)
         {
             this.handleSpinInput();
             this.handleBoostInput();

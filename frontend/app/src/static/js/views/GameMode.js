@@ -48,7 +48,6 @@ export default class extends AbstractView {
           document.getElementById('button-tournament').addEventListener('click', () => this.handleTournament(resolve));
         }
         catch(error) {
-          console.log(error);
           this.Redirect('/500');
         }
       });
@@ -75,7 +74,7 @@ export default class extends AbstractView {
         document.getElementById('button-tournament').removeEventListener('click', this.handleTournament);
       }
       catch(error) {
-        console.log(error);
+      
       }
     }
 

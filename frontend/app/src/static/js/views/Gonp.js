@@ -1,15 +1,8 @@
-
-// import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
-// import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Game } from '../gonp/gonp.js';
 import * as KEY from '../gonp/keys.js';
 
 import AbstractView from "./AbstractView.js";
 
-// {
-//  params[]
-//  settingsObject
-// }
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -21,7 +14,6 @@ export default class extends AbstractView {
     this.players = ["player1", "player2"];
     this.resolve = null;
     this.controls = null;
-    // this.game.update = this.game.update.bind(this);
     this.onWindowResize = this.onWindowResize.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
@@ -95,7 +87,6 @@ export default class extends AbstractView {
         player2.boostPressed = true;
         break;
       case 'b':
-        console.log(player1.pushers, player2.pushers);
         break ;
       }
   }
@@ -154,8 +145,6 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
-    console.log("RENDERER: ");
-    console.log(this.game.renderer)
     return (this.game.renderer.domElement);
   }
 

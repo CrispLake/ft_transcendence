@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Home.js                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/24 10:03:21 by jmykkane         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 import AbstractView from "./AbstractView.js";
 
 export default class extends AbstractView {
@@ -37,7 +25,6 @@ export default class extends AbstractView {
       gonpButton.addEventListener('click', this.ButtonHandler);
     }
     catch(error) {
-      console.log(error);
       this.Redirect('/500');
     }
   }
@@ -51,7 +38,6 @@ export default class extends AbstractView {
       gonpButton.removeEventListener('click', this.ButtonHandler);
     }
     catch(error) {
-      console.log(error);
       this.Redirect('/500');
     }
   }

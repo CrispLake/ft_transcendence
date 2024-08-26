@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Profile.js                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/20 09:22:19 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/25 13:00:05 by emajuri          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 import { Notification } from '../notification.js';
 import AbstractView from './AbstractView.js';
 
@@ -29,7 +17,6 @@ export default class extends AbstractView {
     async fetchProfileData() {
         const token = this.GetKey();
         if (!token) {
-            console.log('No auth token found');
             return;
         }
 
@@ -59,9 +46,7 @@ export default class extends AbstractView {
                 { headers: {'Authorization': `Token ${token}`} }
             );
             this.profileData = response.data;
-            console.log(response.data);
         } catch (error) {
-            console.error('Error fetching profile data', error);
             this.profileData = { error: 'Failed to load profile data' };
         }
     }
@@ -71,7 +56,6 @@ export default class extends AbstractView {
       this.DeleteKey();
       const friendListDiv = document.getElementById('friendList');
       if (friendListDiv) {
-        console.log('emptying friendlist');
         friendList.innerHTML = '';
       }
       Notification('notification-div', '<p class="font-text message">Logout success!</p>', 0);
@@ -117,7 +101,6 @@ export default class extends AbstractView {
 
         const imageUrl = `https://localhost:8000/account/${this.profileData.id}/image`;
         const pfp = `<img class="profile-picture" src="${imageUrl}" alt="Profile picture">`;
-        const matchHistory = `/history/${this.profileData.id}`;
 
         return `
             <div id="notification-div" class="notification-div"><p class="message"></p></div>

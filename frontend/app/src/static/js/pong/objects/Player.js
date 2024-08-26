@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import * as COLOR from '../colors.js';
 import * as G from '../globals.js';
-// import * as SETTINGS from '../gameSetting.js';
 import * as PongMath from '../math.js';
 
 export class Player
@@ -369,7 +368,6 @@ export class Player
         this.setPos(this.startPos.x, this.startPos.y, this.startPos.z);
         this.boostAmount = 0;
         this.updateBoostMeter();
-        // this.box.setFromObject(this.paddle);
     }
 
     update()

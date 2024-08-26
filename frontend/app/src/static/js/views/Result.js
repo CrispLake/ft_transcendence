@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Result.js                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/22 13:36:52 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/25 13:00:05 by emajuri          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 import AbstractView from "./AbstractView.js";
 
 export default class extends AbstractView {
@@ -34,7 +22,6 @@ export default class extends AbstractView {
                 document.getElementById('continueButton').addEventListener('click', () => this.handleContinue(resolve));
             }
             catch(error) {
-                console.log(error);
                 this.Redirect('/500');
             }
         });
@@ -60,11 +47,8 @@ export default class extends AbstractView {
 
     
     ParseResults() {
-        console.log('players: ', this.players);
-        console.log('results: ', this.results);
         let stats = [];
         this.players.forEach((player, index) => {
-            console.log('with: ', this.results[`player${index+1}Score`], ' --> ', `player${index+1}Score`);
             stats.push({
                 id: player.id,
                 name: player.username,
@@ -72,7 +56,6 @@ export default class extends AbstractView {
             });
         });
         stats.sort((a, b) => a.score - b.score);
-        console.log(stats);
         
         if (this.players.length === 2) {
            this.winner = stats[1];  

@@ -38,7 +38,6 @@ export default class extends AbstractView {
             );
             return response.data;
         } catch (error) {
-            console.error('Error fetching games:', error);
             return [];
         }
     }
@@ -66,7 +65,7 @@ export default class extends AbstractView {
                       <div class="font-text gamecard-left">
                         ${
                           game.player1
-                          ? `<a class="player-name" href="/profile/${game.player1}" data-id="${game.player1}">${game.player1Username}</a>`
+                          ? `<a class="player-name" href="/profile/${game.player1}" data-id="${game.player1}" data-link>${game.player1Username}</a>`
                           : '<a class="player-name guest" href="#">Guest</a>'
                         }
                       </div>
@@ -79,7 +78,7 @@ export default class extends AbstractView {
                       <div class="font-text gamecard-right">
                         ${
                           game.player2
-                          ? `<a class="player-name" href="/profile/${game.player2}" data-id="${game.player2}">${game.player2Username}</a>`
+                          ? `<a class="player-name" href="/profile/${game.player2}" data-id="${game.player2}" data-link>${game.player2Username}</a>`
                           : '<a class="player-name guest" href="#">Guest</a>'
                         }
                       </div>
@@ -154,7 +153,6 @@ export default class extends AbstractView {
                 tabs[i].addEventListener('click', this.CategoryHandler);
             }
         } else {
-            console.log('505 - Internal server error - could not find tabs');
             this.Redirect('/500');
         }
     }
@@ -167,7 +165,6 @@ export default class extends AbstractView {
                 tabs[i].removeEventListener('click', this.CategoryHandler);
             }
         } else {
-            console.log('505 - Internal server error - could not find tabs');
             this.Redirect('/500');
         }
     }

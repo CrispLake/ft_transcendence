@@ -3,20 +3,14 @@ import * as THREE from 'three';
 import * as G from './globals.js';
 import View from '../views/Gonp.js'
 
-// let player1 = View.game.player1;
-// let player2 = View.game.player2;
-// let scene = View.game.scene;
-// let arena = View.game.arena;
 
 export function setPushersColliding(colliding)
 {
 	for (let i = 0; i < View.game.player1.pushers.length; i++) {
 		View.game.player1.pushers[i].colliding = colliding;
-		// View.game.player1.pushers[i].collisionNumber = -1;
 	}
 	for (let i = 0; i < View.game.player2.pushers.length; i++) {
 		View.game.player2.pushers[i].colliding = colliding;
-		// View.game.player2.pushers[i].collisionNumber = -1;
 	}
 }
 
@@ -52,17 +46,14 @@ export function checkPowerupCollision() {
 }
 
 function checkPushersCollision() {
-	// let collisionNumber = 0;
 
 	for (let i = 0; i < View.game.player1.pushers.length; i++) {
 		const pusher1 = View.game.player1.pushers[i];
 		const box1 = pusher1.box;
-		// pusher1.collisionNumber = -1;
 
 		for (let j = 0; j < View.game.player2.pushers.length; j++) {
 			const pusher2 = View.game.player2.pushers[j];
 			const box2 = pusher2.box;
-			// pusher2.collisionNumber = -1;
 
 			if (box1.intersectsBox(box2)) {
 				const overlapX = Math.min(box1.max.x, box2.max.x) - Math.max(box1.min.x, box2.min.x);
@@ -79,9 +70,6 @@ function checkPushersCollision() {
 				pusher2.colliding = true;
 				pusher1.updateBoundingBox();
 				pusher2.updateBoundingBox();
-				// pusher1.collisionNumber = collisionNumber;
-				// pusher2.collisionNumber = collisionNumber;
-				// collisionNumber++;
 				continue ;
 			}
 		}
@@ -93,13 +81,11 @@ export function pushersLogic() {
 	checkPushersCollision();
 	checkPowerupCollision();
 	movePushers();
-	// moveCollisionGroups();
 }
 
 export function movePushers() {
 	let pusher;
 
-	// console.log(View.game.player1.pushers)
 	for (let i = 0; i < View.game.player1.pushers.length; i++) {
 		pusher = View.game.player1.pushers[i];
 		View.game.player1.movePusher(pusher);
@@ -152,55 +138,3 @@ export function updateBoost() {
 	}
 }
 
-// function moveCollisionGroups() {
-// 	let velocity = [];
-// 	let mass = [];
-// 	let momentum = [];
-// 	let collisionNumber = -1;
-// 	let i;
-
-
-// 	for (i = 0; i < View.game.player1.pushers.length; i++) {
-// 		collisionNumber = View.game.player1.pushers[i].collisionNumber;
-// 		if (collisionNumber >= 0) {
-// 			if (velocity[collisionNumber] === undefined) {
-// 				velocity[collisionNumber] = 0;
-// 			}
-// 			velocity[collisionNumber] -= View.game.player1.pushers[i].speed;
-// 			if (mass[collisionNumber] === undefined) {
-// 				mass[collisionNumber] = 0;
-// 			}
-// 			mass[collisionNumber] -= View.game.player1.pushers[i].size;
-// 		}
-// 	}
-// 	for (i = 0; i < View.game.player2.pushers.length; i++) {
-// 		collisionNumber = View.game.player2.pushers[i].collisionNumber;
-// 		if (collisionNumber >= 0) {
-// 			if (velocity[collisionNumber] === undefined) {
-// 				velocity[collisionNumber] = 0;
-// 			}
-// 			velocity[collisionNumber] += View.game.player2.pushers[i].speed;
-// 			if (mass[collisionNumber] === undefined) {
-// 				mass[collisionNumber] = 0;
-// 			}
-// 			mass[collisionNumber] += View.game.player2.pushers[i].size;
-// 		}
-// 	}
-// 	for (i = 0; i < mass.length; i++) {
-// 		momentum[i] = velocity[i];
-// 	}
-// 	for (i = 0; i < velocity.length; i++) {
-// 		momentum[i] -= mass[i] * (momentum[i] > 0 ? 1 : -1);
-// 	}
-// 	for (i = 0; i < View.game.player1.pushers.length; i++) {
-// 		if (View.game.player1.pushers[i].collisionNumber >= 0) {
-// 			View.game.player1.pushers[i].moveX(momentum[View.game.player1.pushers[i].collisionNumber]);
-// 		}
-// 	}
-// 	for (i = 0; i < View.game.player2.pushers.length; i++) {
-// 		if (View.game.player2.pushers[i].collisionNumber >= 0) {
-// 			View.game.player2.pushers[i].moveX(momentum[View.game.player2.pushers[i].collisionNumber]);
-// 		}
-// 	}
-// 	// console.log(velocity, mass, momentum);
-// }

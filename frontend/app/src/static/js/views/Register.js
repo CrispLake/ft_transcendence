@@ -70,12 +70,12 @@ export default class extends AbstractView {
                     this.registerURL,
                     payload
                 );
-                Notification('notification-div', `<h3>Register succesful, redirecting to login!</h3>`, 0);
+                Notification('notification-div', `<h3 class="font-text">Register succesful, redirecting to login!</h3>`, 0);
                 setTimeout(() => {
                     this.Redirect('/login');
                 }, 3000);
             } catch (error) {
-                Notification('notification-div', `<h3>${error.response.data.user.username}</h3>`, 1);
+                Notification('notification-div', `<h3 class="font-text" >${error.response.data.user.username}</h3>`, 1);
             }
         }
 
@@ -85,7 +85,6 @@ export default class extends AbstractView {
         if (registerForm) {
             registerForm.addEventListener('submit', this.registerHandler);
         } else {
-            console.log('500 - Internal server error - could not find submit buttons');
             this.Redirect('/500');
         }
     }
@@ -96,7 +95,6 @@ export default class extends AbstractView {
         if (registerForm) {
             registerForm.removeEventListener('submit', this.registerHandler);
         } else {
-            console.log('500 - Internal server error - could not find submit buttons');
             this.Redirect('/500');
         }
     }

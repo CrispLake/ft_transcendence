@@ -39,20 +39,16 @@ export class UserInterface
 
         if (this.card.lives * (this.card.lifeBoxHeight * G.lifeSizeRatio) + ((this.card.lives - 1) * this.card.lifeBoxHeight * G.lifeSizeRatio * G.lifeGapWidthRatio) <= this.card.lifeBoxWidth)
         {
-            console.log("Fits inside the box.");
             this.card.lifeHeight = this.card.lifeBoxHeight;
             this.card.lifeWidth = this.card.lifeHeight * G.lifeSizeRatio;
         }
         else
         {
-            console.log("Too wide!");
             this.card.lifeWidth = this.card.lifeBoxWidth / (this.card.lives + (this.card.lives * G.lifeGapWidthRatio) - G.lifeGapWidthRatio);
             this.card.lifeHeight = this.card.lifeWidth / G.lifeSizeRatio;
         }
 
         this.card.lifeGap = this.card.lifeWidth * G.lifeGapWidthRatio;
-
-        console.log(this.card);
     }
 
     addPlayerCard(player)

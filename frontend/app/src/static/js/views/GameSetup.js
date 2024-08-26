@@ -58,7 +58,6 @@ export default class extends AbstractView {
                 })
             }
             catch(error) {
-                console.log(error);
                 this.Redirect('/500')
             }
         });
@@ -116,12 +115,9 @@ export default class extends AbstractView {
                 'https://localhost:8000/account',
                 { headers: {'Authorization': `Token ${this.GetKey()}`} }
             );
-            console.log("Response: " + response.data);
             const wins = response.data.user.wins;
             const losses = response.data.user.losses;
             const total = wins + losses;
-
-            console.log('wins: ', wins, 'losses: ', losses);
 
             let winrate;
             if (total === 0 || total === NaN) {
@@ -141,10 +137,8 @@ export default class extends AbstractView {
             this.playerCounter++;
             this.renderEntries();
         } catch (error) {
-            console.error('Error fetching profile data', error);
             this.addGuestEntryHandler();
         }
-        console.log(response)
     }
 
 
@@ -152,14 +146,6 @@ export default class extends AbstractView {
         event.preventDefault();
 
         if (this.MaxPlayerLimitReached()) {
-            console.log('Max player limit reached');
-            return;
-        }
-
-        // 2 == GONP in gamemode list
-        // and gonp does not have AI
-        if (this.gameMode == 2) {
-            Notification('notification-div', '<h3>AI does not know how to play GONP</h3>', 1);
             return;
         }
 
@@ -169,7 +155,6 @@ export default class extends AbstractView {
             id: this.entryIdCounter++,
             title: `AI`,
             image: `<img class="card-image" src="static/images/ai.avif" alt="AI icon" >`,
-            // TODO: take winrate from form
             winrate: 50
         };
         this.playerCounter++;
@@ -183,7 +168,6 @@ export default class extends AbstractView {
         }
 
         if (this.MaxPlayerLimitReached()) {
-            console.log('Max player limit reached');
             return;
         }
 
@@ -311,7 +295,6 @@ export default class extends AbstractView {
 
         if (this.MaxPlayerLimitReached()) {
             this.HideLoginPopUp();
-            console.log('Max player limit reached');
             return;
         }
 
@@ -344,10 +327,8 @@ export default class extends AbstractView {
     PowerUpToggle(event) {
         event.preventDefault();
 
-        console.log('in toggle');
         const PowerUpToggle = document.getElementById('toggle-content');
         if (!PowerUpToggle) {
-            console.log('505 - Internal server error - could not find toggle');
             this.Redirect('/500');
         }
         if (this.powerups === false) {
@@ -367,11 +348,9 @@ export default class extends AbstractView {
         const sliderValue = document.getElementById('slider-value');
 
         try {
-            console.log('hello from: ', rangeSlider.value)
             sliderValue.textContent = rangeSlider.value;
             this.ai_difficulty = rangeSlider.value;
         } catch (error) {
-            console.log('505 - Internal server error - could not find slider');
             this.Redirect('/500');
         }
 
@@ -384,7 +363,6 @@ export default class extends AbstractView {
         const carousel = document.getElementById("carousel-carousel");
         if (!carousel) { return; }
         this.currentDeg = this.currentDeg - 60;
-        console.log('click logged and deg: ', this.currentDeg);
         carousel.style.transform = `rotateY(${this.currentDeg}deg)`;
     }
 
@@ -400,8 +378,7 @@ export default class extends AbstractView {
 
     HideSuggestion(event) {
       event.preventDefault();
-      console.log('hello from hide');  
-    const button = document.getElementById('matchmake-results');
+      const button = document.getElementById('matchmake-results');
       if (!button) return;
       button.style.display = 'none';
     }
@@ -429,7 +406,6 @@ export default class extends AbstractView {
         const elem = document.getElementById('matchmake-results');
         
         if (!content || !elem) {
-          console.log('500 -- elem not found');
           this.Redirect('/500');
           return;
         }
@@ -447,7 +423,6 @@ export default class extends AbstractView {
         `;
       }
       catch(error) {
-        console.log(error)
         Notification('notification-div', `<h3 class="font-text">${error.response.data.detail}</h3>`, 1);
       }
     }
@@ -511,7 +486,6 @@ export default class extends AbstractView {
                 rangeSlider.removeEventListener('input', this.AiDifficultySlider);
             }
         } catch (error) {
-            console.log('505 - Internal server error - could not find LoginSubmitButton');
             this.Redirect('/500');
         }
     }

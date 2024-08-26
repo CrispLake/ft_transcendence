@@ -54,7 +54,6 @@ export class PowerPaddleLong
 
     activate(player)
     {
-        console.log(this.message);
         if (player.paddleLength < G.maxPaddleLength)
         {
             let newPaddleLength = player.paddleLength + G.paddleSizeIncrement;

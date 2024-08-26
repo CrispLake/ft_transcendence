@@ -1045,7 +1045,6 @@ export class AI
 
     readGame()
     {
-        // console.log(this.playerNum +": ----Read Game----------------------------------------------");
         // First we check where the ball intersects
         if (this.considerSpin && this.game.ball.spin != 0)
             this.getBallIntersectionPointWithSpin();
@@ -1507,9 +1506,7 @@ export class AI
         }
 
         // Update the AI input based on the game situation.
-        if (this.shouldAim)
-            this.handleAimInput();
-        else if (this.canSpin)
+        if (this.canSpin)
         {
             this.handleSpinInput();
             this.handleBoostInput();

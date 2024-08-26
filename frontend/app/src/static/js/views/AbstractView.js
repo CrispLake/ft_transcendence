@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   AbstractView.js                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/16 07:08:11 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/25 13:00:05 by emajuri          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 // NOTE: Each view that has event listeners will need their own version of
 // AddListeners() function and a list of those listeners
 
@@ -44,7 +32,6 @@ export default class {
       return id;
     }
     catch(error) {
-      console.log(error);
       return -1;
     }
   }
@@ -59,7 +46,6 @@ export default class {
       return name;
     }
     catch(error) {
-      console.log(error);
       return -1;
     }
   }
@@ -72,13 +58,10 @@ export default class {
           );
           if (response.status === 401) {
               this.DeleteKey();
-              console.error('Incorrect token');
               return false;
           }
-          console.log('Correct token');
           return true;
       } catch (error) {
-          console.error('Incorrect token');
           return false;
       }
     }

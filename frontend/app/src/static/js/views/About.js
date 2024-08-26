@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   About.js                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/20 09:22:19 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/25 21:47:22 by emajuri          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 import AbstractView from "./AbstractView.js";
 
 export default class extends AbstractView {
@@ -68,7 +56,7 @@ export default class extends AbstractView {
           </div>
 
           <div class="authors-row">
-              <span class="author">nona</span> <span>\u00A0-\u00A0</span> <span class="author">pong</span>
+            <span class="author">nona</span> <span>\u00A0-\u00A0</span> <span class="author">pong & AI</span>
           </div>
 
           <div class="authors-row">

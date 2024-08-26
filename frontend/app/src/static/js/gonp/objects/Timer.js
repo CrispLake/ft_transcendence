@@ -1,4 +1,3 @@
-
 export class Timer {
 	constructor() {
 		this.startTime = null;

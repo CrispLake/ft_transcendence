@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import * as COLOR from '../colors.js';
 import * as G from '../globals.js';
-// import * as SETTINGS from '../gameSetting.js';
 import * as PongMath from '../math.js';
 
 export class Player

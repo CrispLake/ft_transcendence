@@ -13,17 +13,8 @@ import { Arena } from './objects/Arena.js';
 import { TextManager } from './objects/TextManager.js'
 import { Timer } from './objects/Timer.js'
 
-import { playersLogic, pushersLogic } from './logicFunctions.js'
-// import { onWindowResize, handleKeyUp, handleKeyDown } from './events.js'
-
 /*---- INITIALIZE ------------------------------------------------------------*/
 
-
-// document.addEventListener('keydown', handleKeyDown);
-// document.addEventListener('keyup', handleKeyUp);
-// window.addEventListener( 'resize', onWindowResize, false );
-
-// update();
 
 
 export class Game {
@@ -120,11 +111,9 @@ export class Game {
 	{
 		for (let i = 0; i < this.player1.pushers.length; i++) {
 			this.player1.pushers[i].colliding = colliding;
-			// this.player1.pushers[i].collisionNumber = -1;
 		}
 		for (let i = 0; i < this.player2.pushers.length; i++) {
 			this.player2.pushers[i].colliding = colliding;
-			// this.player2.pushers[i].collisionNumber = -1;
 		}
 	}
 	
@@ -196,65 +185,12 @@ export class Game {
 		}
 	}
 	
-	// function moveCollisionGroups() {
-	// 	let velocity = [];
-	// 	let mass = [];
-	// 	let momentum = [];
-	// 	let collisionNumber = -1;
-	// 	let i;
-	
-	
-	// 	for (i = 0; i < this.player1.pushers.length; i++) {
-	// 		collisionNumber = this.player1.pushers[i].collisionNumber;
-	// 		if (collisionNumber >= 0) {
-	// 			if (velocity[collisionNumber] === undefined) {
-	// 				velocity[collisionNumber] = 0;
-	// 			}
-	// 			velocity[collisionNumber] -= this.player1.pushers[i].speed;
-	// 			if (mass[collisionNumber] === undefined) {
-	// 				mass[collisionNumber] = 0;
-	// 			}
-	// 			mass[collisionNumber] -= this.player1.pushers[i].size;
-	// 		}
-	// 	}
-	// 	for (i = 0; i < this.player2.pushers.length; i++) {
-	// 		collisionNumber = this.player2.pushers[i].collisionNumber;
-	// 		if (collisionNumber >= 0) {
-	// 			if (velocity[collisionNumber] === undefined) {
-	// 				velocity[collisionNumber] = 0;
-	// 			}
-	// 			velocity[collisionNumber] += this.player2.pushers[i].speed;
-	// 			if (mass[collisionNumber] === undefined) {
-	// 				mass[collisionNumber] = 0;
-	// 			}
-	// 			mass[collisionNumber] += this.player2.pushers[i].size;
-	// 		}
-	// 	}
-	// 	for (i = 0; i < mass.length; i++) {
-	// 		momentum[i] = velocity[i];
-	// 	}
-	// 	for (i = 0; i < velocity.length; i++) {
-	// 		momentum[i] -= mass[i] * (momentum[i] > 0 ? 1 : -1);
-	// 	}
-	// 	for (i = 0; i < this.player1.pushers.length; i++) {
-	// 		if (this.player1.pushers[i].collisionNumber >= 0) {
-	// 			this.player1.pushers[i].moveX(momentum[this.player1.pushers[i].collisionNumber]);
-	// 		}
-	// 	}
-	// 	for (i = 0; i < this.player2.pushers.length; i++) {
-	// 		if (this.player2.pushers[i].collisionNumber >= 0) {
-	// 			this.player2.pushers[i].moveX(momentum[this.player2.pushers[i].collisionNumber]);
-	// 		}
-	// 	}
-	// 	// console.log(velocity, mass, momentum);
-	// }
 	
 	pushersLogic() {
 		this.setPushersColliding(false);
 		this.checkPowerupCollision();
 		this.checkPushersCollision();
 		this.movePushers();
-		// moveCollisionGroups();
 	}
 	
 	movePushers() {
@@ -311,5 +247,4 @@ export class Game {
 			this.player2.resetBoost();
 		}
 	}
-	
 }

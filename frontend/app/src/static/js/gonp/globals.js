@@ -1,5 +1,3 @@
-import * as PongMath from './math.js';
-
 export let powerups = true;
 export let time = 3;
 

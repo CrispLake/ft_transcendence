@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   notification.js                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/27 12:45:45 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/07/25 15:45:43 by jmykkane         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 // Using this requires inner div with id of 'notification-div'
 export const Notification = async (elementID, content, type) => {
   // mode following C style return codes
@@ -19,7 +7,6 @@ export const Notification = async (elementID, content, type) => {
   // Find element --> exit if cannot
   const element = document.getElementById(elementID);
   if (!element) {
-    console.log(`ERROR - Cannot find element with ID: ${elementID}`);
     return;
   }
 

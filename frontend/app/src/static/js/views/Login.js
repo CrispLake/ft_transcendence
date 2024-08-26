@@ -1,20 +1,7 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Login.js                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/22 13:36:52 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/25 13:00:05 by emajuri          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 // loginEvent:
 // Will be triggered after succesfull login
 // Will trigger functions like fetching friend list
 // Will contain { detail: [RESPONSE STATUS] }
-
 
 import { Notification } from "../notification.js";
 import AbstractView from "./AbstractView.js";
@@ -101,7 +88,6 @@ export default class extends AbstractView {
       }
       this.Redirect(`/${event.target.href}`);
     } catch(error) {
-        console.log('Invalid credentials!!');
         Notification('notification-div', '<p class="font-text message">Invalid credentials!</p>', 1);
     }
   }
@@ -115,7 +101,6 @@ export default class extends AbstractView {
       submitButton.addEventListener('mouseenter', this.StartScramble);
       submitButton.addEventListener('mouseleave', this.StopScramble);
     } else {
-      console.log('505 - Internal server error - could not find LoginSubmitButton');
       this.Redirect('/500');
     }
   }
@@ -130,7 +115,6 @@ export default class extends AbstractView {
       submitButton.removeEventListener('mouseenter', this.StartScramble);
       submitButton.removeEventListener('mouseleave', this.StopScramble);
     } else {
-      console.log('505 - Internal server error - could not find LoginSubmitButton');
       this.Redirect('/500');
     }
   }
@@ -162,5 +146,4 @@ export default class extends AbstractView {
       </div>
     `
   }
-  
 }

@@ -1,38 +1,17 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   friends.js                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/12 06:52:04 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/25 13:00:05 by emajuri          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 import AbstractView from "./views/AbstractView.js";
 const view = new AbstractView();
 
 let friendData = new String('');
 let requestData = new Array();
 
-// Function for <button> tag to open friends panel
 export const toggleView = () => {
-  // if (!localStorage.getItem('auth_token')) {
-  //   console.log('not logged in');
-  //   // TODO: create notification to log in
-  //   return;
-  // }
-
   document.getElementById('dropDownButton').classList.toggle('button-up');
   document.getElementById('dropDownDiv').classList.toggle('show');
 }
 
 // Event handler for closing friends panel when clicked else where
 window.onclick = (event) => {
-  console.log(event.target);
   if (event.target.matches('.friends-drop')) {
-    console.log('returning');
     return;
   }
 
@@ -63,7 +42,6 @@ const fetchMyID = async () => {
     return response.data.id;
   }
   catch(error) {
-    console.log(error);
     return -1;
   }
 }
@@ -74,7 +52,6 @@ const fetchMyID = async () => {
 const fetchFriendData = async () => {
   try {
     if (!view.Authenticate()) {
-      console.log('No token found in loginDataFetch, exit!');
       return;
     }
     const response = await axios.get('https://localhost:8000/account', {
@@ -83,7 +60,6 @@ const fetchFriendData = async () => {
     return response.data;
   }
   catch(error) {
-    console.log('Error fetching friendlist.');
     return { error: 'Error fetching friendlist.' };
   }
 }
@@ -93,7 +69,7 @@ const fetchFriendData = async () => {
 const parseFriendData = (data) => {
   let res = '';
   data.friends.forEach(friend => {
-    res += `<li class="friend"><div class="status-div ${friend.online_status}"></div><a href="/profile/${friend.user.id}">${friend.user.username}</a></li>`;
+    res += `<li class="friend"><div class="status-div ${friend.online_status}"></div><a href="/profile/${friend.user.id}" data-link>${friend.user.username}</a></li>`;
   });
   return res;
 }
@@ -211,7 +187,6 @@ const sendResponseToRequest = async (answer, id) => {
     loginDataFetch(new Event('friendRequest'));
   }
   catch(error) {
-    console.log(error);
     view.Redirect('/500');
   }
 }

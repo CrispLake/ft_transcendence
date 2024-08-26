@@ -13,7 +13,6 @@ export class PowerupManager
         this.game = game;
         this.scene = game.gameScene;
         this.powerups = [];
-        console.log('in powerup manager: ', this.game.settings);
         if (this.game.settings.powerups == true)
         {
             this.powerups.push(new PowerPaddleLong(this.game));

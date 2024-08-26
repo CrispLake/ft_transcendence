@@ -8,7 +8,6 @@ export class Arena4Player
 {
     constructor(scene, fontLoader, renderer, composer, camera)
     {
-        console.log("Creating Multiplayer Arena...");
         this.scene = scene;
         this.fontLoader = fontLoader;
         this.renderer = renderer;

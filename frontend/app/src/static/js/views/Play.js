@@ -1,18 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Play.js                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/25 19:56:55 by emajuri          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-import { Settings } from '../pong/objects/Settings.js';
 import AbstractView from './AbstractView.js';
-
 import Tournament from './Tournament.js';
 import GameSetup from './GameSetup.js';
 import GameMode from './GameMode.js';
@@ -80,7 +66,6 @@ export default class extends AbstractView {
   async postGameResults(gameResults, players) {
     // check if any player is logged in. if not then no posting needs to be done
     if (!players.some(obj => obj.id !== null && obj.id !== 1)) {
-        console.log("no posting done for game results");
         return;
     }
 
@@ -95,7 +80,7 @@ export default class extends AbstractView {
         )
     }
     catch(error) {
-        console.log(error.response.data.detail);
+
     }
   }
   // Launch 2p Gonp
@@ -187,7 +172,6 @@ export default class extends AbstractView {
     tournamentObject.AddListeners();
     tournamentObject.displayTournament();
     await tournamentObject.getUserInput();
-    // tournament also posts it's results as pong will 
     tournamentObject.RemoveListeners();
     this.Redirect('/');
   }

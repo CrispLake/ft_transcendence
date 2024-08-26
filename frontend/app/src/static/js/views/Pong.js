@@ -1,26 +1,9 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Pong.js                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/16 07:10:36 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/25 22:04:26 by emajuri          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Game } from '../pong/objects/Game.js';
+import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
 import * as KEY from '../pong/keys.js';
 
 import AbstractView from "./AbstractView.js";
 
-// {
-//  params[]
-//  settingsObject
-// }
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -32,6 +15,7 @@ export default class extends AbstractView {
     this.players = null;
     this.resolve = null;
     this.controls = null;
+    RectAreaLightUniformsLib.init();
 
     this.onWindowResize = this.onWindowResize.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
@@ -61,7 +45,6 @@ export default class extends AbstractView {
   async launchGame(gameSettings, appDiv) {
     this.players = gameSettings.players;
     this.settings = gameSettings;
-    console.log('from launch: ', gameSettings);
     this.game = new Game(gameSettings);
   
     appDiv.style.background = 'var(--black)';

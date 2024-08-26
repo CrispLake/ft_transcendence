@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Settings.js                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emajuri <emajuri@student.hive.fi>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/25 15:41:42 by jmykkane          #+#    #+#             */
-/*   Updated: 2024/08/25 13:00:05 by emajuri          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 import { Notification } from '../notification.js';
 import AbstractView from './AbstractView.js';
 
@@ -47,7 +35,6 @@ export default class extends AbstractView {
         Notification('notification-div', '<h3 class="font-text">Upload succesful!</h3>', 0);
       }
       catch(error) {
-        console.log('imgHandler error: ', error);
         Notification('notification-div', `<h3 class="font-text">No file chosen</h3>`, 1);
       }
     }
@@ -79,7 +66,6 @@ export default class extends AbstractView {
 
     async PasswordHandler(event) {
         event.preventDefault();
-        console.log('Changing password');
 
         const formElement = await document.getElementById('change-password-form');
         if (!formElement) {
@@ -101,7 +87,6 @@ export default class extends AbstractView {
             this.CreateKey(response.data.token);
             Notification('notification-div', '<h3 class="font-text">Password changed</h3>', 0);
         } catch (error) {
-            console.error('Error changing password', error.response);
             Notification('notification-div', `<h3 class="font-text">${error.response.data.username}</h3>`, 1);
         }
     }
@@ -116,7 +101,6 @@ export default class extends AbstractView {
             passwordForm.addEventListener('submit', this.PasswordHandler);
             imgForm.addEventListener('submit', this.imgHandler);
         } else {
-            console.log('505 - Internal server error - could not find submit buttons');
             this.Redirect('/500');
         }
     }
@@ -131,7 +115,6 @@ export default class extends AbstractView {
             passwordForm.removeEventListener('submit', this.PasswordHandler);
             imgForm.removeEventListener('submit', this.imgHandler);
         } else {
-            console.log('505 - Internal server error - could not find submit buttons');
             this.Redirect('/500');
         }
     }

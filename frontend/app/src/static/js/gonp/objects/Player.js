@@ -122,9 +122,6 @@ export class Player {
 				this.feedPusher(pusher, secondPusher)
 				const overlapX = Math.min(pusher.box.max.x, secondPusher.box.max.x) - Math.max(pusher.box.min.x, secondPusher.box.min.x);
 				let mtv = new THREE.Vector3(overlapX, 0, 0);
-				// pusher.moveX(-((mtv.x - 0.005) * this.sign));
-				// pusher.updateBoundingBox();
-				// pusher.collisionNumber = secondPusher.collisionNumber;
 				return ;
 			}
 		}
@@ -144,7 +141,6 @@ export class Player {
 				pusher.downSize(downSizeAmount);
 			}
 		}
-		// pusher.moveX((pusher.speed * speedModifier) * this.sign);
 
 		pusher.mesh.position.x += (pusher.speed * speedModifier) * this.sign;
 		pusher.setFurtestX();

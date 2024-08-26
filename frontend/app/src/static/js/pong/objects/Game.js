@@ -219,7 +219,6 @@ export class Game
 		this.gameClock.start();
 		this.countDown = 3;
 		this.createCountDownText(this.countDown.toString());
-		console.log(this.countDown);
 	}
 	
 	startAnimation()

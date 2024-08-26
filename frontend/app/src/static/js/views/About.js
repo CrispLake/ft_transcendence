@@ -56,7 +56,7 @@ export default class extends AbstractView {
           </div>
 
           <div class="authors-row">
-              <span class="author">nona</span> <span>\u00A0-\u00A0</span> <span class="author">pong</span>
+            <span class="author">nona</span> <span>\u00A0-\u00A0</span> <span class="author">pong & AI</span>
           </div>
 
           <div class="authors-row">

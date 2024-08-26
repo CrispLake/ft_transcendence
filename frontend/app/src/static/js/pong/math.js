@@ -93,10 +93,10 @@ export function arcLength(radius, angle)
 
 export function quadraticFormulaPositive(a, b, c)
 {
-    return ((-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a));
+    return ((-b + Math.sqrt((b * b) - (4 * a * c))) / (2 * a));
 }
 
 export function quadraticFormulaNegative(a, b, c)
 {
-    return ((-b - Math.sqrt(b * b - 4 * a * c)) / (2 * a));
+    return ((-b - Math.sqrt((b * b) - (4 * a * c))) / (2 * a));
 }

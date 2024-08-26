@@ -52,17 +52,16 @@ export default class extends AbstractView {
           </div>
 
           <div class="authors-row">
-              <span class="author">emajuri</span> <span>\u00A0-\u00A0</span> <span class="author">backend</span>
+              <span class="author">emajuri</span> <span>\u00A0-\u00A0</span> <span class="author">backend & frontend</span>
           </div>
 
           <div class="authors-row">
-              <span class="author">nona</span> <span>\u00A0-\u00A0</span> <span class="author">graphics</span>
+              <span class="author">nona</span> <span>\u00A0-\u00A0</span> <span class="author">pong</span>
           </div>
 
           <div class="authors-row">
-              <span class="author">ekinnune</span> <span>\u00A0-\u00A0</span> <span class="author">gameplay</span>
+              <span class="author">ekinnune</span> <span>\u00A0-\u00A0</span> <span class="author">gonp</span>
           </div>
-          
         </div>
 
       </div>

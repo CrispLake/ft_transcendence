@@ -36,17 +36,15 @@ def pong_2p(request, player_id=None):
         player1_id = request.data.get('player1')
         player2_id = request.data.get('player2')
 
-        if player1_id is None:
-            return Response({'detail': 'Player ID is required.'}, status=status.HTTP_400_BAD_REQUEST)
-        
         if player1_id == player2_id:
             return Response({'detail': 'Player IDs can not be same'}, status=status.HTTP_400_BAD_REQUEST)
 
         tokens = [token.strip() for token in request.headers.get('Authorization', '').replace('Token ', '').split(',')]
         valid_user_ids = [user.id for user in User.objects.filter(auth_token__key__in=tokens)]
 
-        if player1_id not in valid_user_ids:
-            return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
+        if player1_id is not None:
+            if player1_id not in valid_user_ids:
+                return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
         if player2_id is not None and player2_id != 1:
             if player2_id not in valid_user_ids:
                 return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
@@ -99,17 +97,15 @@ def pong_4p(request, player_id=None):
         player3_id = request.data.get('player3')
         player4_id = request.data.get('player4')
 
-        if player1_id is None:
-            return Response({'detail': 'Player ID is required.'}, status=status.HTTP_400_BAD_REQUEST)
-        
         if check_unique_ids(player1_id, player2_id, player3_id, player4_id) is False:
             return Response({'detail': 'Player IDs can not be same'}, status=status.HTTP_400_BAD_REQUEST)
 
         tokens = [token.strip() for token in request.headers.get('Authorization', '').replace('Token ', '').split(',')]
         valid_user_ids = [user.id for user in User.objects.filter(auth_token__key__in=tokens)]
 
-        if player1_id not in valid_user_ids:
-            return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
+        if player1_id is not None:
+            if player1_id not in valid_user_ids:
+                return Response({'detail': 'Invalid player ID or unauthorized.'}, status=status.HTTP_403_FORBIDDEN)
 
         if player2_id is not None and player2_id != 1:
             if player2_id not in valid_user_ids:

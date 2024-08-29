@@ -250,7 +250,8 @@ export class Game
 
 	update()
 	{
-		setTimeout(() => { requestAnimationFrame(this.update); }, 1000 / G.fps);
+		if (!this.gameEnded)
+			setTimeout(() => { requestAnimationFrame(this.update); }, 1000 / G.fps);
 		
 		if (this.gameEnded)
 		{

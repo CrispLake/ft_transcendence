@@ -133,6 +133,8 @@ export class PowerupManager
             this.game.arena.setWidth(width);
             for (let player in this.game.players)
             {
+                if (this.game.players[player].stunned)
+                    this.keepStunnedPlayerInsideBoundaries(this.game.players[player]);
                 this.game.players[player].setMovingBoundaries();
                 this.game.players[player].stayWithinBoundaries();
             }
@@ -146,6 +148,24 @@ export class PowerupManager
                 this.game.players[player].stayWithinBoundaries();
             }
 
+        }
+    }
+
+    keepStunnedPlayerInsideBoundaries(player)
+    {
+        if (player.alignment == G.vertical)
+        {
+            if (player.stunPosition.z < -player.movementBoundary)
+                player.stunPosition.z = -player.movementBoundary;
+            else if (player.stunPosition.z > player.movementBoundary)
+                player.stunPosition.z = player.movementBoundary;
+        }
+        else
+        {
+            if (player.stunPosition.x < -player.movementBoundary)
+                player.stunPosition.x = -player.movementBoundary;
+            else if (player.stunPosition.x > player.movementBoundary)
+                player.stunPosition.x = player.movementBoundary;
         }
     }
 
